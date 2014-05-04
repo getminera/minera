@@ -1,0 +1,20 @@
+/**
+ * All your custom CSS should go into this file
+ */
+.padding-vert { padding-bottom: 20px;}
+.knob-label { font-size: 10pt !important;}
+.devs_table_foot { background: #666; color: #fff;}
+.box.box-gold { border-top-color: #e6cc64;}
+.box.box-dark { border-top-color: #666;}
+.box.box-light { border-top-color: #ddd;}
+.nav .caret { border-top-color: #434343; border-bottom-color: #434343; }
+.nav .open>a, .nav .open>a:hover, .nav .open>a:focus { background-color: #eee !important; border-color: #434343;}
+.skin-black .navbar .nav > li > a:hover {background: #999; }
+.bg-dark-grey { background-color: #333 !important;  color: #f9f9f9 !important; }
+.bg-light { background-color: #f0f0f0 !important; color: #434343 !important; }
+.bg-light >.box-header { color: #434343 !important;}
+.navbar-nav > .user-menu > .dropdown-menu > li.user-body { padding: 25px 15px 20px !important; }
+.pass-form { padding-left: 90px;}
+.box > .loading-img { background: transparent url('../img/ajax-loader.gif') 50% 50% no-repeat !important;}
+.more-line-height {line-height: 1.8em;}
+.warning-section { display: none;}
