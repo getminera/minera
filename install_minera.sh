@@ -20,6 +20,7 @@ MINER_BIN=`pwd`"/minera-bin/"
 
 echo -e "Adding default startup settings to redis\n-----\n"
 echo -n $MINER_OPT | redis-cli -x set minerd_settings
+echo -n "minera" | redis-cli -x set minera_password
 
 echo -e "Adding minera startup command to rc.local\n-----\n"
 chmod 777 /etc/rc.local
