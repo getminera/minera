@@ -24,15 +24,19 @@ When you have your system ready, ssh into it and **install Minera**
 Skip this step and continue below if you have a web server with PHP just installed.
 
 ```
-sudo apt-get install nginx php5 php5-cli php5-fpm
+sudo apt-get install lighttpd php5-cgi
+sudo lighty-enable-mod fastcgi 
+sudo lighty-enable-mod fastcgi-php
+sudo service lighttpd force-reload
 ```
 
 When your web server is ready you can install Minera:
 
 ```
-sudo apt-get install redis
+sudo apt-get install redis-server git screen
 cd /var/www
 sudo git clone https://github.com/michelem09/minera
+cd minera
 sudo ./install_minera.sh
 ```
 
@@ -41,19 +45,27 @@ The installer will configure the system requirements and will tell you the URL t
     Default URL: http://<your-minera-ip>/minera/
 
 	Default password: minera
+	
+**Important**: minera system user has password "minera", you should change it if your system is a public host with SSH access.
+
+	sudo passwd minera
+	
+This isn't the web password, to change the web password, login into the web interface and go to *Miner -> Settings*
 
 Configuring
 -------------
 
 Minera needs only to know how to start “minerd” command, there are some options you can choose, so please refer to cpuminer-gc3355 README.
 
-Go to settings (Sidebar -> Miner -> Settings) and fill the “Minerd options” textarea with something like this:
+Go to settings (*Miner -> Settings*) and fill the “Minerd options” textarea with something like this:
 
 ```
 --gc3355=/dev/ttyACM0,/dev/ttyACM1,/dev/ttyACM2 --gc3355-autotune --freq=850 --url=stratum+tcp://<yourpool>:<yourpollport> --userpass=<yourworker>:<yourworkerpass> --retries=1
 ```
 
-A sample settings is pre-configured when you run the install_minera.sh script, please remember to change your minera's settings or you will mine for my workers :)
+A sample settings is pre-configured when you run the install_minera.sh script.
+
+Please remember to change your minera's settings or you will mine for my workers :)
 
 TODO
 -------------
@@ -64,6 +76,17 @@ TODO
 * Add more crypto-currencies exchange rates
 * Add more system monitor (CPU/Mem)
 * Add cgminer/bfgminer support
+
+Screenshots
+-------------
+
+Dashboard:
+
+![Dashboard](https://github.com/michelem09/minera/raw/master/assets/img/screen_minera_dashboard.png)
+
+Settings:
+
+![Settings](https://github.com/michelem09/minera/raw/master/assets/img/screen_minera_settings.png)
 
 Donations
 -------------
@@ -77,17 +100,6 @@ Minera is a free and Open Source software, if you like it, please consider a don
     Dogecoin: DLAHwNxfUTUcePewbkvwvAouny19mcosA7
 
 Thanks and happy mining!
-
-Screenshots
--------------
-
-Dashboard:
-
-![Dashboard](https://github.com/michelem09/minera/raw/master/assets/img/screen_minera_dashboard.png)
-
-Settings:
-
-![Settings](https://github.com/michelem09/minera/raw/master/assets/img/screen_minera_settings.png)
 
 LICENSE
 -------------

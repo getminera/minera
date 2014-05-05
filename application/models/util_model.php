@@ -21,7 +21,7 @@ class Util_model extends CI_Model {
 		{
 			if(!($fp = fsockopen("127.0.0.1", 4028, $errno, $errstr, 0)))
 			{
-				return json_encode(array("notrunning" => true));
+				return json_encode(array("error" => true));
 			}
 			
 			stream_set_blocking($fp, false);
@@ -64,6 +64,10 @@ class Util_model extends CI_Model {
 					return json_encode(array("error" => true));
 				}
 			}			
+		}
+		else
+		{
+			return json_encode(array("notrunning" => true));
 		}
 		
 		return false;
