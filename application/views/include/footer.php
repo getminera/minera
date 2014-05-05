@@ -98,7 +98,6 @@
 			$('.top-section').hide();
 			$('.right-section').hide();
 			$('.left-section').hide();
-			$('.bottom-section').hide();
 			$('.warning-message').html(msg);                        
 			$('.warning-section').fadeIn();
 			

@@ -52,6 +52,21 @@ The installer will configure the system requirements and will tell you the URL t
 	
 This isn't the web password, to change the web password, login into the web interface and go to *Miner -> Settings*
 
+**Minerd (CPUMiner-gc3355)**
+
+The *minerd* binary path is:
+
+	minera-bin/minerd 
+	
+It's pre-compiled for Raspberry (ARM) with the latest version available, please refer to https://github.com/siklon/cpuminer-gc3355 if you wanna recompile it.
+
+**For Ubuntu user only**
+
+In the same path you can find also *minerd-ubuntu-64bit* file, this one is pre-compiled for Ubuntu 64bit, you should copy it overwriting *minerd* if you run Minera on Ubuntu.
+
+	cd /var/www/minera/minera-bin
+	sudo cp minerd-ubuntu-64bit minerd
+
 Configuring
 -------------
 
@@ -66,6 +81,27 @@ Go to settings (*Miner -> Settings*) and fill the “Minerd options” textarea 
 A sample settings is pre-configured when you run the install_minera.sh script.
 
 Please remember to change your minera's settings or you will mine for my workers :)
+
+Troubleshooting
+-------------
+
+If you wanna check your minera's screen session just SSH into it and attach the session:
+
+	ssh minera@<your-minera-ip>
+	screen -r
+
+If you receive the following error:
+
+	Cannot open your terminal '/dev/pts/0' - please check.
+	
+Please run:
+
+	script /dev/null
+	screen -r
+	
+If you wanna check the raw JSON stats from your minerd, please point your browser to:
+
+	http://<your-minera-ip>/minera/index.php/app/stats
 
 TODO
 -------------

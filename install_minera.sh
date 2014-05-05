@@ -35,4 +35,4 @@ echo -e "Adding cron file in /etc/cron.d\n-----\n"
 
 echo "*/5 * * * * minera php `pwd`/index.php app cron_stats" > /etc/cron.d/minera
 
-echo -e "DONE! Minera is ready!\n\nOpen the URL: http://$(hostname -I)/minera/\n\nAnd happy mining!\n"
+echo -e 'DONE! Minera is ready!\n\nOpen the URL: http://'$(hostname -I | tr -d ' ')'/minera/\n\nAnd happy mining!\n'
