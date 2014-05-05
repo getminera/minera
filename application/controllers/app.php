@@ -93,7 +93,9 @@ class App extends Main_Controller {
 			}
 		}
 		
-		$data['btc'] = $this->util_model->getBtcValue();
+		$data['btc'] = $this->util_model->getBtcUsdRates();
+		$data['ltc'] = $this->util_model->getCryptsyRates(3);
+		$data['doge'] = $this->util_model->getCryptsyRates(132);
 		$data['isOnline'] = $this->util_model->isOnline();
 		$data['htmlTag'] = "settings";
 		
