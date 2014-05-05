@@ -90,20 +90,14 @@
 					            </li>
 					            <!-- Menu Body -->
 					            <li class="user-body">
-					                <div class="col-xs-4 text-center">
-					                    <a href="bitcoin:1AmREReHNLec9EaW7gLRdW31LNSDA9SGR1">Bitcoin</a>
-					                </div>
-					                <div class="col-xs-4 text-center">
-					                    <a href="litecoin:LLPmAT9gDwmiSdqwWEZu6mpUDmrNAnYBdC">Litecoin</a>
-					                </div>
-					                <div class="col-xs-4 text-center">
-					                    <a href="dogecoin:DLAHwNxfUTUcePewbkvwvAouny19mcosA7">Dogecoin</a>
-					                </div>
+					                <div class="col-xs-12 text-center">
+										<a href="https://github.com/michelem09/minera/issues">Problems?</a>
+									</div>
 					            </li>
 					            <!-- Menu Footer-->
 					            <li class="user-footer">
 					                <div class="pull-left">
-					                    <a href="#" class="btn btn-default btn-flat">Github</a>
+					                    <a href="https://github.com/michelem09/minera" class="btn btn-default btn-flat">Github</a>
 					                </div>
 					                <div class="pull-right">
 					                    <a href="http://twitter.com/michelem" class="btn btn-default btn-flat">Twitter</a>

@@ -15,17 +15,37 @@ class Util_model extends CI_Model {
 	// Get the live stats from cpuminer
 	public function getStats()
 	{
-		$cmd = escapeshellarg('{"get":"stats"}\n');
-
-		$o = shell_exec("printf $cmd | nc 127.0.0.1 4028 -w 2"); 
-		
 		$tmpFile = $this->config->item("tmp_stats_file");
 		
 		if ($this->isOnline())
 		{
-			if ($o)
+			if(!($fp = fsockopen("127.0.0.1", 4028, $errno, $errstr, 0)))
 			{
-				$a = json_decode($o);
+				return json_encode(array("notrunning" => true));
+			}
+			
+			stream_set_blocking($fp, false);
+			
+			$out = json_encode(array("get" => "stats"))."\n";
+			
+			fwrite($fp, $out);
+			
+			usleep(100000);
+			
+			$out = "";
+			
+			while(!feof($fp))
+			{
+			    if(!($str = fgets($fp, 2048))) break;
+			    $out .= $str;
+			}
+			
+			fclose($fp);
+			
+			$a = json_decode($out);
+			
+			if ($a)
+			{
 				$a = (array)$a;
 				$a["sysload"] = sys_getloadavg();
 				
@@ -45,11 +65,6 @@ class Util_model extends CI_Model {
 				}
 			}			
 		}
-		else
-		{
-			return json_encode(array("notrunning" => true));
-		}
-
 		
 		return false;
 	}
