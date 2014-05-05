@@ -19,10 +19,18 @@ Many softwares like Minera give the complete img file to install on a SD card, I
 
 Simply download and put it in your SD card (there are tons of guide to do this, google it).
 
-When you have your system ready, ssh into it and **install Minera:**
+When you have your system ready, ssh into it and **install Minera**
+
+Skip this step and continue below if you have a web server with PHP just installed.
 
 ```
-sudo apt-get install nginx php5 php5-cli php5-fpm redis
+sudo apt-get install nginx php5 php5-cli php5-fpm
+```
+
+When your web server is ready you can install Minera:
+
+```
+sudo apt-get install redis
 cd /var/www
 sudo git clone https://github.com/michelem09/minera
 sudo ./install_minera.sh
@@ -51,7 +59,7 @@ TODO
 -------------
 
 * Create an img file “plug&play”
-* Add some errors control
+* Add some errors control to installer
 * Add daily/weekly/monthly charts
 * Add more crypto-currencies exchange rates
 * Add more system monitor (CPU/Mem)
@@ -69,6 +77,17 @@ Minera is a free and Open Source software, if you like it, please consider a don
     Dogecoin: DLAHwNxfUTUcePewbkvwvAouny19mcosA7
 
 Thanks and happy mining!
+
+Screenshots
+-------------
+
+Dashboard:
+
+![Dashboard](https://github.com/michelem09/minera/raw/master/assets/img/screen_minera_dashboard.png)
+
+Settings:
+
+![Settings](https://github.com/michelem09/minera/raw/master/assets/img/screen_minera_settings.png)
 
 LICENSE
 -------------
