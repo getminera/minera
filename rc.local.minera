@@ -12,7 +12,7 @@
 # By default this script does nothing.
 
 # Print the IP address
-_IP=$(hostname -I) || true
-printf "Connect to http://%s to manage Minera\n" "$_IP"
+_IP=$(hostname -I | tr -d ' ') || true
+printf "Connect to http://%s/minera to manage Minera\n" "$_IP"
 printf "Happy mining!\n"
 

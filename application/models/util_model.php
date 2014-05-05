@@ -12,6 +12,12 @@ class Util_model extends CI_Model {
 		parent::__construct();
 	}
 
+	/*
+	//
+	// Stats related stuff
+	//
+	*/
+	
 	// Get the live stats from cpuminer
 	public function getStats()
 	{
@@ -128,8 +134,14 @@ class Util_model extends CI_Model {
 		$this->redis->command("ZADD minerd_stats ".time()." ".$json);
 	}
 	
-	// Get Bitstamp API to look at BTC values
-	public function getBtcValue()
+	/*
+	//
+	// Crypto rates related stuff
+	//
+	*/
+	
+	// Get Bitstamp API to look at BTC/USD rates
+	public function getBtcUsdRates()
 	{
 		if ($json = file_get_contents("https://www.bitstamp.net/api/ticker/"))
 		{
@@ -141,6 +153,27 @@ class Util_model extends CI_Model {
 			return false;
 		}
 	}
+	
+	// Get Cryptsy API to look at LTC/BTC rates
+	public function getCryptsyRates($id)
+	{
+		if ($json = file_get_contents("http://pubapi.cryptsy.com/api.php?method=singlemarketdata&marketid=$id"))
+		{
+			$a = json_decode($json);
+			return $a;
+		}
+		else
+		{
+			return false;
+		}
+	}
+	
+	
+	/*
+	//
+	// Miner and System related stuff
+	//
+	*/
 	
 	// Check if the minerd if running
 	public function isOnline()
@@ -185,9 +218,11 @@ class Util_model extends CI_Model {
 	public function minerdStop()
 	{
 		exec("sudo -u " . $this->config->item("system_user") . " " . $this->config->item("screen_command_stop"));
-		exec("sudo -u " . $this->config->item("system_user") . " killall minerd");
-		unlink($this->config->item("tmp_stats_file"));
-		
+		exec("sudo -u " . $this->config->item("system_user") . " killall minerd", $test);
+
+		if (file_exists($this->config->item("tmp_stats_file")))
+			unlink($this->config->item("tmp_stats_file"));
+			
 		return true;
 	}
 	

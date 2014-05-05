@@ -17,6 +17,7 @@
                 </a>
 				<div class="navbar-right">
 					<ul class="nav navbar-nav">
+						<!-- BTC/USD rates -->
 						<li class="messages-menu">
                             <a href="#" class="dropdown-toggle" data-toggle="dropdown">
                                 <i class="fa fa-btc"></i> price: <?php echo $btc->last ?> <i class="fa fa-dollar"></i>
@@ -62,12 +63,92 @@
                                                 <p>Low</p>
                                             </a>
                                         </li>
-                                    </ul><div class="slimScrollBar" style="background-color: rgb(0, 0, 0); width: 3px; position: absolute; top: 0px; opacity: 0.4; display: block; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; z-index: 99; right: 1px; background-position: initial initial; background-repeat: initial initial;"></div><div class="slimScrollRail" style="width: 3px; height: 100%; position: absolute; top: 0px; display: none; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; background-color: rgb(51, 51, 51); opacity: 0.2; z-index: 90; right: 1px; background-position: initial initial; background-repeat: initial initial;"></div></div>
-                                </li>
+                                    </ul>                                </li>
                                 <li class="footer"><a href="https://www.bitstamp.net">Go to Bitstamp</a></li>
                             </ul>
                         </li>
-					    <!-- User Account: style can be found in dropdown.less -->
+                        
+                        <!-- LTC/BTC Rates -->
+						<li class="messages-menu">
+                            <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                                LTC price: <?php echo $ltc->return->markets->LTC->lasttradeprice ?> <i class="fa fa-btc"></i>
+                            </a>
+                            <ul class="dropdown-menu">
+                                <li class="header">Data from Cryptsy</li>
+                                <li>
+                                    <!-- inner menu: contains the actual data -->
+                                    <div class="slimScrollDiv" style="position: relative; overflow: hidden; width: auto; height: 200px;"><ul class="menu" style="overflow: hidden; width: 100%; height: 200px;">
+                                        <li>
+                                            <a href="#">
+                                            	<div class="pull-left" style="padding-left:15px;">
+                                                    <i class="fa fa-archive"></i>
+                                                </div>
+                                                <h4>
+                                                    <?php echo $ltc->return->markets->LTC->volume ?>
+                                                    <small><i class="fa fa-clock-o"></i> <?php echo date("H:i", strtotime($ltc->return->markets->LTC->lasttradetime." EST")) ?></small>
+                                                </h4>
+                                                <p>Volume</p>
+                                            </a>
+                                        </li>
+                                        <li>
+                                            <a href="#">
+                                            	<div class="pull-left" style="padding-left:15px;">
+                                                    <i class="fa fa-exchange"></i>
+                                                </div>
+                                                <h4>
+                                                    <?php echo $ltc->return->markets->LTC->lasttradetime." EST" ?>
+                                                    <small><i class="fa fa-clock-o"></i> <?php echo date("H:i", strtotime($ltc->return->markets->LTC->lasttradetime." EST")) ?></small>
+                                                </h4>
+                                                <p>Last trade time</p>
+                                            </a>
+                                        </li>
+                                    </ul>
+                                </li>
+                                <li class="footer"><a href="https://www.cryptsy.com/users/register?refid=243592">Register at Cryptsy</a></li>
+                            </ul>
+                        </li>
+                        
+						<!-- DOGE/BTC Rates -->
+						<li class="messages-menu">
+                            <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                                DOGE price: <?php echo $doge->return->markets->DOGE->lasttradeprice ?> <i class="fa fa-btc"></i>
+                            </a>
+                            <ul class="dropdown-menu">
+                                <li class="header">Data from Cryptsy</li>
+                                <li>
+                                    <!-- inner menu: contains the actual data -->
+                                    <div class="slimScrollDiv" style="position: relative; overflow: hidden; width: auto; height: 200px;"><ul class="menu" style="overflow: hidden; width: 100%; height: 200px;">
+                                        <li>
+                                            <a href="#">
+                                            	<div class="pull-left" style="padding-left:15px;">
+                                                    <i class="fa fa-archive"></i>
+                                                </div>
+                                                <h4>
+                                                    <?php echo $doge->return->markets->DOGE->volume ?>
+                                                    <small><i class="fa fa-clock-o"></i> <?php echo date("H:i", strtotime($doge->return->markets->DOGE->lasttradetime." EST")) ?></small>
+                                                </h4>
+                                                <p>Volume</p>
+                                            </a>
+                                        </li>
+                                        <li>
+                                            <a href="#">
+                                            	<div class="pull-left" style="padding-left:15px;">
+                                                    <i class="fa fa-exchange"></i>
+                                                </div>
+                                                <h4>
+                                                    <?php echo $doge->return->markets->DOGE->lasttradetime." EST" ?>
+                                                    <small><i class="fa fa-clock-o"></i> <?php echo date("H:i", strtotime($doge->return->markets->DOGE->lasttradetime." EST")) ?></small>
+                                                </h4>
+                                                <p>Last trade time</p>
+                                            </a>
+                                        </li>
+                                    </ul>
+                                </li>
+                                <li class="footer"><a href="https://www.cryptsy.com/users/register?refid=243592">Register at Cryptsy</a></li>
+                            </ul>
+                        </li>
+                        
+					    <!-- Donate/Help dropdown -->
 					    <li class="dropdown user user-menu">
 					        <a href="#" class="dropdown-toggle" data-toggle="dropdown">
 					            <i class="glyphicon glyphicon-gift"></i>
@@ -117,7 +198,7 @@
             <aside class="left-side sidebar-offcanvas">
                 <!-- sidebar: style can be found in sidebar.less -->
                 <section class="sidebar">
-                    <!-- Sidebar user panel -->
+                    <!-- Sidebar main panel -->
                     <div class="user-panel">
                         <div class="pull-left info">
                             <p>Hello, your miner is</p>
@@ -129,7 +210,7 @@
                         </div>
                     </div>
 
-                    <!-- sidebar menu: : style can be found in sidebar.less -->
+                    <!-- sidebar menu -->
                     <ul class="sidebar-menu">
                         <li>
                             <a href="<?php echo site_url("app/dashboard") ?>">

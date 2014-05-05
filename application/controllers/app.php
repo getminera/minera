@@ -1,6 +1,9 @@
 <?php if (!defined('BASEPATH')) die();
 class App extends Main_Controller {
 
+	/*
+	// Index/lock screen controller
+	*/
 	public function index()
 	{	
 		$data['htmlTag'] = "lockscreen";
@@ -8,6 +11,9 @@ class App extends Main_Controller {
 		$this->load->view('lockscreen');
 	}
 	
+	/*
+	// Login controller
+	*/
 	public function login()
 	{
 		if ($this->input->post('password', true) && $this->input->post('password', true) == $this->redis->get('minera_password'))
@@ -20,90 +26,16 @@ class App extends Main_Controller {
 	}
 	
 	/*
-	// Shutdown the system
-	*/
-	public function shutdown()
-	{	
-		if ($this->input->get('confirm'))
-		{
-			$data['message'] = "Please wait to unplug me.";
-			$data['timer'] = true;
-			$this->util_model->shutdown();
-		}
-		else
-		{
-			$data['title'] = "Are you sure?";
-			$data['message'] = '<a href="'.site_url("app/shutdown").'?confirm=1"><button class="btn btn-default btn-lg"><i class="fa fa-check"></i> Yes, shutdown now</button></a>&nbsp;&nbsp;&nbsp;<a href="'.site_url("app/dashboard").'"><button class="btn btn-default btn-lg"><i class="fa fa-times"></i> No, thanks</button></a>';
-			$data['timer'] = false;
-		}
-		$data['messageEnd'] = "you can unplug me now.";
-		$data['htmlTag'] = "lockscreen";
-		$data['seconds'] = 60;
-		$data['refreshUrl'] = false;
-		$this->load->view('include/header', $data);
-		$this->load->view('sysop', $data);
-	}
-
-	/*
-	// Reboot the system
-	*/
-	public function reboot()
-	{	
-		if ($this->input->get('confirm'))
-		{
-			$data['message'] = "Please wait while I'm rebooting...";
-			$data['timer'] = true;
-			$this->util_model->reboot();
-		}
-		else
-		{
-			$data['title'] = "Are you sure?";
-			$data['message'] = '<a href="'.site_url("app/reboot").'?confirm=1"><button class="btn btn-default btn-lg"><i class="fa fa-check"></i> Yes, reboot now</button></a>&nbsp;&nbsp;&nbsp;<a href="'.site_url("app/dashboard").'"><button class="btn btn-default btn-lg"><i class="fa fa-times"></i> No, thanks</button></a>';
-			$data['timer'] = false;
-		}
-		$data['messageEnd'] = "here we go!";
-		$data['htmlTag'] = "lockscreen";
-		$data['seconds'] = 30;
-		$data['refreshUrl'] = site_url("app/index");
-		$this->load->view('include/header', $data);
-		$this->load->view('sysop', $data);
-	}
-
-	/*
-	// Start the miner
-	*/
-	public function start_miner()
-	{
-		if (!$this->session->userdata("loggedin"))
-			redirect('app/index');
-		
-		$this->util_model->minerdStart();
-		
-		redirect('app/dashboard');
-	}
-
-	/*
-	// Stop the miner
-	*/
-	public function stop_miner()
-	{
-		if (!$this->session->userdata("loggedin"))
-			redirect('app/index');
-		
-		$this->util_model->minerdStop();
-		
-		redirect('app/dashboard');
-	}
-			
-	/*
 	// Dashboard controller
-	*/	
+	*/
 	public function dashboard()
 	{
 		if (!$this->session->userdata("loggedin"))
 			redirect('app/index');
 		
-		$data['btc'] = $this->util_model->getBtcValue();
+		$data['btc'] = $this->util_model->getBtcUsdRates();
+		$data['ltc'] = $this->util_model->getCryptsyRates(3);
+		$data['doge'] = $this->util_model->getCryptsyRates(132);
 		$data['isOnline'] = $this->util_model->isOnline();
 		$data['htmlTag'] = "dashboard";
 		
@@ -170,7 +102,83 @@ class App extends Main_Controller {
 		$this->load->view('settings', $data);
 		$this->load->view('include/footer');
 	}
+	
+	/*
+	// Shutdown controller (this should be in a different "system" controller file)
+	*/
+	public function shutdown()
+	{	
+		if ($this->input->get('confirm'))
+		{
+			$data['message'] = "Please wait to unplug me.";
+			$data['timer'] = true;
+			$this->util_model->shutdown();
+		}
+		else
+		{
+			$data['title'] = "Are you sure?";
+			$data['message'] = '<a href="'.site_url("app/shutdown").'?confirm=1"><button class="btn btn-default btn-lg"><i class="fa fa-check"></i> Yes, shutdown now</button></a>&nbsp;&nbsp;&nbsp;<a href="'.site_url("app/dashboard").'"><button class="btn btn-default btn-lg"><i class="fa fa-times"></i> No, thanks</button></a>';
+			$data['timer'] = false;
+		}
+		$data['messageEnd'] = "you can unplug me now.";
+		$data['htmlTag'] = "lockscreen";
+		$data['seconds'] = 60;
+		$data['refreshUrl'] = false;
+		$this->load->view('include/header', $data);
+		$this->load->view('sysop', $data);
+	}
+
+	/*
+	// Reboot controller (this should be in a different "system" controller file)
+	*/
+	public function reboot()
+	{	
+		if ($this->input->get('confirm'))
+		{
+			$data['message'] = "Please wait while I'm rebooting...";
+			$data['timer'] = true;
+			$this->util_model->reboot();
+		}
+		else
+		{
+			$data['title'] = "Are you sure?";
+			$data['message'] = '<a href="'.site_url("app/reboot").'?confirm=1"><button class="btn btn-default btn-lg"><i class="fa fa-check"></i> Yes, reboot now</button></a>&nbsp;&nbsp;&nbsp;<a href="'.site_url("app/dashboard").'"><button class="btn btn-default btn-lg"><i class="fa fa-times"></i> No, thanks</button></a>';
+			$data['timer'] = false;
+		}
+		$data['messageEnd'] = "here we go!";
+		$data['htmlTag'] = "lockscreen";
+		$data['seconds'] = 30;
+		$data['refreshUrl'] = site_url("app/index");
+		$this->load->view('include/header', $data);
+		$this->load->view('sysop', $data);
+	}
+
+	/*
+	// Start miner controller (this should be in a different "system" controller file)
+	*/
+	public function start_miner()
+	{
+		if (!$this->session->userdata("loggedin"))
+			redirect('app/index');
 		
+		$this->util_model->minerdStart();
+		
+		redirect('app/dashboard');
+	}
+
+	/*
+	// Stop miner controller (this should be in a different "system" controller file)
+	*/
+	public function stop_miner()
+	{
+		if (!$this->session->userdata("loggedin"))
+			redirect('app/index');
+		
+		$this->util_model->minerdStop();
+		
+		redirect('app/dashboard');
+	}
+
 	public function stats()
 	{
 		$stats = $this->util_model->getStats();
