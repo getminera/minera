@@ -1,2 +1,0 @@
-#!/bin/bash
-/usr/bin/screen -dmS cpuminer /home/pi/minera/minera-bin/minerd --gc3355=/dev/ttyACM0,/dev/ttyACM1,/dev/ttyACM2 --gc3355-autotune --freq=850 --url=stratum+tcp://doge.ghash.io:3333 --userpass=michelem.1:x --retries=1
