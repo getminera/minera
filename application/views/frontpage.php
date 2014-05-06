@@ -197,7 +197,7 @@
                                     <h3 class="box-title">Donations</h3>
                                 </div>
                                 <div class="box-body">
-                                    <p class="more-line-height">If you like Minera, please consider a donation to support it. <strong>Bitcoin</strong>: <code>1AmREReHNLec9EaW7gLRdW31LNSDA9SGR1</code> <strong>Litecoin</strong>: <code>LLPmAT9gDwmiSdqwWEZu6mpUDmrNAnYBdC</code> <strong>Dogecoin</strong>: <code>DLAHwNxfUTUcePewbkvwvAouny19mcosA7</code></p>
+                                    <p class="more-line-height">If you like Minera, please consider a donation to support it. <strong>Bitcoin</strong>: <code><a href="bitcoin:1AmREReHNLec9EaW7gLRdW31LNSDA9SGR1" target="_blank">1AmREReHNLec9EaW7gLRdW31LNSDA9SGR1</a></code> <strong>Litecoin</strong>: <code><a href="litecoin:LLPmAT9gDwmiSdqwWEZu6mpUDmrNAnYBdC" target="_blank">LLPmAT9gDwmiSdqwWEZu6mpUDmrNAnYBdC</a></code> <strong>Dogecoin</strong>: <code><a href="dogecoin:DLAHwNxfUTUcePewbkvwvAouny19mcosA7" target="_blank">DLAHwNxfUTUcePewbkvwvAouny19mcosA7</a></code></p>
                                 </div><!-- /.box-body -->
                             </div>
                             

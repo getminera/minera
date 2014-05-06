@@ -55,6 +55,15 @@
 													<h5><i><?php echo $this->config->item("screen_command") ?> <?php echo $this->config->item("minerd_command")."</i> <strong>".$this->redis->get('minerd_settings') ?></strong></h5>
 												</div>
 	                                        </div>
+	                                        
+											<div class="form-group">
+												<div class="checkbox">
+													<label>
+														<input type="checkbox" name="minerd_autorecover" value="1" <?php if ($minerd_autorecover) : ?>checked=""<?php endif; ?> />
+														Enable auto-recover mode <small>(If minerd process dies Minera restarts it)</small>
+													</label>                                                
+												</div>
+											</div>
 	
 	                                </div>
 									<div class="box-footer">

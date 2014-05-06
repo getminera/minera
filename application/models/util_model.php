@@ -18,52 +18,62 @@ class Util_model extends CI_Model {
 	//
 	*/
 	
+	// Call minerd to get the stats and retry before give up
+	public function callMinerd($i = 0)
+	{
+		if(!($fp = fsockopen("127.0.0.1", 4028, $errno, $errstr, 1)))
+		{
+			return array("error" => true, "msg" => $errstr);
+		}
+	
+		stream_set_blocking($fp, false);
+		
+		$out = json_encode(array("get" => "stats"))."\n";
+		
+		fwrite($fp, $out);
+		
+		usleep(150000);
+		
+		$out = false;
+		
+		while(!feof($fp))
+		{
+		    if(!($str = fgets($fp, 2048))) break;
+		    $out .= $str;
+		}
+
+		fclose($fp);
+		
+		/*if ($out === false && $i <= 1)
+		{
+			$this->callMinerd($i++);	
+		}*/
+			
+		return json_decode($out);
+	}
+	
 	// Get the live stats from cpuminer
 	public function getStats()
 	{
-		$tmpFile = $this->config->item("tmp_stats_file");
-		
 		if ($this->isOnline())
 		{
-			if(!($fp = fsockopen("127.0.0.1", 4028, $errno, $errstr, 0)))
-			{
-				return json_encode(array("error" => true));
-			}
-			
-			stream_set_blocking($fp, false);
-			
-			$out = json_encode(array("get" => "stats"))."\n";
-			
-			fwrite($fp, $out);
-			
-			usleep(100000);
-			
-			$out = "";
-			
-			while(!feof($fp))
-			{
-			    if(!($str = fgets($fp, 2048))) break;
-			    $out .= $str;
-			}
-			
-			fclose($fp);
-			
-			$a = json_decode($out);
-			
-			if ($a)
+			$a = $this->callMinerd();
+
+			if (is_object($a))
 			{
 				$a = (array)$a;
 				$a["sysload"] = sys_getloadavg();
 				
 				$o = json_encode($a);
-				file_put_contents($tmpFile, $o);
+				$this->redis->set("latest_stats", $o);
+				
 				return $o;
 			}
 			else
 			{
-				if (file_exists($tmpFile))
+				if ($latestSaved = $this->redis->get("latest_stats"))
 				{
-					return file_get_contents($tmpFile);
+					return $latestSaved;
 				}
 				else
 				{
@@ -80,24 +90,24 @@ class Util_model extends CI_Model {
 	}
 
 	// Get the stored stats from Redis
-	public function getStoredStats()
+	public function getStoredStats($seconds = 3600)
 	{	
 		$now = time();
-		$onehourago = $now-3600;
+		$onehourago = $now-$seconds;
 		$this->load->library('redis');
 		$o = $this->redis->command("ZRANGEBYSCORE minerd_stats $onehourago $now");
 		
 		return $o;
 	}
-
+	
 	// Store the live stats on Redis
 	public function storeStats()
-	{		
+	{
 		$data = json_decode($this->getStats());
 		
 		$totHash = 0; $totFreq = 0; $totAc = 0; $totHw = 0; $totRe = 0; $totSh = 0; $d = 0; $c = 0;
-		
-		if ($data->d && count($data->d) > 0)
+
+		if ($data && $data->d && count($data->d) > 0)
 		{
 			foreach($data->d as $device)
 			{
@@ -186,6 +196,23 @@ class Util_model extends CI_Model {
 		return false;
 	}
 	
+	public function checkMinerIsUp()
+	{
+		// Check if miner is not manually stopped
+		if ($this->redis->get("minerd_status"))
+		{
+			if ($this->isOnline() === false)
+			{
+				// Force stop and killall
+				$this->minerdStop();
+				// Restart minerd
+				$this->minerdStart();
+			}
+		}
+		
+		return;
+	}
+	
 	// Call shutdown cmd
 	public function shutdown()
 	{
@@ -218,11 +245,11 @@ class Util_model extends CI_Model {
 	public function minerdStop()
 	{
 		exec("sudo -u " . $this->config->item("system_user") . " " . $this->config->item("screen_command_stop"));
-		exec("sudo -u " . $this->config->item("system_user") . " killall minerd", $test);
-
-		if (file_exists($this->config->item("tmp_stats_file")))
-			unlink($this->config->item("tmp_stats_file"));
-			
+		exec("sudo -u " . $this->config->item("system_user") . " /usr/bin/killall minerd");
+		
+		$this->redis->del("latest_stats");
+		$this->redis->set("minerd_status", false);
+					
 		return true;
 	}
 	
@@ -232,7 +259,28 @@ class Util_model extends CI_Model {
 		$command = array($this->config->item("screen_command"), $this->config->item("minerd_command"), $this->redis->get('minerd_settings'));
 
 		exec("sudo -u " . $this->config->item("system_user") . " " . implode(" ", $command));
+		
+		$this->redis->set("minerd_status", true);
 
+		return true;
+	}
+	
+	// Check Minera version
+	public function checkVersion()
+	{
+		$latestConfig = json_decode(file_get_contents($this->config->item("remote_config_url")));
+		$localConfig = json_decode(file_get_contents(base_url('minera.json')));
+		base_url('minera.json');
+
+	}
+
+	// Check Internet connection
+	public function checkConn()
+	{
+		if(!fsockopen("www.google.com", 80)) {
+			return false;
+		}
+		
 		return true;
 	}
 }

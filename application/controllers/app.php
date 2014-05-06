@@ -38,6 +38,8 @@ class App extends Main_Controller {
 		$data['doge'] = $this->util_model->getCryptsyRates(132);
 		$data['isOnline'] = $this->util_model->isOnline();
 		$data['htmlTag'] = "dashboard";
+		$data['appScript'] = true;
+		//$this->util_model->checkVersion();
 		
 		$this->load->view('include/header', $data);
 		$this->load->view('include/sidebar', $data);
@@ -59,6 +61,8 @@ class App extends Main_Controller {
 			if (!empty($settings))
 			{
 				$this->redis->set("minerd_settings", $settings);
+				$this->redis->set("minerd_autorecover", $this->input->post('minerd_autorecover'));
+				
 				$this->util_model->saveStartupScript();
 				
 				$data['message'] = '<b>Success!</b> Settings saved!';
@@ -97,7 +101,9 @@ class App extends Main_Controller {
 		$data['ltc'] = $this->util_model->getCryptsyRates(3);
 		$data['doge'] = $this->util_model->getCryptsyRates(132);
 		$data['isOnline'] = $this->util_model->isOnline();
+		$data['minerd_autorecover'] = $this->redis->get('minerd_autorecover');
 		$data['htmlTag'] = "settings";
+		$data['appScript'] = false;
 		
 		$this->load->view('include/header', $data);
 		$this->load->view('include/sidebar', $data);
@@ -181,6 +187,9 @@ class App extends Main_Controller {
 		redirect('app/dashboard');
 	}
 
+	/*
+	// Stats controller get the live stats
+	*/
 	public function stats()
 	{
 		$stats = $this->util_model->getStats();
@@ -190,19 +199,33 @@ class App extends Main_Controller {
 			->set_output($stats);
 	}
 	
+	/*
+	// Store controller Get the store stats from Redis
+	*/
 	public function stored_stats()
 	{
-		$storedStats = $this->util_model->getStoredStats();
+		$storedStats = $this->util_model->getStoredStats(3600);
 		
 		$this->output
 			->set_content_type('application/json')
 			->set_output("[".implode(",", $storedStats)."]");
 	}	
 
-	public function cron_stats()
+	/*
+	// Cron controller to be used to run scheduled tasks
+	*/
+	public function cron()
 	{
+		// Check and restart the minerd if it's dead
+		if ($this->redis->get('minerd_autorecover'))
+		{
+			$this->util_model->checkMinerIsUp();	
+		}
+		
+		// Store the live stats to be used on time graphs
 		$this->util_model->storeStats();
 	}
+
 }
 
 /* End of file frontpage.php */

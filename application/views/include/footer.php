@@ -6,7 +6,8 @@
 
     <!-- AdminLTE App -->
     <script src="<?php echo base_url('assets/js/app.js') ?>" type="text/javascript"></script>
-
+	
+	<?php if ($appScript) : ?>
 	<!-- jQuery Knob -->
     <script src="<?php echo base_url('assets/js/jquery.knob.js') ?>" type="text/javascript"></script>
     
@@ -29,7 +30,7 @@
 		        handle: ".box-header, .nav-tabs",
 		        forcePlaceholderSize: true,
 		        zIndex: 999999
-		    }).disableSelection();
+		    });
 		    $(".box-header, .nav-tabs").css("cursor","move");
 		    
 			/* Morris.js Charts */
@@ -438,6 +439,7 @@
 
 
     </script>
-        
+	<?php endif; ?>
+	
 </body>
 </html>

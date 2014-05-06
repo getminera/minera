@@ -343,12 +343,12 @@ class CI_Input {
 				}
 			}
 
-			$this->ip_address = ($spoof !== FALSE && in_array($_SERVER['REMOTE_ADDR'], $proxy_ips, TRUE))
-				? $spoof : $_SERVER['REMOTE_ADDR'];
+			$this->ip_address = ($spoof !== FALSE && in_array($this->server('remote_addr'), $proxy_ips, TRUE))
+				? $spoof : $this->server('remote_addr');
 		}
 		else
 		{
-			$this->ip_address = $_SERVER['REMOTE_ADDR'];
+			$this->ip_address = $this->server('remote_addr');
 		}
 
 		if ( ! $this->valid_ip($this->ip_address))

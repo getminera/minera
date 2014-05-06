@@ -1,4 +1,4 @@
-    <body class="skin-black" onload="getStats(false);">
+    <body class="skin-black"<?php if ($appScript) : ?> onload="getStats(false);"<?php endif; ?>>
 
         <!-- header logo: style can be found in header.less -->
         <header class="header">
