@@ -9,7 +9,7 @@ adduser minera --gecos "" --disabled-password
 echo "minera:minera" | chpasswd
 
 echo -e "Adding groups to Minera\n-----\n"
-usermod -a -G dialout,plugdev,netdev,input minera
+usermod -a -G dialout,plugdev,tty minera
 
 echo -e "Adding sudoers configuration for www-data and minera users\n-----\n"
 echo -e "\n#Minera settings\nminera ALL=(ALL) NOPASSWD: ALL\nwww-data ALL = (ALL) NOPASSWD: /bin/kill\nwww-data ALL = (ALL) NOPASSWD: /usr/bin/screen\nwww-data ALL = (ALL) NOPASSWD: /sbin/reboot\nwww-data ALL = (ALL) NOPASSWD: /sbin/shutdown\nwww-data ALL = (minera) NOPASSWD: /usr/bin/killall" >> /etc/sudoers
