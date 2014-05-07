@@ -28,27 +28,27 @@
                         
                         <!-- Top section -->
                         <section class="col-md-12 connectedSortable ui-sortable">
-                                                    
-                            <div class="box box-primary">
-								<div class="box-header">
-									<!-- tools box -->
-                                    <div class="pull-right box-tools">
-                                        <button class="btn btn-default btn-xs" data-widget="collapse" data-toggle="tooltip" title="" data-original-title="Collapse"><i class="fa fa-minus"></i></button>
-                                    </div><!-- /. tools -->
-                                    <i class="fa fa-gear"></i>
-                                    
-                                    <h3 class="box-title">Miner Settings</h3>
-                                </div>
 								
-								<form action="<?php site_url("app/dashboard") ?>" method="post" role="form">
-									<input type="hidden" name="save_settings" value="1" />
-	                                <div class="box-body">
-										<p>Please input here your command options, Minera will start the <code>minerd</code> command within a screen session.</p>
-
+							<form action="<?php site_url("app/dashboard") ?>" method="post" role="form">
+								<input type="hidden" name="save_settings" value="1" />                                                    
+	                            <div class="box box-primary">
+									<div class="box-header">
+										<!-- tools box -->
+	                                    <div class="pull-right box-tools">
+	                                        <button class="btn btn-default btn-xs" data-widget="collapse" data-toggle="tooltip" title="" data-original-title="Collapse"><i class="fa fa-minus"></i></button>
+	                                    </div><!-- /. tools -->
+	                                    <i class="fa fa-gear"></i>
+	                                    
+	                                    <h3 class="box-title">Miner Settings</h3>
+	                                </div>
+	
+		                                <div class="box-body">
+											<p>Please input here your command options, Minera will start the <code>minerd</code> command within a screen session.</p>
+	
 	                                        <!-- Minerd options config -->
 	                                        <div class="form-group">
 	                                            <label>Minerd options</label>
-	                                            <textarea name="minerd_settings" class="form-control" rows="5" placeholder="Example: --gc3355=/dev/ttyACM0,/dev/ttyACM1,/dev/ttyACM2 --gc3355-autotune --freq=850 --url=stratum+tcp://multi.ghash.io:3333 --userpass=michelem.1:x --retries=1"><?php echo $this->redis->get('minerd_settings') ?></textarea>
+	                                            <textarea name="minerd_settings" class="form-control" rows="5" placeholder="Example: --gc3355-detect --gc3355-autotune --freq=850 -o stratum+tcp://multi.ghash.io:3333 -u michelem.minera -p x --retries=1"><?php echo $this->redis->get('minerd_settings') ?></textarea>
 												<h6>Please do not include the command name!</h6>
 												<div class="callout callout-info">
 													<h4>Miner will start with this command line:</h4>
@@ -68,28 +68,24 @@
 												
 	                                </div>
 									<div class="box-footer">
-										<button type="submit" class="btn btn-primary">Save miner settings</button>
+										<button type="submit" class="btn btn-primary">Save settings</button>
 									</div>
-								
-								</form>
-                            </div>
-                            
-							<div class="box box-primary">
-								<div class="box-header">
-									<!-- tools box -->
-                                    <div class="pull-right box-tools">
-                                        <button class="btn btn-default btn-xs" data-widget="collapse" data-toggle="tooltip" title="" data-original-title="Collapse"><i class="fa fa-minus"></i></button>
-                                    </div><!-- /. tools -->
-                                    <i class="fa fa-dashboard"></i>
-                                    
-                                    <h3 class="box-title">Dashboard Settings</h3>
-                                </div>
-								
-								<form action="<?php site_url("app/dashboard") ?>" method="post" role="form">
-									<input type="hidden" name="save_dashboard_settings" value="1" />
+	                            </div>
+	                            
+								<div class="box box-primary">
+									<div class="box-header">
+										<!-- tools box -->
+	                                    <div class="pull-right box-tools">
+	                                        <button class="btn btn-default btn-xs" data-widget="collapse" data-toggle="tooltip" title="" data-original-title="Collapse"><i class="fa fa-minus"></i></button>
+	                                    </div><!-- /. tools -->
+	                                    <i class="fa fa-dashboard"></i>
+	                                    
+	                                    <h3 class="box-title">Dashboard Settings</h3>
+	                                </div>
+									
 	                                <div class="box-body">
 										<p>Setup the dashboard options</p>
-
+	
 											<!-- Refresh time -->
 											<div class="form-group">
 												<label>Refresh time</label>
@@ -109,12 +105,12 @@
 												
 	                                </div>
 									<div class="box-footer">
-										<button type="submit" class="btn btn-primary">Save dashboard settings</button>
+										<button type="submit" class="btn btn-primary">Save settings</button>
 									</div>
-								
-								</form>
-                            </div>
-                            
+	                            </div>
+
+							</form>                            
+
 							<div class="box box-primary">
 								<div class="box-header">
 									<!-- tools box -->

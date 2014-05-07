@@ -59,10 +59,13 @@ class App extends Main_Controller {
 		if ($this->input->post('save_settings'))
 		{
 			$settings = trim($this->input->post('minerd_settings'));
-			if (!empty($settings))
+			$dashSettings = trim($this->input->post('dashboard_refresh_time'));
+
+			if (!empty($settings) && !empty($dashSettings))
 			{
 				$this->redis->set("minerd_settings", $settings);
 				$this->redis->set("minerd_autorecover", $this->input->post('minerd_autorecover'));
+				$this->redis->set("dashboard_refresh_time", $dashSettings);
 				
 				$this->util_model->saveStartupScript();
 				
@@ -71,24 +74,15 @@ class App extends Main_Controller {
 			}
 			else
 			{
-				$data['message'] = "<b>Warning!</b> Minerd options can't be empty";
-				$data['message_type'] = "warning";
-			}
-		}
-		
-		if ($this->input->post('save_dashboard_settings'))
-		{
-			$dashSettings = trim($this->input->post('dashboard_refresh_time'));
-			if (!empty($dashSettings) && !is_integer($dashSettings) && $dashSettings >= 5)
-			{
-				$this->redis->set("dashboard_refresh_time", $dashSettings);
-				
-				$data['message'] = '<b>Success!</b> Settings saved!';
-				$data['message_type'] = "success";
-			}
-			else
-			{
-				$data['message'] = "<b>Warning!</b> Refresh time must be integer and >= 5";
+				if (empty($settings))
+				{
+					$data['message'] = "<b>Warning!</b> Minerd options can't be empty";					
+				}
+				elseif (empty($dashSettings))
+				{
+					$data['message'] = "<b>Warning!</b> Refresh time must be integer and >= 5";
+				}
+
 				$data['message_type'] = "warning";
 			}
 		}
@@ -208,29 +202,51 @@ class App extends Main_Controller {
 	}
 	
 	/*
+	// Restart miner controller (this should be in a different "system" controller file)
+	*/
+	public function restart_miner()
+	{
+		if (!$this->session->userdata("loggedin"))
+			redirect('app/index');
+		
+		$this->util_model->minerdStop();
+		sleep(2);
+		$this->util_model->minerdStart();
+		sleep(2);
+		
+		redirect('app/dashboard');
+	}
+	
+	/*
 	// Update controller (this should be in a different "system" controller file)
 	*/
 	public function update()
-	{	
-		if ($this->input->get('confirm'))
+	{
+		if ($this->util_model->checkUpdate())
 		{
-			$data['message'] = "Please wait while I'm upgrading the system...";
-			$data['timer'] = true;
-			$this->util_model->update();
+			if ($this->input->get('confirm'))
+			{
+				$data['message'] = "Please wait while I'm upgrading the system...";
+				$data['timer'] = true;
+				$this->util_model->update();
+			}
+			else
+			{
+				$data['title'] = "System update detected";
+				$data['message'] = '<a href="'.site_url("app/update").'?confirm=1"><button class="btn btn-default btn-lg"><i class="fa fa-check"></i> Let me install the updates</button></a>&nbsp;&nbsp;&nbsp;<a href="'.site_url("app/dashboard").'"><button class="btn btn-default btn-lg"><i class="fa fa-times"></i> No, thanks</button></a>';
+				$data['timer'] = false;
+			}
+			$data['messageEnd'] = "System updated!";
+			$data['htmlTag'] = "lockscreen";
+			$data['seconds'] = 15;
+			$data['refreshUrl'] = site_url("app/index");
+			$this->load->view('include/header', $data);
+			$this->load->view('sysop', $data);
 		}
 		else
 		{
-			$data['title'] = "System update detected";
-			$data['message'] = "Please SSH in minera and run the following commands:<p><code>cd ".FCPATH."<br />sudo git pull</code></p><p>Then come back here and go to the <a href='".site_url("app/dashboard")."'>dashboard</a>. <small>(An auto-update tool is coming asap)</small>";
-			//$data['message'] = '<a href="'.site_url("app/update").'?confirm=1"><button class="btn btn-default btn-lg"><i class="fa fa-check"></i> Let me install the updates</button></a>&nbsp;&nbsp;&nbsp;<a href="'.site_url("app/dashboard").'"><button class="btn btn-default btn-lg"><i class="fa fa-times"></i> No, thanks</button></a>';
-			$data['timer'] = false;
+			redirect("app/dashboard");
 		}
-		$data['messageEnd'] = "System updated!";
-		$data['htmlTag'] = "lockscreen";
-		$data['seconds'] = 30;
-		$data['refreshUrl'] = false;//site_url("app/index");
-		$this->load->view('include/header', $data);
-		$this->load->view('sysop', $data);
 	}
 
 	/*

@@ -15,7 +15,7 @@ echo -e "Adding sudoers configuration for www-data and minera users\n-----\n"
 echo -e "\n#Minera settings\nminera ALL=(ALL) NOPASSWD: ALL\nwww-data ALL = (ALL) NOPASSWD: /bin/kill\nwww-data ALL = (ALL) NOPASSWD: /usr/bin/screen\nwww-data ALL = (ALL) NOPASSWD: /sbin/reboot\nwww-data ALL = (ALL) NOPASSWD: /sbin/shutdown\nwww-data ALL = (ALL) NOPASSWD: /usr/bin/killall" >> /etc/sudoers
 
 NEW_UUID=$(cat /dev/urandom | tr -dc 'a-z0-9' | fold -w 12 | head -n 1)
-MINER_OPT="--gc3355=/dev/ttyACM0 --gc3355-autotune --freq=850 --url=stratum+tcp://multi.ghash.io:3333 --userpass=michelem.$NEW_UUID:x --retries=1"
+MINER_OPT="--gc3355-detect --gc3355-autotune --freq=850 -o stratum+tcp://multi.ghash.io:3333 -u michelem.$NEW_UUID -p x --retries=1"
 MINER_BIN=`pwd`"/minera-bin/"
 
 echo -e "Adding default startup settings to redis\n-----\n"
@@ -33,6 +33,6 @@ echo -e $RC_LOCAL_CMD >> /etc/rc.local
 
 echo -e "Adding cron file in /etc/cron.d\n-----\n"
 
-echo "*/5 * * * * minera php `pwd`/index.php app cron" > /etc/cron.d/minera
+echo "*/5 * * * * minera php `pwd`/index.php app cron_stats" > /etc/cron.d/minera
 
 echo -e 'DONE! Minera is ready!\n\nOpen the URL: http://'$(hostname -I | tr -d ' ')'/minera/\n\nAnd happy mining!\n'

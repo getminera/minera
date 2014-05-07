@@ -263,9 +263,8 @@ class Util_model extends CI_Model {
 	// Call update cmd
 	public function update()
 	{
-		exec("sudo su - minera && cd ".FCPATH." && sudo git status", $out);
+		exec("cd ".FCPATH." && sudo -u " . $this->config->item("system_user") . " /usr/bin/git pull", $out);
 
-		var_dump($out);
 		return true;
 	}
 	
@@ -279,6 +278,7 @@ class Util_model extends CI_Model {
 
 			$latestConfig = json_decode(file_get_contents($this->config->item("remote_config_url")));
 			$localVersion = $this->currentVersion();
+
 			if ($latestConfig->version != $localVersion)
 			{
 				$this->redis->command("HSET minera_update value 1");

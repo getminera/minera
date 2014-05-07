@@ -120,24 +120,6 @@
                                     <div class="row padding-vert" id="devs"></div>
                                 </div><!-- /.box-body -->
                             </div><!-- /.tree box -->
-
-							<!-- System box -->
-                            <div class="box box-success">
-                               	<div class="overlay"></div>
-                               	<div class="loading-img"></div>
-                                <div class="box-header" style="cursor: move;">
-                                	<!-- tools box -->
-                                    <div class="pull-right box-tools">
-                                        <button class="btn btn-default btn-xs" data-widget="collapse" data-toggle="tooltip" title="" data-original-title="Collapse"><i class="fa fa-minus"></i></button>
-                                    </div><!-- /. tools -->
-                                    <i class="fa fa-tasks"></i>
-
-                                    <h3 class="box-title">System Load</h3>
-                                </div><!-- /.box-header -->
-                                <div class="box-body" style="display: block;">
-                                    <div class="row padding-vert sysload" ></div>
-                                </div><!-- /.box-body -->
-                            </div><!-- /.system box -->
                                                  
                         </section><!-- Right col -->
                         
@@ -178,6 +160,24 @@
                                 	<div class="chart" id="rehw-chart" style="height:160px;"></div>
                                 </div>
                             </div>
+                            
+							<!-- System box -->
+                            <div class="box box-success">
+                               	<div class="overlay"></div>
+                               	<div class="loading-img"></div>
+                                <div class="box-header" style="cursor: move;">
+                                	<!-- tools box -->
+                                    <div class="pull-right box-tools">
+                                        <button class="btn btn-default btn-xs" data-widget="collapse" data-toggle="tooltip" title="" data-original-title="Collapse"><i class="fa fa-minus"></i></button>
+                                    </div><!-- /. tools -->
+                                    <i class="fa fa-tasks"></i>
+
+                                    <h3 class="box-title">System Load</h3>
+                                </div><!-- /.box-header -->
+                                <div class="box-body" style="display: block;">
+                                    <div class="row padding-vert sysload" ></div>
+                                </div><!-- /.box-body -->
+                            </div><!-- /.system box -->
                         
                         </section><!-- /.left col -->
                        

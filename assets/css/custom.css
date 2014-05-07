@@ -18,3 +18,4 @@
 .box > .loading-img { background: transparent url('../img/ajax-loader.gif') 50% 50% no-repeat !important;}
 .more-line-height {line-height: 1.8em;}
 .warning-section { display: none;}
+body > .header .navbar .nav > li > a > .label { padding: 3px !important; }

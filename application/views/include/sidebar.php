@@ -153,6 +153,7 @@
 					        <a href="#" class="dropdown-toggle" data-toggle="dropdown">
 					            <i class="glyphicon glyphicon-gift"></i>
 					            <span>Help <i class="caret"></i></span>
+				                	<?php if ($mineraUpdate) : ?><span class="label label-danger"><i class="fa fa-info"></i></span><?php endif; ?>
 					        </a>
 					        <ul class="dropdown-menu">
 					            <!-- User image -->
@@ -171,11 +172,14 @@
 					            </li>
 					            <!-- Menu Body -->
 					            <li class="user-body">
-					                <div class="col-xs-6 text-center">
-										<a href="https://github.com/michelem09/minera/issues">Support</a>
+					                <div class="col-xs-4 text-center">
+										<a href="https://github.com/michelem09/minera/issues" target="_blank">Support</a>
 									</div>
-					                <div class="col-xs-6 text-center">
-					                    <a href="http://twitter.com/michelem">Follow</a>										
+					                <div class="col-xs-4 text-center">
+										<a href="https://bitcointalk.org/index.php?topic=596620.0" target="_blank">Forum</a>
+									</div>
+					                <div class="col-xs-4 text-center">
+					                    <a href="http://twitter.com/michelem" target="_blank">Follow</a>					
 									</div>
 					            </li>
 					            <!-- Menu Footer-->
@@ -238,10 +242,11 @@
                                 <i class="fa pull-right fa-angle-left"></i>
                             </a>
                             <ul class="treeview-menu" style="display: none;">
-                                <li><a href="<?php echo site_url("app/settings") ?>" style="margin-left: 10px;"><i class="fa fa-angle-double-right"></i> Settings</a></li>
 
-                                <li><a href="<?php echo site_url("app/start_miner") ?>" style="margin-left: 10px;"><i class="fa fa-angle-double-right"></i> Start miner</a></li>
-                                <li><a href="<?php echo site_url("app/stop_miner") ?>" style="margin-left: 10px;"><i class="fa fa-angle-double-right"></i> Stop miner</a></li>
+                                <li><a href="<?php echo site_url("app/start_miner") ?>" style="margin-left: 10px;"><i class="fa fa-arrow-circle-o-up"></i> Start miner</a></li>
+                                <li><a href="<?php echo site_url("app/stop_miner") ?>" style="margin-left: 10px;"><i class="fa fa-arrow-circle-o-down"></i> Stop miner</a></li>
+                                <li><a href="<?php echo site_url("app/restart_miner") ?>" style="margin-left: 10px;"><i class="fa fa-repeat"></i> Restart miner</a></li>
+                                <li><a href="<?php echo site_url("app/settings") ?>" style="margin-left: 10px;"><i class="fa fa-gear"></i> Settings</a></li>
                             </ul>
                         </li>
                         <li class="treeview">
@@ -251,8 +256,8 @@
                                 <i class="fa pull-right fa-angle-left"></i>
                             </a>
                             <ul class="treeview-menu" style="display: none;">
-                                <li><a href="<?php echo site_url("app/shutdown") ?>" style="margin-left: 10px;" id="opener"><i class="fa fa-angle-double-right"></i> Shutdown</a></li>
-                                <li><a href="<?php echo site_url("app/reboot") ?>" style="margin-left: 10px;"><i class="fa fa-angle-double-right"></i> Reboot</a></li>
+                                <li><a href="<?php echo site_url("app/reboot") ?>" style="margin-left: 10px;"><i class="fa fa-flash"></i> Reboot</a></li>
+                                <li><a href="<?php echo site_url("app/shutdown") ?>" style="margin-left: 10px;"><i class="fa fa-power-off"></i> Shutdown</a></li>
                             </ul>
                         </li>
                     </ul>
