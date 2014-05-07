@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset='utf-8'>
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <link href='https://fonts.googleapis.com/css?family=Architects+Daughter' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" type="text/css" href="stylesheets/stylesheet.css" media="screen" />
+    <link rel="stylesheet" type="text/css" href="stylesheets/pygment_trac.css" media="screen" />
+    <link rel="stylesheet" type="text/css" href="stylesheets/print.css" media="print" />
+
+    <!--[if lt IE 9]>
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+
+    <title>Minera by michelem09</title>
+  </head>
+
+  <body>
+    <header>
+      <div class="inner">
+        <h1>Minera</h1>
+        <h2>A complete web system controller for your ASIC mining devices</h2>
+        <a href="https://github.com/michelem09/minera" class="button"><small>View project on</small>GitHub</a>
+      </div>
+    </header>
+
+    <div id="content-wrapper">
+      <div class="inner clearfix">
+        <section id="main-content">
+          <h1>
+<a name="minera" class="anchor" href="#minera"><span class="octicon octicon-link"></span></a>Minera</h1>
+
+<p>Minera is a web frontend to monitor the Gridseed devices running with minerd command.</p>
+
+<p>By now Minera supports only the new cpuminer-gc3355 by sandor111 please refer to <a href="https://github.com/siklon/cpuminer-gc3355">https://github.com/siklon/cpuminer-gc3355</a>.</p>
+
+<p>Minera is tested only with Gridseed 5chip device, so it could show weird results with Gridseed Blade devices, if you would like to help me support this kind of device, please drop me a line.</p>
+
+<h2>
+<a name="requirements" class="anchor" href="#requirements"><span class="octicon octicon-link"></span></a>Requirements</h2>
+
+<p>Minera should be installed on the Gridseed controller, usually a Raspberry, with a Debian-like Linux distribution and of course an internet connection.</p>
+
+<h2>
+<a name="installing" class="anchor" href="#installing"><span class="octicon octicon-link"></span></a>Installing</h2>
+
+<p>You can opt for a img file to put in your SD Card or for a manual install.</p>
+
+<p><strong>Image file (img)</strong></p>
+
+<p>The img file is on the go only few days (since today 2014-05-07) and you will be able to download the minera.img and put it in your SD Card without the worry to do anything else but turn on your brand new Minera controller.</p>
+
+<p><strong>Manual install</strong></p>
+
+<p>While you are waiting for the img release you can simply install Minera on your current Linux controller. Check if it's a debian based one otherwise download and install a right distribution.
+If you have a Raspberry, I suggest you to install Raspbia you can get it here: </p>
+
+<p><a href="http://downloads.raspberrypi.org/raspbian_latest">http://downloads.raspberrypi.org/raspbian_latest</a></p>
+
+<p>Simply download and put it in your SD card (there are tons of guide to do this, google it).</p>
+
+<p>When you have your system ready, ssh into it and <strong>install Minera</strong></p>
+
+<p>Skip this step and continue below if you have a web server with PHP just installed.</p>
+
+<pre><code>sudo apt-get install lighttpd php5-cgi
+sudo lighty-enable-mod fastcgi 
+sudo lighty-enable-mod fastcgi-php
+sudo service lighttpd force-reload
+</code></pre>
+
+<p>When your web server is ready you can install Minera:</p>
+
+<pre><code>sudo apt-get install redis-server git screen php5-cli
+cd /var/www
+sudo git clone https://github.com/michelem09/minera
+cd minera
+sudo ./install_minera.sh
+</code></pre>
+
+<p>The installer will configure the system requirements and will tell you the URL to connect to.</p>
+
+<pre><code>Default URL: http://&lt;your-minera-ip&gt;/minera/
+
+Default password: minera
+</code></pre>
+
+<p><strong>Important</strong>: minera system user has password "minera", you should change it if your system is a public host with SSH access.</p>
+
+<pre><code>sudo passwd minera
+</code></pre>
+
+<p>This isn't the web password, to change the web password, login into the web interface and go to <em>Miner -&gt; Settings</em></p>
+
+<p><strong>Minerd (CPUMiner-gc3355)</strong></p>
+
+<p>The <em>minerd</em> binary path is:</p>
+
+<pre><code>minera-bin/minerd 
+</code></pre>
+
+<p>It's pre-compiled for Raspberry (ARM) with the latest version available, please refer to <a href="https://github.com/siklon/cpuminer-gc3355">https://github.com/siklon/cpuminer-gc3355</a> if you wanna recompile it.</p>
+
+<p><strong>For Ubuntu user only</strong></p>
+
+<p>In the same path you can find also <em>minerd-ubuntu-64bit</em> file, this one is pre-compiled for Ubuntu 64bit, you should copy it overwriting <em>minerd</em> if you run Minera on Ubuntu.</p>
+
+<pre><code>cd /var/www/minera/minera-bin
+sudo cp minerd-ubuntu-64bit minerd
+</code></pre>
+
+<h2>
+<a name="configuring" class="anchor" href="#configuring"><span class="octicon octicon-link"></span></a>Configuring</h2>
+
+<p>Minera grows and now has some cool options.
+First of all you need to configure the minerd options to know how to start “minerd” command, there are some options you can choose, so please refer to cpuminer-gc3355 README.</p>
+
+<p>Go to settings (<em>Miner -&gt; Settings</em>) and fill the “Minerd options” textarea with something like this:</p>
+
+<pre><code>--gc3355-detect --gc3355-autotune --freq=850 -o stratum+tcp://&lt;yourpool&gt;:&lt;yourpollport&gt; -u &lt;yourworker&gt; -p &lt;yourworkerpass&gt; --retries=1
+</code></pre>
+
+<p>A sample settings is pre-configured when you run the install_minera.sh script.</p>
+
+<p>Please remember to change your minera's settings or you will mine for my workers :)</p>
+
+<p>Then you can set:</p>
+
+<ul>
+<li>minerd auto-recover mode</li>
+<li>dashboard auto-refresh time</li>
+</ul><h2>
+<a name="troubleshooting" class="anchor" href="#troubleshooting"><span class="octicon octicon-link"></span></a>Troubleshooting</h2>
+
+<p>If you wanna check your minera's screen session just SSH into it and attach the session:</p>
+
+<pre><code>ssh minera@&lt;your-minera-ip&gt;
+screen -r
+</code></pre>
+
+<p>If you receive the following error:</p>
+
+<pre><code>Cannot open your terminal '/dev/pts/0' - please check.
+</code></pre>
+
+<p>Please run:</p>
+
+<pre><code>script /dev/null
+screen -r
+</code></pre>
+
+<p>If you wanna check the raw JSON stats from your minerd, please point your browser to:</p>
+
+<pre><code>http://&lt;your-minera-ip&gt;/minera/index.php/app/stats
+</code></pre>
+
+<p>If the Minera version upgrade fails you could miss a line in /etc/sudoers file, please check you have this line:</p>
+
+<pre><code>www-data ALL = (ALL) NOPASSWD: /usr/bin/git
+</code></pre>
+
+<p>If you miss it run:</p>
+
+<pre><code>echo "www-data ALL = (ALL) NOPASSWD: /usr/bin/git" | sudo tee -a /etc/sudoers
+</code></pre>
+
+<h2>
+<a name="todo" class="anchor" href="#todo"><span class="octicon octicon-link"></span></a>TODO</h2>
+
+<ul>
+<li>Create an img file “plug&amp;play”</li>
+<li>Add some errors control to installer</li>
+<li>Add daily/weekly/monthly charts</li>
+<li>Add more crypto-currencies exchange rates</li>
+<li>Add more system monitor (CPU/Mem)</li>
+<li>Add cgminer/bfgminer support</li>
+</ul><h2>
+<a name="screenshots" class="anchor" href="#screenshots"><span class="octicon octicon-link"></span></a>Screenshots</h2>
+
+<p>Dashboard:</p>
+
+<p><img src="https://github.com/michelem09/minera/raw/master/assets/img/screen_minera_dashboard.png" alt="Dashboard"></p>
+
+<p>Settings:</p>
+
+<p><img src="https://github.com/michelem09/minera/raw/master/assets/img/screen_minera_settings.png" alt="Settings"></p>
+
+<h2>
+<a name="donations" class="anchor" href="#donations"><span class="octicon octicon-link"></span></a>Donations</h2>
+
+<p>Minera is a free and Open Source software, if you like it, please consider a donation to support it:</p>
+
+<pre><code>Bitcoin: 1AmREReHNLec9EaW7gLRdW31LNSDA9SGR1
+
+Litecoin: LLPmAT9gDwmiSdqwWEZu6mpUDmrNAnYBdC
+
+Dogecoin: DLAHwNxfUTUcePewbkvwvAouny19mcosA7
+</code></pre>
+
+<p>Thanks and happy mining!</p>
+
+<h2>
+<a name="license" class="anchor" href="#license"><span class="octicon octicon-link"></span></a>LICENSE</h2>
+
+<p>Copyright 2014 Michele Marcucci</p>
+
+<p>Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at</p>
+
+<pre><code>http://www.apache.org/licenses/LICENSE-2.0
+</code></pre>
+
+<p>Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.</p>
+        </section>
+
+        <aside id="sidebar">
+          <a href="https://github.com/michelem09/minera/zipball/master" class="button">
+            <small>Download</small>
+            .zip file
+          </a>
+          <a href="https://github.com/michelem09/minera/tarball/master" class="button">
+            <small>Download</small>
+            .tar.gz file
+          </a>
+
+          <p class="repo-owner"><a href="https://github.com/michelem09/minera"></a> is maintained by <a href="https://github.com/michelem09">michelem09</a>.</p>
+
+          <p>This page was generated by <a href="https://pages.github.com">GitHub Pages</a> using the Architect theme by <a href="https://twitter.com/jasonlong">Jason Long</a>.</p>
+        </aside>
+      </div>
+    </div>
+
+  
+  </body>
+</html>
