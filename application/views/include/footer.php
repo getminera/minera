@@ -6,7 +6,7 @@
 
     <!-- AdminLTE App -->
     <script src="<?php echo base_url('assets/js/app.js') ?>" type="text/javascript"></script>
-	
+		
 	<?php if ($appScript) : ?>
 	<!-- jQuery Knob -->
     <script src="<?php echo base_url('assets/js/jquery.knob.js') ?>" type="text/javascript"></script>
@@ -21,8 +21,39 @@
 		$(function() {
 		    "use strict";
 
-			//setInterval(function() { getStats(true); }, 5000);
-				
+			var refresh_time = "<?php echo ($dashboard_refresh_time) ? $dashboard_refresh_time : 60; ?>";
+			
+			// set the date we're counting down to
+			var target_date = new Date().getTime();
+			 
+			// variables for time units
+			var days, hours, minutes, seconds;
+
+			// update the tag with id "countdown" every 1 second
+			setInterval(function () {
+			    // find the amount of "seconds" between now and target
+			    var current_date = new Date().getTime();
+			    var seconds_left = (target_date + (refresh_time*1000 + 2000) - current_date) / 1000;
+					console.log(parseInt(seconds_left));
+				if (parseInt(seconds_left) != 0)
+				{
+				    // do some time calculations
+					minutes = parseInt(seconds_left / 60);
+					seconds = parseInt(seconds_left % 60);
+			     
+					// format countdown string + set tag value
+					$('.auto-refresh-time').html("auto-refreshing in " + minutes + "m / " + seconds + "s ");	
+				}
+				else
+				{
+					target_date = new Date().getTime();
+					getStats(false);
+				}
+			 
+			}, 1000);
+			
+			$(".refresh-btn").click( function() { getStats(false); });
+			
 		    //Make the dashboard widgets sortable Using jquery UI
 		    $(".connectedSortable").sortable({
 		        placeholder: "sort-highlight",
@@ -105,9 +136,12 @@
 			return false;
 		}
     	
-    	function getStats(update)
+    	function getStats(refresh)
     	{
 			var d = 0; var totalhash = 0; var totalac = 0; var totalre = 0; var totalhw = 0; var totalsh = 0; var totalfr = 0;
+			
+			$('.overlay').show();
+			$('.loading-img').show();
 						
 			// get Json data from minerd
 	        $.getJSON( "<?php echo site_url($this->config->item('live_stats_url')); ?>", function( data ) 
@@ -125,11 +159,11 @@
 				    var items = [];
 					var hashrates = []
 					
-					var startdate = new Date(data['t']*1000);
+					var startdate = new Date(data['start_time']*1000);
 					
 					var now = new Date().getTime();
 					
-					var uptime = convertMS(now - data['t']*1000);
+					var uptime = convertMS(now - data['start_time']*1000);
 	
 					for (var ukey in uptime) {
 						var human_uptime = human_uptime + parseInt(uptime[ukey]) + ukey + " ";
@@ -137,18 +171,18 @@
 					
 					$(".miner-uptime").html("Miner started "+human_uptime+" ago on <strong>"+startdate+"</strong>");
 					
-				    $.each( data['d'], function( key, val ) {
+				    $.each( data['devices'], function( key, val ) {
 				    	d = d+1;
 				    	//console.log(val);
 				    	// Build dev stats from single procs
 				    	var hash = 0; var ac = 0; var re = 0; var hw = 0; var fr = 0; var sh = 0;
-				    	for (var i = 0; i < val['c'].length; i++) {
-				    		hash = hash + val['c'][i]['ha'];
-				    		ac = ac + val['c'][i]['ac'];
-				    		re = re + val['c'][i]['re'];
-				    		hw = hw + val['c'][i]['hw'];
-				    		fr = fr + val['c'][i]['fr'];
-				    		sh = sh + val['c'][i]['sh'];	
+				    	for (var i = 0; i < val['chips'].length; i++) {
+				    		hash = hash + val['chips'][i]['hashrate'];
+				    		ac = ac + val['chips'][i]['accepted'];
+				    		re = re + val['chips'][i]['rejected'];
+				    		hw = hw + val['chips'][i]['hw_errors'];
+				    		fr = fr + val['chips'][i]['frequency'];
+				    		sh = sh + val['chips'][i]['shares'];	
 				    	}
 				    	
 				    	devFr = fr/i;
@@ -176,9 +210,10 @@
 					// this is the global stats
 					items["total"] = { "hash": totalhash, "ac": totalac, "re": totalre, "hw": totalhw, "fr": avgFr, "sh": totalsh };
 	
-					// Update the graphs
-					if (update)
+					// Refresh the graphs
+					if (refresh)
 					{
+						/*
 						var currentHash = 0;
 						
 						var statsLoop = $("body").data("stats-loop");
@@ -197,6 +232,7 @@
 							    'configure',
 							    {
 							    "max":max,
+								"step":10,
 							    }
 							);
 							
@@ -211,23 +247,27 @@
 							
 							$('.'+index).css('font-size','12px');
 						}
+						*/
 					}
 					// Create the knob graphs
 					else
 					{
 						$("body").data("stats-loop", 0);
-						for (var index in items) {
+						for (var index in items) 
+						{
+							// Knob for devices and total
 							createMon(index, items[index].hash, totalhash, maxHashrate, items[index].ac, items[index].re, items[index].hw, items[index].sh, items[index].fr);
 							
 							// Add per device rows in system table
-							var devTable = '<tr><td class="devs_table_name">'+index+'</td><td class="devs_table_freq">'+ items[index].fr + ' Mhz</td><td class="devs_table_hash">'+ convertHashrate(items[index].hash) +'</td><td class="devs_table_sh">'+ items[index].sh +'</td><td class="devs_table_ac">'+ items[index].ac +'</td><td class="devs_table_re">'+ items[index].re +'</td><td class="devs_table_hw">'+ items[index].hw +'</td></tr>'
+							var devTable = '<tr class="dev-'+index+'"><td class="devs_table_name">'+index+'</td><td class="devs_table_freq">'+ items[index].fr + ' Mhz</td><td class="devs_table_hash">'+ convertHashrate(items[index].hash) +'</td><td class="devs_table_sh">'+ items[index].sh +'</td><td class="devs_table_ac">'+ items[index].ac +'</td><td class="devs_table_re">'+ items[index].re +'</td><td class="devs_table_hw">'+ items[index].hw +'</td></tr>'
 							    
 							if (index == "total")
 							{
-							    $('.devs_table_foot').append(devTable);		
+							    $('.devs_table_foot').html(devTable);		
 							}
 							else
 							{
+								$('.dev-'+index).remove();
 							    $('.devs_table').append(devTable);
 							}
 							
@@ -338,7 +378,7 @@
 		        "ticks": 16,
 		        "width":size,
 		        "height":size,
-				'draw' : function () { 
+				"draw" : function () { 
 					// "tron" case
                     if (this.o.skin == 'tron') {
 						
@@ -398,6 +438,7 @@
 			        {
 			        "min":0,
 			        "max":max,
+			        "step":1,
 			        }
 			    );
 			    

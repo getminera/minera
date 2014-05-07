@@ -58,6 +58,8 @@
                                 <div class="box-header" style="cursor: move;">
                                     <!-- tools box -->
                                     <div class="pull-right box-tools">
+                                    	<small class="auto-refresh-time"></small>&nbsp;
+                                    	<button class="btn btn-danger btn-xs refresh-btn" data-toggle="tooltip" title="" data-original-title="Refresh"><i class="fa fa-refresh"></i></button>
                                         <button class="btn btn-default btn-xs" data-widget="collapse" data-toggle="tooltip" title="" data-original-title="Collapse"><i class="fa fa-minus"></i></button>
                                     </div><!-- /. tools -->
                                     <i class="fa fa-desktop"></i>

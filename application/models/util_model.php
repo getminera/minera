@@ -43,11 +43,6 @@ class Util_model extends CI_Model {
 		}
 
 		fclose($fp);
-		
-		/*if ($out === false && $i <= 1)
-		{
-			$this->callMinerd($i++);	
-		}*/
 			
 		return json_decode($out);
 	}
@@ -107,22 +102,22 @@ class Util_model extends CI_Model {
 		
 		$totHash = 0; $totFreq = 0; $totAc = 0; $totHw = 0; $totRe = 0; $totSh = 0; $d = 0; $c = 0;
 
-		if ($data && $data->d && count($data->d) > 0)
+		if ($data && $data->devices && count($data->devices) > 0)
 		{
-			foreach($data->d as $device)
+			foreach($data->devices as $device)
 			{
 				$d++;
-				if ($device->c && count($device->c) > 0)
+				if ($device->chips && count($device->chips) > 0)
 				{
-					foreach($device->c as $chip)
+					foreach($device->chips as $chip)
 					{
 						$c++;
-						$totHash += $chip->ha;
-						$totFreq += $chip->fr;
-						$totAc += $chip->ac;
-						$totHw += $chip->hw;
-						$totRe += $chip->re;
-						$totSh += $chip->sh;
+						$totHash += $chip->hashrate;
+						$totFreq += $chip->frequency;
+						$totAc += $chip->accepted;
+						$totHw += $chip->hw_errors;
+						$totRe += $chip->rejected;
+						$totSh += $chip->shares;
 					}
 				}
 			}

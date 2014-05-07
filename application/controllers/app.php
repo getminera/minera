@@ -39,7 +39,8 @@ class App extends Main_Controller {
 		$data['isOnline'] = $this->util_model->isOnline();
 		$data['htmlTag'] = "dashboard";
 		$data['appScript'] = true;
-		$data['mineraUpdate'] = $this->util_model->checkUpdate();		
+		$data['mineraUpdate'] = $this->util_model->checkUpdate();
+		$data['dashboard_refresh_time'] = $this->redis->get("dashboard_refresh_time");
 		
 		$this->load->view('include/header', $data);
 		$this->load->view('include/sidebar', $data);
@@ -74,6 +75,23 @@ class App extends Main_Controller {
 				$data['message_type'] = "warning";
 			}
 		}
+		
+		if ($this->input->post('save_dashboard_settings'))
+		{
+			$dashSettings = trim($this->input->post('dashboard_refresh_time'));
+			if (!empty($dashSettings) && !is_integer($dashSettings) && $dashSettings >= 5)
+			{
+				$this->redis->set("dashboard_refresh_time", $dashSettings);
+				
+				$data['message'] = '<b>Success!</b> Settings saved!';
+				$data['message_type'] = "success";
+			}
+			else
+			{
+				$data['message'] = "<b>Warning!</b> Refresh time must be integer and >= 5";
+				$data['message_type'] = "warning";
+			}
+		}
 
 		if ($this->input->post('save_password'))
 		{
@@ -102,6 +120,7 @@ class App extends Main_Controller {
 		$data['doge'] = $this->util_model->getCryptsyRates(132);
 		$data['isOnline'] = $this->util_model->isOnline();
 		$data['minerd_autorecover'] = $this->redis->get('minerd_autorecover');
+		$data['dashboard_refresh_time'] = $this->redis->get("dashboard_refresh_time");
 		$data['htmlTag'] = "settings";
 		$data['appScript'] = false;
 		
