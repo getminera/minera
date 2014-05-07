@@ -87,7 +87,7 @@ First of all you need to configure the minerd options to know how to start “mi
 Go to settings (*Miner -> Settings*) and fill the “Minerd options” textarea with something like this:
 
 ```
---gc3355=/dev/ttyACM0,/dev/ttyACM1,/dev/ttyACM2 --gc3355-autotune --freq=850 --url=stratum+tcp://<yourpool>:<yourpollport> --userpass=<yourworker>:<yourworkerpass> --retries=1
+--gc3355-detect --gc3355-autotune --freq=850 -o stratum+tcp://<yourpool>:<yourpollport> -u <yourworker> -p <yourworkerpass> --retries=1
 ```
 
 A sample settings is pre-configured when you run the install_minera.sh script.
@@ -119,6 +119,14 @@ Please run:
 If you wanna check the raw JSON stats from your minerd, please point your browser to:
 
 	http://<your-minera-ip>/minera/index.php/app/stats
+	
+If the Minera version upgrade fails you could miss a line in /etc/sudoers file, please check you have this line:
+
+	www-data ALL = (ALL) NOPASSWD: /usr/bin/git
+	
+If you miss it run:
+
+	echo "www-data ALL = (ALL) NOPASSWD: /usr/bin/git" | sudo tee -a /etc/sudoers
 
 TODO
 -------------
