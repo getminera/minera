@@ -121,6 +121,7 @@ class App extends Main_Controller {
 		$data['isOnline'] = $this->util_model->isOnline();
 		$data['minerd_autorecover'] = $this->redis->get('minerd_autorecover');
 		$data['dashboard_refresh_time'] = $this->redis->get("dashboard_refresh_time");
+		$data['mineraUpdate'] = $this->util_model->checkUpdate();
 		$data['htmlTag'] = "settings";
 		$data['appScript'] = false;
 		

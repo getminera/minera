@@ -10,12 +10,23 @@ Minera is tested only with Gridseed 5chip device, so it could show weird results
 Requirements
 -------------
 
-Minera should be installed on the Gridseed controller, usually a Raspberry, with a Debian-like Linux distribution.
+Minera should be installed on the Gridseed controller, usually a Raspberry, with a Debian-like Linux distribution and of course an internet connection.
 
 Installing
 -------------
 
-Many softwares like Minera give the complete img file to install on a SD card, I hope I can find time to do that but in the meantime you can start with a fresh Raspbian install if you are on a Raspberry, you can get it here: http://downloads.raspberrypi.org/raspbian_latest
+You can opt for a img file to put in your SD Card or for a manual install.
+
+**Image file (img)**
+
+The img file is on the go only few days (since today 2014-05-07) and you will be able to download the minera.img and put it in your SD Card without the worry to do anything else but turn on your brand new Minera controller.
+
+**Manual install**
+
+While you are waiting for the img release you can simply install Minera on your current Linux controller. Check if it's a debian based one otherwise download and install a right distribution.
+If you have a Raspberry, I suggest you to install Raspbia you can get it here: 
+
+http://downloads.raspberrypi.org/raspbian_latest
 
 Simply download and put it in your SD card (there are tons of guide to do this, google it).
 
@@ -70,7 +81,8 @@ In the same path you can find also *minerd-ubuntu-64bit* file, this one is pre-c
 Configuring
 -------------
 
-Minera needs only to know how to start “minerd” command, there are some options you can choose, so please refer to cpuminer-gc3355 README.
+Minera grows and now has some cool options.
+First of all you need to configure the minerd options to know how to start “minerd” command, there are some options you can choose, so please refer to cpuminer-gc3355 README.
 
 Go to settings (*Miner -> Settings*) and fill the “Minerd options” textarea with something like this:
 
@@ -81,6 +93,11 @@ Go to settings (*Miner -> Settings*) and fill the “Minerd options” textarea 
 A sample settings is pre-configured when you run the install_minera.sh script.
 
 Please remember to change your minera's settings or you will mine for my workers :)
+
+Then you can set:
+
+* minerd auto-recover mode
+* dashboard auto-refresh time
 
 Troubleshooting
 -------------

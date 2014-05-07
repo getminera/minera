@@ -33,7 +33,7 @@
 			setInterval(function () {
 			    // find the amount of "seconds" between now and target
 			    var current_date = new Date().getTime();
-			    var seconds_left = (target_date + (refresh_time*1000 + 2000) - current_date) / 1000;
+			    var seconds_left = (target_date + (refresh_time*1000 + 1000) - current_date) / 1000;
 					console.log(parseInt(seconds_left));
 				if (parseInt(seconds_left) != 0)
 				{
@@ -52,7 +52,7 @@
 			 
 			}, 1000);
 			
-			$(".refresh-btn").click( function() { getStats(false); });
+			$(".refresh-btn").click( function() { getStats(false); target_date = new Date().getTime(); });
 			
 		    //Make the dashboard widgets sortable Using jquery UI
 		    $(".connectedSortable").sortable({
