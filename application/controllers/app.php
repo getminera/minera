@@ -39,7 +39,7 @@ class App extends Main_Controller {
 		$data['isOnline'] = $this->util_model->isOnline();
 		$data['htmlTag'] = "dashboard";
 		$data['appScript'] = true;
-		//$this->util_model->checkVersion();
+		$data['mineraUpdate'] = $this->util_model->checkUpdate();		
 		
 		$this->load->view('include/header', $data);
 		$this->load->view('include/sidebar', $data);
@@ -186,6 +186,32 @@ class App extends Main_Controller {
 		
 		redirect('app/dashboard');
 	}
+	
+	/*
+	// Update controller (this should be in a different "system" controller file)
+	*/
+	public function update()
+	{	
+		if ($this->input->get('confirm'))
+		{
+			$data['message'] = "Please wait while I'm upgrading the system...";
+			$data['timer'] = true;
+			$this->util_model->update();
+		}
+		else
+		{
+			$data['title'] = "System update detected";
+			$data['message'] = "Please SSH in minera and run the following commands:<p><code>cd ".FCPATH."<br />sudo git pull</code></p><p>Then come back here and go to the <a href='".site_url("app/dashboard")."'>dashboard</a>. <small>(An auto-update tool is coming asap)</small>";
+			//$data['message'] = '<a href="'.site_url("app/update").'?confirm=1"><button class="btn btn-default btn-lg"><i class="fa fa-check"></i> Let me install the updates</button></a>&nbsp;&nbsp;&nbsp;<a href="'.site_url("app/dashboard").'"><button class="btn btn-default btn-lg"><i class="fa fa-times"></i> No, thanks</button></a>';
+			$data['timer'] = false;
+		}
+		$data['messageEnd'] = "System updated!";
+		$data['htmlTag'] = "lockscreen";
+		$data['seconds'] = 30;
+		$data['refreshUrl'] = false;//site_url("app/index");
+		$this->load->view('include/header', $data);
+		$this->load->view('sysop', $data);
+	}
 
 	/*
 	// Stats controller get the live stats
@@ -224,6 +250,14 @@ class App extends Main_Controller {
 		
 		// Store the live stats to be used on time graphs
 		$this->util_model->storeStats();
+	}
+	
+	/*
+	// Controllers for retro compatibility
+	*/
+	public function cron_stats()
+	{
+		redirect('app/cron');
 	}
 
 }

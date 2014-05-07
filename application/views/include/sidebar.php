@@ -171,8 +171,11 @@
 					            </li>
 					            <!-- Menu Body -->
 					            <li class="user-body">
-					                <div class="col-xs-12 text-center">
-										<a href="https://github.com/michelem09/minera/issues">Problems?</a>
+					                <div class="col-xs-6 text-center">
+										<a href="https://github.com/michelem09/minera/issues">Support</a>
+									</div>
+					                <div class="col-xs-6 text-center">
+					                    <a href="http://twitter.com/michelem">Follow</a>										
 									</div>
 					            </li>
 					            <!-- Menu Footer-->
@@ -181,9 +184,20 @@
 					                    <a href="https://github.com/michelem09/minera" class="btn btn-default btn-flat">Github</a>
 					                </div>
 					                <div class="pull-right">
-					                    <a href="http://twitter.com/michelem" class="btn btn-default btn-flat">Twitter</a>
+					                	<?php if ($mineraUpdate) : ?>
+						                    <a href="<?php echo site_url("app/update") ?>" class="btn btn-danger btn-flat" style="color:#fff;">Ver. <?php echo $this->util_model->currentVersion() ?></a>
+										<?php else: ?>
+						                    <a href="<?php echo base_url("minera.json") ?>" class="btn btn-default btn-flat">Ver. <?php echo $this->util_model->currentVersion() ?></a>
+										<?php endif; ?>
 					                </div>
 					            </li>
+			                	<?php if ($mineraUpdate) : ?>
+				                <li class="user-footer">
+				                	<div class="col-xs-12 text-center">
+				                		<small><a href="<?php echo site_url("app/update") ?>">There is a new version available</a></small>
+				                	</div>
+				                </li>
+								<?php endif; ?>
 					        </ul>
 					    </li>
 					</ul>

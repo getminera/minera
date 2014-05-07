@@ -265,15 +265,59 @@ class Util_model extends CI_Model {
 		return true;
 	}
 	
-	// Check Minera version
-	public function checkVersion()
+	// Call update cmd
+	public function update()
 	{
-		$latestConfig = json_decode(file_get_contents($this->config->item("remote_config_url")));
-		$localConfig = json_decode(file_get_contents(base_url('minera.json')));
-		base_url('minera.json');
+		exec("sudo su - minera && cd ".FCPATH." && sudo git status", $out);
 
+		var_dump($out);
+		return true;
+	}
+	
+	// Check Minera version
+	public function checkUpdate()
+	{
+		// wait 1h before recheck
+		if (time() > ($this->redis->command("HGET minera_update timestamp")+3600))
+		{
+			$this->redis->command("HSET minera_update timestamp ".time());
+
+			$latestConfig = json_decode(file_get_contents($this->config->item("remote_config_url")));
+			$localVersion = $this->currentVersion();
+			if ($latestConfig->version != $localVersion)
+			{
+				$this->redis->command("HSET minera_update value 1");
+				return true;
+			}
+		
+			$this->redis->command("HSET minera_update value 0");			
+		}
+		else
+		{
+			if ($this->redis->command("HGET minera_update value"))
+				return true;
+			else
+				return false;
+		}
 	}
 
+	// Get local Minera version
+	public function currentVersion()
+	{
+		// wait 1h before recheck
+		if (time() > ($this->redis->command("HGET minera_version timestamp")+3600))
+		{
+			$this->redis->command("HSET minera_version timestamp ".time());
+			$localConfig = json_decode(file_get_contents(base_url('minera.json')));		
+			$this->redis->command("HSET minera_version value ".$localConfig->version);
+			return $localConfig->version;
+		}
+		else
+		{
+			return $this->redis->command("HGET minera_version value");
+		}
+	}
+	
 	// Check Internet connection
 	public function checkConn()
 	{
