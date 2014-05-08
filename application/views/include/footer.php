@@ -15,7 +15,7 @@
     <script src="//cdnjs.cloudflare.com/ajax/libs/raphael/2.1.0/raphael-min.js"></script>
     <script src="<?php echo base_url('assets/js/morris.min.js') ?>" type="text/javascript"></script>
 
-    <!-- page script -->
+    <!-- Dashboard script -->
     <script type="text/javascript">
     	
 		$(function() {
@@ -64,7 +64,28 @@
 		    });
 		    $(".box-header, .nav-tabs").css("cursor","move");
 		    
+		});
+		
+		function triggerError(msg)
+		{
+			$('.top-section').hide();
+			$('.right-section').hide();
+			$('.left-section').hide();
+			$('.warning-message').html(msg);                        
+			$('.warning-section').fadeIn();
+			
+			return false;
+		}
+    	
+    	function getStats(refresh)
+    	{
+			var d = 0; var totalhash = 0; var totalac = 0; var totalre = 0; var totalhw = 0; var totalsh = 0; var totalfr = 0;
+			
+			$('.overlay').show();
+			$('.loading-img').show();
+			
 			/* Morris.js Charts */
+			// get Json data from stored_stats url (redis) and create the graphs
 			$.getJSON( "<?php echo site_url($this->config->item('stored_stats_url')); ?>", function( data ) 
 	        {
 	        	var data = Object.keys(data).map(function(key) { 
@@ -123,27 +144,9 @@
 				}	
 	        	
 			});
-		});
-		
-		function triggerError(msg)
-		{
-			$('.top-section').hide();
-			$('.right-section').hide();
-			$('.left-section').hide();
-			$('.warning-message').html(msg);                        
-			$('.warning-section').fadeIn();
 			
-			return false;
-		}
-    	
-    	function getStats(refresh)
-    	{
-			var d = 0; var totalhash = 0; var totalac = 0; var totalre = 0; var totalhw = 0; var totalsh = 0; var totalfr = 0;
-			
-			$('.overlay').show();
-			$('.loading-img').show();
-						
-			// get Json data from minerd
+			/* Knob, Table, Sysload */		
+			// get Json data from minerd and create Knob, table and sysload
 	        $.getJSON( "<?php echo site_url($this->config->item('live_stats_url')); ?>", function( data ) 
 	        {
 		        if (data['error'])

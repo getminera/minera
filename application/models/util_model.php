@@ -98,6 +98,8 @@ class Util_model extends CI_Model {
 	// Store the live stats on Redis
 	public function storeStats()
 	{
+		log_message('error', "Storing stats...");
+		
 		$data = json_decode($this->getStats());
 		
 		$totHash = 0; $totFreq = 0; $totAc = 0; $totHw = 0; $totRe = 0; $totSh = 0; $d = 0; $c = 0;
@@ -137,6 +139,8 @@ class Util_model extends CI_Model {
 
 		$this->load->library('redis');
 		$this->redis->command("ZADD minerd_stats ".time()." ".$json);
+		
+		log_message('error', "Stats stored as: $json");
 	}
 	
 	/*
@@ -192,17 +196,20 @@ class Util_model extends CI_Model {
 	}
 	
 	public function checkMinerIsUp()
-	{
+	{		
 		// Check if miner is not manually stopped
 		if ($this->redis->get("minerd_status"))
 		{
 			if ($this->isOnline() === false)
 			{
+				log_message('error', "It seems miner is down, trying to restart it");
 				// Force stop and killall
 				$this->minerdStop();
 				// Restart minerd
 				$this->minerdStart();
 			}
+			
+			log_message('error', "Miner is up");
 		}
 		
 		return;
@@ -211,6 +218,8 @@ class Util_model extends CI_Model {
 	// Call shutdown cmd
 	public function shutdown()
 	{
+		log_message('error', "Shutdown cmd called");
+		
 		exec("sudo shutdown -h now");
 
 		return true;
@@ -219,6 +228,8 @@ class Util_model extends CI_Model {
 	// Call reboot cmd
 	public function reboot()
 	{
+		log_message('error', "Reboot cmd called");
+		
 		exec("sudo reboot");
 
 		return true;
@@ -231,7 +242,11 @@ class Util_model extends CI_Model {
 		
 		$rcLocal = file_get_contents(FCPATH."rc.local.minera");
 		
-		file_put_contents('/etc/rc.local', $rcLocal."\nsu - ".$this->config->item('system_user').' -c "'.implode(' ', $command)."\"\n\nexit 0");
+		$rcLocal .= "\nsu - ".$this->config->item('system_user').' -c "'.implode(' ', $command)."\"\n\nexit 0";
+		
+		file_put_contents('/etc/rc.local', $rcLocal);
+		
+		log_message('error', "Startup script saved: ".var_export($rcLocal, true));
 
 		return true;
 	}
@@ -244,6 +259,8 @@ class Util_model extends CI_Model {
 		
 		$this->redis->del("latest_stats");
 		$this->redis->set("minerd_status", false);
+		
+		log_message('error', "Minerd stopped");
 					
 		return true;
 	}
@@ -253,9 +270,13 @@ class Util_model extends CI_Model {
 	{
 		$command = array($this->config->item("screen_command"), $this->config->item("minerd_command"), $this->redis->get('minerd_settings'));
 
-		exec("sudo -u " . $this->config->item("system_user") . " " . implode(" ", $command));
+		$finalCommand = "sudo -u " . $this->config->item("system_user") . " " . implode(" ", $command);
+		
+		exec($finalCommand, $out);
 		
 		$this->redis->set("minerd_status", true);
+		
+		log_message('error', "Minerd started with command: $finalCommand - Output was: ".var_export($out, true));
 
 		return true;
 	}
@@ -263,8 +284,13 @@ class Util_model extends CI_Model {
 	// Call update cmd
 	public function update()
 	{
-		exec("cd ".FCPATH." && sudo -u " . $this->config->item("system_user") . " /usr/bin/git pull", $out);
-
+		exec("cd ".FCPATH." && sudo -u " . $this->config->item("system_user") . " /usr/bin/git pull -v", $out);
+		
+		log_message('error', "Update request from ".$this->currentVersion()." to ".$this->redis->command("HGET minera_version new_version")." : ".var_export($out, true));
+		
+		$this->redis->del("minera_update");
+		$this->redis->del("minera_version");
+		
 		return true;
 	}
 	
@@ -274,6 +300,8 @@ class Util_model extends CI_Model {
 		// wait 1h before recheck
 		if (time() > ($this->redis->command("HGET minera_update timestamp")+3600))
 		{
+			log_message('error', "Checking Minera updates");
+			
 			$this->redis->command("HSET minera_update timestamp ".time());
 
 			$latestConfig = json_decode(file_get_contents($this->config->item("remote_config_url")));
@@ -281,7 +309,10 @@ class Util_model extends CI_Model {
 
 			if ($latestConfig->version != $localVersion)
 			{
+				log_message('error', "Found a new Minera update");
+				
 				$this->redis->command("HSET minera_update value 1");
+				$this->redis->command("HSET minera_update new_version ".$latestConfig->version);
 				return true;
 			}
 		
