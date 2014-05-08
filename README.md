@@ -24,7 +24,7 @@ The img file is on the go only few days (since today 2014-05-07) and you will be
 **Manual install**
 
 While you are waiting for the img release you can simply install Minera on your current Linux controller. Check if it's a debian based one otherwise download and install a right distribution.
-If you have a Raspberry, I suggest you to install Raspbia you can get it here: 
+If you have a Raspberry, I suggest you to install Raspbian you can get it here: 
 
 http://downloads.raspberrypi.org/raspbian_latest
 
@@ -111,7 +111,7 @@ If you receive the following error:
 
 	Cannot open your terminal '/dev/pts/0' - please check.
 	
-Please run:
+Please run this commands:
 
 	script /dev/null
 	screen -r
@@ -124,7 +124,7 @@ If the Minera version upgrade fails you could miss a line in /etc/sudoers file, 
 
 	www-data ALL = (ALL) NOPASSWD: /usr/bin/git
 	
-If you miss it run:
+If you miss it run this command:
 
 	echo "www-data ALL = (ALL) NOPASSWD: /usr/bin/git" | sudo tee -a /etc/sudoers
 
@@ -141,13 +141,19 @@ TODO
 Screenshots
 -------------
 
+Click for hi-res images.
+
+Lockscreen:
+
+[![Dashboard](https://github.com/michelem09/minera/raw/master/assets/img/screen_minera_lock.png)](https://github.com/michelem09/minera/raw/master/assets/img/screen_minera_lock_hi.png)
+
 Dashboard:
 
-![Dashboard](https://github.com/michelem09/minera/raw/master/assets/img/screen_minera_dashboard.png)
+[![Dashboard](https://github.com/michelem09/minera/raw/master/assets/img/screen_minera_dashboard.png)](https://github.com/michelem09/minera/raw/master/assets/img/screen_minera_dashboard_hi.png)
 
 Settings:
 
-![Settings](https://github.com/michelem09/minera/raw/master/assets/img/screen_minera_settings.png)
+[![Settings](https://github.com/michelem09/minera/raw/master/assets/img/screen_minera_settings.png)](https://github.com/michelem09/minera/raw/master/assets/img/screen_minera_settings_hi.png)
 
 Donations
 -------------
