@@ -243,10 +243,10 @@
                             </a>
                             <ul class="treeview-menu" style="display: none;">
 
-                                <li><a href="<?php echo site_url("app/start_miner") ?>" style="margin-left: 10px;"><i class="fa fa-arrow-circle-o-up"></i> Start miner</a></li>
-                                <li><a href="<?php echo site_url("app/stop_miner") ?>" style="margin-left: 10px;"><i class="fa fa-arrow-circle-o-down"></i> Stop miner</a></li>
-                                <li><a href="<?php echo site_url("app/restart_miner") ?>" style="margin-left: 10px;"><i class="fa fa-repeat"></i> Restart miner</a></li>
-                                <li><a href="<?php echo site_url("app/settings") ?>" style="margin-left: 10px;"><i class="fa fa-gear"></i> Settings</a></li>
+                                <li data-toggle="tooltip" title="" data-original-title="<?php echo ($isOnline) ? "It seems your miner is mining. To restart it click below" : "Start your miner"; ?>"><a href="<?php echo ($isOnline) ? "#" : site_url("app/start_miner"); ?>" style="margin-left: 10px;"><i class="fa fa-arrow-circle-o-up"></i> Start miner</a></li>
+                                <li data-toggle="tooltip" title="" data-original-title="<?php echo ($isOnline) ? "Stop your miner" : "Your miner is stopped"; ?>"><a href="<?php echo site_url("app/stop_miner") ?>" style="margin-left: 10px;"><i class="fa fa-arrow-circle-o-down"></i> Stop miner</a></li>
+                                <li data-toggle="tooltip" title="" data-original-title="Restart your miner"><a href="<?php echo site_url("app/restart_miner") ?>" style="margin-left: 10px;"><i class="fa fa-repeat"></i> Restart miner</a></li>
+                                <li data-toggle="tooltip" title="" data-original-title="Go to settings"><a href="<?php echo site_url("app/settings") ?>" style="margin-left: 10px;"><i class="fa fa-gear"></i> Settings</a></li>
                             </ul>
                         </li>
                         <li class="treeview">
@@ -256,8 +256,8 @@
                                 <i class="fa pull-right fa-angle-left"></i>
                             </a>
                             <ul class="treeview-menu" style="display: none;">
-                                <li><a href="<?php echo site_url("app/reboot") ?>" style="margin-left: 10px;"><i class="fa fa-flash"></i> Reboot</a></li>
-                                <li><a href="<?php echo site_url("app/shutdown") ?>" style="margin-left: 10px;"><i class="fa fa-power-off"></i> Shutdown</a></li>
+                                <li data-toggle="tooltip" title="" data-original-title="Reboot Minera"><a href="<?php echo site_url("app/reboot") ?>" style="margin-left: 10px;"><i class="fa fa-flash"></i> Reboot</a></li>
+                                <li data-toggle="tooltip" title="" data-original-title="Shutdown Minera"><a href="<?php echo site_url("app/shutdown") ?>" style="margin-left: 10px;"><i class="fa fa-power-off"></i> Shutdown</a></li>
                             </ul>
                         </li>
                     </ul>

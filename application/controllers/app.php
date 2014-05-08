@@ -183,7 +183,13 @@ class App extends Main_Controller {
 		if (!$this->session->userdata("loggedin"))
 			redirect('app/index');
 		
-		$this->util_model->minerdStart();
+		if (!$this->util_model->isOnline())
+			$this->util_model->minerdStart();
+		else
+		{
+			$this->session->set_flashdata('message', "<b>Warning!</b> Your miner is currently mining, before you can start it you need to stop it before, or try the restart link.");
+		}
+			
 		
 		redirect('app/dashboard');
 	}

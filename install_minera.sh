@@ -9,7 +9,7 @@ adduser minera --gecos "" --disabled-password
 echo "minera:minera" | chpasswd
 
 echo -e "Adding groups to Minera\n-----\n"
-usermod -a -G dialout,plugdev,tty minera
+usermod -a -G dialout,plugdev,tty,www-data minera
 
 echo -e "Adding sudoers configuration for www-data and minera users\n-----\n"
 echo -e "\n#Minera settings\nminera ALL=(ALL) NOPASSWD: ALL\nwww-data ALL = (ALL) NOPASSWD: /bin/kill\nwww-data ALL = (ALL) NOPASSWD: /usr/bin/screen\nwww-data ALL = (ALL) NOPASSWD: /sbin/reboot\nwww-data ALL = (ALL) NOPASSWD: /sbin/shutdown\nwww-data ALL = (ALL) NOPASSWD: /usr/bin/killall" >> /etc/sudoers
@@ -20,6 +20,7 @@ MINER_BIN=`pwd`"/minera-bin/"
 
 echo -e "Chown minera dir\n-----\n"
 chown -R minera.minera `pwd`
+chmod -R 777 `pwd/application/logs
 
 echo -e "Adding default startup settings to redis\n-----\n"
 echo -n $MINER_OPT | redis-cli -x set minerd_settings
@@ -36,6 +37,6 @@ echo -e $RC_LOCAL_CMD >> /etc/rc.local
 
 echo -e "Adding cron file in /etc/cron.d\n-----\n"
 
-echo "*/5 * * * * www-data php `pwd`/index.php app cron_stats" > /etc/cron.d/minera
+echo "*/5 * * * * www-data php `pwd`/index.php app cron" > /etc/cron.d/minera
 
 echo -e 'DONE! Minera is ready!\n\nOpen the URL: http://'$(hostname -I | tr -d ' ')'/minera/\n\nAnd happy mining!\n'

@@ -34,7 +34,7 @@
 			    // find the amount of "seconds" between now and target
 			    var current_date = new Date().getTime();
 			    var seconds_left = (target_date + (refresh_time*1000 + 1000) - current_date) / 1000;
-					console.log(parseInt(seconds_left));
+					//console.log(parseInt(seconds_left));
 				if (parseInt(seconds_left) != 0)
 				{
 				    // do some time calculations
@@ -79,6 +79,7 @@
     	
     	function getStats(refresh)
     	{
+    		var now = new Date().getTime();
 			var d = 0; var totalhash = 0; var totalac = 0; var totalre = 0; var totalhw = 0; var totalsh = 0; var totalfr = 0;
 			
 			$('.overlay').show();
@@ -160,11 +161,10 @@
 				else
 				{
 				    var items = [];
-					var hashrates = []
+					var hashrates = [];
+					var lastTotalShares = [];
 					
 					var startdate = new Date(data['start_time']*1000);
-					
-					var now = new Date().getTime();
 					
 					var uptime = convertMS(now - data['start_time']*1000);
 	
@@ -178,6 +178,7 @@
 				    	d = d+1;
 				    	//console.log(val);
 				    	// Build dev stats from single procs
+						var lastShares = [];
 				    	var hash = 0; var ac = 0; var re = 0; var hw = 0; var fr = 0; var sh = 0;
 				    	for (var i = 0; i < val['chips'].length; i++) {
 				    		hash = hash + val['chips'][i]['hashrate'];
@@ -185,9 +186,10 @@
 				    		re = re + val['chips'][i]['rejected'];
 				    		hw = hw + val['chips'][i]['hw_errors'];
 				    		fr = fr + val['chips'][i]['frequency'];
-				    		sh = sh + val['chips'][i]['shares'];	
+				    		sh = sh + val['chips'][i]['shares'];
+							lastShares.push(val['chips'][i]['last_share'])
 				    	}
-				    	
+
 				    	devFr = fr/i;
 				    	
 				    	totalhash = totalhash + hash;
@@ -199,19 +201,24 @@
 				    	
 				    	hash = Math.round(hash/1000);
 				    	
+				    	var serial = val['serial'];
+				    	var lastShare = Math.max.apply(Math, lastShares);
+
 				    	// these are the single devices stats	
-				    	items[key] = { "hash": hash, "ac": ac, "re": re, "hw": hw, "fr": devFr, "sh": sh };
-						hashrates.push(hash)
+				    	items[key] = { "serial": serial, "hash": hash, "ac": ac, "re": re, "hw": hw, "fr": devFr, "sh": sh, "ls": lastShare };
+						hashrates.push(hash);
+						lastTotalShares.push(lastShare);
 				    	
 				    });
 				    
 			    	var maxHashrate = Math.max.apply(Math, hashrates);
+			    	var lastTotalShare = Math.max.apply(Math, lastTotalShares);
 					var avgFr = Math.round(totalfr/d);
 			    	
 					totalhash = Math.round(totalhash/1000);
 					
 					// this is the global stats
-					items["total"] = { "hash": totalhash, "ac": totalac, "re": totalre, "hw": totalhw, "fr": avgFr, "sh": totalsh };
+					items["total"] = { "serial": "", "hash": totalhash, "ac": totalac, "re": totalre, "hw": totalhw, "fr": avgFr, "sh": totalsh, "ls":  lastTotalShare};
 	
 					// Refresh the graphs
 					if (refresh)
@@ -261,8 +268,17 @@
 							// Knob for devices and total
 							createMon(index, items[index].hash, totalhash, maxHashrate, items[index].ac, items[index].re, items[index].hw, items[index].sh, items[index].fr);
 							
+							var dev_serial = "";
+							if (index != "total")
+								 dev_serial = ' <small class="text-muted">('+items[index].serial+')</small>';
+								 
 							// Add per device rows in system table
-							var devTable = '<tr class="dev-'+index+'"><td class="devs_table_name">'+index+'</td><td class="devs_table_freq">'+ items[index].fr + ' Mhz</td><td class="devs_table_hash">'+ convertHashrate(items[index].hash) +'</td><td class="devs_table_sh">'+ items[index].sh +'</td><td class="devs_table_ac">'+ items[index].ac +'</td><td class="devs_table_re">'+ items[index].re +'</td><td class="devs_table_hw">'+ items[index].hw +'</td></tr>'
+							var share_date = new Date(items[index].ls*1000);
+							var last_share_secs = (now - share_date)/1000;
+							var percentageRe = (100*items[index].re/items[index].ac);
+							var percentageHw = (100*items[index].hw/items[index].ac);
+							
+							var devTable = '<tr class="dev-'+index+'"><td class="devs_table_name"><i class="glyphicon glyphicon-hdd"></i>&nbsp;&nbsp;'+index+dev_serial+'</td><td class="devs_table_freq">'+ items[index].fr + ' Mhz</td><td class="devs_table_hash"><strong>'+ convertHashrate(items[index].hash) +'</strong></td><td class="devs_table_sh">'+ items[index].sh +'</td><td class="devs_table_ac">'+ items[index].ac +'</td><td class="devs_table_re">'+ items[index].re +' <small class="text-muted">('+parseFloat(percentageRe).toFixed(2)+'%)</small></td><td class="devs_table_hw">'+ items[index].hw +' <small class="text-muted">('+parseFloat(percentageHw).toFixed(2)+'%)</small></td><td class="devs_table_ls">'+ parseInt(last_share_secs) +' secs ago <small class="text-muted">('+share_date.toUTCString()+')</small></td></tr>'
 							    
 							if (index == "total")
 							{

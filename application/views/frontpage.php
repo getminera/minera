@@ -17,11 +17,20 @@
 					<div class="row">
                         
                         <?php if (isset($message)) : ?>
-	                        <section class="col-md-12">
+	                        <section class="col-md-12 pop-message">
     	                    	<div class="alert alert-<?php echo $message_type ?> alert-dismissable">
 									<i class="fa fa-check"></i>
 									<button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
 									<?php echo $message ?>.
+								</div>
+	                        </section>
+                        <?php endif; ?>
+                        <?php if ($this->session->flashdata('message')) : ?>
+	                        <section class="col-md-12 pop-message">
+    	                    	<div class="alert alert-warning alert-dismissable">
+									<i class="fa fa-check"></i>
+									<button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
+									<?php echo $this->session->flashdata('message'); ?>.
 								</div>
 	                        </section>
                         <?php endif; ?>
@@ -81,6 +90,7 @@
 		                                                <th>Accepted</th>
 		                                                <th>Rejected</th>
 		                                                <th>Errors</th>
+		                                                <th>Last share</th>
 		                                            </tr>
 		                                            </thead>
 		                                            <tbody class="devs_table">
