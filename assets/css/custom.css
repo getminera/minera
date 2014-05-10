@@ -11,6 +11,7 @@
 .nav .open>a, .nav .open>a:hover, .nav .open>a:focus { background-color: #eee !important; border-color: #434343;}
 .skin-black .navbar .nav > li > a:hover {background: #999; }
 .bg-dark-grey { background-color: #333 !important;  color: #f9f9f9 !important; }
+.bg-dark { background-color: #666 !important;  color: #fff !important; }
 .bg-light { background-color: #f0f0f0 !important; color: #434343 !important; }
 .bg-light >.box-header { color: #434343 !important;}
 .navbar-nav > .user-menu > .dropdown-menu > li.user-body { padding: 25px 15px 20px !important; }
@@ -20,6 +21,8 @@
 .warning-section { display: none;}
 body > .header .navbar .nav > li > a > .label { padding: 3px !important; }
 .row-btn-options { margin: 15px 0;}
+.label-white { background-color: #f7f7f7; color: #434343; }
+.label-light { background-color: #E0E0E0; color: #7a7a7a; }
 
 @media all and (max-width : 960px) { 
 	.messages-menu { display: none !important;}

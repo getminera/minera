@@ -47,6 +47,24 @@ class Util_model extends CI_Model {
 		return json_decode($out);
 	}
 	
+	// Check if pool is alive
+	public function checkPool($url)
+	{	
+		$parsedUrl = @parse_url($url);
+
+		if (isset($parsedUrl['host']) && isset($parsedUrl['port']))
+		{
+			$conn = @fsockopen($parsedUrl['host'], $parsedUrl['port'], $errno, $errstr, 1);
+			if (is_resource($conn))
+			{
+				fclose($conn);
+				return true;
+			}
+		}
+		
+		return false;
+	}
+	
 	// Get the live stats from cpuminer
 	public function getStats()
 	{
@@ -58,6 +76,16 @@ class Util_model extends CI_Model {
 			{
 				$a = (array)$a;
 				$a["sysload"] = sys_getloadavg();
+				
+				$pools = json_decode($this->redis->get("minerd_pools"), true);
+				
+				foreach ($pools as $pool)
+				{
+					$pool['alive'] = $this->checkPool($pool['url']);
+					$nPools[] = $pool; 
+				}
+				
+				$a["pools"] = $nPools;
 				
 				$o = json_encode($a);
 				$this->redis->set("latest_stats", $o);
@@ -255,7 +283,7 @@ class Util_model extends CI_Model {
 	public function minerdStop()
 	{
 		exec("sudo -u " . $this->config->item("system_user") . " " . $this->config->item("screen_command_stop"));
-		exec("sudo -u " . $this->config->item("system_user") . " /usr/bin/killall minerd");
+		exec("sudo -u " . $this->config->item("system_user") . " /usr/bin/killall -s9 minerd");
 		
 		$this->redis->del("latest_stats");
 		$this->redis->set("minerd_status", false);

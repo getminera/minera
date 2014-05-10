@@ -25,6 +25,15 @@
 								</div>
 	                        </section>
                         <?php endif; ?>
+                        <?php if ($this->session->flashdata('message')) : ?>
+	                        <section class="col-md-12 pop-message">
+    	                    	<div class="alert alert-warning alert-dismissable">
+									<i class="fa fa-check"></i>
+									<button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
+									<?php echo $this->session->flashdata('message'); ?>.
+								</div>
+	                        </section>
+                        <?php endif; ?>
                         
                         <!-- Top section -->
                         <section class="col-md-12 connectedSortable ui-sortable">
@@ -166,13 +175,24 @@
 													</div>
 		                                            <h6>Write here any other option you want to include please refer to the <a href="https://github.com/siklon/cpuminer-gc3355">Github page</a> for the complete options list.</h6>
 		                                        </div>
+												
+												<!-- Logging -->
+												<div class="form-group">
+													<div class="checkbox">
+														<label>
+															<input type="checkbox" name="minerd_log" value="1" <?php if ($minerdLog) : ?>checked=""<?php endif; ?> />
+															Enable logging <small>(--log)</small>
+														</label>                                                
+													</div>
+												</div>		                                        
+		                                        
 											</div>
 	                                        
 	                                        <!-- Minerd manual options config -->
 	                                        <div class="form-group manual-options">
 	                                            <label>Manual options</label>
 	                                            <p>You have chosen to add all options manually, I will only add for you the pools list, you have to take care of the rest.</p>
-	                                            <textarea name="minerd_manual_settings" class="form-control" rows="5" placeholder="Example: --gc3355-detect --gc3355-autotune --freq=850 --retries=1"><?php echo $minerdManualSettings ?></textarea>
+	                                            <textarea name="minerd_manual_settings" class="form-control" rows="5" placeholder="Example: --gc3355-detect --gc3355-autotune --freq=850 --retries=1" class="minerd_manual_settings"><?php echo $minerdManualSettings ?></textarea>
 												<h6>Please do not include the command name or the pools (they are automatically added).</h6>
 											</div>
 											

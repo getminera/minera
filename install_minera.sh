@@ -20,11 +20,12 @@ MINER_BIN=`pwd`"/minera-bin/"
 
 echo -e "Chown minera dir\n-----\n"
 chown -R minera.minera `pwd`
-chmod -R 777 `pwd`/application/logs
+chmod -R 777 `pwd/application/logs
 
 echo -e "Adding default startup settings to redis\n-----\n"
 echo -n $MINER_OPT | redis-cli -x set minerd_settings
 echo -n "minera" | redis-cli -x set minera_password
+echo -n "1" | redis-cli -x set guided_options
 
 echo -e "Adding minera startup command to rc.local\n-----\n"
 chmod 777 /etc/rc.local

@@ -40,7 +40,9 @@
 		    
 		    // validate signup form on keyup and submit
 			var validator = $("#minersettings").validate({
-			    // the errorPlacement has to take the table layout into account
+				rules: {
+					minerd_manual_settings: "required"
+				},
 			    errorPlacement: function(error, element) {
 					error.appendTo( $(element).closest(".input-group").parent().after() );
 			    },
@@ -48,7 +50,6 @@
 			    /*submitHandler: function() {
 			    	alert("submitted!");
 			    },*/
-			    // set this class to error-labels to indicate valid fields
 			    unhighlight: function(element) {
 					$(element).closest(".input-group").removeClass("has-error").addClass("has-success");
 			    },
@@ -116,6 +117,10 @@
 	<?php if ($appScript) : ?>
 	<!-- jQuery Knob -->
     <script src="<?php echo base_url('assets/js/jquery.knob.js') ?>" type="text/javascript"></script>
+
+    <!-- DATA TABES SCRIPT -->
+	<script src="<?php echo base_url('assets/js/jquery.dataTables.js') ?>" type="text/javascript"></script>
+	<script src="<?php echo base_url('assets/js/dataTables.bootstrap.js') ?>" type="text/javascript"></script>
     
     <!-- jQuery Morris Charts -->
     <script src="//cdnjs.cloudflare.com/ajax/libs/raphael/2.1.0/raphael-min.js"></script>
@@ -174,6 +179,7 @@
 		
 		function triggerError(msg)
 		{
+			$('.widgets-section').hide();
 			$('.top-section').hide();
 			$('.right-section').hide();
 			$('.left-section').hide();
@@ -369,15 +375,12 @@
 					else
 					{
 						$("body").data("stats-loop", 0);
+						
 						for (var index in items) 
 						{
 							// Knob for devices and total
 							createMon(index, items[index].hash, totalhash, maxHashrate, items[index].ac, items[index].re, items[index].hw, items[index].sh, items[index].fr);
 							
-							var dev_serial = "";
-							if (index != "total")
-								 dev_serial = ' <small class="text-muted">('+items[index].serial+')</small>';
-								 
 							// Add per device rows in system table
 							var share_date = new Date(items[index].ls*1000);
 							var last_share_secs = (now - share_date)/1000;
@@ -386,24 +389,75 @@
 							var percentageRe = (100*items[index].re/totalWorkedShares);
 							var percentageHw = (100*items[index].hw/totalWorkedShares);
 							
-							var devTable = '<tr class="dev-'+index+'"><td class="devs_table_name"><i class="glyphicon glyphicon-hdd"></i>&nbsp;&nbsp;'+index+dev_serial+'</td><td class="devs_table_freq">'+ items[index].fr + ' Mhz</td><td class="devs_table_hash"><strong>'+ convertHashrate(items[index].hash) +'</strong></td><td class="devs_table_sh">'+ items[index].sh +'</td><td class="devs_table_ac">'+ items[index].ac +' <small class="text-muted">('+parseFloat(percentageAc).toFixed(2)+'%)</small></td><td class="devs_table_re">'+ items[index].re +' <small class="text-muted">('+parseFloat(percentageRe).toFixed(2)+'%)</small></td><td class="devs_table_hw">'+ items[index].hw +' <small class="text-muted">('+parseFloat(percentageHw).toFixed(2)+'%)</small></td><td class="devs_table_ls">'+ parseInt(last_share_secs) +' secs ago <small class="text-muted">('+share_date.toUTCString()+')</small></td></tr>'
+							var dev_serial = "";
+							if (index != "total")
+							{
+								dev_serial = ' <small class="text-muted">('+items[index].serial+')</small>';	
+							}
+							else
+							{
+								$(".widget-total-hashrate").html(convertHashrate(items[index].hash));
+								$(".widget-last-share").html(parseInt(last_share_secs) + ' secs');
+								$(".widget-hwre-rates").html(parseFloat(percentageHw).toFixed(2) + '<sup style="font-size: 20px">%</sup> / ' + parseFloat(percentageRe).toFixed(2) + '<sup style="font-size: 20px">%</sup>');
+							}
+							
+							var devRow = '<tr class="dev-'+index+'"><td class="devs_table_name"><i class="glyphicon glyphicon-hdd"></i>&nbsp;&nbsp;'+index+dev_serial+'</td><td class="devs_table_freq">'+ items[index].fr + ' Mhz</td><td class="devs_table_hash"><strong>'+ convertHashrate(items[index].hash) +'</strong></td><td class="devs_table_sh">'+ items[index].sh +'</td><td class="devs_table_ac">'+ items[index].ac +' <small class="text-muted">('+parseFloat(percentageAc).toFixed(2)+'%)</small></td><td class="devs_table_re">'+ items[index].re +' <small class="text-muted">('+parseFloat(percentageRe).toFixed(2)+'%)</small></td><td class="devs_table_hw">'+ items[index].hw +' <small class="text-muted">('+parseFloat(percentageHw).toFixed(2)+'%)</small></td><td class="devs_table_ls">'+ parseInt(last_share_secs) +' secs ago <small class="text-muted">('+share_date.toUTCString()+')</small></td></tr>'
 							    
 							if (index == "total")
 							{
-							    $('.devs_table_foot').html(devTable);		
+							    $('.devs_table_foot').html(devRow);		
 							}
 							else
 							{
 								$('.dev-'+index).remove();
-							    $('.devs_table').append(devTable);
+							    $('.devs_table').append(devRow);
 							}
 							
 						}
+
+						$('#miner-table-details').dataTable();
+
 				    }
 				    
-					// Add server load average knob graph
-					$.each( data['sysload'], function( lkey, lval ) {
+					$('.pool-row').remove();
+				    
+					// Add pools data
+					$.each( data['pools'], function( pkey, pval ) 
+					{
+						var picon = "download";
+						var ptype = "failover";
+						var pclass = "bg-light";
+						var plabel = "light";
+						var purl = pval.url;
 						
+						if (pkey == 0)
+						{
+							picon = "upload";
+							ptype = "main";
+							pclass = "bg-dark";
+							plabel = "white";
+							purl = '<strong>'+pval.url+'</strong>';
+						}
+						
+						if (pval.alive)
+						{
+							paliveclass = "success";
+							palivelabel = "Alive";
+						}
+						else
+						{
+							paliveclass = "danger";
+							palivelabel = "Dead";
+						}
+							
+						var poolRow = '<tr class="pool-row '+pclass+'"><td><i class="fa fa-cloud-'+picon+'"></i> '+purl+'</td><td><span class="label label-'+plabel+'">'+ptype+'</span></td><td><span class="label label-'+paliveclass+'">'+palivelabel+'</span></td><td>'+pval.username+'</td><td>'+pval.password+'</td></tr>';
+						
+						$('.pools_table').append(poolRow);
+					});
+				    
+					// Add server load average knob graph
+					$.each( data['sysload'], function( lkey, lval ) 
+					{
 						if (lkey == 0) var llabel = "1min";
 						if (lkey == 1) var llabel = "5min";
 						if (lkey == 2) var llabel = "15min";
@@ -456,15 +510,15 @@
 				}
 			    
 			});
-    	}    	
-    	  
+    	}
+		
 		function createMon(key, hash, totalhash, maxHashrate, ac, re, hw, sh, freq)
 		{
 			if (key == "total")
 			{
 				var col = 12;
 				var toAppend = "#devs-total";
-				var color = "#e85d74";
+				var color = "#f56954";
 				var size = 140;
 				var skin = "tron";
 				var thickness = ".2";

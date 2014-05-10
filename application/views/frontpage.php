@@ -57,6 +57,44 @@
                         
                         </section>
                         
+                        <section class="col-md-12 widgets-section">
+	                        <div class="row">
+								<div class="col-lg-4 col-xs-4">
+									<!-- small box -->
+									<div class="small-box bg-red">
+										<div class="inner">
+											<h3 class="widget-total-hashrate"><i class="ion ion-loading-c"></i></h3>
+											<p>Total Hashrate</p>
+										</div>
+										<div class="icon"><i class="ion ion-ios7-speedometer-outline"></i></div>
+										<a href="#hashrate-history" class="small-box-footer">History <i class="fa fa-arrow-circle-right"></i></a>
+									</div>
+								</div>
+								<div class="col-lg-4 col-xs-4">
+									<!-- small box -->
+									<div class="small-box bg-light">
+										<div class="inner">
+											<h3 class="widget-hwre-rates"><i class="ion ion-loading-c"></i></h3>
+											<p>Error/Rejected rates</p>
+										</div>
+										<div class="icon"><i class="ion ion-alert-circled"></i></div>
+										<a href="#error-history" class="small-box-footer">Details <i class="fa fa-arrow-circle-right"></i></a>
+									</div>
+								</div>
+								<div class="col-lg-4 col-xs-4">
+									<!-- small box -->
+									<div class="small-box bg-light-blue">
+										<div class="inner">
+											<h3 class="widget-last-share"><i class="ion ion-loading-c"></i></h3>
+											<p>Last Share</p>
+										</div>
+										<div class="icon"><i class="ion ion-ios7-stopwatch-outline"></i></div>
+										<a href="#miner-details" class="small-box-footer">Miner details <i class="fa fa-arrow-circle-right"></i></a>
+									</div>
+								</div>
+							</div>
+                        </section>
+                        
                         <!-- Top section -->
                         <section class="col-md-12 connectedSortable ui-sortable top-section">
                         
@@ -73,14 +111,14 @@
                                     </div><!-- /. tools -->
                                     <i class="fa fa-desktop"></i>
 
-                                    <h3 class="box-title">Miner details</h3>
+                                    <h3 class="box-title" id="miner-details">Miner details</h3>
                                 </div>
                                 <div class="box-body">
                                     <div class="row">
                                         <div class="col-sm-12">
                                             <div class="table-responsive">
 		                                        <!-- .table - Uses sparkline charts-->
-		                                        <table class="table table-striped">
+		                                        <table id="miner-table-details" class="table table-striped datatable">
 		                                            <thead>
 		                                            <tr>
 		                                                <th>DEV</th>
@@ -136,6 +174,43 @@
 						<!-- Left col -->
                         <section class="col-md-6 connectedSortable ui-sortable left-section">
                         
+							<!-- Pools box -->
+                            <div class="box box-light">
+                               	<div class="overlay"></div>
+                               	<div class="loading-img"></div>
+                                <div class="box-header" style="cursor: move;">
+                                    <!-- tools box -->
+                                    <div class="pull-right box-tools">
+                                        <button class="btn btn-default btn-xs" data-widget="collapse" data-toggle="tooltip" title="" data-original-title="Collapse"><i class="fa fa-minus"></i></button>
+                                    </div><!-- /. tools -->
+                                    <i class="fa fa-cloud"></i>
+
+                                    <h3 class="box-title" id="pools-details">Pools details</h3>
+                                </div>
+                                <div class="box-body">
+                                    <div class="row">
+                                        <div class="col-sm-12">
+                                            <div class="table-responsive">
+		                                        <!-- .table - Uses sparkline charts-->
+		                                        <table class="table">
+		                                            <thead>
+		                                            <tr>
+		                                                <th>Pool Url</th>
+		                                                <th>Priority</th>
+		                                                <th>Status</th>
+		                                                <th>Username</th>
+		                                                <th>Password</th>
+		                                            </tr>
+		                                            </thead>
+		                                            <tbody class="pools_table">
+													</tbody>
+												</table><!-- /.table -->
+		                                    </div>
+                                        </div>
+                                    </div><!-- /.row - inside box -->
+                                </div><!-- /.box-body -->
+                            </div><!-- /.miner box -->  
+                            
                         	<!-- Hashrate box chart -->
 							<div class="box box-primary">
                                	<div class="overlay"></div>
@@ -147,7 +222,7 @@
                                     </div><!-- /. tools -->
                                     <i class="fa fa-bar-chart-o"></i>
                                     
-                                    <h3 class="box-title">Hashrate History</h3>
+                                    <h3 class="box-title" id="hashrate-history">Hashrate History</h3>
                                 </div>
                                 <div class="box-body chart-responsive">
                                 	<div class="chart" id="hashrate-chart" style="height:160px;"></div>
@@ -164,7 +239,7 @@
                                     </div><!-- /. tools -->
                                     <i class="fa fa-warning"></i>
                                     
-                                    <h3 class="box-title">Rejected/Errors</h3>
+                                    <h3 class="box-title" id="error-history">Rejected/Errors</h3>
                                 </div>
                                 <div class="box-body chart-responsive">
                                 	<div class="chart" id="rehw-chart" style="height:160px;"></div>

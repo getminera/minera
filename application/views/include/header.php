@@ -15,6 +15,8 @@
 	<link href="<?php echo base_url('favicon.ico') ?>" rel="icon">
 	<link href="<?php echo base_url('assets/css/bootstrap.min.css') ?>" rel="stylesheet" />
 	<link href="<?php echo base_url('assets/css/font-awesome.css') ?>" rel="stylesheet" />
+	<link href="<?php echo base_url('assets/css/ionicons.min.css') ?>" rel="stylesheet" />
+	<link href="<?php echo base_url('assets/css/datatables/dataTables.bootstrap.css') ?>" rel="stylesheet" />
 	<link href="<?php echo base_url('assets/css/custom.css') ?>" rel="stylesheet" />
 	<link href="<?php echo base_url('assets/css/morris.css') ?>" rel="stylesheet" />
 	<link href="<?php echo base_url('assets/css/jQueryUI/jquery-ui-1.10.3.custom.min.css') ?>" rel="stylesheet" />

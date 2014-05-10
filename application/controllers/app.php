@@ -33,6 +33,7 @@ class App extends Main_Controller {
 		if (!$this->session->userdata("loggedin"))
 			redirect('app/index');
 		
+		$data['minerdPools'] = json_decode($this->redis->get("minerd_pools"));
 		$data['btc'] = $this->util_model->getBtcUsdRates();
 		$data['ltc'] = $this->util_model->getCryptsyRates(3);
 		$data['doge'] = $this->util_model->getCryptsyRates(132);
@@ -56,7 +57,9 @@ class App extends Main_Controller {
 	{
 		if (!$this->session->userdata("loggedin"))
 			redirect('app/index');
-
+			
+		$extramessages = false;
+			
 		if ($this->input->post('save_settings'))
 		{
 			$dashSettings = trim($this->input->post('dashboard_refresh_time'));
@@ -70,7 +73,16 @@ class App extends Main_Controller {
 				if ($poolUrl)
 				{
 					if (isset($poolUsernames[$key]) && isset($poolPasswords[$key]))
-						$pools[] = array("url" => $poolUrl, "username" => $poolUsernames[$key], "password" => $poolPasswords[$key]);
+					{
+						if ($this->util_model->checkPool($poolUrl))
+						{
+							$pools[] = array("url" => $poolUrl, "username" => $poolUsernames[$key], "password" => $poolPasswords[$key]);	
+						}
+						else
+						{
+							$extramessages[] = "I cannot add this pool <strong>$poolUrl</strong> because it doesn't seem to be alive";
+						}
+					}
 				}
 			}
 
@@ -119,6 +131,13 @@ class App extends Main_Controller {
 					$settings .= " ".$this->input->post('minerd_extraoptions')." ";
 				}
 				$this->redis->set('minerd_extraoptions', $this->input->post('minerd_extraoptions'));
+				
+				// Logging
+				if ($this->input->post('minerd_log'))
+				{
+					$settings .= " --log ";
+				}
+				$this->redis->set('minerd_log', $this->input->post('minerd_log'));
 			}
 			
 			// Add the pools to the command
@@ -163,6 +182,12 @@ class App extends Main_Controller {
 			}
 		}
 		
+		if (is_array($extramessages))
+		{
+			$data['message'] = '<b>Warning!</b> '.implode(" ", $extramessages);
+			$data['message_type'] = "warning";
+		}
+		
 		$data['btc'] = $this->util_model->getBtcUsdRates();
 		$data['ltc'] = $this->util_model->getCryptsyRates(3);
 		$data['doge'] = $this->util_model->getCryptsyRates(132);
@@ -172,6 +197,7 @@ class App extends Main_Controller {
 		$data['minerdAutotune'] = $this->redis->get('minerd_autotune');
 		$data['minerdStartfreq'] = $this->redis->get('minerd_startfreq');
 		$data['minerdExtraoptions'] = $this->redis->get('minerd_extraoptions');
+		$data['minerdLog'] = $this->redis->get('minerd_log');
 		$data['minerdManualSettings'] = $this->redis->get('minerd_manual_settings');
 		$data['minerdSettings'] = $this->redis->get("minerd_settings");
 		$data['minerdPools'] = $this->redis->get("minerd_pools");
