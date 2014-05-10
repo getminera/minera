@@ -7,6 +7,35 @@ By now Minera supports only the new cpuminer-gc3355 by sandor111 please refer to
 
 Minera is tested only with Gridseed 5chip device, so it could show weird results with Gridseed Blade devices, if you would like to help me support this kind of device, please drop me a line.
 
+Features
+-------------
+
+This is a list of some of the Minera's features:
+
+**Dashboard**
+
+* Hashrate widget
+* Errors widget
+* Last share widget
+* Miner details table with per device sort, search, pagination
+* Devices tree with cool graph
+* Hashrate history
+* Errors/Rejects history
+* Sysload monitor
+
+**Settings**
+
+* Pools setting with main/failovers (pool are live checked)
+* Guided or Manual miner configuration
+* Device autotune
+* Device autodetection
+* Logging
+* Start frequency
+* Auto-recover mode
+* Extra options
+* Dashboard refresh time
+* Minera password management
+
 Requirements
 -------------
 
@@ -81,23 +110,15 @@ In the same path you can find also *minerd-ubuntu-64bit* file, this one is pre-c
 Configuring
 -------------
 
-Minera grows and now has some cool options.
-First of all you need to configure the minerd options to know how to start “minerd” command, there are some options you can choose, so please refer to cpuminer-gc3355 README.
+Minera has a complete settings page where you can choose many options to start your miners.
 
-Go to settings (*Miner -> Settings*) and fill the “Minerd options” textarea with something like this:
+You can add or remove pools for failover and select to be guided or to write your own configuration.
 
-```
---gc3355-detect --gc3355-autotune --freq=850 -o stratum+tcp://<yourpool>:<yourpollport> -u <yourworker> -p <yourworkerpass> --retries=1
-```
+Go to settings (*Miner -> Settings*) and choose your preferred options.
 
 A sample settings is pre-configured when you run the install_minera.sh script.
 
 Please remember to change your minera's settings or you will mine for my workers :)
-
-Then you can set:
-
-* minerd auto-recover mode
-* dashboard auto-refresh time
 
 Troubleshooting
 -------------
