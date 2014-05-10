@@ -230,10 +230,15 @@
 
                     <!-- sidebar menu -->
                     <ul class="sidebar-menu">
-                        <li>
+                        <li data-toggle="tooltip" title="" data-original-title="Go to the dashboard page">
                             <a href="<?php echo site_url("app/dashboard") ?>">
                                 <i class="fa fa-dashboard"></i> <span>Dashboard</span>
                             </a>
+                        </li>
+                        <li data-toggle="tooltip" title="" data-original-title="Go to the settings page">
+                        	<a href="<?php echo site_url("app/settings") ?>">
+                        		<i class="fa fa-gear"></i> <span>Settings</span>
+                        	</a>
                         </li>
                         <li class="treeview">
                             <a href="#">
@@ -246,7 +251,6 @@
                                 <li data-toggle="tooltip" title="" data-original-title="<?php echo ($isOnline) ? "It seems your miner is mining. To restart it click below" : "Start your miner"; ?>"><a href="<?php echo ($isOnline) ? "#" : site_url("app/start_miner"); ?>" style="margin-left: 10px;"><i class="fa fa-arrow-circle-o-up"></i> Start miner</a></li>
                                 <li data-toggle="tooltip" title="" data-original-title="<?php echo ($isOnline) ? "Stop your miner" : "Your miner is stopped"; ?>"><a href="<?php echo site_url("app/stop_miner") ?>" style="margin-left: 10px;"><i class="fa fa-arrow-circle-o-down"></i> Stop miner</a></li>
                                 <li data-toggle="tooltip" title="" data-original-title="Restart your miner"><a href="<?php echo site_url("app/restart_miner") ?>" style="margin-left: 10px;"><i class="fa fa-repeat"></i> Restart miner</a></li>
-                                <li data-toggle="tooltip" title="" data-original-title="Go to settings"><a href="<?php echo site_url("app/settings") ?>" style="margin-left: 10px;"><i class="fa fa-gear"></i> Settings</a></li>
                             </ul>
                         </li>
                         <li class="treeview">

@@ -19,6 +19,7 @@
 .more-line-height {line-height: 1.8em;}
 .warning-section { display: none;}
 body > .header .navbar .nav > li > a > .label { padding: 3px !important; }
+.row-btn-options { margin: 15px 0;}
 
 @media all and (max-width : 960px) { 
 	.messages-menu { display: none !important;}

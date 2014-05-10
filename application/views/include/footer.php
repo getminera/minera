@@ -6,7 +6,113 @@
 
     <!-- AdminLTE App -->
     <script src="<?php echo base_url('assets/js/app.js') ?>" type="text/javascript"></script>
-		
+
+	<?php if ($settingsScript) : ?>
+	<!-- jQuery Validation -->
+    <script src="<?php echo base_url('assets/js/jquery.validate.min.js') ?>" type="text/javascript"></script>
+    
+    <!-- Settings script -->
+    <script type="text/javascript">
+    	
+		$(function() {
+		    "use strict";
+
+		    if ($("#manual_options").val() == "1") $(".guided-options").hide();
+		    if ($("#guided_options").val() == "1") $(".manual-options").hide();
+		    $(".btn-manual-options").click(function() {
+		    	$(".guided-options").fadeOut();
+				$(".manual-options").fadeIn();
+				$(".btn-manual-options").addClass("disabled");
+				$(".btn-guided-options").removeClass("disabled");
+				$("#manual_options").val(1);
+				$("#guided_options").val(0);
+				return false;
+		    });
+		    $(".btn-guided-options").click(function() {
+		    	$(".manual-options").fadeOut();
+				$(".guided-options").fadeIn();
+				$(".btn-guided-options").addClass("disabled");
+				$(".btn-manual-options").removeClass("disabled");
+				$("#manual_options").val(0);
+				$("#guided_options").val(1);
+				return false;
+		    });
+		    
+		    // validate signup form on keyup and submit
+			var validator = $("#minersettings").validate({
+			    // the errorPlacement has to take the table layout into account
+			    errorPlacement: function(error, element) {
+					error.appendTo( $(element).closest(".input-group").parent().after() );
+			    },
+			    // specifying a submitHandler prevents the default submit, good for the demo
+			    /*submitHandler: function() {
+			    	alert("submitted!");
+			    },*/
+			    // set this class to error-labels to indicate valid fields
+			    unhighlight: function(element) {
+					$(element).closest(".input-group").removeClass("has-error").addClass("has-success");
+			    },
+			    highlight: function(element, errorClass) {
+			    	$(element).closest(".input-group").removeClass("has-success").addClass("has-error");
+			    }
+			});
+			
+			$(".pool_url").each(function () {
+				if ($(this).attr("name") == "pool_url[0]")
+				{
+					$(this).rules('add', 'required');
+				}
+				else
+				{
+					$(this).rules('add', {
+						required: {
+							depends: function(element) {
+								return ($(element).parent().parent().parent().find('.pool_username').val() != '' || $(element).parent().parent().parent().find('.pool_password').val() != '');
+							}
+						}
+					});
+				}
+			});
+			
+			$(".pool_username").each(function () {
+				if ($(this).attr("name") == "pool_username[0]")
+				{
+					$(this).rules('add', 'required');
+				}
+				else
+				{
+					$(this).rules('add', {
+						required: {
+							depends: function(element) {
+								return ($(element).parent().parent().parent().find('.pool_url').val() != '' || $(element).parent().parent().parent().find('.pool_password').val() != '');
+							}
+						}
+					});
+				}
+			});
+			
+			$(".pool_password").each(function () {
+				if ($(this).attr("name") == "pool_password[0]")
+				{
+					$(this).rules('add', 'required');
+				}
+				else
+				{
+					$(this).rules('add', {
+						required: {
+							depends: function(element) {
+								return ($(element).parent().parent().parent().find('.pool_username').val() != '' || $(element).parent().parent().parent().find('.pool_url').val() != '');
+							}
+						}
+					});
+				}
+			});
+
+		});
+	</script>
+	<?php endif; ?>
+	
+	
 	<?php if ($appScript) : ?>
 	<!-- jQuery Knob -->
     <script src="<?php echo base_url('assets/js/jquery.knob.js') ?>" type="text/javascript"></script>
@@ -83,7 +189,7 @@
 			var d = 0; var totalhash = 0; var totalac = 0; var totalre = 0; var totalhw = 0; var totalsh = 0; var totalfr = 0;
 			
 			$('.overlay').show();
-			$('.loading-img').show();
+			//$('.loading-img').show();
 			
 			/* Morris.js Charts */
 			// get Json data from stored_stats url (redis) and create the graphs
@@ -275,10 +381,12 @@
 							// Add per device rows in system table
 							var share_date = new Date(items[index].ls*1000);
 							var last_share_secs = (now - share_date)/1000;
-							var percentageRe = (100*items[index].re/items[index].ac);
-							var percentageHw = (100*items[index].hw/items[index].ac);
+							var totalWorkedShares = (items[index].ac+items[index].re+items[index].hw);
+							var percentageAc = (100*items[index].ac/totalWorkedShares);
+							var percentageRe = (100*items[index].re/totalWorkedShares);
+							var percentageHw = (100*items[index].hw/totalWorkedShares);
 							
-							var devTable = '<tr class="dev-'+index+'"><td class="devs_table_name"><i class="glyphicon glyphicon-hdd"></i>&nbsp;&nbsp;'+index+dev_serial+'</td><td class="devs_table_freq">'+ items[index].fr + ' Mhz</td><td class="devs_table_hash"><strong>'+ convertHashrate(items[index].hash) +'</strong></td><td class="devs_table_sh">'+ items[index].sh +'</td><td class="devs_table_ac">'+ items[index].ac +'</td><td class="devs_table_re">'+ items[index].re +' <small class="text-muted">('+parseFloat(percentageRe).toFixed(2)+'%)</small></td><td class="devs_table_hw">'+ items[index].hw +' <small class="text-muted">('+parseFloat(percentageHw).toFixed(2)+'%)</small></td><td class="devs_table_ls">'+ parseInt(last_share_secs) +' secs ago <small class="text-muted">('+share_date.toUTCString()+')</small></td></tr>'
+							var devTable = '<tr class="dev-'+index+'"><td class="devs_table_name"><i class="glyphicon glyphicon-hdd"></i>&nbsp;&nbsp;'+index+dev_serial+'</td><td class="devs_table_freq">'+ items[index].fr + ' Mhz</td><td class="devs_table_hash"><strong>'+ convertHashrate(items[index].hash) +'</strong></td><td class="devs_table_sh">'+ items[index].sh +'</td><td class="devs_table_ac">'+ items[index].ac +' <small class="text-muted">('+parseFloat(percentageAc).toFixed(2)+'%)</small></td><td class="devs_table_re">'+ items[index].re +' <small class="text-muted">('+parseFloat(percentageRe).toFixed(2)+'%)</small></td><td class="devs_table_hw">'+ items[index].hw +' <small class="text-muted">('+parseFloat(percentageHw).toFixed(2)+'%)</small></td><td class="devs_table_ls">'+ parseInt(last_share_secs) +' secs ago <small class="text-muted">('+share_date.toUTCString()+')</small></td></tr>'
 							    
 							if (index == "total")
 							{
@@ -379,7 +487,7 @@
 				var name = key;			
 
 			// Add per device knob graph
-			var devBox = '<div class="col-md-'+col+' text-center" id="master-'+ key +'"><input type="text" class="'+ key +'" /><div class="knob-label"><p><strong>'+name+'</strong></p><p>A: '+ac+' - R: '+re+' - H: '+hw+'</p></div></div>';
+			var devBox = '<div class="col-xs-'+col+' text-center" id="master-'+ key +'"><input type="text" class="'+ key +'" /><div class="knob-label"><p><strong>'+name+'</strong></p><p>A: '+ac+' - R: '+re+' - H: '+hw+'</p></div></div>';
 			
 			$("#master-"+key).remove();
 			

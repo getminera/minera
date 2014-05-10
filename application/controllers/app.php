@@ -39,6 +39,7 @@ class App extends Main_Controller {
 		$data['isOnline'] = $this->util_model->isOnline();
 		$data['htmlTag'] = "dashboard";
 		$data['appScript'] = true;
+		$data['settingsScript'] = false;
 		$data['mineraUpdate'] = $this->util_model->checkUpdate();
 		$data['dashboard_refresh_time'] = $this->redis->get("dashboard_refresh_time");
 		
@@ -58,33 +59,86 @@ class App extends Main_Controller {
 
 		if ($this->input->post('save_settings'))
 		{
-			$settings = trim($this->input->post('minerd_settings'));
 			$dashSettings = trim($this->input->post('dashboard_refresh_time'));
+			$poolUrls = $this->input->post('pool_url');
+			$poolUsernames = $this->input->post('pool_username');
+			$poolPasswords = $this->input->post('pool_password');
 
-			if (!empty($settings) && !empty($dashSettings))
+			$pools = array();
+			foreach ($poolUrls as $key => $poolUrl)
 			{
-				$this->redis->set("minerd_settings", $settings);
-				$this->redis->set("minerd_autorecover", $this->input->post('minerd_autorecover'));
-				$this->redis->set("dashboard_refresh_time", $dashSettings);
-				
-				$this->util_model->saveStartupScript();
-				
-				$data['message'] = '<b>Success!</b> Settings saved!';
-				$data['message_type'] = "success";
+				if ($poolUrl)
+				{
+					if (isset($poolUsernames[$key]) && isset($poolPasswords[$key]))
+						$pools[] = array("url" => $poolUrl, "username" => $poolUsernames[$key], "password" => $poolPasswords[$key]);
+				}
+			}
+
+			// Start creating command options string
+			$settings = null;
+
+			// Save manual/guided selection
+			$this->redis->set('manual_options', $this->input->post('manual_options'));
+			$this->redis->set('guided_options', $this->input->post('guided_options'));
+
+			if ($this->input->post('manual_options'))
+			{
+				// Manual options
+				$settings = trim($this->input->post('minerd_manual_settings'));
+				$this->redis->set('minerd_manual_settings', $settings);
+
 			}
 			else
 			{
-				if (empty($settings))
+				// Guided options
+				
+				// Auto-detect
+				if ($this->input->post('minerd_autodetect'))
 				{
-					$data['message'] = "<b>Warning!</b> Minerd options can't be empty";					
+					$settings .= " --gc3355-detect ";			
 				}
-				elseif (empty($dashSettings))
-				{
-					$data['message'] = "<b>Warning!</b> Refresh time must be integer and >= 5";
-				}
+				$this->redis->set('minerd_autodetect', $this->input->post('minerd_autodetect'));
 
-				$data['message_type'] = "warning";
+				// Autotune
+				if ($this->input->post('minerd_autotune'))
+				{
+					$settings .= " --gc3355-autotune ";
+				}
+				$this->redis->set('minerd_autotune', $this->input->post('minerd_autotune'));
+					
+				// Start frequency
+				if ($this->input->post('minerd_startfreq'))
+				{
+					$settings .= " --freq=".$this->input->post('minerd_startfreq')." ";
+				}
+				$this->redis->set('minerd_startfreq', $this->input->post('minerd_startfreq'));
+
+				// Extra options
+				if ($this->input->post('minerd_extraoptions'))
+				{
+					$settings .= " ".$this->input->post('minerd_extraoptions')." ";
+				}
+				$this->redis->set('minerd_extraoptions', $this->input->post('minerd_extraoptions'));
 			}
+			
+			// Add the pools to the command
+			foreach ($pools as $pool)
+			{
+				$addPools[] = " -o ".$pool['url']." -u ".$pool['username']." -p ".$pool['password'];
+			}
+			
+			$settings .= implode(" ", $addPools);
+			// End options string
+
+			$this->redis->set("minerd_pools", json_encode($pools));
+			$this->redis->set("minerd_settings", $settings);
+			$this->redis->set("minerd_autorecover", $this->input->post('minerd_autorecover'));
+			$this->redis->set("dashboard_refresh_time", $dashSettings);
+				
+			$this->util_model->saveStartupScript();
+				
+			$data['message'] = '<b>Success!</b> Settings saved!';
+			$data['message_type'] = "success";
 		}
 
 		if ($this->input->post('save_password'))
@@ -113,11 +167,21 @@ class App extends Main_Controller {
 		$data['ltc'] = $this->util_model->getCryptsyRates(3);
 		$data['doge'] = $this->util_model->getCryptsyRates(132);
 		$data['isOnline'] = $this->util_model->isOnline();
-		$data['minerd_autorecover'] = $this->redis->get('minerd_autorecover');
+		$data['minerdAutorecover'] = $this->redis->get('minerd_autorecover');
+		$data['minerdAutodetect'] = $this->redis->get('minerd_autodetect');
+		$data['minerdAutotune'] = $this->redis->get('minerd_autotune');
+		$data['minerdStartfreq'] = $this->redis->get('minerd_startfreq');
+		$data['minerdExtraoptions'] = $this->redis->get('minerd_extraoptions');
+		$data['minerdManualSettings'] = $this->redis->get('minerd_manual_settings');
+		$data['minerdSettings'] = $this->redis->get("minerd_settings");
+		$data['minerdPools'] = $this->redis->get("minerd_pools");
+		$data['minerdGuidedOptions'] = $this->redis->get("guided_options");
+		$data['minerdManualOptions'] = $this->redis->get("manual_options");
 		$data['dashboard_refresh_time'] = $this->redis->get("dashboard_refresh_time");
 		$data['mineraUpdate'] = $this->util_model->checkUpdate();
 		$data['htmlTag'] = "settings";
 		$data['appScript'] = false;
+		$data['settingsScript'] = true;
 		
 		$this->load->view('include/header', $data);
 		$this->load->view('include/sidebar', $data);
