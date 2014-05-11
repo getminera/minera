@@ -15,7 +15,7 @@ echo -e "Adding groups to Minera\n-----\n"
 usermod -a -G dialout,plugdev,tty,www-data minera
 
 echo -e "Adding sudoers configuration for www-data and minera users\n-----\n"
-echo -e "\n#Minera settings\nminera ALL=(ALL) NOPASSWD: ALL\nwww-data ALL = (ALL) NOPASSWD: /bin/kill\nwww-data ALL = (ALL) NOPASSWD: /usr/bin/screen\nwww-data ALL = (ALL) NOPASSWD: /sbin/reboot\nwww-data ALL = (ALL) NOPASSWD: /sbin/shutdown\nwww-data ALL = (ALL) NOPASSWD: /usr/bin/killall" >> /etc/sudoers
+echo -e "\n#Minera settings\nminera ALL=(ALL) NOPASSWD: ALL\nwww-data ALL = (ALL) NOPASSWD: /bin/kill\nwww-data ALL = (ALL) NOPASSWD: /usr/bin/screen\nwww-data ALL = (ALL) NOPASSWD: /sbin/reboot\nwww-data ALL = (ALL) NOPASSWD: /sbin/shutdown\nwww-data ALL = (ALL) NOPASSWD: /usr/bin/killall\nwww-data ALL = (ALL) NOPASSWD: /usr/bin/git" >> /etc/sudoers
 
 MINER_OPT="--gc3355-detect --gc3355-autotune --freq=850 -o stratum+tcp://multi.ghash.io:3333 -u michelem.minera -p x --retries=1"
 MINER_BIN=`pwd`"/minera-bin/"

@@ -71,7 +71,7 @@ When you have your system ready, ssh into it and **install Minera**
 Skip this step and continue below if you have a web server with PHP just installed.
 
 ```
-sudo apt-get install lighttpd php5-cgi
+sudo apt-get install -y lighttpd php5-cgi
 sudo lighty-enable-mod fastcgi 
 sudo lighty-enable-mod fastcgi-php
 sudo service lighttpd force-reload

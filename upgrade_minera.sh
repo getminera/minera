@@ -11,6 +11,9 @@ echo -e "Changing permissions on Minera dir\n-----\n"
 chown -R minera.minera `pwd`
 chmod -R 777 `pwd`/application/logs
 
+echo -e "Upgrading sudoers configuration for www-data and minera users\n-----\n"
+echo -e "\nwww-data ALL = (ALL) NOPASSWD: /usr/bin/git" >> /etc/sudoers
+
 echo -e "Changing cron file\n-----\n"
 echo "*/5 * * * * www-data php `pwd`/index.php app cron" > /etc/cron.d/minera
 
