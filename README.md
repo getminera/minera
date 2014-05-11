@@ -1,11 +1,15 @@
 Minera
 ==============
 
-Minera is a web frontend to monitor the Gridseed devices running with minerd command.
+Minera is a complete system to manage and monitor your Gridseed devices.
 
 By now Minera supports only the new cpuminer-gc3355 by sandor111 please refer to https://github.com/siklon/cpuminer-gc3355.
 
-Minera is tested only with Gridseed 5chip device, so it could show weird results with Gridseed Blade devices, if you would like to help me support this kind of device, please drop me a line.
+If you like it, please consider a donation:
+
+    Bitcoin: 1AmREReHNLec9EaW7gLRdW31LNSDA9SGR1
+
+Thanks.
 
 Features
 -------------
@@ -17,6 +21,9 @@ This is a list of some of the Minera's features:
 * Hashrate widget
 * Errors widget
 * Last share widget
+* Temperature widget
+* Main pool widget
+* Uptime widget
 * Miner details table with per device sort, search, pagination
 * Devices tree with cool graph
 * Hashrate history
@@ -73,7 +80,7 @@ sudo service lighttpd force-reload
 When your web server is ready you can install Minera:
 
 ```
-sudo apt-get install redis-server git screen php5-cli
+sudo apt-get install -y redis-server git screen php5-cli
 cd /var/www
 sudo git clone https://github.com/michelem09/minera
 cd minera
@@ -106,6 +113,12 @@ In the same path you can find also *minerd-ubuntu-64bit* file, this one is pre-c
 
 	cd /var/www/minera/minera-bin
 	sudo cp minerd-ubuntu-64bit minerd
+
+Upgrading
+-------------
+
+Minera will show you a notification icon in the upper right corner if a new version is available. Click the link to run the upgrade.
+Your miner will not be stopped, but you should restart it to take full adavntages of updates.
 
 Configuring
 -------------

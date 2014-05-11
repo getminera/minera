@@ -21,7 +21,7 @@ class Util_model extends CI_Model {
 	// Call minerd to get the stats and retry before give up
 	public function callMinerd($i = 0)
 	{
-		if(!($fp = fsockopen("127.0.0.1", 4028, $errno, $errstr, 1)))
+		if(!($fp = @fsockopen("127.0.0.1", 4028, $errno, $errstr, 1)))
 		{
 			return array("error" => true, "msg" => $errstr);
 		}
@@ -75,8 +75,11 @@ class Util_model extends CI_Model {
 			if (is_object($a))
 			{
 				$a = (array)$a;
+				
+				// Add sysload stats
 				$a["sysload"] = sys_getloadavg();
 				
+				// Add pools
 				$pools = json_decode($this->redis->get("minerd_pools"), true);
 				
 				foreach ($pools as $pool)
@@ -87,6 +90,10 @@ class Util_model extends CI_Model {
 				
 				$a["pools"] = $nPools;
 				
+				// Add controller temp
+				$a["temp"] = $this->checkTemp();
+				
+				// Encode and save the latest
 				$o = json_encode($a);
 				$this->redis->set("latest_stats", $o);
 				
@@ -215,12 +222,32 @@ class Util_model extends CI_Model {
 	// Check if the minerd if running
 	public function isOnline()
 	{
+		/*
 		exec('ps -ef|grep "minera-bin/minerd" | grep -v grep|grep -v -i screen', $minerd);
 
 		if (count($minerd) > 0)
 			return true;
+		*/
+		if(!($fp = @fsockopen("127.0.0.1", 4028, $errno, $errstr, 1)))
+		{
+			return false;
+		}
 		
-		return false;
+		return true;
+	}
+	
+	// Check RPi temp
+	public function checkTemp()
+	{
+		if (file_exists($this->config->item("rpi_temp_file")))
+		{
+			$temp = exec("cat ".$this->config->item("rpi_temp_file"));
+			return number_format($temp/1000, 2);
+		}
+		else
+		{
+			return false;
+		}
 	}
 	
 	public function checkMinerIsUp()

@@ -278,14 +278,6 @@
 					
 					var startdate = new Date(data['start_time']*1000);
 					
-					var uptime = convertMS(now - data['start_time']*1000);
-	
-					for (var ukey in uptime) {
-						var human_uptime = human_uptime + parseInt(uptime[ukey]) + ukey + " ";
-					}
-					
-					$(".miner-uptime").html("Miner started "+human_uptime+" ago on <strong>"+startdate+"</strong>");
-					
 				    $.each( data['devices'], function( key, val ) {
 				    	d = d+1;
 				    	//console.log(val);
@@ -430,15 +422,6 @@
 						var plabel = "light";
 						var purl = pval.url;
 						
-						if (pkey == 0)
-						{
-							picon = "upload";
-							ptype = "main";
-							pclass = "bg-dark";
-							plabel = "white";
-							purl = '<strong>'+pval.url+'</strong>';
-						}
-						
 						if (pval.alive)
 						{
 							paliveclass = "success";
@@ -449,11 +432,71 @@
 							paliveclass = "danger";
 							palivelabel = "Dead";
 						}
+
+						// Main pool
+						if (pkey == 0)
+						{	
+							picon = "upload";
+							ptype = "main";
+							pclass = "bg-dark";
+							plabel = "white";
+							purl = '<strong>'+pval.url+'</strong>';
+							
+							//Add Main pool widget
+							$('.widget-main-pool').html(palivelabel);
+							$('.widget-main-pool').next('p').html(pval.url);
+						}
 							
 						var poolRow = '<tr class="pool-row '+pclass+'"><td><i class="fa fa-cloud-'+picon+'"></i> '+purl+'</td><td><span class="label label-'+plabel+'">'+ptype+'</span></td><td><span class="label label-'+paliveclass+'">'+palivelabel+'</span></td><td>'+pval.username+'</td><td>'+pval.password+'</td></tr>';
 						
 						$('.pools_table').append(poolRow);
 					});
+					
+					// Add controller temperature
+					if (data['temp'])
+					{
+						var temp_bar = "bg-blue";
+						var temp_text = "It's cool here, wanna join me?"
+						var sys_temp = parseFloat(data['temp']);
+						
+						if (sys_temp > 40 && sys_temp < 60)
+						{
+							temp_bar = "bg-green";
+							temp_text = "I'm warm and fine."
+						}
+						else if (sys_temp >= 60 && sys_temp < 75)
+						{
+							temp_bar = "bg-yellow";
+							temp_text = "Well, it's going to be hot here..."
+						}
+						else if (sys_temp > 75)
+						{
+							temp_bar = "bg-red";
+							temp_text = "HEY MAN! I'm burning! Blow blow!"
+						}
+						
+						var sys_temp_box = parseFloat(sys_temp).toFixed(2)+'&deg;c';
+						//<div class="progress xs progress-striped active"><div class="progress-bar progress-bar-'+temp_bar+'" role="progressbar" aria-valuenow="'+parseInt(sys_temp)+'" aria-valuemin="0" aria-valuemax="100" style="width: '+parseInt(sys_temp)+'%"></div></div>';
+						$('.sys-temp-box').addClass(temp_bar);
+						$('.sys-temp-footer').html(temp_text+'<i class="fa fa-arrow-circle-right">');
+						$('.widget-sys-temp').html(sys_temp_box);
+					}
+					else
+					{
+						$('.widget-sys-temp').html("N.a.");
+						$('.sys-temp-footer').html('Temperature not available <i class="fa fa-arrow-circle-right">');
+					}
+					
+					// Add Uptime widget
+					var uptime = convertMS(now - data['start_time']*1000);
+	
+					var human_uptime = "";
+					for (var ukey in uptime) {
+						human_uptime = human_uptime + "" + uptime[ukey] + ukey + " ";
+					}
+					
+					$(".widget-uptime").html(human_uptime);
+					$(".uptime-footer").html("Started on <strong>"+startdate.toUTCString()+"</strong>");
 				    
 					// Add server load average knob graph
 					$.each( data['sysload'], function( lkey, lval ) 
@@ -656,6 +699,7 @@
 			m = m % 60;
 			d = Math.floor(h / 24);
 			h = h % 24;
+
 			return { d: d, h: h, m: m, s: s };
 		};
 

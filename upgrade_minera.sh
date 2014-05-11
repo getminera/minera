@@ -4,6 +4,9 @@
 
 echo -e "-----\nSTART Minera Upgrade script\n-----\n"
 
+echo -e "-----\nInstall extra packages\n-----\n"
+apt-get install -y build-essential libtool libcurl4-openssl-dev libjansson-dev libudev-dev libncurses5-dev autoconf automake postfix
+
 echo -e "Changing permissions on Minera dir\n-----\n"
 chown -R minera.minera `pwd`
 chmod -R 777 `pwd`/application/logs

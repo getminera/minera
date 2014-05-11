@@ -57,8 +57,11 @@
                         
                         </section>
                         
+                        <!-- widgets section -->
                         <section class="col-md-12 widgets-section">
 	                        <div class="row">
+	                        
+	                        	<!-- total hashrate widget -->
 								<div class="col-lg-4 col-xs-4">
 									<!-- small box -->
 									<div class="small-box bg-red">
@@ -70,6 +73,8 @@
 										<a href="#hashrate-history" class="small-box-footer">History <i class="fa fa-arrow-circle-right"></i></a>
 									</div>
 								</div>
+								
+								<!-- hw/re widget -->
 								<div class="col-lg-4 col-xs-4">
 									<!-- small box -->
 									<div class="small-box bg-light">
@@ -81,6 +86,8 @@
 										<a href="#error-history" class="small-box-footer">Details <i class="fa fa-arrow-circle-right"></i></a>
 									</div>
 								</div>
+								
+								<!-- last share widget -->
 								<div class="col-lg-4 col-xs-4">
 									<!-- small box -->
 									<div class="small-box bg-light-blue">
@@ -92,7 +99,51 @@
 										<a href="#miner-details" class="small-box-footer">Miner details <i class="fa fa-arrow-circle-right"></i></a>
 									</div>
 								</div>
+							</div>							
+							
+							<div class="row">
+							
+								<!-- sys temp widget -->
+								<div class="col-lg-4 col-xs-4">
+									<!-- small box -->
+									<div class="small-box sys-temp-box bg-blue">
+										<div class="inner">
+											<h3 class="widget-sys-temp"><i class="ion ion-loading-c"></i></h3>
+											<p>System temperature</p>
+										</div>
+										<div class="icon"><i class="ion ion-thermometer"></i></div>
+										<a href="#sysload" class="small-box-footer sys-temp-footer">...<i class="fa fa-arrow-circle-right"></i></a>
+									</div>
+								</div>
+								
+								<!-- main pool -->
+								<div class="col-lg-4 col-xs-4">
+									<!-- small box -->
+									<div class="small-box bg-dark">
+										<div class="inner">
+											<h3 class="widget-main-pool"><i class="ion ion-loading-c"></i></h3>
+											<p>Checking...</p>
+										</div>
+										<div class="icon"><i class="ion ion-ios7-cloud-upload-outline"></i></div>
+										<a href="#pools-details" class="small-box-footer">Pools details <i class="fa fa-arrow-circle-right"></i></a>
+									</div>
+								</div>
+								
+								<!-- uptime widget -->
+								<div class="col-lg-4 col-xs-4">
+									<!-- small box -->
+									<div class="small-box bg-aqua">
+										<div class="inner">
+											<h3 class="widget-uptime"><i class="ion ion-loading-c"></i></h3>
+											<p>Miner uptime</p>
+										</div>
+										<div class="icon"><i class="ion ion-ios7-timer-outline"></i></div>
+										<a href="#miner-details" class="small-box-footer uptime-footer">... <i class="fa fa-arrow-circle-right"></i></a>
+									</div>
+								</div>
+								
 							</div>
+							
                         </section>
                         
                         <!-- Top section -->
@@ -140,40 +191,8 @@
                                         </div>
                                     </div><!-- /.row - inside box -->
                                 </div><!-- /.box-body -->
-								<div class="box-footer">
-									<h6 class="miner-uptime"></h6>
-								</div>
-                            </div><!-- /.miner box -->  
-                        
-                        </section>
-                        
-                        <!-- Right col -->
-                        <section class="col-md-6 connectedSortable ui-sortable right-section">
-                        
-                        	<!-- Tree box -->
-                            <div class="box box-dark">
-                               	<div class="overlay"></div>
-                               	<div class="loading-img"></div>
-                                <div class="box-header" style="cursor: move;">
-                                	<!-- tools box -->
-                                    <div class="pull-right box-tools">
-                                        <button class="btn btn-default btn-xs" data-widget="collapse" data-toggle="tooltip" title="" data-original-title="Collapse"><i class="fa fa-minus"></i></button>
-                                    </div><!-- /. tools -->
-                                    <i class="fa fa-sitemap"></i>
-
-                                    <h3 class="box-title">Device Tree</h3>
-                                </div><!-- /.box-header -->
-                                <div class="box-body" style="display: block;">
-                                    <div class="row padding-vert" id="devs-total" ></div>
-                                    <div class="row padding-vert" id="devs"></div>
-                                </div><!-- /.box-body -->
-                            </div><!-- /.tree box -->
-                                                 
-                        </section><!-- Right col -->
-                        
-						<!-- Left col -->
-                        <section class="col-md-6 connectedSortable ui-sortable left-section">
-                        
+                            </div><!-- /.miner box -->
+                            
 							<!-- Pools box -->
                             <div class="box box-light">
                                	<div class="overlay"></div>
@@ -210,6 +229,35 @@
                                     </div><!-- /.row - inside box -->
                                 </div><!-- /.box-body -->
                             </div><!-- /.miner box -->  
+                        
+                        </section>
+                        
+                        <!-- Right col -->
+                        <section class="col-md-6 connectedSortable ui-sortable right-section">
+                        
+                        	<!-- Tree box -->
+                            <div class="box box-dark">
+                               	<div class="overlay"></div>
+                               	<div class="loading-img"></div>
+                                <div class="box-header" style="cursor: move;">
+                                	<!-- tools box -->
+                                    <div class="pull-right box-tools">
+                                        <button class="btn btn-default btn-xs" data-widget="collapse" data-toggle="tooltip" title="" data-original-title="Collapse"><i class="fa fa-minus"></i></button>
+                                    </div><!-- /. tools -->
+                                    <i class="fa fa-sitemap"></i>
+
+                                    <h3 class="box-title">Device Tree</h3>
+                                </div><!-- /.box-header -->
+                                <div class="box-body" style="display: block;">
+                                    <div class="row padding-vert" id="devs-total" ></div>
+                                    <div class="row padding-vert" id="devs"></div>
+                                </div><!-- /.box-body -->
+                            </div><!-- /.tree box -->
+                                                 
+                        </section><!-- Right col -->
+                        
+						<!-- Left col -->
+                        <section class="col-md-6 connectedSortable ui-sortable left-section">
                             
                         	<!-- Hashrate box chart -->
 							<div class="box box-primary">
@@ -247,7 +295,7 @@
                             </div>
                             
 							<!-- System box -->
-                            <div class="box box-success">
+                            <div class="box box-light">
                                	<div class="overlay"></div>
                                	<div class="loading-img"></div>
                                 <div class="box-header" style="cursor: move;">
@@ -257,7 +305,7 @@
                                     </div><!-- /. tools -->
                                     <i class="fa fa-tasks"></i>
 
-                                    <h3 class="box-title">System Load</h3>
+                                    <h3 class="box-title" id="sysload">System Load</h3>
                                 </div><!-- /.box-header -->
                                 <div class="box-body" style="display: block;">
                                     <div class="row padding-vert sysload" ></div>
