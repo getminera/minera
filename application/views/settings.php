@@ -157,7 +157,7 @@
 																<select class="form-control" name="minerd_startfreq">
 																<?php $inc = 15; ?>
 																<?php for ($s=600; $s<=1400; $s++) : ?>
-																	<option <?php echo ($minerdStartfreq == $s) ? "selected" : ""; ?>><?php echo $s ?>MHz</option>
+																	<option value="<?php echo $s ?>" <?php echo ($minerdStartfreq == $s) ? "selected" : ""; ?>><?php echo $s ?>MHz</option>
 																<?php endfor; ?>
 																</select>
 															</div><!-- /.input group -->
