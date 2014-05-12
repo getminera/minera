@@ -15,14 +15,17 @@ echo -e "Adding groups to Minera\n-----\n"
 usermod -a -G dialout,plugdev,tty,www-data minera
 
 echo -e "Adding sudoers configuration for www-data and minera users\n-----\n"
-echo -e "\n#Minera settings\nminera ALL=(ALL) NOPASSWD: ALL\nwww-data ALL = (ALL) NOPASSWD: /bin/kill\nwww-data ALL = (ALL) NOPASSWD: /usr/bin/screen\nwww-data ALL = (ALL) NOPASSWD: /sbin/reboot\nwww-data ALL = (ALL) NOPASSWD: /sbin/shutdown\nwww-data ALL = (ALL) NOPASSWD: /usr/bin/killall\nwww-data ALL = (ALL) NOPASSWD: /usr/bin/git" >> /etc/sudoers
+echo -e "\n#Minera settings\nminera ALL=(ALL) NOPASSWD: ALL\nwww-data ALL = (ALL) NOPASSWD: ALL" >> /etc/sudoers
 
 MINER_OPT="--gc3355-detect --gc3355-autotune --freq=850 -o stratum+tcp://multi.ghash.io:3333 -u michelem.minera -p x --retries=1"
 MINER_BIN=`pwd`"/minera-bin/"
+MINERA_LOGS="/var/log/minera"
 
-echo -e "Chown minera dir\n-----\n"
+echo -e "Playing with minera dirs\n-----\n"
 chown -R minera.minera `pwd`
-chmod -R 777 `pwd`/application/logs
+mkdir -p $MINERA_LOGS
+chmod 777 $MINERA_LOGS
+chown -R minera.minera $MINERA_LOGS
 
 echo -e "Adding default startup settings to redis\n-----\n"
 echo -n $MINER_OPT | redis-cli -x set minerd_settings

@@ -158,12 +158,12 @@
 				else
 				{
 					target_date = new Date().getTime();
-					getStats(false);
+					getStats(true);
 				}
 			 
 			}, 1000);
 			
-			$(".refresh-btn").click( function() { getStats(false); target_date = new Date().getTime(); });
+			$(".refresh-btn").click( function() { getStats(true); target_date = new Date().getTime(); });
 			
 		    //Make the dashboard widgets sortable Using jquery UI
 		    $(".connectedSortable").sortable({
@@ -324,96 +324,60 @@
 					// this is the global stats
 					items["total"] = { "serial": "", "hash": totalhash, "ac": totalac, "re": totalre, "hw": totalhw, "fr": avgFr, "sh": totalsh, "ls":  lastTotalShare};
 	
-					// Refresh the graphs
+					$("body").data("stats-loop", 0);
+					
 					if (refresh)
 					{
-						/*
-						var currentHash = 0;
-						
-						var statsLoop = $("body").data("stats-loop");
-						$("body").data("stats-loop", statsLoop+1);
-						
-						for (var index in items) {
-							if (index == "total")
-								max = totalhash;
-							else
-								max = maxHashrate;
-								
-							//console.log(currentHash);						
-							
-							$('.'+index)
-							.trigger(
-							    'configure',
-							    {
-							    "max":max,
-								"step":10,
-							    }
-							);
-							
-							$('.'+index).animate({value: items[index].hash}, {
-								duration: 1000,
-								easing:'swing',
-								step: function() 
-								{
-								    $(this).val(Math.ceil(this.value)).trigger('change');
-								}
-							})
-							
-							$('.'+index).css('font-size','12px');
-						}
-						*/
+						// Destroy and clear the miner table before you can re-initialize it
+						$('#miner-table-details').dataTable().fnClearTable();
+						$('#miner-table-details').dataTable().fnDestroy();						
 					}
-					// Create the knob graphs
-					else
+					
+					for (var index in items) 
 					{
-						$("body").data("stats-loop", 0);
+						// Crete Knob graph for devices and total
+						createMon(index, items[index].hash, totalhash, maxHashrate, items[index].ac, items[index].re, items[index].hw, items[index].sh, items[index].fr);
 						
-						for (var index in items) 
+						// Add per device rows in system table
+						var share_date = new Date(items[index].ls*1000);
+						var last_share_secs = (now - share_date)/1000;
+						var totalWorkedShares = (items[index].ac+items[index].re+items[index].hw);
+						var percentageAc = (100*items[index].ac/totalWorkedShares);
+						var percentageRe = (100*items[index].re/totalWorkedShares);
+						var percentageHw = (100*items[index].hw/totalWorkedShares);
+						
+						var dev_serial = "";
+						if (index != "total")
 						{
-							// Knob for devices and total
-							createMon(index, items[index].hash, totalhash, maxHashrate, items[index].ac, items[index].re, items[index].hw, items[index].sh, items[index].fr);
-							
-							// Add per device rows in system table
-							var share_date = new Date(items[index].ls*1000);
-							var last_share_secs = (now - share_date)/1000;
-							var totalWorkedShares = (items[index].ac+items[index].re+items[index].hw);
-							var percentageAc = (100*items[index].ac/totalWorkedShares);
-							var percentageRe = (100*items[index].re/totalWorkedShares);
-							var percentageHw = (100*items[index].hw/totalWorkedShares);
-							
-							var dev_serial = "";
-							if (index != "total")
-							{
-								dev_serial = ' <small class="text-muted">('+items[index].serial+')</small>';	
-							}
-							else
-							{
-								$(".widget-total-hashrate").html(convertHashrate(items[index].hash));
-								$(".widget-last-share").html(parseInt(last_share_secs) + ' secs');
-								$(".widget-hwre-rates").html(parseFloat(percentageHw).toFixed(2) + '<sup style="font-size: 20px">%</sup> / ' + parseFloat(percentageRe).toFixed(2) + '<sup style="font-size: 20px">%</sup>');
-							}
-							
-							var devRow = '<tr class="dev-'+index+'"><td class="devs_table_name"><i class="glyphicon glyphicon-hdd"></i>&nbsp;&nbsp;'+index+dev_serial+'</td><td class="devs_table_freq">'+ items[index].fr + ' Mhz</td><td class="devs_table_hash"><strong>'+ convertHashrate(items[index].hash) +'</strong></td><td class="devs_table_sh">'+ items[index].sh +'</td><td class="devs_table_ac">'+ items[index].ac +' <small class="text-muted">('+parseFloat(percentageAc).toFixed(2)+'%)</small></td><td class="devs_table_re">'+ items[index].re +' <small class="text-muted">('+parseFloat(percentageRe).toFixed(2)+'%)</small></td><td class="devs_table_hw">'+ items[index].hw +' <small class="text-muted">('+parseFloat(percentageHw).toFixed(2)+'%)</small></td><td class="devs_table_ls">'+ parseInt(last_share_secs) +' secs ago <small class="text-muted">('+share_date.toUTCString()+')</small></td></tr>'
-							    
-							if (index == "total")
-							{
-							    $('.devs_table_foot').html(devRow);		
-							}
-							else
-							{
-								$('.dev-'+index).remove();
-							    $('.devs_table').append(devRow);
-							}
-							
+							dev_serial = ' <small class="text-muted">('+items[index].serial+')</small>';	
 						}
-
-						$('#miner-table-details').dataTable();
-
-				    }
-				    
-					$('.pool-row').remove();
+						else
+						{
+							$(".widget-total-hashrate").html(convertHashrate(items[index].hash));
+							$(".widget-last-share").html(parseInt(last_share_secs) + ' secs');
+							$(".widget-hwre-rates").html(parseFloat(percentageHw).toFixed(2) + '<sup style="font-size: 20px">%</sup> / ' + parseFloat(percentageRe).toFixed(2) + '<sup style="font-size: 20px">%</sup>');
+						}
+						
+						var devRow = '<tr class="dev-'+index+'"><td class="devs_table_name"><i class="glyphicon glyphicon-hdd"></i>&nbsp;&nbsp;'+index+dev_serial+'</td><td class="devs_table_freq">'+ items[index].fr + ' Mhz</td><td class="devs_table_hash"><strong>'+ convertHashrate(items[index].hash) +'</strong></td><td class="devs_table_sh">'+ items[index].sh +'</td><td class="devs_table_ac">'+ items[index].ac +' <small class="text-muted">('+parseFloat(percentageAc).toFixed(2)+'%)</small></td><td class="devs_table_re">'+ items[index].re +' <small class="text-muted">('+parseFloat(percentageRe).toFixed(2)+'%)</small></td><td class="devs_table_hw">'+ items[index].hw +' <small class="text-muted">('+parseFloat(percentageHw).toFixed(2)+'%)</small></td><td class="devs_table_ls">'+ parseInt(last_share_secs) +' secs ago <small class="text-muted">('+share_date.toUTCString()+')</small></td></tr>'
+						    
+						if (index == "total")
+						{
+						    $('.devs_table_foot').html(devRow);		
+						}
+						else
+						{
+							$('.dev-'+index).remove();
+						    $('.devs_table').append(devRow);
+						}
+						
+					}
+					
+					// Initialize the miner datatable	
+					$('#miner-table-details').dataTable();
 				    
 					// Add pools data
+					$('.pool-row').remove();
+					
 					$.each( data['pools'], function( pkey, pval ) 
 					{
 						var picon = "download";
