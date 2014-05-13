@@ -8,12 +8,16 @@ echo -e "-----\nInstall extra packages\n-----\n"
 apt-get install -y build-essential libtool libcurl4-openssl-dev libjansson-dev libudev-dev libncurses5-dev autoconf automake postfix
 
 MINERA_LOGS="/var/log/minera"
+MINERA_OLD_LOGS=`pwd`"/application/logs"
 
 echo -e "Changing permissions on Minera dir\n-----\n"
 chown -R minera.minera `pwd`
 mkdir -p $MINERA_LOGS
 chmod 777 $MINERA_LOGS
 chown -R minera.minera $MINERA_LOGS
+mv $MINERA_OLD_LOGS/* $MINERA_LOGS
+rm -rf $MINERA_OLD_LOGS
+ln -s $MINERA_LOGS $MINERA_OLD_LOGS
 
 echo -e "Upgrading sudoers configuration for www-data and minera users\n-----\n"
 echo -e "\n#Minera settings\nminera ALL=(ALL) NOPASSWD: ALL\nwww-data ALL = (ALL) NOPASSWD: ALL" >> /etc/sudoers
