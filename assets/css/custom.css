@@ -24,6 +24,8 @@ body > .header .navbar .nav > li > a > .label { padding: 3px !important; }
 .label-white { background-color: #f7f7f7; color: #434343; }
 .label-light { background-color: #E0E0E0; color: #7a7a7a; }
 .small-box h4 { font-size: 28px; font-weight: bold; margin: 0 0 10px 0; white-space: nowrap; padding: 0; }
+.log-box { font-size: 11px; min-height: 220px; overflow: hidden;}
+.sidebar { position: fixed; width: 220px; }
 
 @media all and (max-width : 960px) { 
 	.messages-menu { display: none !important;}

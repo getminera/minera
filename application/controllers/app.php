@@ -38,6 +38,7 @@ class App extends Main_Controller {
 		$data['ltc'] = $this->util_model->getCryptsyRates(3);
 		$data['doge'] = $this->util_model->getCryptsyRates(132);
 		$data['isOnline'] = $this->util_model->isOnline();
+		$data['minerdLog'] = $this->redis->get('minerd_log');
 		$data['htmlTag'] = "dashboard";
 		$data['appScript'] = true;
 		$data['settingsScript'] = false;

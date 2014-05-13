@@ -121,7 +121,7 @@
     <!-- DATA TABES SCRIPT -->
 	<script src="<?php echo base_url('assets/js/jquery.dataTables.js') ?>" type="text/javascript"></script>
 	<script src="<?php echo base_url('assets/js/dataTables.bootstrap.js') ?>" type="text/javascript"></script>
-    
+	    
     <!-- jQuery Morris Charts -->
     <script src="//cdnjs.cloudflare.com/ajax/libs/raphael/2.1.0/raphael-min.js"></script>
     <script src="<?php echo base_url('assets/js/morris.min.js') ?>" type="text/javascript"></script>
@@ -174,6 +174,176 @@
 		        zIndex: 999999
 		    });
 		    $(".box-header, .nav-tabs").css("cursor","move");
+		    
+		    /*
+		    // Start logviewer
+		    */
+			var dataelem = "#real-time-log-data";
+			var pausetoggle = "#pause";
+			var scrollelems = [".real-time-log-data"];
+			
+			var url = "<?php echo base_url($this->config->item("minerd_log_url")); ?>";
+			var fix_rn = true;
+			var load_log = 1 * 1024; /* 30KB */
+			var poll = 1000; /* 1s */
+			
+			var kill = false;
+			var loading = false;
+			var pause_log = false;
+			var reverse = false;
+			var log_data = "";
+			var log_size = 0;
+			
+			function get_log() {
+			    if (kill | loading) return;
+			    loading = true;
+			
+			    var range;
+			    if (log_size === 0)
+			        /* Get the last 'load' bytes */
+			        range = "-" + load_log.toString();
+			    else
+			        /* Get the (log_size - 1)th byte, onwards. */
+			        range = (log_size - 1).toString() + "-";
+			
+			    /* The "log_size - 1" deliberately reloads the last byte, which we already
+			     * have. This is to prevent a 416 "Range unsatisfiable" error: a response
+			     * of length 1 tells us that the file hasn't changed yet. A 416 shows that
+			     * the file has been trucnated */
+			
+			    $.ajax(url, {
+			        dataType: "text",
+			        cache: false,
+			        headers: {Range: "bytes=" + range},
+			        success: function (data, s, xhr) {
+			            loading = false;
+			
+			            var size;
+			
+			            if (xhr.status === 206) {
+			                //if (data.length > load)
+			                    //throw "Expected 206 Partial Content";
+			
+			                var c_r = xhr.getResponseHeader("Content-Range");
+			                if (!c_r)
+			                    throw "Server did not respond with a Content-Range";
+			
+			                size = parseInt(c_r.split("/")[1]);
+			                if (isNaN(size))
+			                    throw "Invalid Content-Range size";
+			            } else if (xhr.status === 200) {
+			                if (log_size > 1)
+			                    throw "Expected 206 Partial Content";
+			
+			                size = data.length;
+			            }
+			
+			            var added = false;
+			
+			            if (log_size === 0) {
+			                /* Clip leading part-line if not the whole file */
+			                if (data.length < size) {
+			                    var start = data.indexOf("\n");
+			                    log_data = data.substring(start + 1);
+			                } else {
+			                    log_data = data;
+			                }
+			
+			                added = true;
+			            } else {
+			                /* Drop the first byte (see above) */
+			                log_data += data.substring(1);
+			
+			                if (log_data.length > load_log) {
+			                    var start = log_data.indexOf("\n", log_data.length - load_log);
+			                    log_data = log_data.substring(start + 1);
+			                }
+			
+			                if (data.length > 1)
+			                    added = true;
+			            }
+			
+			            log_size = size;
+			            if (added)
+			                show_log(added);
+			            setTimeout(get_log, poll);
+			        },
+			        error: function (xhr, s, t) {
+			            loading = false;
+			
+			            if (xhr.status === 416 || xhr.status == 404) {
+			                /* 416: Requested range not satisfiable: log was truncated. */
+			                /* 404: Retry soon, I guess */
+			
+			                log_size = 0;
+			                log_data = "";
+			                show_log();
+			
+			                setTimeout(get_log, poll);
+			            } else {
+			                if (s == "error")
+			                    error(xhr.statusText);
+			                else
+			                    error("AJAX Error: " + s);
+			            }
+			        }
+			    });
+			}
+			
+			function scroll_log(where) {
+			    for (var i = 0; i < scrollelems.length; i++) {
+			        var s = $(scrollelems[i]);
+			        if (where === -1)
+			            s.scrollTop(s.height());
+			        else
+			            s.scrollTop(where);
+			    }
+			}
+			
+			function show_log() {
+			    if (pause_log) return;
+			
+			    var t = log_data;
+			
+			    if (reverse) {
+			        var t_a = t.split(/\n/g);
+			        t_a.reverse();
+			        if (t_a[0] == "") 
+			            t_a.shift();
+			        t = t_a.join("\n");
+			    }
+			
+			    if (fix_rn)
+			        t = t.replace(/\n/g, "\r\n");
+			
+			    $(dataelem).text(t);
+			    if (!reverse)
+			        scroll_log(-1);
+			}
+			
+			/* Add pause toggle */
+			$('.pause-log').click(function (e) {
+				pause_log = !pause_log;
+				if (pause_log)
+				{
+					$(this).html('<i class="fa fa-play"></i>');
+					$(this).attr('data-original-title', 'Play log');
+				}
+				else
+				{
+					$(this).html('<i class="fa fa-pause"></i>');	
+					$(this).attr('data-original-title', 'Pause log');
+				}
+				show_log();
+				e.preventDefault();
+			});
+			
+			get_log();
+			$('.pause-log').click();
+			
+			/*
+			// End logviewer
+			*/
 		    
 		});
 		
@@ -353,9 +523,13 @@
 						}
 						else
 						{
+							// Widgets
 							$(".widget-total-hashrate").html(convertHashrate(items[index].hash));
 							$(".widget-last-share").html(parseInt(last_share_secs) + ' secs');
 							$(".widget-hwre-rates").html(parseFloat(percentageHw).toFixed(2) + '<sup style="font-size: 20px">%</sup> / ' + parseFloat(percentageRe).toFixed(2) + '<sup style="font-size: 20px">%</sup>');
+							
+							//Sidebar hashrate
+							//$('.sidebar-hashrate').html("@ "+convertHashrate(items[index].hash));
 						}
 						
 						var devRow = '<tr class="dev-'+index+'"><td class="devs_table_name"><i class="glyphicon glyphicon-hdd"></i>&nbsp;&nbsp;'+index+dev_serial+'</td><td class="devs_table_freq">'+ items[index].fr + ' Mhz</td><td class="devs_table_hash"><strong>'+ convertHashrate(items[index].hash) +'</strong></td><td class="devs_table_sh">'+ items[index].sh +'</td><td class="devs_table_ac">'+ items[index].ac +' <small class="text-muted">('+parseFloat(percentageAc).toFixed(2)+'%)</small></td><td class="devs_table_re">'+ items[index].re +' <small class="text-muted">('+parseFloat(percentageRe).toFixed(2)+'%)</small></td><td class="devs_table_hw">'+ items[index].hw +' <small class="text-muted">('+parseFloat(percentageHw).toFixed(2)+'%)</small></td><td class="devs_table_ls">'+ parseInt(last_share_secs) +' secs ago <small class="text-muted">('+share_date.toUTCString()+')</small></td></tr>'

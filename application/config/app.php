@@ -8,6 +8,7 @@ $config['screen_command_stop'] = '/usr/bin/screen -S cpuminer -X quit';
 $config['minerd_command'] = FCPATH.'minera-bin/minerd';
 $config['minerd_start_script_file'] = FCPATH.'minera-bin/start_minerd';
 $config['minerd_log_file'] = '/var/log/minera/cpuminer.log';
+$config['minerd_log_url'] = 'application/logs/cpuminer.log';
 $config['tmp_stats_file'] = '/tmp/cm_latest_stats';
 $config['system_user'] = 'minera';
 $config['remote_config_url'] = 'https://raw.githubusercontent.com/michelem09/minera/master/minera.json';

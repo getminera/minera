@@ -221,7 +221,7 @@
                         <div class="pull-left info">
                             <p>Hello, your miner is</p>
 							<?php if ($isOnline) : ?>
-	                            <a href="#"><i class="fa fa-circle text-success"></i> Online</a>
+	                            <a href="#"><i class="fa fa-circle text-success"></i> Online <span class="sidebar-hashrate"></span></a>
 	                        <?php else: ?>
 	                            <a href="#"><i class="fa fa-circle text-danger"></i> Offline</a>
 							<?php endif; ?>

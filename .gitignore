@@ -1,3 +1,2 @@
-application/logs/log-*
-application/logs/*.log
+application/logs
 *.log

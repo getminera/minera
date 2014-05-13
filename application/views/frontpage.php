@@ -229,7 +229,7 @@
                                     </div><!-- /.row - inside box -->
                                 </div><!-- /.box-body -->
                             </div><!-- /.miner box -->  
-                        
+                            
                         </section>
                         
                         <!-- Right col -->
@@ -320,7 +320,33 @@
 					
                         <!-- Bottom section -->
 						<section class="col-md-12 connectedSortable ui-sortable bottom-section">
+                        
+							<!-- Real time log box -->
+                            <div class="box box-light">
+                                <div class="box-header" style="cursor: move;">
+                                    <!-- tools box -->
+                                    <div class="pull-right box-tools">
+										<small class="log-file"><a href="<?php echo base_url($this->config->item("minerd_log_url")); ?>" target="_blank">view raw log</a></small>&nbsp;
+                                        <button class="btn btn-default btn-xs pause-log" data-widget="pause" data-toggle="tooltip" title="" data-original-title="Pause Log"><i class="fa fa-pause"></i></button>
+                                        <button class="btn btn-default btn-xs" data-widget="collapse" data-toggle="tooltip" title="" data-original-title="Collapse"><i class="fa fa-minus"></i></button>
+                                    </div><!-- /. tools -->
+                                    <i class="fa fa-file-o"></i>
+
+                                    <h3 class="box-title" id="pools-details">Miner real time log</h3>
+                                </div>
+                                <div class="box-body">
+                                	<?php if ($minerdLog) :?>
+										<pre class="log-box" id="real-time-log-data">Logger is in pause, click play to resume it.</pre>
+									<?php else: ?>
+										<pre>Please enable logging in the settings page to see the miner log here.</pre>
+									<?php endif; ?>
+                                </div><!-- /.box-body -->
+                                <div class="box-footer">
+                                	<h6>To view the full <a href="<?php echo base_url($this->config->item("minerd_log_url")); ?>" target="_blank">raw log please click this link</a>, just refresh it to see updates.</h6>
+                                </div>
+                            </div><!-- /.miner box -->                             
                             
+                            <!-- Donations box -->
                             <div class="box bg-light box-danger">
                                 <div class="box-header">
 									<!-- tools box -->
