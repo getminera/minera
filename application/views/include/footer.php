@@ -221,7 +221,7 @@
 			            var size;
 			
 			            if (xhr.status === 206) {
-			                //if (data.length > load)
+			                //if (data.length > load_log)
 			                    //throw "Expected 206 Partial Content";
 			
 			                var c_r = xhr.getResponseHeader("Content-Range");
@@ -326,11 +326,14 @@
 				pause_log = !pause_log;
 				if (pause_log)
 				{
+					kill = true;
 					$(this).html('<i class="fa fa-play"></i>');
 					$(this).attr('data-original-title', 'Play log');
 				}
 				else
 				{
+					kill = false;
+					get_log();
 					$(this).html('<i class="fa fa-pause"></i>');	
 					$(this).attr('data-original-title', 'Pause log');
 				}

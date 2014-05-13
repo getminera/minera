@@ -89,6 +89,7 @@ class App extends Main_Controller {
 
 			// Start creating command options string
 			$settings = null;
+			$confArray = array();
 
 			// Save manual/guided selection
 			$this->redis->set('manual_options', $this->input->post('manual_options'));
@@ -108,6 +109,7 @@ class App extends Main_Controller {
 				// Auto-detect
 				if ($this->input->post('minerd_autodetect'))
 				{
+					$confArray["gc3355-detect"] = true;
 					$settings .= " --gc3355-detect ";			
 				}
 				$this->redis->set('minerd_autodetect', $this->input->post('minerd_autodetect'));
@@ -115,6 +117,7 @@ class App extends Main_Controller {
 				// Autotune
 				if ($this->input->post('minerd_autotune'))
 				{
+					$confArray["gc3355-autotune"] = true;
 					$settings .= " --gc3355-autotune ";
 				}
 				$this->redis->set('minerd_autotune', $this->input->post('minerd_autotune'));
@@ -122,6 +125,7 @@ class App extends Main_Controller {
 				// Start frequency
 				if ($this->input->post('minerd_startfreq'))
 				{
+					$confArray["freq"] = $this->input->post('minerd_startfreq');
 					$settings .= " --freq=".$this->input->post('minerd_startfreq')." ";
 				}
 				$this->redis->set('minerd_startfreq', $this->input->post('minerd_startfreq'));
@@ -136,22 +140,30 @@ class App extends Main_Controller {
 				// Logging
 				if ($this->input->post('minerd_log'))
 				{
+					$confArray["log"] = $this->config->item("minerd_log_file");
 					$settings .= " --log ".$this->config->item("minerd_log_file");
 				}
 				$this->redis->set('minerd_log', $this->input->post('minerd_log'));
 			}
 			
 			// Add the pools to the command
+			$poolsArray = array();
 			foreach ($pools as $pool)
 			{
 				$addPools[] = " -o ".$pool['url']." -u ".$pool['username']." -p ".$pool['password'];
+				$poolsArray[] = array("url" => $pool['url'], "user" => $pool['username'], "pass" => $pool['password']);
 			}
 			
 			$settings .= implode(" ", $addPools);
+			
+			$confArray['pools'] = $poolsArray;
+			$jsonConf = json_encode($confArray);
+
 			// End options string
 
 			$this->redis->set("minerd_pools", json_encode($pools));
 			$this->redis->set("minerd_settings", $settings);
+			$this->redis->set("minerd_json_settings", $jsonConf);
 			$this->redis->set("minerd_autorecover", $this->input->post('minerd_autorecover'));
 			$this->redis->set("dashboard_refresh_time", $dashSettings);
 				
