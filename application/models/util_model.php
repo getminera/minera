@@ -163,7 +163,7 @@ class Util_model extends CI_Model {
 		$o = array(
 			"timestamp" => time(),
 			"hashrate" => $totHash,
-			"avg_freq" => round($totFreq/$c),
+			"avg_freq" => @round($totFreq/$c),
 			"accepted" => $totAc,
 			"errors" => $totHw,
 			"rejected" => $totRe,
@@ -371,21 +371,18 @@ class Util_model extends CI_Model {
 	// Call update cmd
 	public function update()
 	{
-		log_message('error', "Update request from ".$this->currentVersion()." to ".$this->redis->command("HGET minera_version new_version")." : ".var_export($out, true));
-
 		// Pull the latest code from github
 		exec("cd ".FCPATH." && sudo -u " . $this->config->item("system_user") . " /usr/bin/git pull -v", $out);
-
-		log_message('error', "Running upgrade script".var_export($out, true));
+		log_message('error', "Update request from ".$this->currentVersion()." to ".$this->redis->command("HGET minera_version new_version")." : ".var_export($out, true));
 				
 		// Run upgrade script
 		exec("cd ".FCPATH." && sudo -u " . $this->config->item("system_user") . " ./upgrade_minera.sh", $out);
-
-		log_message('error', "End Update");
+		log_message('error', "Running upgrade script".var_export($out, true));
 				
 		$this->redis->del("minera_update");
 		$this->redis->del("minera_version");
 		$this->checkUpdate();
+		log_message('error', "End Update");
 		
 		return true;
 	}
