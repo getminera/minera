@@ -148,6 +148,26 @@
 													</div>
 												</div>
 												
+												<!-- Logging -->
+												<div class="form-group">
+													<div class="checkbox">
+														<label>
+															<input type="checkbox" name="minerd_log" value="1" <?php if ($minerdLog) : ?>checked=""<?php endif; ?> />
+															Enable logging <small>(--log)</small>
+														</label>                                                
+													</div>
+												</div>
+												
+												<!-- Debug -->
+												<div class="form-group">
+													<div class="checkbox">
+														<label>
+															<input type="checkbox" name="minerd_debug" value="1" <?php if ($minerdDebug) : ?>checked=""<?php endif; ?> />
+															Enable debug <small>(--debug)</small>
+														</label>                                                
+													</div>
+												</div>												
+												
 												<!-- Start Frequency -->
 												<div class="form-group">
 													<label>Select starting frequency</label>
@@ -174,17 +194,7 @@
 														<input type="text" class="form-control" placeholder="Extra options" name="minerd_extraoptions" value="<?php echo $minerdExtraoptions ?>" />
 													</div>
 		                                            <h6>Write here any other option you want to include please refer to the <a href="https://github.com/siklon/cpuminer-gc3355">Github page</a> for the complete options list.</h6>
-		                                        </div>
-												
-												<!-- Logging -->
-												<div class="form-group">
-													<div class="checkbox">
-														<label>
-															<input type="checkbox" name="minerd_log" value="1" <?php if ($minerdLog) : ?>checked=""<?php endif; ?> />
-															Enable logging <small>(--log)</small>
-														</label>                                                
-													</div>
-												</div>		                                        
+		                                        </div>	                                        
 		                                        
 											</div>
 	                                        
@@ -214,6 +224,14 @@
 												<h4>Miner will start with this command line:</h4>
 												<h5><i><?php echo $this->config->item("screen_command") ?> <?php echo $this->config->item("minerd_command")."</i> <strong>".$minerdSettings ?></strong></h5>
 											</div>
+
+											<?php if ($savedFrequencies) : ?>
+												<h3>Saved frequencies</h3>
+												<div class="callout callout-light">
+													<h6>Here is the string you can add to the extra options, but remember to uncheck the autotune option:</h6>
+													<pre  id="miner-freq" style="font-size:10px">--gc3355-freq=<?php echo $savedFrequencies ?></pre>
+												</div>
+											<?php endif; ?>
 												
 	                                </div>
 									<div class="box-footer">

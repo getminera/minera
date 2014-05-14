@@ -290,6 +290,27 @@ class Util_model extends CI_Model {
 		return true;
 	}
 	
+	public function saveCurrentFreq()
+	{
+		$stats = json_decode($this->getStats());
+
+		$dev = array();
+		foreach ($stats->devices as $d => $device)
+		{
+			foreach ($device->chips as $c => $chip)
+			{
+				$fr = $chip->frequency;
+				$dev[] = "/dev/".$d.":".$fr.":".$c;
+			}
+		}
+		
+		$r = implode(",", $dev);
+		
+		$this->redis->set("current_frequencies", $r);
+		
+		return $r;
+	}
+	
 	// Write rc.local startup file
 	public function saveStartupScript()
 	{

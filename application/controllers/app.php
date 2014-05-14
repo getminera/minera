@@ -39,6 +39,7 @@ class App extends Main_Controller {
 		$data['doge'] = $this->util_model->getCryptsyRates(132);
 		$data['isOnline'] = $this->util_model->isOnline();
 		$data['minerdLog'] = $this->redis->get('minerd_log');
+		$data['savedFrequencies'] = $this->redis->get('current_frequencies');
 		$data['htmlTag'] = "dashboard";
 		$data['appScript'] = true;
 		$data['settingsScript'] = false;
@@ -144,6 +145,14 @@ class App extends Main_Controller {
 					$settings .= " --log ".$this->config->item("minerd_log_file");
 				}
 				$this->redis->set('minerd_log', $this->input->post('minerd_log'));
+
+				// Debug
+				if ($this->input->post('minerd_debug'))
+				{
+					$confArray["debug"] = true;
+					$settings .= " --debug ";
+				}
+				$this->redis->set('minerd_debug', $this->input->post('minerd_debug'));
 			}
 			
 			// Add the pools to the command
@@ -201,22 +210,31 @@ class App extends Main_Controller {
 			$data['message_type'] = "warning";
 		}
 		
+		// Load Coin Rates
 		$data['btc'] = $this->util_model->getBtcUsdRates();
 		$data['ltc'] = $this->util_model->getCryptsyRates(3);
 		$data['doge'] = $this->util_model->getCryptsyRates(132);
-		$data['isOnline'] = $this->util_model->isOnline();
+		
+		// Load miner settings
 		$data['minerdAutorecover'] = $this->redis->get('minerd_autorecover');
 		$data['minerdAutodetect'] = $this->redis->get('minerd_autodetect');
 		$data['minerdAutotune'] = $this->redis->get('minerd_autotune');
 		$data['minerdStartfreq'] = $this->redis->get('minerd_startfreq');
 		$data['minerdExtraoptions'] = $this->redis->get('minerd_extraoptions');
 		$data['minerdLog'] = $this->redis->get('minerd_log');
+		$data['minerdDebug'] = $this->redis->get('minerd_debug');
 		$data['minerdManualSettings'] = $this->redis->get('minerd_manual_settings');
 		$data['minerdSettings'] = $this->redis->get("minerd_settings");
 		$data['minerdPools'] = $this->redis->get("minerd_pools");
 		$data['minerdGuidedOptions'] = $this->redis->get("guided_options");
 		$data['minerdManualOptions'] = $this->redis->get("manual_options");
+		
+		//Load Dashboard settings
 		$data['dashboard_refresh_time'] = $this->redis->get("dashboard_refresh_time");
+		
+		// Everything else
+		$data['savedFrequencies'] = $this->redis->get('current_frequencies');
+		$data['isOnline'] = $this->util_model->isOnline();
 		$data['mineraUpdate'] = $this->util_model->checkUpdate();
 		$data['htmlTag'] = "settings";
 		$data['appScript'] = false;
@@ -358,6 +376,23 @@ class App extends Main_Controller {
 		}
 	}
 
+	/*
+	// Stats controller get the live stats
+	*/
+	public function api()
+	{
+		switch($this->input->get('command'))
+		{
+			case "save_current_freq":
+				$o = $this->util_model->saveCurrentFreq();
+			break;
+		}
+		
+		$this->output
+			->set_content_type('application/json')
+			->set_output($o);
+	}
+	
 	/*
 	// Stats controller get the live stats
 	*/

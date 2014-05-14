@@ -158,6 +158,7 @@
                                     <div class="pull-right box-tools">
                                     	<small class="auto-refresh-time"></small>&nbsp;
                                     	<button class="btn btn-danger btn-xs refresh-btn" data-toggle="tooltip" title="" data-original-title="Refresh"><i class="fa fa-refresh"></i></button>
+                                        <button class="btn btn-default btn-xs save-freq" data-toggle="tooltip" title="" data-original-title="Save current frequencies"><i class="fa fa-save"></i></button>
                                         <button class="btn btn-default btn-xs" data-widget="collapse" data-toggle="tooltip" title="" data-original-title="Collapse"><i class="fa fa-minus"></i></button>
                                     </div><!-- /. tools -->
                                     <i class="fa fa-desktop"></i>
@@ -191,6 +192,15 @@
                                         </div>
                                     </div><!-- /.row - inside box -->
                                 </div><!-- /.box-body -->
+                                <?php if ($savedFrequencies) : ?>
+	                                <div class="box-footer">
+	                                	<button class="btn btn-primary btn-sm btn-saved-freq" data-toggle="tooltip" title="" data-original-title="Look at saved frequencies"><i class="fa fa-eye"></i> Saved frequencies</button>
+	                                	<div class="freq-box" style="display:none; margin-top:10px;">
+		                                	<h6>You can find this on the settings page too</h6>
+											<pre id="miner-freq" style="font-size:10px; margin-top:10px;">--gc3355-freq=<?php echo $savedFrequencies ?></pre>
+	                                	</div>
+									</div>
+                                <?php endif; ?>
                             </div><!-- /.miner box -->
                             
 							<!-- Pools box -->
@@ -342,7 +352,7 @@
 									<?php endif; ?>
                                 </div><!-- /.box-body -->
                                 <div class="box-footer">
-                                	<h6>To view the full <a href="<?php echo base_url($this->config->item("minerd_log_url")); ?>" target="_blank">raw log please click this link</a>, just refresh it to see updates.</h6>
+                                	<h6>To download the full <a href="<?php echo base_url($this->config->item("minerd_log_url")); ?>" target="_blank">raw log please click this link</a>.</h6>
                                 </div>
                             </div><!-- /.miner box -->                             
                             

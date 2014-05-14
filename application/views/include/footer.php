@@ -7,6 +7,9 @@
     <!-- AdminLTE App -->
     <script src="<?php echo base_url('assets/js/app.js') ?>" type="text/javascript"></script>
 
+    <!-- ScrollTo -->
+    <script src="<?php echo base_url('assets/js/jquery.scrollTo.min.js') ?>" type="text/javascript"></script>
+
 	<?php if ($settingsScript) : ?>
 	<!-- jQuery Validation -->
     <script src="<?php echo base_url('assets/js/jquery.validate.min.js') ?>" type="text/javascript"></script>
@@ -163,7 +166,24 @@
 			 
 			}, 1000);
 			
+			// Refresh button
 			$(".refresh-btn").click( function() { getStats(true); target_date = new Date().getTime(); });
+			
+			// Save frequency table button
+			$(".btn-saved-freq").click( function() {
+				$(".freq-box").fadeToggle();
+			});
+			
+			$(".save-freq").click( function() {
+				$('.freq-box').fadeOut();
+				$.ajax("<?php echo site_url("app/api?command=save_current_freq"); ?>", {
+			        dataType: "text",
+			        success: function (data) {
+						$('#miner-freq').html('--gc3355-freq='+data);
+						$.scrollTo($('.freq-box').fadeIn());
+			        }
+			    });
+			});
 			
 		    //Make the dashboard widgets sortable Using jquery UI
 		    $(".connectedSortable").sortable({
@@ -210,7 +230,7 @@
 			     * have. This is to prevent a 416 "Range unsatisfiable" error: a response
 			     * of length 1 tells us that the file hasn't changed yet. A 416 shows that
 			     * the file has been trucnated */
-			
+
 			    $.ajax(url, {
 			        dataType: "text",
 			        cache: false,
