@@ -19,7 +19,12 @@ rm -rf $MINERA_OLD_LOGS
 ln -s $MINERA_LOGS $MINERA_OLD_LOGS
 
 echo -e "Upgrading sudoers configuration for www-data and minera users\n-----\n"
-echo -e "\n#Minera settings\nminera ALL=(ALL) NOPASSWD: ALL\nwww-data ALL = (ALL) NOPASSWD: ALL" >> /etc/sudoers
+if ! grep -q 'www-data ALL = (ALL) NOPASSWD: ALL' '/etc/sudoers'; then
+	echo -e "www-data ALL = (ALL) NOPASSWD: ALL" >> /etc/sudoers
+fi
+if ! grep -q 'minera ALL = (ALL) NOPASSWD: ALL' '/etc/sudoers'; then
+	echo -e "minera ALL = (ALL) NOPASSWD: ALL" >> /etc/sudoers
+fi
 
 echo -e "Changing cron file\n-----\n"
 echo "*/5 * * * * www-data php `pwd`/index.php app cron" > /etc/cron.d/minera
