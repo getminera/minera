@@ -179,8 +179,11 @@
 				$.ajax("<?php echo site_url("app/api?command=save_current_freq"); ?>", {
 			        dataType: "text",
 			        success: function (data) {
-						$('#miner-freq').html('--gc3355-freq='+data);
-						$.scrollTo($('.freq-box').fadeIn());
+			        	if (data)
+			        	{
+							$('#miner-freq').html('--gc3355-freq='+data);
+							$.scrollTo($('.freq-box').fadeIn());
+						}
 			        }
 			    });
 			});
@@ -553,6 +556,9 @@
 							
 							//Sidebar hashrate
 							//$('.sidebar-hashrate').html("@ "+convertHashrate(items[index].hash));
+							
+						    // Changing title page according to hashrate
+						    $(document).attr('title', convertHashrate(items[index].hash)+' | Minera - Dashboard');
 						}
 						
 						var devRow = '<tr class="dev-'+index+'"><td class="devs_table_name"><i class="glyphicon glyphicon-hdd"></i>&nbsp;&nbsp;'+index+dev_serial+'</td><td class="devs_table_freq">'+ items[index].fr + ' Mhz</td><td class="devs_table_hash"><strong>'+ convertHashrate(items[index].hash) +'</strong></td><td class="devs_table_sh">'+ items[index].sh +'</td><td class="devs_table_ac">'+ items[index].ac +' <small class="text-muted">('+parseFloat(percentageAc).toFixed(2)+'%)</small></td><td class="devs_table_re">'+ items[index].re +' <small class="text-muted">('+parseFloat(percentageRe).toFixed(2)+'%)</small></td><td class="devs_table_hw">'+ items[index].hw +' <small class="text-muted">('+parseFloat(percentageHw).toFixed(2)+'%)</small></td><td class="devs_table_ls">'+ parseInt(last_share_secs) +' secs ago <small class="text-muted">('+share_date.toUTCString()+')</small></td></tr>'

@@ -96,7 +96,7 @@
 										<?php endfor; ?>											
 	                                </div>
 									<div class="box-footer">
-										<button type="submit" class="btn btn-primary">Save settings</button>
+										<button type="submit" class="btn btn-primary" name="save" value="1">Save</button> <button type="submit" class="btn btn-danger" name="save_restart" value="1">Save & Restart Miner</button>
 									</div>
 	                            </div>
 	                            
@@ -235,7 +235,7 @@
 												
 	                                </div>
 									<div class="box-footer">
-										<button type="submit" class="btn btn-primary">Save settings</button>
+										<button type="submit" class="btn btn-primary" name="save" value="1">Save</button> <button type="submit" class="btn btn-danger" name="save_restart" value="1">Save & Restart Miner</button>
 									</div>
 	                            </div>
 	                            
@@ -273,7 +273,7 @@
 												
 	                                </div>
 									<div class="box-footer">
-										<button type="submit" class="btn btn-primary">Save settings</button>
+										<button type="submit" class="btn btn-primary" name="save" value="1">Save</button>
 									</div>
 	                            </div>
 

@@ -7,6 +7,7 @@ class App extends Main_Controller {
 	public function index()
 	{	
 		$data['htmlTag'] = "lockscreen";
+		$data['pageTitle'] = "Welcome to Minera";
 		$this->load->view('include/header', $data);
 		$this->load->view('lockscreen');
 	}
@@ -45,6 +46,7 @@ class App extends Main_Controller {
 		$data['settingsScript'] = false;
 		$data['mineraUpdate'] = $this->util_model->checkUpdate();
 		$data['dashboard_refresh_time'] = $this->redis->get("dashboard_refresh_time");
+		$data['pageTitle'] = "Minera - Dashboard";
 		
 		$this->load->view('include/header', $data);
 		$this->load->view('include/sidebar', $data);
@@ -177,9 +179,18 @@ class App extends Main_Controller {
 			$this->redis->set("dashboard_refresh_time", $dashSettings);
 				
 			$this->util_model->saveStartupScript();
-				
+
 			$data['message'] = '<b>Success!</b> Settings saved!';
 			$data['message_type'] = "success";
+						
+			if ($this->input->post('save_restart'))
+			{
+				$this->util_model->minerdRestart();
+				
+				$data['message'] = '<b>Success!</b> Settings saved and miner restarted!';
+				$data['message_type'] = "success";
+			}
+
 		}
 
 		if ($this->input->post('save_password'))
@@ -239,6 +250,7 @@ class App extends Main_Controller {
 		$data['htmlTag'] = "settings";
 		$data['appScript'] = false;
 		$data['settingsScript'] = true;
+		$data['pageTitle'] = "Minera - Settings";
 		
 		$this->load->view('include/header', $data);
 		$this->load->view('include/sidebar', $data);
@@ -263,9 +275,11 @@ class App extends Main_Controller {
 			$data['message'] = '<a href="'.site_url("app/shutdown").'?confirm=1"><button class="btn btn-default btn-lg"><i class="fa fa-check"></i> Yes, shutdown now</button></a>&nbsp;&nbsp;&nbsp;<a href="'.site_url("app/dashboard").'"><button class="btn btn-default btn-lg"><i class="fa fa-times"></i> No, thanks</button></a>';
 			$data['timer'] = false;
 		}
+		
+		$data['pageTitle'] = "Shutdown Minera";
 		$data['messageEnd'] = "you can unplug me now.";
 		$data['htmlTag'] = "lockscreen";
-		$data['seconds'] = 60;
+		$data['seconds'] = 30;
 		$data['refreshUrl'] = false;
 		$this->load->view('include/header', $data);
 		$this->load->view('sysop', $data);
@@ -288,9 +302,11 @@ class App extends Main_Controller {
 			$data['message'] = '<a href="'.site_url("app/reboot").'?confirm=1"><button class="btn btn-default btn-lg"><i class="fa fa-check"></i> Yes, reboot now</button></a>&nbsp;&nbsp;&nbsp;<a href="'.site_url("app/dashboard").'"><button class="btn btn-default btn-lg"><i class="fa fa-times"></i> No, thanks</button></a>';
 			$data['timer'] = false;
 		}
+		
+		$data['pageTitle'] = "Reboot Minera";
 		$data['messageEnd'] = "here we go!";
 		$data['htmlTag'] = "lockscreen";
-		$data['seconds'] = 30;
+		$data['seconds'] = 60;
 		$data['refreshUrl'] = site_url("app/index");
 		$this->load->view('include/header', $data);
 		$this->load->view('sysop', $data);
@@ -336,10 +352,7 @@ class App extends Main_Controller {
 		if (!$this->session->userdata("loggedin"))
 			redirect('app/index');
 		
-		$this->util_model->minerdStop();
-		sleep(2);
-		$this->util_model->minerdStart();
-		sleep(2);
+		$this->util_model->minerdRestart();
 		
 		redirect('app/dashboard');
 	}
@@ -363,6 +376,8 @@ class App extends Main_Controller {
 				$data['message'] = '<a href="'.site_url("app/update").'?confirm=1"><button class="btn btn-default btn-lg"><i class="fa fa-check"></i> Let me install the updates</button></a>&nbsp;&nbsp;&nbsp;<a href="'.site_url("app/dashboard").'"><button class="btn btn-default btn-lg"><i class="fa fa-times"></i> No, thanks</button></a>';
 				$data['timer'] = false;
 			}
+			
+			$data['pageTitle'] = "Updating Minera";
 			$data['messageEnd'] = "System updated!";
 			$data['htmlTag'] = "lockscreen";
 			$data['seconds'] = 15;

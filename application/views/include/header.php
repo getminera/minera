@@ -10,7 +10,7 @@
 	<meta name="keywords" content="" />
 	<meta name="author" content="" />
 	
-	<title>Minera - Mining Dashboard</title>
+	<title>Minera - <?php echo $pageTitle ?></title>
 	
 	<link href="<?php echo base_url('favicon.ico') ?>" rel="icon">
 	<link href="<?php echo base_url('assets/css/bootstrap.min.css') ?>" rel="stylesheet" />
