@@ -372,11 +372,11 @@ class Util_model extends CI_Model {
 	public function update()
 	{
 		// Pull the latest code from github
-		exec("cd ".FCPATH." && sudo -u " . $this->config->item("system_user") . " /usr/bin/git pull -v", $out);
+		exec("cd ".FCPATH." && sudo -u " . $this->config->item("system_user") . " sudo /usr/bin/git pull -v", $out);
 		log_message('error', "Update request from ".$this->currentVersion()." to ".$this->redis->command("HGET minera_version new_version")." : ".var_export($out, true));
 				
 		// Run upgrade script
-		exec("cd ".FCPATH." && sudo -u " . $this->config->item("system_user") . " ./upgrade_minera.sh", $out);
+		exec("cd ".FCPATH." && sudo -u " . $this->config->item("system_user") . " sudo ./upgrade_minera.sh", $out);
 		log_message('error', "Running upgrade script".var_export($out, true));
 				
 		$this->redis->del("minera_update");
