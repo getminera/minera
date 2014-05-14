@@ -163,7 +163,7 @@ class Util_model extends CI_Model {
 		$o = array(
 			"timestamp" => time(),
 			"hashrate" => $totHash,
-			"avg_freq" => @round($totFreq/$c),
+			"avg_freq" => round($totFreq/$c),
 			"accepted" => $totAc,
 			"errors" => $totHw,
 			"rejected" => $totRe,
@@ -187,7 +187,7 @@ class Util_model extends CI_Model {
 	// Get Bitstamp API to look at BTC/USD rates
 	public function getBtcUsdRates()
 	{
-		if ($json = file_get_contents("https://www.bitstamp.net/api/ticker/"))
+		if ($json = @file_get_contents("https://www.bitstamp.net/api/ticker/"))
 		{
 			$a = json_decode($json);
 			return $a;
@@ -201,7 +201,7 @@ class Util_model extends CI_Model {
 	// Get Cryptsy API to look at LTC/BTC rates
 	public function getCryptsyRates($id)
 	{
-		if ($json = file_get_contents("http://pubapi.cryptsy.com/api.php?method=singlemarketdata&marketid=$id"))
+		if ($json = @file_get_contents("http://pubapi.cryptsy.com/api.php?method=singlemarketdata&marketid=$id"))
 		{
 			$a = json_decode($json);
 			return $a;
