@@ -5,6 +5,7 @@
 echo -e "-----\nSTART Minera Upgrade script\n-----\n"
 
 echo -e "-----\nInstall extra packages\n-----\n"
+apt-get update
 apt-get install -y build-essential libtool libcurl4-openssl-dev libjansson-dev libudev-dev libncurses5-dev autoconf automake postfix
 
 MINERA_LOGS="/var/log/minera"

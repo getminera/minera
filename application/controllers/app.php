@@ -306,7 +306,7 @@ class App extends Main_Controller {
 		$data['pageTitle'] = "Reboot Minera";
 		$data['messageEnd'] = "here we go!";
 		$data['htmlTag'] = "lockscreen";
-		$data['seconds'] = 60;
+		$data['seconds'] = 45;
 		$data['refreshUrl'] = site_url("app/index");
 		$this->load->view('include/header', $data);
 		$this->load->view('sysop', $data);
