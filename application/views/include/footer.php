@@ -146,10 +146,7 @@
 		    "use strict";
 
 			// Refresh stats when you come back in Minera tab
-			$(window).focus(function() 
-			{
-				getStats(true);
-			});
+			$(window).focus(function() { getStats(true); });
 			
 			var refresh_time = "<?php echo ($dashboard_refresh_time) ? $dashboard_refresh_time : 60; ?>";
 			
