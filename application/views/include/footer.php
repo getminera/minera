@@ -402,70 +402,11 @@
     	{
     		var now = new Date().getTime();
 			var d = 0; var totalhash = 0; var totalac = 0; var totalre = 0; var totalhw = 0; var totalsh = 0; var totalfr = 0;
+			var errorTriggered = false;
 			
 			$('.overlay').show();
+			// Show loaders
 			//$('.loading-img').show();
-			
-			/* Morris.js Charts */
-			// get Json data from stored_stats url (redis) and create the graphs
-			$.getJSON( "<?php echo site_url($this->config->item('stored_stats_url')); ?>", function( data ) 
-	        {
-	        	var data = Object.keys(data).map(function(key) { 
-							data[key]['timestamp'] = data[key]['timestamp']*1000; 
-							data[key]['hashrate'] = (data[key]['hashrate']/1000/1000).toFixed(2);
-							
-							return data[key];
-					});
-				
-				if (data.length)
-				{
-					// Hashrate history graph
-					var areaHash = new Morris.Area({
-						element: 'hashrate-chart',
-						resize: true,
-						data: data,
-						xkey: 'timestamp',
-						ykeys: ['hashrate'],
-						ymax: 'auto',
-						postUnits: "Mh/s",
-						labels: ['Hashrate'],
-						lineColors: ['#65b8e7'],
-						hideHover: 'auto',
-					});	
-					
-					// Rejected/Errors graph
-					var areaRej = new Morris.Area({
-						element: 'rehw-chart',
-						resize: true,
-						data: data,
-						xkey: 'timestamp',
-						ykeys: ['rejected', 'errors'],
-						ymax: 'auto',
-						labels: ['Rejected', 'Errors'],
-						lineColors: ['#f5b989', '#f59189'],
-						hideHover: 'auto',
-					});
-					
-					$(window).resize(function() {
-						redrawGraphs()
-					});
-					
-					$('.sidebar-toggle').click(function() { redrawGraphs(); })
-				}
-				else
-				{
-					$('.chart').css({'height': '100%', 'overflow': 'visible', 'margin-top': '10px'}).html('<div class="alert alert-warning"><i class="fa fa-warning"></i><b>Alert!</b> <small>No data collected, wait at least 5 minutes to see the chart.</small></div>');	
-				}
-
-				function redrawGraphs()
-				{
-				    areaHash.redraw();
-				    areaRej.redraw();
-					    
-				    return false;
-				}	
-	        	
-			});
 			
 			/* Knob, Table, Sysload */		
 			// get Json data from minerd and create Knob, table and sysload
@@ -473,10 +414,12 @@
 	        {
 		        if (data['error'])
 				{
+					errorTriggered = true;
 					triggerError('I can\'t get the stats from your minerd. Please try to <strong>refresh the page</strong> or check your settings (minerd API must listen on <code>127.0.0.1:4028</code>).');
 				}
 				else if (data['notrunning'])
 				{
+					errorTriggered = true;
 					triggerError('It seems your minerd is not running, please try to start it or review your settings.');
 				}
 				else
@@ -730,10 +673,73 @@
 					$('.overlay').hide();
 					$('.loading-img').hide();
 					
+					/* Morris.js Charts */
+					// get Json data from stored_stats url (redis) and create the graphs
+					$.getJSON( "<?php echo site_url($this->config->item('stored_stats_url')); ?>", function( data ) 
+	        		{
+	        			var data = Object.keys(data).map(function(key) { 
+									data[key]['timestamp'] = data[key]['timestamp']*1000; 
+									data[key]['hashrate'] = (data[key]['hashrate']/1000/1000).toFixed(2);
+									
+									return data[key];
+							});
+					
+					
+						if (data.length && errorTriggered === false)
+						{
+							// Hashrate history graph
+							var areaHash = new Morris.Area({
+								element: 'hashrate-chart',
+								resize: true,
+								data: data,
+								xkey: 'timestamp',
+								ykeys: ['hashrate'],
+								ymax: 'auto',
+								postUnits: "Mh/s",
+								labels: ['Hashrate'],
+								lineColors: ['#65b8e7'],
+								hideHover: 'auto',
+							});	
+							
+							// Rejected/Errors graph
+							var areaRej = new Morris.Area({
+								element: 'rehw-chart',
+								resize: true,
+								data: data,
+								xkey: 'timestamp',
+								ykeys: ['rejected', 'errors'],
+								ymax: 'auto',
+								labels: ['Rejected', 'Errors'],
+								lineColors: ['#f5b989', '#f59189'],
+								hideHover: 'auto',
+							});
+							
+							$(window).resize(function() {
+								redrawGraphs()
+							});
+							
+							$('.sidebar-toggle').click(function() { redrawGraphs(); })
+						}
+						else
+						{
+							$('.chart').css({'height': '100%', 'overflow': 'visible', 'margin-top': '10px'}).html('<div class="alert alert-warning"><i class="fa fa-warning"></i><b>Alert!</b> <small>No data collected, wait at least 5 minutes to see the chart.</small></div>');	
+						}
+					
+						function redrawGraphs()
+						{
+						    areaHash.redraw();
+						    areaRej.redraw();
+							    
+						    return false;
+						}	
+	        			
+					}); //End get stored stats
+					
 				}
 			    
-			});
-    	}
+			}); // End get live stats
+			
+    	} // End function getStats()
 		
 		function createMon(key, hash, totalhash, maxHashrate, ac, re, hw, sh, freq)
 		{
