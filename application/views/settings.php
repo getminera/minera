@@ -36,7 +36,7 @@
                         <?php endif; ?>
                         
                         <!-- Top section -->
-                        <section class="col-md-12 connectedSortable ui-sortable">
+                        <section class="col-md-12">
 								
 							<form action="<?php site_url("app/dashboard") ?>" method="post" role="form" id="minersettings">
 								<input type="hidden" name="save_settings" value="1" />                                                    
@@ -69,10 +69,11 @@
 	                                        </div>
 										</div>
 										<!-- Main Pool -->
+										<div class="poolSortable ui-sortable">
 										<?php $savedPools = json_decode($minerdPools);?>
 										<?php for ($i=0;$i<=3;$i++) : ?>
 										<div class="form-group pool-group">
-										    <div class="row">
+										    <div class="row sort-attach">
 										    	<div class="col-xs-6">
 										    		<div class="input-group">
 										    			<span class="input-group-addon"><i class="fa fa-cloud-<?php echo ($i == 0) ? "upload" : "download"; ?>"></i></span>
@@ -93,7 +94,8 @@
 										    	</div>
 										    </div>
 										</div>
-										<?php endfor; ?>											
+										<?php endfor; ?>
+										</div><!-- sortable -->											
 	                                </div>
 									<div class="box-footer">
 										<button type="submit" class="btn btn-primary" name="save" value="1">Save</button> <button type="submit" class="btn btn-danger" name="save_restart" value="1">Save & Restart Miner</button>
@@ -175,6 +177,7 @@
 														<div class="col-xs-4">
 															<div class="input-group">
 																<select class="form-control" name="minerd_startfreq">
+																	<option value="0">default</option>
 																<?php $inc = 15; ?>
 																<?php for ($s=600; $s<=1400; $s++) : ?>
 																	<option value="<?php echo $s ?>" <?php echo ($minerdStartfreq == $s) ? "selected" : ""; ?>><?php echo $s ?>MHz</option>

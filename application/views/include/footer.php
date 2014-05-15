@@ -1,6 +1,6 @@
-	<script src="http://ajax.googleapis.com/ajax/libs/jquery/2.0.2/jquery.min.js"></script>
-	<script src="//ajax.googleapis.com/ajax/libs/jqueryui/1.10.3/jquery-ui.min.js"></script>
-	<script src="//cdnjs.cloudflare.com/ajax/libs/lodash.js/1.3.1/lodash.min.js"></script>
+	<script src="<?php echo base_url('assets/js/jquery-2.1.1.min.js') ?>"></script>
+	<script src="<?php echo base_url('assets/js/jquery-ui-1.10.4.min.js') ?>"></script>
+	<script src="<?php echo base_url('assets/js/lodash.min.js') ?>"></script>
 	<script src="<?php echo base_url('assets/js/bootstrap.min.js') ?>"></script>
 	<script src="<?php echo base_url('assets/js/custom.js') ?>"></script>
 
@@ -19,6 +19,16 @@
     	
 		$(function() {
 		    "use strict";
+		    
+		    //Make the dashboard widgets sortable Using jquery UI
+		    $(".poolSortable").sortable({
+		        placeholder: "sort-highlight",
+		        connectWith: ".sort-attach",
+		        handle: ".sort-attach",
+		        forcePlaceholderSize: true,
+		        zIndex: 999999
+		    });
+		    $(".sort-attach").css("cursor","move");
 
 		    if ($("#manual_options").val() == "1") $(".guided-options").hide();
 		    if ($("#guided_options").val() == "1") $(".manual-options").hide();
@@ -126,7 +136,7 @@
 	<script src="<?php echo base_url('assets/js/dataTables.bootstrap.js') ?>" type="text/javascript"></script>
 	    
     <!-- jQuery Morris Charts -->
-    <script src="//cdnjs.cloudflare.com/ajax/libs/raphael/2.1.0/raphael-min.js"></script>
+    <script src="<?php echo base_url('assets/js/raphael-min.js') ?>"></script>
     <script src="<?php echo base_url('assets/js/morris.min.js') ?>" type="text/javascript"></script>
 
     <!-- Dashboard script -->
@@ -135,6 +145,12 @@
 		$(function() {
 		    "use strict";
 
+			// Refresh stats when you come back in Minera tab
+			$(window).focus(function() 
+			{
+				getStats(true);
+			});
+			
 			var refresh_time = "<?php echo ($dashboard_refresh_time) ? $dashboard_refresh_time : 60; ?>";
 			
 			// set the date we're counting down to
