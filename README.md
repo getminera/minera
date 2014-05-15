@@ -11,6 +11,18 @@ If you like it, please consider a donation:
 
 Thanks.
 
+**[Download minera-latest.img](http://j.mp/minera-latest-img)**
+
+Look below for how to install / use it.
+
+Support
+-------------
+
+If you need support please try to look at the main [forum thread here](https://bitcointalk.org/index.php?topic=596620.0). If you found a bug, want to propose some changes, want a new feature, please [write down an issue here in Github](https://github.com/michelem09/minera/issues) so we can take everything organised.
+
+* [General support/discussion forum](https://bitcointalk.org/index.php?topic=596620.0)
+* [Bugs, issues, requests](https://github.com/michelem09/minera/issues)
+
 Features
 -------------
 
@@ -51,15 +63,21 @@ Minera should be installed on the Gridseed controller, usually a Raspberry, with
 Installing
 -------------
 
-You can opt for a img file to put in your SD Card or for a manual install.
+You can choose for a img file to put in your SD Card or for a manual install.
 
 **Image file (img)**
 
-The img file is on the go only few days (since today 2014-05-07) and you will be able to download the minera.img and put it in your SD Card without the worry to do anything else but turn on your brand new Minera controller.
+This is the Minera image file for Raspberry PI, you have only to download it and put in your SD Card.
+
+You need at least a 4GB SD Card:
+
+**[Download minera-latest.img](http://j.mp/minera-latest-img)**
+
+Default passwords are "*minera*" you should change them as well as the miner settings.
 
 **Manual install**
 
-While you are waiting for the img release you can simply install Minera on your current Linux controller. Check if it's a debian based one otherwise download and install a right distribution.
+If you prefer you can simply install Minera on your current Linux controller. Check if it's a debian based one otherwise download and install a right distribution.
 If you have a Raspberry, I suggest you to install Raspbian you can get it here: 
 
 http://downloads.raspberrypi.org/raspbian_latest
@@ -153,24 +171,20 @@ Please run this commands:
 If you wanna check the raw JSON stats from your minerd, please point your browser to:
 
 	http://<your-minera-ip>/minera/index.php/app/stats
-	
-If the Minera version upgrade fails you could miss a line in /etc/sudoers file, please check you have this line:
-
-	www-data ALL = (ALL) NOPASSWD: /usr/bin/git
-	
-If you miss it run this command:
-
-	echo "www-data ALL = (ALL) NOPASSWD: /usr/bin/git" | sudo tee -a /etc/sudoers
 
 TODO
 -------------
 
-* Create an img file “plug&play”
-* Add some errors control to installer
+* ~~Create an img file “plug&play”~~
+* ~~Add some errors control to installer~~
 * Add daily/weekly/monthly charts
-* Add more crypto-currencies exchange rates
+* ~~Add more crypto-currencies exchange rates~~
 * Add more system monitor (CPU/Mem)
+* ~~Add system temperature~~
 * Add cgminer/bfgminer support
+* Add email notification
+* Add start/stop daemon
+* Add JSON config support
 
 Screenshots
 -------------
