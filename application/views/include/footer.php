@@ -132,7 +132,7 @@
     <script src="<?php echo base_url('assets/js/jquery.knob.js') ?>" type="text/javascript"></script>
 
     <!-- DATA TABES SCRIPT -->
-	<script src="<?php echo base_url('assets/js/jquery.dataTables.js') ?>" type="text/javascript"></script>
+	<script src="<?php echo base_url('assets/js/jquery.dataTables.min.js') ?>" type="text/javascript"></script>
 	<script src="<?php echo base_url('assets/js/dataTables.bootstrap.js') ?>" type="text/javascript"></script>
 	    
     <!-- jQuery Morris Charts -->
@@ -532,7 +532,11 @@
 					}
 					
 					// Initialize the miner datatable	
-					$('#miner-table-details').dataTable();
+					$('#miner-table-details').dataTable({
+						"lengthMenu": [ 5, 10, 25, 50 ],
+						"pageLength": 5,
+						"stateSave": true
+					});
 				    
 					// Add pools data
 					$('.pool-row').remove();

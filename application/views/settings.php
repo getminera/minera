@@ -219,6 +219,17 @@
 												</div>
 											</div>
 											
+											<!-- Minerd delay time option -->
+	                                        <div class="form-group">
+	                                            <label>Autostart Delay Time</label>
+												<div class="input-group">
+													<span class="input-group-addon"><i class="fa fa-clock-o"></i></span>
+													<input type="text" class="form-control" placeholder="Delay time" name="minerd_delaytime" value="<?php echo $minerdDelaytime ?>" />
+												</div>
+	                                            <h6>With this option you can set a delay in rc.local before starting minerd to give the system the time to detect devices.</h6>
+	                                        </div>	
+											
+											
 											<hr />
 											
 	                                        <!-- Minerd final config -->

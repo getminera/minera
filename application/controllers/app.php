@@ -178,7 +178,16 @@ class App extends Main_Controller {
 			$this->redis->set("minerd_autorecover", $this->input->post('minerd_autorecover'));
 			$this->redis->set("dashboard_refresh_time", $dashSettings);
 				
-			$this->util_model->saveStartupScript();
+			// Delay time
+			$delay = 5;
+			if ($this->input->post('minerd_delaytime'))
+			{
+				$delay = $this->input->post('minerd_delaytime');
+				$this->redis->set("minerd_delaytime", $delay);
+			}
+			
+			// Startup script
+			$this->util_model->saveStartupScript($delay);
 
 			$data['message'] = '<b>Success!</b> Settings saved!';
 			$data['message_type'] = "success";
@@ -239,6 +248,7 @@ class App extends Main_Controller {
 		$data['minerdPools'] = $this->redis->get("minerd_pools");
 		$data['minerdGuidedOptions'] = $this->redis->get("guided_options");
 		$data['minerdManualOptions'] = $this->redis->get("manual_options");
+		$data['minerdDelaytime'] = $this->redis->get("minerd_delaytime");
 		
 		//Load Dashboard settings
 		$data['dashboard_refresh_time'] = $this->redis->get("dashboard_refresh_time");

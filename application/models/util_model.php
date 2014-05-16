@@ -312,13 +312,13 @@ class Util_model extends CI_Model {
 	}
 	
 	// Write rc.local startup file
-	public function saveStartupScript()
+	public function saveStartupScript($delay = 5)
 	{
 		$command = array($this->config->item("screen_command"), $this->config->item("minerd_command"), $this->redis->get('minerd_settings'));
 		
 		$rcLocal = file_get_contents(FCPATH."rc.local.minera");
 		
-		$rcLocal .= "\nsu - ".$this->config->item('system_user').' -c "'.implode(' ', $command)."\"\n\nexit 0";
+		$rcLocal .= "\nsleep $delay\nsu - ".$this->config->item('system_user').' -c "'.implode(' ', $command)."\"\n\nexit 0";
 		
 		file_put_contents('/etc/rc.local', $rcLocal);
 		
