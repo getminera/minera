@@ -224,11 +224,10 @@
 	                                            <label>Autostart Delay Time</label>
 												<div class="input-group">
 													<span class="input-group-addon"><i class="fa fa-clock-o"></i></span>
-													<input type="text" class="form-control" placeholder="Delay time" name="minerd_delaytime" value="<?php echo $minerdDelaytime ?>" />
+													<input type="text" class="form-control" placeholder="Delay time" name="minerd_delaytime" value="<?php echo $minerdDelaytime ?>" style="width:90px"/>
 												</div>
-	                                            <h6>With this option you can set a delay in rc.local before starting minerd to give the system the time to detect devices.</h6>
-	                                        </div>	
-											
+												<h6>Seconds to wait before starting minerd (on boot).</h6>
+	                                        </div>											
 											
 											<hr />
 											
@@ -271,18 +270,13 @@
 											<!-- Refresh time -->
 											<div class="form-group">
 												<label>Refresh time</label>
-												<div class="row">
-													<div class="col-xs-3">
-														<div class="input-group">
-															<div class="input-group-addon">
-																<i class="fa fa-clock-o"></i>
-															</div>
-															<input type="text" class="form-control" name="dashboard_refresh_time" placeholder="seconds" value="<?php echo $dashboard_refresh_time ?>" />
-														</div><!-- /.input group -->
-														<small>time in seconds, min 5 secs</small>
+												<div class="input-group">
+													<div class="input-group-addon">
+														<i class="fa fa-clock-o"></i>
 													</div>
-													<div class="col-xs-9"></div>
-												</div>
+													<input type="text" class="form-control" name="dashboard_refresh_time" placeholder="seconds" value="<?php echo $dashboard_refresh_time ?>" style="width:90px" />
+												</div><!-- /.input group -->
+												<small>time in seconds, min 5 secs</small>
 											</div>
 												
 	                                </div>
