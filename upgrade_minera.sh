@@ -16,7 +16,7 @@ echo -e "Changing permissions on Minera dir\n-----\n"
 chown -R minera.minera `pwd`
 mkdir -p $MINERA_LOGS
 chmod 777 $MINERA_LOGS
-chmod 777 $MINERA_CONF
+chmod -R 777 $MINERA_CONF
 chown -R minera.minera $MINERA_LOGS
 chown -R www-data.www-data $MINERA_LOGS/log*.php
 rm -rf $MINERA_OLD_LOGS

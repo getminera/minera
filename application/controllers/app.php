@@ -205,7 +205,7 @@ class App extends Main_Controller {
 						
 			if ($this->input->post('save_restart'))
 			{
-				$this->util_model->minerdRestart();
+				$this->util_model->minerRestart();
 				
 				$data['message'] = '<b>Success!</b> Settings saved and miner restarted!';
 				$data['message_type'] = "success";
