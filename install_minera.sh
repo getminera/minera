@@ -20,12 +20,14 @@ echo -e "\n#Minera settings\nminera ALL = (ALL) NOPASSWD: ALL\nwww-data ALL = (A
 MINER_OPT="--gc3355-detect --gc3355-autotune --freq=850 -o stratum+tcp://multi.ghash.io:3333 -u michelem.minera -p x --retries=1"
 MINER_BIN=`pwd`"/minera-bin/"
 MINERA_LOGS="/var/log/minera"
+MINERA_CONF=`pwd`"/conf"
 MINERA_OLD_LOGS=`pwd`"/application/logs"
 
 echo -e "Playing with minera dirs\n-----\n"
 chown -R minera.minera `pwd`
 mkdir -p $MINERA_LOGS
 chmod 777 $MINERA_LOGS
+chmod 777 $MINERA_CONF
 chown -R minera.minera $MINERA_LOGS
 rm -rf $MINERA_OLD_LOGS
 ln -s $MINERA_LOGS $MINERA_OLD_LOGS
