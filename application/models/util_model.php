@@ -373,7 +373,7 @@ class Util_model extends CI_Model {
 	{
 		// Pull the latest code from github
 		exec("cd ".FCPATH." && sudo -u " . $this->config->item("system_user") . " sudo /usr/bin/git pull -v", $out);
-		log_message('error', "Update request from ".$this->currentVersion()." to ".$this->redis->command("HGET minera_version new_version")." : ".var_export($out, true));
+		log_message('error', "Update request from ".$this->currentVersion()." to ".$this->redis->command("HGET minera_update new_version")." : ".var_export($out, true));
 				
 		// Run upgrade script
 		exec("cd ".FCPATH." && sudo -u " . $this->config->item("system_user") . " sudo ./upgrade_minera.sh", $out);
@@ -398,12 +398,13 @@ class Util_model extends CI_Model {
 			$this->redis->command("HSET minera_update timestamp ".time());
 
 			$latestConfig = json_decode(file_get_contents($this->config->item("remote_config_url")));
+
 			$localVersion = $this->currentVersion();
 
 			if ($latestConfig->version != $localVersion)
 			{
 				log_message('error', "Found a new Minera update");
-				
+
 				$this->redis->command("HSET minera_update value 1");
 				$this->redis->command("HSET minera_update new_version ".$latestConfig->version);
 				return true;
