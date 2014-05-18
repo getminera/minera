@@ -9,12 +9,14 @@ echo -e "-----\nInstall extra packages\n-----\n"
 apt-get install -y build-essential libtool libcurl4-openssl-dev libjansson-dev libudev-dev libncurses5-dev autoconf automake postfix
 
 MINERA_LOGS="/var/log/minera"
+MINERA_CONF=`pwd`"/conf"
 MINERA_OLD_LOGS=`pwd`"/application/logs"
 
 echo -e "Changing permissions on Minera dir\n-----\n"
 chown -R minera.minera `pwd`
 mkdir -p $MINERA_LOGS
 chmod 777 $MINERA_LOGS
+chmod 777 $MINERA_CONF
 chown -R minera.minera $MINERA_LOGS
 chown -R www-data.www-data $MINERA_LOGS/log*.php
 rm -rf $MINERA_OLD_LOGS
