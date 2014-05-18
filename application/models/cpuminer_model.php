@@ -79,7 +79,7 @@ class Cpuminer_model extends CI_Model {
 	// Start minerd
 	public function start()
 	{
-		$command = array($this->config->item("screen_command"), $this->config->item("minerd_command"), $this->redis->get('minerd_settings'));
+		$command = array($this->config->item("screen_command"), $this->config->item("minerd_command"), $this->util_model->getCommandline());
 
 		$finalCommand = "sudo -u " . $this->config->item("system_user") . " " . implode(" ", $command);
 		
@@ -95,9 +95,9 @@ class Cpuminer_model extends CI_Model {
 	// Restart minerd
 	public function restart()
 	{
-		$this->minerdStop();
+		$this->stop();
 		sleep(1);
-		$this->minerdStart();
+		$this->start();
 		sleep(1);
 					
 		return true;

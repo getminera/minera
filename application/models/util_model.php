@@ -11,7 +11,7 @@ class Util_model extends CI_Model {
 	{
 		// load CPUMiner Model
 		// TODO Switch model for CGMiner/BFGMiner
-		$this->load->model('cpuminer_model');
+		$this->load->model('cpuminer_model', 'miner');
 		
 		parent::__construct();
 	}
@@ -45,7 +45,7 @@ class Util_model extends CI_Model {
 	{
 		if ($this->isOnline())
 		{
-			$a = $this->cpuminer_model->callMinerd();
+			$a = $this->miner->callMinerd();
 
 			if (is_object($a))
 			{
@@ -55,7 +55,7 @@ class Util_model extends CI_Model {
 				$a["sysload"] = sys_getloadavg();
 				
 				// Add pools
-				$pools = json_decode($this->redis->get("minerd_pools"), true);
+				$pools = json_decode($this->getPools(), true);
 				
 				foreach ($pools as $pool)
 				{
@@ -153,6 +153,26 @@ class Util_model extends CI_Model {
 		log_message('error', "Stats stored as: $json");
 	}
 	
+	function setPools($pools)
+	{
+		return $this->redis->set("minerd_pools", json_encode($pools));
+	}
+
+	function getPools()
+	{
+		return $this->redis->get("minerd_pools");
+	}
+	
+	function setCommandline($string)
+	{
+		return $this->redis->set("minerd_settings", $string);
+	}
+
+	function getCommandline()
+	{
+		return $this->redis->get("minerd_settings");
+	}
+		
 	/*
 	//
 	// Crypto rates related stuff
@@ -262,7 +282,7 @@ class Util_model extends CI_Model {
 	// Write rc.local startup file
 	public function saveStartupScript($delay = 5, $extracommands = false)
 	{
-		$command = array($this->config->item("screen_command"), $this->config->item("minerd_command"), $this->redis->get('minerd_settings'));
+		$command = array($this->config->item("screen_command"), $this->config->item("minerd_command"), $this->getCommandline());
 		
 		$rcLocal = file_get_contents(FCPATH."rc.local.minera");
 		
@@ -277,25 +297,25 @@ class Util_model extends CI_Model {
 
 	public function saveCurrentFreq()
 	{
-		return $this->cpuminer_model->saveCurrentFreq();
+		return $this->miner->saveCurrentFreq();
 	}
 		
 	// Stop miner
 	public function minerStop()
 	{
-		return $this->cpuminer_model->stop();
+		return $this->miner->stop();
 	}
 	
 	// Start miner
 	public function minerStart()
 	{
-		return $this->cpuminer_model->start();
+		return $this->miner->start();
 	}
 	
 	// Stop minerd
 	public function minerRestart()
 	{
-		return $this->cpuminer_model->restart();
+		return $this->miner->restart();
 	}
 	
 	// Call update cmd

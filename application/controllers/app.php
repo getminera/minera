@@ -34,7 +34,7 @@ class App extends Main_Controller {
 		if (!$this->session->userdata("loggedin"))
 			redirect('app/index');
 		
-		$data['minerdPools'] = json_decode($this->redis->get("minerd_pools"));
+		$data['minerdPools'] = json_decode($this->util_model->getPools());
 		$data['btc'] = $this->util_model->getBtcUsdRates();
 		$data['ltc'] = $this->util_model->getCryptsyRates(3);
 		$data['doge'] = $this->util_model->getCryptsyRates(132);
@@ -112,8 +112,7 @@ class App extends Main_Controller {
 				// Auto-detect
 				if ($this->input->post('minerd_autodetect'))
 				{
-					$confArray["gc3355-detect"] = true;
-					//$settings .= " --gc3355-detect ";			
+					$confArray["gc3355-detect"] = true;			
 				}
 				$this->redis->set('minerd_autodetect', $this->input->post('minerd_autodetect'));
 
@@ -121,7 +120,6 @@ class App extends Main_Controller {
 				if ($this->input->post('minerd_autotune'))
 				{
 					$confArray["gc3355-autotune"] = true;
-					//$settings .= " --gc3355-autotune ";
 				}
 				$this->redis->set('minerd_autotune', $this->input->post('minerd_autotune'));
 					
@@ -129,22 +127,13 @@ class App extends Main_Controller {
 				if ($this->input->post('minerd_startfreq'))
 				{
 					$confArray["freq"] = $this->input->post('minerd_startfreq');
-					//$settings .= " --freq=".$this->input->post('minerd_startfreq')." ";
 				}
 				$this->redis->set('minerd_startfreq', $this->input->post('minerd_startfreq'));
-
-				// Extra options
-				if ($this->input->post('minerd_extraoptions'))
-				{
-					$settings .= " ".$this->input->post('minerd_extraoptions')." ";
-				}
-				$this->redis->set('minerd_extraoptions', $this->input->post('minerd_extraoptions'));
 				
 				// Logging
 				if ($this->input->post('minerd_log'))
 				{
 					$confArray["log"] = $this->config->item("minerd_log_file");
-					//$settings .= " --log ".$this->config->item("minerd_log_file");
 				}
 				$this->redis->set('minerd_log', $this->input->post('minerd_log'));
 
@@ -152,9 +141,16 @@ class App extends Main_Controller {
 				if ($this->input->post('minerd_debug'))
 				{
 					$confArray["debug"] = true;
-					//$settings .= " --debug ";
 				}
 				$this->redis->set('minerd_debug', $this->input->post('minerd_debug'));
+
+				// Extra options
+				if ($this->input->post('minerd_extraoptions'))
+				{
+					$settings .= " ".$this->input->post('minerd_extraoptions')." ";
+				}
+				$this->redis->set('minerd_extraoptions', $this->input->post('minerd_extraoptions'));				
+				
 			}
 			
 			// Add the pools to the command
@@ -164,21 +160,21 @@ class App extends Main_Controller {
 				$addPools[] = " -o ".$pool['url']." -u ".$pool['username']." -p ".$pool['password'];
 				$poolsArray[] = array("url" => $pool['url'], "user" => $pool['username'], "pass" => $pool['password']);
 			}
-			
-			//$settings .= implode(" ", $addPools);
-			
 			$confArray['pools'] = $poolsArray;
+			
+			// Prepare JSON conf
 			$jsonConfRedis = json_encode($confArray);
 			$jsonConfFile = json_encode($confArray, JSON_PRETTY_PRINT);
 			
+			// Add JSON conf to miner command
 			$settings .= " -c ".$this->config->item("minerd_conf_file");
-
+			// Save the JSON conf file
 			file_put_contents($this->config->item("minerd_conf_file"), $jsonConfFile);
 
-			// End options string
+			// End command options string
 
-			$this->redis->set("minerd_pools", json_encode($pools));
-			$this->redis->set("minerd_settings", $settings);
+			$this->util_model->setPools($pools);
+			$this->util_model->setCommandline($settings);
 			$this->redis->set("minerd_json_settings", $jsonConfRedis);
 			$this->redis->set("minerd_autorecover", $this->input->post('minerd_autorecover'));
 			$this->redis->set("dashboard_refresh_time", $dashSettings);
@@ -259,9 +255,9 @@ class App extends Main_Controller {
 		$data['minerdLog'] = $this->redis->get('minerd_log');
 		$data['minerdDebug'] = $this->redis->get('minerd_debug');
 		$data['minerdManualSettings'] = $this->redis->get('minerd_manual_settings');
-		$data['minerdSettings'] = $this->redis->get("minerd_settings");
+		$data['minerdSettings'] = $this->util_model->getCommandline();
 		$data['minerdJsonSettings'] = $this->redis->get("minerd_json_settings");
-		$data['minerdPools'] = $this->redis->get("minerd_pools");
+		$data['minerdPools'] = $this->util_model->getPools();
 		$data['minerdGuidedOptions'] = $this->redis->get("guided_options");
 		$data['minerdManualOptions'] = $this->redis->get("manual_options");
 		$data['minerdDelaytime'] = $this->redis->get("minerd_delaytime");
