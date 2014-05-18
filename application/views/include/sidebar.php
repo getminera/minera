@@ -68,6 +68,7 @@
                             </ul>
                         </li>
                         
+                        <?php if (isset($ltc->return->markets->LTC)) : ?>
                         <!-- LTC/BTC Rates -->
 						<li class="messages-menu">
                             <a href="#" class="dropdown-toggle" data-toggle="dropdown">
@@ -107,7 +108,9 @@
                                 <li class="footer"><a href="https://www.cryptsy.com/users/register?refid=243592">Register at Cryptsy</a></li>
                             </ul>
                         </li>
+                        <?php endif; ?>
                         
+                        <?php if (isset($doge->return->markets->DOGE)) : ?>
 						<!-- DOGE/BTC Rates -->
 						<li class="messages-menu">
                             <a href="#" class="dropdown-toggle" data-toggle="dropdown">
@@ -147,6 +150,7 @@
                                 <li class="footer"><a href="https://www.cryptsy.com/users/register?refid=243592">Register at Cryptsy</a></li>
                             </ul>
                         </li>
+                        <?php endif; ?>
                         
 					    <!-- Donate/Help dropdown -->
 					    <li class="dropdown user user-menu">

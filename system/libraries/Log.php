@@ -103,7 +103,12 @@ class CI_Log {
 		flock($fp, LOCK_UN);
 		fclose($fp);
 
-		@chmod($filepath, FILE_WRITE_MODE);
+		//@chmod($filepath, FILE_WRITE_MODE);
+		// michelem
+		if (octdec(substr(sprintf('%o', fileperms($filepath)), -4)) != FILE_WRITE_MODE)
+		{
+			@chmod($filepath, FILE_WRITE_MODE);
+		}
 		return TRUE;
 	}
 

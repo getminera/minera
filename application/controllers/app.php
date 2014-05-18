@@ -113,7 +113,7 @@ class App extends Main_Controller {
 				if ($this->input->post('minerd_autodetect'))
 				{
 					$confArray["gc3355-detect"] = true;
-					$settings .= " --gc3355-detect ";			
+					//$settings .= " --gc3355-detect ";			
 				}
 				$this->redis->set('minerd_autodetect', $this->input->post('minerd_autodetect'));
 
@@ -121,7 +121,7 @@ class App extends Main_Controller {
 				if ($this->input->post('minerd_autotune'))
 				{
 					$confArray["gc3355-autotune"] = true;
-					$settings .= " --gc3355-autotune ";
+					//$settings .= " --gc3355-autotune ";
 				}
 				$this->redis->set('minerd_autotune', $this->input->post('minerd_autotune'));
 					
@@ -129,7 +129,7 @@ class App extends Main_Controller {
 				if ($this->input->post('minerd_startfreq'))
 				{
 					$confArray["freq"] = $this->input->post('minerd_startfreq');
-					$settings .= " --freq=".$this->input->post('minerd_startfreq')." ";
+					//$settings .= " --freq=".$this->input->post('minerd_startfreq')." ";
 				}
 				$this->redis->set('minerd_startfreq', $this->input->post('minerd_startfreq'));
 
@@ -144,7 +144,7 @@ class App extends Main_Controller {
 				if ($this->input->post('minerd_log'))
 				{
 					$confArray["log"] = $this->config->item("minerd_log_file");
-					$settings .= " --log ".$this->config->item("minerd_log_file");
+					//$settings .= " --log ".$this->config->item("minerd_log_file");
 				}
 				$this->redis->set('minerd_log', $this->input->post('minerd_log'));
 
@@ -152,7 +152,7 @@ class App extends Main_Controller {
 				if ($this->input->post('minerd_debug'))
 				{
 					$confArray["debug"] = true;
-					$settings .= " --debug ";
+					//$settings .= " --debug ";
 				}
 				$this->redis->set('minerd_debug', $this->input->post('minerd_debug'));
 			}
@@ -165,19 +165,26 @@ class App extends Main_Controller {
 				$poolsArray[] = array("url" => $pool['url'], "user" => $pool['username'], "pass" => $pool['password']);
 			}
 			
-			$settings .= implode(" ", $addPools);
+			//$settings .= implode(" ", $addPools);
 			
 			$confArray['pools'] = $poolsArray;
-			$jsonConf = json_encode($confArray);
+			$jsonConfRedis = json_encode($confArray);
+			$jsonConfFile = json_encode($confArray, JSON_PRETTY_PRINT);
+			
+			$settings .= " -c ".$this->config->item("minerd_conf_file");
+
+			file_put_contents($this->config->item("minerd_conf_file"), $jsonConfFile);
 
 			// End options string
 
 			$this->redis->set("minerd_pools", json_encode($pools));
 			$this->redis->set("minerd_settings", $settings);
-			$this->redis->set("minerd_json_settings", $jsonConf);
+			$this->redis->set("minerd_json_settings", $jsonConfRedis);
 			$this->redis->set("minerd_autorecover", $this->input->post('minerd_autorecover'));
 			$this->redis->set("dashboard_refresh_time", $dashSettings);
-				
+			
+			// System settings
+			
 			// Delay time
 			$delay = 5;
 			if ($this->input->post('minerd_delaytime'))
@@ -185,9 +192,17 @@ class App extends Main_Controller {
 				$delay = $this->input->post('minerd_delaytime');
 				$this->redis->set("minerd_delaytime", $delay);
 			}
-			
-			// Startup script
-			$this->util_model->saveStartupScript($delay);
+
+			// On boot extra commands
+			$extracommands = false;
+			if ($this->input->post('system_extracommands'))
+			{
+				$extracommands = $this->input->post('system_extracommands');
+			}
+			$this->redis->set("system_extracommands", $extracommands);
+						
+			// Startup script rc.local
+			$this->util_model->saveStartupScript($delay, $extracommands);
 
 			$data['message'] = '<b>Success!</b> Settings saved!';
 			$data['message_type'] = "success";
@@ -245,6 +260,7 @@ class App extends Main_Controller {
 		$data['minerdDebug'] = $this->redis->get('minerd_debug');
 		$data['minerdManualSettings'] = $this->redis->get('minerd_manual_settings');
 		$data['minerdSettings'] = $this->redis->get("minerd_settings");
+		$data['minerdJsonSettings'] = $this->redis->get("minerd_json_settings");
 		$data['minerdPools'] = $this->redis->get("minerd_pools");
 		$data['minerdGuidedOptions'] = $this->redis->get("guided_options");
 		$data['minerdManualOptions'] = $this->redis->get("manual_options");
@@ -252,7 +268,10 @@ class App extends Main_Controller {
 		
 		//Load Dashboard settings
 		$data['dashboard_refresh_time'] = $this->redis->get("dashboard_refresh_time");
-		
+
+		// Load System settings
+		$data['systemExtracommands'] = $this->redis->get("system_extracommands");
+				
 		// Everything else
 		$data['savedFrequencies'] = $this->redis->get('current_frequencies');
 		$data['isOnline'] = $this->util_model->isOnline();

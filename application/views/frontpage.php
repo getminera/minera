@@ -177,10 +177,14 @@
 		                                                <th>Frequency</th>
 		                                                <th>Hashrate</th>
 		                                                <th>Shares</th>
-		                                                <th>Accepted</th>
-		                                                <th>Rejected</th>
-		                                                <th>Errors</th>
+		                                                <th>AC</th>
+		                                                <th>% AC</th>
+		                                                <th>RE</th>
+		                                                <th>% RE</th>
+		                                                <th>HW</th>
+		                                                <th>% HW</th>
 		                                                <th>Last share</th>
+		                                                <th>Last share time</th>
 		                                            </tr>
 		                                            </thead>
 		                                            <tbody class="devs_table">

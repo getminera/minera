@@ -236,6 +236,8 @@
 											<div class="callout callout-info">
 												<h4>Miner will start with this command line:</h4>
 												<h5><i><?php echo $this->config->item("screen_command") ?> <?php echo $this->config->item("minerd_command")."</i> <strong>".$minerdSettings ?></strong></h5>
+												<h4>JSON Conf:</h4>
+												<pre style="font-size:10px;"><?php $jsonConf =  json_decode($minerdJsonSettings); echo json_encode($jsonConf, JSON_PRETTY_PRINT); ?></pre>
 											</div>
 
 											<?php if ($savedFrequencies) : ?>
@@ -284,8 +286,37 @@
 										<button type="submit" class="btn btn-primary" name="save" value="1">Save</button>
 									</div>
 	                            </div>
+	                            
+	                            <!-- System box -->
+								<div class="box box-primary">
+									<div class="box-header">
+										<!-- tools box -->
+	                                    <div class="pull-right box-tools">
+	                                        <button class="btn btn-default btn-xs" data-widget="collapse" data-toggle="tooltip" title="" data-original-title="Collapse"><i class="fa fa-minus"></i></button>
+	                                    </div><!-- /. tools -->
+	                                    <i class="fa fa-rocket"></i>
+	                                    
+	                                    <h3 class="box-title">System Settings</h3>
+	                                </div>
+									
+	                                <div class="box-body">
+										<p>Setup the system options</p>
+	
+											<!-- rc.local extra commands -->
+	                                        <div class="form-group">
+	                                            <label>On boot extra commands (rc.local)</label>
+	                                            <p>If you need to launch any other extra command on boot, you can place them here. Each line will be appended to the file /etc/rc.local</p>
+	                                            <textarea name="system_extracommands" class="form-control" rows="5" placeholder="There isn't any error control here" class="system_extracommands"><?php echo $systemExtracommands ?></textarea>
+												<h6>(WARNING: you could harm your controller putting wrong strings here.)</h6>
+											</div>
+												
+	                                </div>
+									<div class="box-footer">
+										<button type="submit" class="btn btn-primary" name="save" value="1">Save</button>
+									</div>
+	                            </div>
 
-							</form>                            
+							</form>
 
 							<!-- User box -->
 							<div class="box box-primary">

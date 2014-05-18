@@ -21,7 +21,7 @@ class Util_model extends CI_Model {
 	// Call minerd to get the stats and retry before give up
 	public function callMinerd($i = 0)
 	{
-		if(!($fp = @fsockopen("127.0.0.1", 4028, $errno, $errstr, 1)))
+		if(!($fp = @fsockopen("127.0.0.1", 4028, $errno, $errstr, 3)))
 		{
 			return array("error" => true, "msg" => $errstr);
 		}
@@ -32,13 +32,13 @@ class Util_model extends CI_Model {
 		
 		fwrite($fp, $out);
 		
-		usleep(150000);
+		usleep(250000);
 		
 		$out = false;
 		
 		while(!feof($fp))
 		{
-		    if(!($str = fgets($fp, 2048))) break;
+		    if(!($str = fread($fp, 4096))) break;
 		    $out .= $str;
 		}
 
@@ -300,7 +300,7 @@ class Util_model extends CI_Model {
 			foreach ($device->chips as $c => $chip)
 			{
 				$fr = $chip->frequency;
-				$dev[] = "/dev/".$d.":".$fr.":".$c;
+				$dev[] = $device->serial.":".$fr.":".$c;
 			}
 		}
 		
@@ -312,13 +312,13 @@ class Util_model extends CI_Model {
 	}
 	
 	// Write rc.local startup file
-	public function saveStartupScript($delay = 5)
+	public function saveStartupScript($delay = 5, $extracommands = false)
 	{
 		$command = array($this->config->item("screen_command"), $this->config->item("minerd_command"), $this->redis->get('minerd_settings'));
 		
 		$rcLocal = file_get_contents(FCPATH."rc.local.minera");
 		
-		$rcLocal .= "\nsleep $delay\nsu - ".$this->config->item('system_user').' -c "'.implode(' ', $command)."\"\n\nexit 0";
+		$rcLocal .= "\nsleep $delay\nsu - ".$this->config->item('system_user').' -c "'.implode(' ', $command)."\"\n$extracommands\nexit 0";
 		
 		file_put_contents('/etc/rc.local', $rcLocal);
 		

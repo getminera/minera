@@ -146,7 +146,7 @@
 		    "use strict";
 
 			// Refresh stats when you come back in Minera tab
-			$(window).focus(function() { getStats(true); });
+			$(window).focus(function() { getStats(true); target_date = new Date().getTime(); });
 			
 			var refresh_time = "<?php echo ($dashboard_refresh_time) ? $dashboard_refresh_time : 60; ?>";
 			
@@ -485,6 +485,56 @@
 						$('#miner-table-details').dataTable().fnDestroy();						
 					}
 					
+					// Initialize the miner datatable	
+					$('#miner-table-details').dataTable({
+						"lengthMenu": [ 5, 10, 25, 50 ],
+						"pageLength": 5,
+						"stateSave": true,
+						"bAutoWidth": false,
+						"aoColumnDefs": [ 
+						{
+							"aTargets": [ 1 ],	
+							"mRender": function ( data, type, full ) {
+								if (type === 'display')
+								{
+									return data +' MHz'
+								}
+								return data;
+							},
+						},
+						{
+							"aTargets": [ 2 ],	
+							"mRender": function ( data, type, full ) {
+								if (type === 'display')
+								{
+									return '<strong>'+ convertHashrate(data) +'</strong>'
+								}
+								return data;
+							}
+						},
+						{
+							"aTargets": [ 10 ],	
+							"mRender": function ( data, type, full ) {
+								if (type === 'display')
+								{
+									return data +' secs ago'
+								}
+								return data;
+							}
+						},
+						{
+							"aTargets": [ 5, 7, 9 ],	
+							"mRender": function ( data, type, full ) {
+								if (type === 'display')
+								{
+									return '<small class="text-muted">' + data + '%</small>'
+								}
+								return data;
+							}
+						},
+						],
+					});
+					
 					for (var index in items) 
 					{
 						// Crete Knob graph for devices and total
@@ -492,7 +542,9 @@
 						
 						// Add per device rows in system table
 						var share_date = new Date(items[index].ls*1000);
-						var last_share_secs = (now - share_date)/1000;
+						var rightnow = new Date().getTime();
+						var last_share_secs = (rightnow - share_date)/1000;
+						if (last_share_secs < 0) last_share_secs = 0;
 						var totalWorkedShares = (items[index].ac+items[index].re+items[index].hw);
 						var percentageAc = (100*items[index].ac/totalWorkedShares);
 						var percentageRe = (100*items[index].re/totalWorkedShares);
@@ -517,26 +569,33 @@
 						    $(document).attr('title', convertHashrate(items[index].hash)+' | Minera - Dashboard');
 						}
 						
-						var devRow = '<tr class="dev-'+index+'"><td class="devs_table_name"><i class="glyphicon glyphicon-hdd"></i>&nbsp;&nbsp;'+index+dev_serial+'</td><td class="devs_table_freq">'+ items[index].fr + ' Mhz</td><td class="devs_table_hash"><strong>'+ convertHashrate(items[index].hash) +'</strong></td><td class="devs_table_sh">'+ items[index].sh +'</td><td class="devs_table_ac">'+ items[index].ac +' <small class="text-muted">('+parseFloat(percentageAc).toFixed(2)+'%)</small></td><td class="devs_table_re">'+ items[index].re +' <small class="text-muted">('+parseFloat(percentageRe).toFixed(2)+'%)</small></td><td class="devs_table_hw">'+ items[index].hw +' <small class="text-muted">('+parseFloat(percentageHw).toFixed(2)+'%)</small></td><td class="devs_table_ls">'+ parseInt(last_share_secs) +' secs ago <small class="text-muted">('+share_date.toUTCString()+')</small></td></tr>'
-						    
+						var devRow = '<tr class="dev-'+index+'"><td class="devs_table_name"><i class="glyphicon glyphicon-hdd"></i>&nbsp;&nbsp;'+index+dev_serial+'</td><td class="devs_table_freq">'+ items[index].fr + ' Mhz</td><td class="devs_table_hash"><strong>'+ convertHashrate(items[index].hash) +'</strong></td><td class="devs_table_sh">'+ items[index].sh +'</td><td class="devs_table_ac">'+ items[index].ac +'</td><td><small class="text-muted">'+parseFloat(percentageAc).toFixed(2)+'%</small></td><td class="devs_table_re">'+ items[index].re +'</td><td><small class="text-muted">'+parseFloat(percentageRe).toFixed(2)+'%</small></td><td class="devs_table_hw">'+ items[index].hw +'</td><td><small class="text-muted">'+parseFloat(percentageHw).toFixed(2)+'%</small></td><td class="devs_table_ls">'+ parseInt(last_share_secs) +' secs ago</td><td><small class="text-muted">'+share_date.toUTCString()+'</small></td></tr>'
+					
 						if (index == "total")
 						{
+							// TODO add row total via datatable
 						    $('.devs_table_foot').html(devRow);		
 						}
 						else
 						{
-							$('.dev-'+index).remove();
-						    $('.devs_table').append(devRow);
+							// New add rows via datatable
+							$('#miner-table-details').dataTable().fnAddData( [
+								'<i class="glyphicon glyphicon-hdd"></i>&nbsp;&nbsp;'+index+dev_serial,
+								items[index].fr,
+								items[index].hash,
+								items[index].sh,
+								items[index].ac,
+								parseFloat(percentageAc).toFixed(2),
+								items[index].re,
+								parseFloat(percentageRe).toFixed(2),
+								items[index].hw,
+								parseFloat(percentageHw).toFixed(2),
+								parseInt(last_share_secs),
+								'<small class="text-muted">'+share_date.toUTCString()+'</small>'
+							] );
 						}
 						
-					}
-					
-					// Initialize the miner datatable	
-					$('#miner-table-details').dataTable({
-						"lengthMenu": [ 5, 10, 25, 50 ],
-						"pageLength": 5,
-						"stateSave": true
-					});
+					}					
 				    
 					// Add pools data
 					$('.pool-row').remove();
