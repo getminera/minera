@@ -1,3 +1,3 @@
-[submodule "minera-bin/cpuminer-gc3355"]
-	path = minera-bin/cpuminer-gc3355
+[submodule "minera-bin/src/cpuminer-gc3355"]
+	path = minera-bin/src/cpuminer-gc3355
 	url = https://github.com/siklon/cpuminer-gc3355.git
