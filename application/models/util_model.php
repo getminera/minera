@@ -9,6 +9,10 @@ class Util_model extends CI_Model {
 
 	public function __construct()
 	{
+		// load CPUMiner Model
+		// TODO Switch model for CGMiner/BFGMiner
+		$this->load->model('cpuminer_model');
+		
 		parent::__construct();
 	}
 
@@ -17,36 +21,7 @@ class Util_model extends CI_Model {
 	// Stats related stuff
 	//
 	*/
-	
-	// Call minerd to get the stats and retry before give up
-	public function callMinerd($i = 0)
-	{
-		if(!($fp = @fsockopen("127.0.0.1", 4028, $errno, $errstr, 3)))
-		{
-			return array("error" => true, "msg" => $errstr);
-		}
-	
-		stream_set_blocking($fp, false);
 		
-		$out = json_encode(array("get" => "stats"))."\n";
-		
-		fwrite($fp, $out);
-		
-		usleep(250000);
-		
-		$out = false;
-		
-		while(!feof($fp))
-		{
-		    if(!($str = fread($fp, 4096))) break;
-		    $out .= $str;
-		}
-
-		fclose($fp);
-			
-		return json_decode($out);
-	}
-	
 	// Check if pool is alive
 	public function checkPool($url)
 	{	
@@ -70,7 +45,7 @@ class Util_model extends CI_Model {
 	{
 		if ($this->isOnline())
 		{
-			$a = $this->callMinerd();
+			$a = $this->cpuminer_model->callMinerd();
 
 			if (is_object($a))
 			{
@@ -222,12 +197,6 @@ class Util_model extends CI_Model {
 	// Check if the minerd if running
 	public function isOnline()
 	{
-		/*
-		exec('ps -ef|grep "minera-bin/minerd" | grep -v grep|grep -v -i screen', $minerd);
-
-		if (count($minerd) > 0)
-			return true;
-		*/
 		if(!($fp = @fsockopen("127.0.0.1", 4028, $errno, $errstr, 1)))
 		{
 			return false;
@@ -259,9 +228,9 @@ class Util_model extends CI_Model {
 			{
 				log_message('error', "It seems miner is down, trying to restart it");
 				// Force stop and killall
-				$this->minerdStop();
-				// Restart minerd
-				$this->minerdStart();
+				$this->minerStop();
+				// Restart miner
+				$this->minerStart();
 			}
 			
 			log_message('error', "Miner is up");
@@ -290,27 +259,6 @@ class Util_model extends CI_Model {
 		return true;
 	}
 	
-	public function saveCurrentFreq()
-	{
-		$stats = json_decode($this->getStats());
-
-		$dev = array();
-		foreach ($stats->devices as $d => $device)
-		{
-			foreach ($device->chips as $c => $chip)
-			{
-				$fr = $chip->frequency;
-				$dev[] = $device->serial.":".$fr.":".$c;
-			}
-		}
-		
-		$r = implode(",", $dev);
-		
-		$this->redis->set("current_frequencies", $r);
-		
-		return $r;
-	}
-	
 	// Write rc.local startup file
 	public function saveStartupScript($delay = 5, $extracommands = false)
 	{
@@ -326,46 +274,28 @@ class Util_model extends CI_Model {
 
 		return true;
 	}
-	
-	// Stop minerd
-	public function minerdStop()
+
+	public function saveCurrentFreq()
 	{
-		exec("sudo -u " . $this->config->item("system_user") . " " . $this->config->item("screen_command_stop"));
-		exec("sudo -u " . $this->config->item("system_user") . " /usr/bin/killall -s9 minerd");
+		return $this->cpuminer_model->saveCurrentFreq();
+	}
 		
-		$this->redis->del("latest_stats");
-		$this->redis->set("minerd_status", false);
-		
-		log_message('error', "Minerd stopped");
-					
-		return true;
+	// Stop miner
+	public function minerStop()
+	{
+		return $this->cpuminer_model->stop();
 	}
 	
-	// Start minerd
-	public function minerdStart()
+	// Start miner
+	public function minerStart()
 	{
-		$command = array($this->config->item("screen_command"), $this->config->item("minerd_command"), $this->redis->get('minerd_settings'));
-
-		$finalCommand = "sudo -u " . $this->config->item("system_user") . " " . implode(" ", $command);
-		
-		exec($finalCommand, $out);
-		
-		$this->redis->set("minerd_status", true);
-		
-		log_message('error', "Minerd started with command: $finalCommand - Output was: ".var_export($out, true));
-
-		return true;
+		return $this->cpuminer_model->start();
 	}
 	
 	// Stop minerd
-	public function minerdRestart()
+	public function minerRestart()
 	{
-		$this->minerdStop();
-		sleep(1);
-		$this->minerdStart();
-		sleep(1);
-					
-		return true;
+		return $this->cpuminer_model->restart();
 	}
 	
 	// Call update cmd
@@ -400,13 +330,13 @@ class Util_model extends CI_Model {
 			$latestConfig = json_decode(file_get_contents($this->config->item("remote_config_url")));
 
 			$localVersion = $this->currentVersion();
+			$this->redis->command("HSET minera_update new_version ".$latestConfig->version);
 
 			if ($latestConfig->version != $localVersion)
 			{
 				log_message('error', "Found a new Minera update");
 
 				$this->redis->command("HSET minera_update value 1");
-				$this->redis->command("HSET minera_update new_version ".$latestConfig->version);
 				return true;
 			}
 		

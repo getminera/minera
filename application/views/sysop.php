@@ -10,7 +10,7 @@
             <div class="lockscreen-name"><?php echo $message ?></div>			
         </div><!-- /.center -->
 
-		<script src="http://ajax.googleapis.com/ajax/libs/jquery/2.0.2/jquery.min.js"></script>
+		<script src="<?php echo base_url('assets/js/jquery-2.1.1.min.js') ?>"></script>
 		<script src="<?php echo base_url('assets/js/bootstrap.min.js') ?>"></script>
 
         <!-- page script -->

@@ -350,7 +350,7 @@ class App extends Main_Controller {
 			redirect('app/index');
 		
 		if (!$this->util_model->isOnline())
-			$this->util_model->minerdStart();
+			$this->util_model->minerStart();
 		else
 		{
 			$this->session->set_flashdata('message', "<b>Warning!</b> Your miner is currently mining, before you can start it you need to stop it before, or try the restart link.");
@@ -368,7 +368,7 @@ class App extends Main_Controller {
 		if (!$this->session->userdata("loggedin"))
 			redirect('app/index');
 		
-		$this->util_model->minerdStop();
+		$this->util_model->minerStop();
 		
 		redirect('app/dashboard');
 	}
@@ -381,7 +381,7 @@ class App extends Main_Controller {
 		if (!$this->session->userdata("loggedin"))
 			redirect('app/index');
 		
-		$this->util_model->minerdRestart();
+		$this->util_model->minerRestart();
 		
 		redirect('app/dashboard');
 	}

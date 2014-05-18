@@ -203,7 +203,7 @@
 				                <li class="user-footer">
 				                	<div class="col-xs-12 text-center">
 				                		<small><a href="<?php echo site_url("app/update") ?>">There is a new version available</a></small>
-				                		<p><button class="btn btn-danger btn-xs" data-toggle="tooltip" title="" data-original-title="Update Minera">Update Now! <i class="fa fa-download"></i></button></p>
+				                		<p><a href="<?php echo site_url("app/update") ?>"><button class="btn btn-danger btn-xs" data-toggle="tooltip" title="" data-original-title="Update Minera">Update Now! <i class="fa fa-download"></i></button></a></p>
 				                	</div>
 				                </li>
 								<?php endif; ?>
