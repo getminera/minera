@@ -14,7 +14,7 @@ class Cpuminer_model extends CI_Model {
 	
 	// Call minerd to get the stats and retry before give up
 	public function callMinerd($i = 0)
-	{
+	{		
 		if(!($fp = @fsockopen("127.0.0.1", 4028, $errno, $errstr, 3)))
 		{
 			return array("error" => true, "msg" => $errstr);
@@ -22,22 +22,22 @@ class Cpuminer_model extends CI_Model {
 	
 		stream_set_blocking($fp, false);
 		
-		$out = json_encode(array("get" => "stats"))."\n";
+		$in = json_encode(array("get" => "stats"))."\n";
 		
-		fwrite($fp, $out);
+		fwrite($fp, $in);
 		
-		usleep(250000);
-		
+		usleep(150000);
+
 		$out = false;
 		
 		while(!feof($fp))
 		{
-		    if(!($str = fread($fp, 4096))) break;
+		    if(!($str = fread($fp, 8192))) break;
 		    $out .= $str;
 		}
 
 		fclose($fp);
-			
+
 		return json_decode($out);
 	}
 	

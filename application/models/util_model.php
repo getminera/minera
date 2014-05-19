@@ -397,4 +397,30 @@ class Util_model extends CI_Model {
 		
 		return true;
 	}
+
+	// Socket server to get a fake miner to do tests
+	public function fakeMiner()
+	{
+		$server = stream_socket_server("tcp://127.0.0.1:1337", $errno, $errorMessage);
+		
+		if ($server === false) {
+		    throw new UnexpectedValueException("Could not bind to socket: $errorMessage");
+		}
+		
+		for (;;) {
+		    $client = @stream_socket_accept($server);
+		
+		    if ($client) 
+		    {    
+		    	// Inject stdin
+		        //stream_copy_to_stream($client, $client);
+		        
+		        // Inject some json
+		        $j = file_get_contents('test.json');
+		        fwrite($client, $j);
+		        
+		        fclose($client);
+		    }
+		}
+	}
 }
