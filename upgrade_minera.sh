@@ -39,4 +39,8 @@ usermod -a -G www-data minera
 echo -e "Adding default settings\n-----\n"
 echo -n "1" | redis-cli -x set guided_options
 
+echo -e "Update redis values\n-----\n"
+redis-cli del minera_update
+redis-cli del minera_version
+
 echo -e 'DONE! Minera is ready!\n\nOpen the URL: http://'$(hostname -I | tr -d ' ')'/minera/\n\nAnd happy mining!\n'
