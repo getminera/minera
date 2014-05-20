@@ -225,12 +225,18 @@
                                         <div class="col-sm-12">
                                             <div class="table-responsive">
 		                                        <!-- .table - Uses sparkline charts-->
-		                                        <table class="table">
+		                                        <table id="pools-table-details" class="table table-striped datatable">
 		                                            <thead>
 		                                            <tr>
-		                                                <th>Pool Url</th>
+		                                                <th>Pool</th>
+		                                                <th>Url</th>
 		                                                <th>Priority</th>
+		                                                <th>Type</th>
 		                                                <th>Status</th>
+		                                                <th>Shares</th>
+		                                                <th>Accepted</th>
+		                                                <th>Rejected</th>
+		                                                <th>Start Time</th>		                                                
 		                                                <th>Username</th>
 		                                                <th>Password</th>
 		                                            </tr>
@@ -238,6 +244,7 @@
 		                                            <tbody class="pools_table">
 													</tbody>
 												</table><!-- /.table -->
+												<p class="pool-alert"></p>
 		                                    </div>
                                         </div>
                                     </div><!-- /.row - inside box -->

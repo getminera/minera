@@ -480,9 +480,11 @@
 					
 					if (refresh)
 					{
-						// Destroy and clear the miner table before you can re-initialize it
+						// Destroy and clear the data tables before you can re-initialize it
 						$('#miner-table-details').dataTable().fnClearTable();
-						$('#miner-table-details').dataTable().fnDestroy();						
+						$('#miner-table-details').dataTable().fnDestroy();		
+						$('#pools-table-details').dataTable().fnClearTable();
+						$('#pools-table-details').dataTable().fnDestroy();					
 					}
 					
 					// Initialize the miner datatable	
@@ -533,6 +535,19 @@
 							}
 						},
 						],
+					});
+					
+					// Initialize the pools datatable	
+					$('#pools-table-details').dataTable({
+						"stateSave": true,
+						"bAutoWidth": false,
+						"sDom": 't',
+						"order": [[ 2, "asc" ]],
+						"fnRowCallback": function( nRow, aData, iDisplayIndex ) {
+							//if(iDisplayIndex === 0)
+							//	nRow.className = "bg-dark";
+							return nRow;
+						}
 					});
 					
 					for (var index in items) 
@@ -598,7 +613,7 @@
 					}					
 				    
 					// Add pools data
-					$('.pool-row').remove();
+					//$('.pool-row').remove();
 					
 					$.each( data['pools'], function( pkey, pval ) 
 					{
@@ -606,7 +621,18 @@
 						var ptype = "failover";
 						var pclass = "bg-light";
 						var plabel = "light";
+						var pactivelabclass = "";
+						var pactivelab = "Select This";
 						var purl = pval.url;
+						var pstart_time = pval.start_time;
+						if (pstart_time !== 0)
+						{
+							pstart_time = new Date(pval.start_time*1000);
+							pstart_time = pstart_time.toUTCString();							
+						}
+						else
+							pstart_time = "Never started";
+
 						
 						if (pval.alive)
 						{
@@ -620,22 +646,57 @@
 						}
 
 						// Main pool
-						if (pkey == 0)
+						if (pval.active === 1)
 						{	
 							picon = "upload";
-							ptype = "main";
+							ptype = "active";
 							pclass = "bg-dark";
-							plabel = "white";
+							plabel = "primary";
+							pactivelabclass = "disabled";
+							pactivelab = "Selected";
 							purl = '<strong>'+pval.url+'</strong>';
 							
 							//Add Main pool widget
 							$('.widget-main-pool').html(palivelabel);
 							$('.widget-main-pool').next('p').html(pval.url);
 						}
-							
-						var poolRow = '<tr class="pool-row '+pclass+'"><td><i class="fa fa-cloud-'+picon+'"></i> '+purl+'</td><td><span class="label label-'+plabel+'">'+ptype+'</span></td><td><span class="label label-'+paliveclass+'">'+palivelabel+'</span></td><td>'+pval.username+'</td><td>'+pval.password+'</td></tr>';
+
+						// Add Pool rows via datatable
+						$('#pools-table-details').dataTable().fnAddData( [
+							'<button style="width:90px;" class="btn btn-sm btn-default '+pactivelabclass+' select-pool" data-pool-id="'+pval.priority+'"><i class="fa fa-cloud-'+picon+'"></i> '+pactivelab+'</button>',
+							'<small>'+purl+'</small>',
+							pval.priority,
+							'<span class="label label-'+plabel+'">'+ptype+'</span>',
+							'<span class="label label-'+paliveclass+'">'+palivelabel+'</span>',
+							pval.shares,
+							pval.accepted,
+							pval.rejected,
+							'<small class="text-muted">'+pstart_time+'</small>',
+							pval.user,
+							pval.pass
+						] );
 						
-						$('.pools_table').append(poolRow);
+					});
+					
+					// Select Pool on the fly
+					$(".select-pool").click( function() {
+						$('.overlay').show();
+					    var poolId = $(this).data('pool-id');
+					    $.ajax("<?php echo site_url("app/api?command=select_pool&poolId="); ?>"+poolId, {
+					        dataType: "text",
+					        success: function (dataP) {
+					        	if (dataP)
+					        	{
+					        		var dataJ = $.parseJSON(dataP);
+					    			if (dataJ.err === 0)
+					    			{
+						    			setTimeout(getStats(true), 2000);
+					    			}
+					    			else
+					    				$(".pool-alert").html('Error: <pre>'+dataP+'</pre>');
+					    		}
+					        }
+					    });
 					});
 					
 					// Add controller temperature

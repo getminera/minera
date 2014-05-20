@@ -21,24 +21,6 @@ class Util_model extends CI_Model {
 	// Stats related stuff
 	//
 	*/
-		
-	// Check if pool is alive
-	public function checkPool($url)
-	{	
-		$parsedUrl = @parse_url($url);
-
-		if (isset($parsedUrl['host']) && isset($parsedUrl['port']))
-		{
-			$conn = @fsockopen($parsedUrl['host'], $parsedUrl['port'], $errno, $errstr, 1);
-			if (is_resource($conn))
-			{
-				fclose($conn);
-				return true;
-			}
-		}
-		
-		return false;
-	}
 	
 	// Get the live stats from cpuminer
 	public function getStats()
@@ -55,15 +37,10 @@ class Util_model extends CI_Model {
 				$a["sysload"] = sys_getloadavg();
 				
 				// Add pools
-				$pools = json_decode($this->getPools(), true);
-				
-				foreach ($pools as $pool)
+				foreach ($a['pools'] as $pool)
 				{
-					$pool['alive'] = $this->checkPool($pool['url']);
-					$nPools[] = $pool; 
+					$pool->alive = $this->checkPool($pool->url);
 				}
-				
-				$a["pools"] = $nPools;
 				
 				// Add controller temp
 				$a["temp"] = $this->checkTemp();
@@ -213,6 +190,24 @@ class Util_model extends CI_Model {
 	// Miner and System related stuff
 	//
 	*/
+		
+	// Check if pool is alive
+	public function checkPool($url)
+	{	
+		$parsedUrl = @parse_url($url);
+
+		if (isset($parsedUrl['host']) && isset($parsedUrl['port']))
+		{
+			$conn = @fsockopen($parsedUrl['host'], $parsedUrl['port'], $errno, $errstr, 1);
+			if (is_resource($conn))
+			{
+				fclose($conn);
+				return true;
+			}
+		}
+		
+		return false;
+	}	
 	
 	// Check if the minerd if running
 	public function isOnline()
@@ -299,7 +294,12 @@ class Util_model extends CI_Model {
 	{
 		return $this->miner->saveCurrentFreq();
 	}
-		
+
+	public function selectPool($poolId)
+	{
+		return $this->miner->selectPool($poolId);
+	}
+			
 	// Stop miner
 	public function minerStop()
 	{

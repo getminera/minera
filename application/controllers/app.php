@@ -417,7 +417,7 @@ class App extends Main_Controller {
 	}
 
 	/*
-	// Stats controller get the live stats
+	// API controller
 	*/
 	public function api()
 	{
@@ -426,6 +426,8 @@ class App extends Main_Controller {
 			case "save_current_freq":
 				$o = $this->util_model->saveCurrentFreq();
 			break;
+			case "select_pool":
+				$o = json_encode($this->util_model->selectPool($this->input->get('poolId')));
 		}
 		
 		$this->output

@@ -37,6 +37,7 @@ This is a list of some of the Minera's features:
 * Main pool widget
 * Uptime widget
 * Miner details table with per device sort, search, pagination
+* Pools table with **ON-THE-FLY** pool switch
 * Devices tree with cool graph
 * Hashrate history
 * Errors/Rejects history
@@ -187,7 +188,7 @@ TODO
 * Add cgminer/bfgminer support
 * Add email notification
 * Add start/stop daemon
-* Add JSON config support
+* ~~Add JSON config support~~
 
 Screenshots
 -------------
