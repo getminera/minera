@@ -11,7 +11,7 @@ If you like it, please consider a donation:
 
 Thanks.
 
-**[Download minera-latest.img](http://j.mp/minera-latest-img)**
+**[Download minera-latest.img.zip](http://j.mp/minera-latest-img-zip)**
 
 Look below for how to install / use it.
 
@@ -72,9 +72,7 @@ This is the Minera image file for Raspberry PI, you have only to download it and
 
 You need at least a 4GB SD Card:
 
-**[Download minera-latest.img](http://j.mp/minera-latest-img)** (md5 de31ce0d96520073c682da688e91c24e)
-
-**[[mirror] Download minera-latest.img.zip](http://j.mp/minera-latest-img-zip)** (md5 7b9559d2976661ff4906270d3ea39d29)
+**[Download minera-latest.img.zip](http://j.mp/minera-latest-img-zip)** (md5 6a5292bdb949dcab5abb2b4aaa87dec9)
 
 
 Default passwords are "*minera*" you should change them as well as the miner settings.
