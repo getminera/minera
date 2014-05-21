@@ -401,8 +401,9 @@
     	function getStats(refresh)
     	{
     		var now = new Date().getTime();
-			var d = 0; var totalhash = 0; var totalac = 0; var totalre = 0; var totalhw = 0; var totalsh = 0; var totalfr = 0;
+			var d = 0; var totalhash = 0; var totalac = 0; var totalre = 0; var totalhw = 0; var totalsh = 0; var totalfr = 0; var totalpoolhash = 0; var poolHash = 0;
 			var errorTriggered = false;
+			var pool_shares_seconds;
 			
 			$('.overlay').show();
 			// Show loaders
@@ -427,54 +428,8 @@
 				    var items = [];
 					var hashrates = [];
 					var lastTotalShares = [];
-					
+					var miner_starttime = data['start_time'];
 					var startdate = new Date(data['start_time']*1000);
-					
-				    $.each( data['devices'], function( key, val ) {
-				    	d = d+1;
-				    	//console.log(val);
-				    	// Build dev stats from single procs
-						var lastShares = [];
-				    	var hash = 0; var ac = 0; var re = 0; var hw = 0; var fr = 0; var sh = 0;
-				    	for (var i = 0; i < val['chips'].length; i++) {
-				    		hash = hash + val['chips'][i]['hashrate'];
-				    		ac = ac + val['chips'][i]['accepted'];
-				    		re = re + val['chips'][i]['rejected'];
-				    		hw = hw + val['chips'][i]['hw_errors'];
-				    		fr = fr + val['chips'][i]['frequency'];
-				    		sh = sh + val['chips'][i]['shares'];
-							lastShares.push(val['chips'][i]['last_share'])
-				    	}
-
-				    	devFr = fr/i;
-				    	
-				    	totalhash = totalhash + hash;
-				    	totalac = totalac + ac;
-				    	totalre = totalre + re;
-				    	totalhw = totalhw + hw;
-				    	totalsh = totalsh + sh;
-				    	totalfr = totalfr + devFr;
-				    	
-				    	hash = Math.round(hash/1000);
-				    	
-				    	var serial = val['serial'];
-				    	var lastShare = Math.max.apply(Math, lastShares);
-
-				    	// these are the single devices stats	
-				    	items[key] = { "serial": serial, "hash": hash, "ac": ac, "re": re, "hw": hw, "fr": devFr, "sh": sh, "ls": lastShare };
-						hashrates.push(hash);
-						lastTotalShares.push(lastShare);
-				    	
-				    });
-				    
-			    	var maxHashrate = Math.max.apply(Math, hashrates);
-			    	var lastTotalShare = Math.max.apply(Math, lastTotalShares);
-					var avgFr = Math.round(totalfr/d);
-			    	
-					totalhash = Math.round(totalhash/1000);
-					
-					// this is the global stats
-					items["total"] = { "serial": "", "hash": totalhash, "ac": totalac, "re": totalre, "hw": totalhw, "fr": avgFr, "sh": totalsh, "ls":  lastTotalShare};
 	
 					$("body").data("stats-loop", 0);
 					
@@ -515,7 +470,17 @@
 							}
 						},
 						{
-							"aTargets": [ 10 ],	
+							"aTargets": [ 3 ],	
+							"mRender": function ( data, type, full ) {
+								if (type === 'display')
+								{
+									return '<small class="text-muted">'+ convertHashrate(data) +'</small>'
+								}
+								return data;
+							}
+						},
+						{
+							"aTargets": [ 11 ],	
 							"mRender": function ( data, type, full ) {
 								if (type === 'display')
 								{
@@ -525,7 +490,7 @@
 							}
 						},
 						{
-							"aTargets": [ 5, 7, 9 ],	
+							"aTargets": [ 6, 8, 10 ],	
 							"mRender": function ( data, type, full ) {
 								if (type === 'display')
 								{
@@ -550,71 +515,8 @@
 						}
 					});
 					
-					for (var index in items) 
-					{
-						// Crete Knob graph for devices and total
-						createMon(index, items[index].hash, totalhash, maxHashrate, items[index].ac, items[index].re, items[index].hw, items[index].sh, items[index].fr);
-						
-						// Add per device rows in system table
-						var share_date = new Date(items[index].ls*1000);
-						var rightnow = new Date().getTime();
-						var last_share_secs = (rightnow - share_date)/1000;
-						if (last_share_secs < 0) last_share_secs = 0;
-						var totalWorkedShares = (items[index].ac+items[index].re+items[index].hw);
-						var percentageAc = (100*items[index].ac/totalWorkedShares);
-						var percentageRe = (100*items[index].re/totalWorkedShares);
-						var percentageHw = (100*items[index].hw/totalWorkedShares);
-						
-						var dev_serial = "";
-						if (index != "total")
-						{
-							dev_serial = ' <small class="text-muted">('+items[index].serial+')</small>';	
-						}
-						else
-						{
-							// Widgets
-							$(".widget-total-hashrate").html(convertHashrate(items[index].hash));
-							$(".widget-last-share").html(parseInt(last_share_secs) + ' secs');
-							$(".widget-hwre-rates").html(parseFloat(percentageHw).toFixed(2) + '<sup style="font-size: 20px">%</sup> / ' + parseFloat(percentageRe).toFixed(2) + '<sup style="font-size: 20px">%</sup>');
-							
-							//Sidebar hashrate
-							//$('.sidebar-hashrate').html("@ "+convertHashrate(items[index].hash));
-							
-						    // Changing title page according to hashrate
-						    $(document).attr('title', convertHashrate(items[index].hash)+' | Minera - Dashboard');
-						}
-						
-						var devRow = '<tr class="dev-'+index+'"><td class="devs_table_name"><i class="glyphicon glyphicon-hdd"></i>&nbsp;&nbsp;'+index+dev_serial+'</td><td class="devs_table_freq">'+ items[index].fr + ' Mhz</td><td class="devs_table_hash"><strong>'+ convertHashrate(items[index].hash) +'</strong></td><td class="devs_table_sh">'+ items[index].sh +'</td><td class="devs_table_ac">'+ items[index].ac +'</td><td><small class="text-muted">'+parseFloat(percentageAc).toFixed(2)+'%</small></td><td class="devs_table_re">'+ items[index].re +'</td><td><small class="text-muted">'+parseFloat(percentageRe).toFixed(2)+'%</small></td><td class="devs_table_hw">'+ items[index].hw +'</td><td><small class="text-muted">'+parseFloat(percentageHw).toFixed(2)+'%</small></td><td class="devs_table_ls">'+ parseInt(last_share_secs) +' secs ago</td><td><small class="text-muted">'+share_date.toUTCString()+'</small></td></tr>'
 					
-						if (index == "total")
-						{
-							// TODO add row total via datatable
-						    $('.devs_table_foot').html(devRow);		
-						}
-						else
-						{
-							// New add rows via datatable
-							$('#miner-table-details').dataTable().fnAddData( [
-								'<i class="glyphicon glyphicon-hdd"></i>&nbsp;&nbsp;'+index+dev_serial,
-								items[index].fr,
-								items[index].hash,
-								items[index].sh,
-								items[index].ac,
-								parseFloat(percentageAc).toFixed(2),
-								items[index].re,
-								parseFloat(percentageRe).toFixed(2),
-								items[index].hw,
-								parseFloat(percentageHw).toFixed(2),
-								parseInt(last_share_secs),
-								'<small class="text-muted">'+share_date.toUTCString()+'</small>'
-							] );
-						}
-						
-					}					
-				    
 					// Add pools data
-					//$('.pool-row').remove();
-					
 					$.each( data['pools'], function( pkey, pval ) 
 					{
 						var picon = "download";
@@ -648,6 +550,8 @@
 						// Main pool
 						if (pval.active === 1)
 						{	
+							pool_shares_seconds = parseFloat((now/1000)-pval.start_time);
+							pool_shares = pval.shares;
 							picon = "upload";
 							ptype = "active";
 							pclass = "bg-dark";
@@ -690,7 +594,7 @@
 					        		var dataJ = $.parseJSON(dataP);
 					    			if (dataJ.err === 0)
 					    			{
-						    			setTimeout(getStats(true), 2000);
+						    			setTimeout(getStats(true), 3000);
 					    			}
 					    			else
 					    				$(".pool-alert").html('Error: <pre>'+dataP+'</pre>');
@@ -698,6 +602,123 @@
 					        }
 					    });
 					});
+					
+					// Add per device stats
+					$.each( data['devices'], function( key, val ) {
+				    	d = d+1;
+
+				    	// Build device stats from single chips
+						var lastShares = [];
+				    	var hash = 0; var ac = 0; var re = 0; var hw = 0; var fr = 0; var sh = 0;
+				    	for (var i = 0; i < val['chips'].length; i++) {
+				    		hash = hash + val['chips'][i]['hashrate'];
+				    		ac = ac + val['chips'][i]['accepted'];
+				    		re = re + val['chips'][i]['rejected'];
+				    		hw = hw + val['chips'][i]['hw_errors'];
+				    		fr = fr + val['chips'][i]['frequency'];
+				    		sh = sh + val['chips'][i]['shares'];
+							lastShares.push(val['chips'][i]['last_share'])
+				    	}
+
+						// Data for single device (x chips together)
+				    	devFr = fr/i;
+				    	
+				    	// Calculate the real pool hashrate
+				    	poolHash = parseInt((65536.0 * (sh/(now/1000-miner_starttime)))/1000);
+
+				    	totalhash = totalhash + hash;
+				    	totalac = totalac + ac;
+				    	totalre = totalre + re;
+				    	totalhw = totalhw + hw;
+				    	totalsh = totalsh + sh;
+				    	totalfr = totalfr + devFr;
+				    	totalpoolhash = totalpoolhash + poolHash;
+				    	
+				    	hash = Math.round(hash/1000);
+				    	
+				    	var serial = val['serial'];
+				    	var lastShare = Math.max.apply(Math, lastShares);
+
+				    	// these are the single devices stats	
+				    	items[key] = { "serial": serial, "hash": hash, "poolhash": poolHash, "ac": ac, "re": re, "hw": hw, "fr": devFr, "sh": sh, "ls": lastShare };
+						hashrates.push(hash);
+						lastTotalShares.push(lastShare);
+				    	
+				    });
+				    
+			    	var maxHashrate = Math.max.apply(Math, hashrates);
+			    	var lastTotalShare = Math.max.apply(Math, lastTotalShares);
+					var avgFr = Math.round(totalfr/d);
+			    	
+					totalhash = Math.round(totalhash/1000);
+					
+					// this is the global stats
+					items["total"] = { "serial": "", "hash": totalhash, "poolhash": totalpoolhash, "ac": totalac, "re": totalre, "hw": totalhw, "fr": avgFr, "sh": totalsh, "ls":  lastTotalShare};
+					
+					for (var index in items) 
+					{
+						// Crete Knob graph for devices and total
+						createMon(index, items[index].hash, totalhash, maxHashrate, items[index].ac, items[index].re, items[index].hw, items[index].sh, items[index].fr);
+						
+						// Add per device rows in system table
+						var share_date = new Date(items[index].ls*1000);
+						var rightnow = new Date().getTime();
+						var last_share_secs = (rightnow - share_date)/1000;
+						if (last_share_secs < 0) last_share_secs = 0;
+						var totalWorkedShares = (items[index].ac+items[index].re+items[index].hw);
+						var percentageAc = (100*items[index].ac/totalWorkedShares);
+						var percentageRe = (100*items[index].re/totalWorkedShares);
+						var percentageHw = (100*items[index].hw/totalWorkedShares);
+						
+						var dev_serial = "";
+						if (index != "total")
+						{
+							dev_serial = ' <small class="text-muted">('+items[index].serial+')</small>';	
+						}
+						else
+						{
+							// Widgets
+							$(".widget-total-hashrate").html(convertHashrate(items[index].hash));
+							$(".widget-last-share").html(parseInt(last_share_secs) + ' secs');
+							$(".widget-hwre-rates").html(parseFloat(percentageHw).toFixed(2) + '<sup style="font-size: 20px">%</sup> / ' + parseFloat(percentageRe).toFixed(2) + '<sup style="font-size: 20px">%</sup>');
+							
+							//Sidebar hashrate
+							//$('.sidebar-hashrate').html("@ "+convertHashrate(items[index].hash));
+							
+						    // Changing title page according to hashrate
+						    $(document).attr('title', convertHashrate(items[index].hash)+' | Minera - Dashboard');
+						}
+						
+						var devRow = '<tr class="dev-'+index+'"><td class="devs_table_name"><i class="glyphicon glyphicon-hdd"></i>&nbsp;&nbsp;'+index+dev_serial+'</td><td class="devs_table_freq">'+ items[index].fr + ' Mhz</td><td class="devs_table_hash"><strong>'+ convertHashrate(items[index].hash) +'</strong></td><td class="devs_table_poolhash"><small class="text-muted">'+ convertHashrate(items[index].poolhash) +'</small></td><td class="devs_table_sh">'+ items[index].sh +'</td><td class="devs_table_ac">'+ items[index].ac +'</td><td><small class="text-muted">'+parseFloat(percentageAc).toFixed(2)+'%</small></td><td class="devs_table_re">'+ items[index].re +'</td><td><small class="text-muted">'+parseFloat(percentageRe).toFixed(2)+'%</small></td><td class="devs_table_hw">'+ items[index].hw +'</td><td><small class="text-muted">'+parseFloat(percentageHw).toFixed(2)+'%</small></td><td class="devs_table_ls">'+ parseInt(last_share_secs) +' secs ago</td><td><small class="text-muted">'+share_date.toUTCString()+'</small></td></tr>'
+					
+						if (index == "total")
+						{
+							// TODO add row total via datatable
+						    $('.devs_table_foot').html(devRow);		
+						}
+						else
+						{
+							// New add rows via datatable
+							$('#miner-table-details').dataTable().fnAddData( [
+								'<i class="glyphicon glyphicon-hdd"></i>&nbsp;&nbsp;'+index+dev_serial,
+								items[index].fr,
+								items[index].hash,
+								items[index].poolhash,
+								items[index].sh,
+								items[index].ac,
+								parseFloat(percentageAc).toFixed(2),
+								items[index].re,
+								parseFloat(percentageRe).toFixed(2),
+								items[index].hw,
+								parseFloat(percentageHw).toFixed(2),
+								parseInt(last_share_secs),
+								'<small class="text-muted">'+share_date.toUTCString()+'</small>'
+							] );
+						}
+						
+					}					
+				    
+					
 					
 					// Add controller temperature
 					if (data['temp'])

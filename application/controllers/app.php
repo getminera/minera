@@ -393,20 +393,22 @@ class App extends Main_Controller {
 			{
 				$data['message'] = "Please wait while I'm upgrading the system...";
 				$data['timer'] = true;
-				$this->util_model->update();
+				$data['onloadFunction'] = "callUpdate()";
+				$data['refreshUrl'] = site_url("app/index");
 			}
 			else
 			{
 				$data['title'] = "System update detected";
 				$data['message'] = '<a href="'.site_url("app/update").'?confirm=1"><button class="btn btn-default btn-lg"><i class="fa fa-check"></i> Let me install the updates</button></a>&nbsp;&nbsp;&nbsp;<a href="'.site_url("app/dashboard").'"><button class="btn btn-default btn-lg"><i class="fa fa-times"></i> No, thanks</button></a>';
 				$data['timer'] = false;
+				$data['onloadFunction'] = false;
+				$data['refreshUrl'] = false;
 			}
 			
 			$data['pageTitle'] = "Updating Minera";
 			$data['messageEnd'] = "System updated!";
 			$data['htmlTag'] = "lockscreen";
 			$data['seconds'] = 15;
-			$data['refreshUrl'] = site_url("app/index");
 			$this->load->view('include/header', $data);
 			$this->load->view('sysop', $data);
 		}
@@ -428,6 +430,10 @@ class App extends Main_Controller {
 			break;
 			case "select_pool":
 				$o = json_encode($this->util_model->selectPool($this->input->get('poolId')));
+			break;
+			case "update_minera":
+				$o = $this->util_model->update();
+			break;
 		}
 		
 		$this->output

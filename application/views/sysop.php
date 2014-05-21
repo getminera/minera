@@ -1,4 +1,4 @@
-    <body>
+    <body<?php if ($onloadFunction) : ?> onload="<?php echo $onloadFunction ?>;"<?php endif; ?>>
         <!-- Automatic element centering using js -->
         <div class="center">            
             <div class="headline text-center" id="time">
@@ -7,7 +7,8 @@
             </div><!-- /.headline -->
             
             <!-- User name -->
-            <div class="lockscreen-name"><?php echo $message ?></div>			
+            <div class="lockscreen-name"><?php echo $message ?></div>
+            
         </div><!-- /.center -->
 
 		<script src="<?php echo base_url('assets/js/jquery-2.1.1.min.js') ?>"></script>
@@ -23,6 +24,21 @@
                 });
             });
 
+			function callUpdate()
+			{
+        		//$(".center").append('<div class="form-box" style="width:90%"><div class="header" id="msglog-box" style="font-size:16px;"></div></div>');
+			    $.ajax("<?php echo site_url("app/api?command=update_minera"); ?>", {
+			        dataType: "json",
+			        success: function (data) {
+			        	if (data)
+			        	{
+			        		console.log(data);
+			        		//$('#msglog-box').html('<p>'+data+'</p>');
+			    		}
+			        }
+			    });
+			}
+					
 			var count=<?php echo $seconds ?>;
 
 			function timer()

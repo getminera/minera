@@ -321,20 +321,34 @@ class Util_model extends CI_Model {
 	// Call update cmd
 	public function update()
 	{
+		$lines = array();
 		// Pull the latest code from github
 		exec("cd ".FCPATH." && sudo -u " . $this->config->item("system_user") . " sudo /usr/bin/git pull -v", $out);
-		log_message('error', "Update request from ".$this->currentVersion()." to ".$this->redis->command("HGET minera_update new_version")." : ".var_export($out, true));
+		
+		$logmsg = "Update request from ".$this->currentVersion()." to ".$this->redis->command("HGET minera_update new_version")." : ".var_export($out, true);
+		
+		$lines[] = $logmsg;
+		
+		log_message('error', $logmsg);
 				
 		// Run upgrade script
 		exec("cd ".FCPATH." && sudo -u " . $this->config->item("system_user") . " sudo ./upgrade_minera.sh", $out);
-		log_message('error', "Running upgrade script".var_export($out, true));
+
+		$logmsg = "Running upgrade script".var_export($out, true);
+
+		$lines[] = $logmsg;
 				
+		log_message('error', $logmsg);
+			
 		$this->redis->del("minera_update");
 		$this->redis->del("minera_version");
 		$this->checkUpdate();
-		log_message('error', "End Update");
 		
-		return true;
+		$logmsg = "End Update";
+		$lines[] = $logmsg;
+		log_message('error', $logmsg);
+		
+		return json_encode($lines);
 	}
 	
 	// Check Minera version

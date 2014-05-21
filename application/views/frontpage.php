@@ -175,7 +175,8 @@
 		                                            <tr>
 		                                                <th>DEV</th>
 		                                                <th>Frequency</th>
-		                                                <th>Hashrate</th>
+		                                                <th>Dev HR</th>
+		                                                <th>Pool HR</th>
 		                                                <th>Shares</th>
 		                                                <th>AC</th>
 		                                                <th>% AC</th>
