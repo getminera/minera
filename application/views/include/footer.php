@@ -470,17 +470,7 @@
 							}
 						},
 						{
-							"aTargets": [ 3 ],	
-							"mRender": function ( data, type, full ) {
-								if (type === 'display')
-								{
-									return '<small class="text-muted">'+ convertHashrate(data) +'</small>'
-								}
-								return data;
-							}
-						},
-						{
-							"aTargets": [ 11 ],	
+							"aTargets": [ 10 ],	
 							"mRender": function ( data, type, full ) {
 								if (type === 'display')
 								{
@@ -490,7 +480,7 @@
 							}
 						},
 						{
-							"aTargets": [ 6, 8, 10 ],	
+							"aTargets": [ 5, 7, 9 ],	
 							"mRender": function ( data, type, full ) {
 								if (type === 'display')
 								{
@@ -512,7 +502,29 @@
 							//if(iDisplayIndex === 0)
 							//	nRow.className = "bg-dark";
 							return nRow;
-						}
+						},
+						"aoColumnDefs": [ 
+						{
+							"aTargets": [ 5 ],	
+							"mRender": function ( data, type, full ) {
+								if (type === 'display')
+								{
+									return '<small class="text-muted">'+ convertHashrate(data) +'</small>';
+								}
+								return data;
+							},
+						},
+						{
+							"aTargets": [ 7, 9, 11 ],	
+							"mRender": function ( data, type, full ) {
+								if (type === 'display')
+								{
+									return '<small class="text-muted">'+ data +'</small>';
+								}
+								return data;
+							},
+						},
+						]
 					});
 					
 					
@@ -526,15 +538,6 @@
 						var pactivelabclass = "";
 						var pactivelab = "Select This";
 						var purl = pval.url;
-						var pstart_time = pval.start_time;
-						if (pstart_time !== 0)
-						{
-							pstart_time = new Date(pval.start_time*1000);
-							pstart_time = pstart_time.toUTCString();							
-						}
-						else
-							pstart_time = "Never started";
-
 						
 						if (pval.alive)
 						{
@@ -564,6 +567,31 @@
 							$('.widget-main-pool').html(palivelabel);
 							$('.widget-main-pool').next('p').html(pval.url);
 						}
+						
+						var pstatsId = pval.stats_id;
+						var pstart_time = "Never started"; var pshares = 0; var paccepted = 0; var prejected = 0; var phash = 0; var psharesPrev = 0; var pacceptedPrev = 0; var prejectedPrev = 0;
+						// Get the pool stats
+						for (var p = 0; p < pval.stats.length; p++) 
+						{
+							var pstats = pval.stats[p];
+							if (pstatsId == pstats.stats_id)
+							{
+								pstart_time = new Date(pstats.start_time*1000);
+								pstart_time = pstart_time.toUTCString();
+								pshares = pstats.shares;
+								paccepted = pstats.accepted;
+								prejected = pstats.rejected;	
+								
+								// Calculate the real pool hashrate
+								if (pval.active === 1) phash = parseInt((65536.0 * (pshares/(now/1000-pstats.start_time)))/1000);
+							}
+							else
+							{
+								psharesPrev = psharesPrev + pstats.shares;
+								pacceptedPrev = pacceptedPrev + pstats.accepted;
+								prejectedPrev = prejectedPrev + pstats.rejected;
+							}
+						}
 
 						// Add Pool rows via datatable
 						$('#pools-table-details').dataTable().fnAddData( [
@@ -572,12 +600,15 @@
 							pval.priority,
 							'<span class="label label-'+plabel+'">'+ptype+'</span>',
 							'<span class="label label-'+paliveclass+'">'+palivelabel+'</span>',
-							pval.shares,
-							pval.accepted,
-							pval.rejected,
+							phash,
+							pshares,
+							psharesPrev,
+							paccepted,
+							pacceptedPrev,
+							prejected,
+							prejectedPrev,
 							'<small class="text-muted">'+pstart_time+'</small>',
-							pval.user,
-							pval.pass
+							pval.user
 						] );
 						
 					});
@@ -594,7 +625,7 @@
 					        		var dataJ = $.parseJSON(dataP);
 					    			if (dataJ.err === 0)
 					    			{
-						    			setTimeout(getStats(true), 3000);
+						    			getStats(true);
 					    			}
 					    			else
 					    				$(".pool-alert").html('Error: <pre>'+dataP+'</pre>');
@@ -623,16 +654,12 @@
 						// Data for single device (x chips together)
 				    	devFr = fr/i;
 				    	
-				    	// Calculate the real pool hashrate
-				    	poolHash = parseInt((65536.0 * (sh/(now/1000-miner_starttime)))/1000);
-
 				    	totalhash = totalhash + hash;
 				    	totalac = totalac + ac;
 				    	totalre = totalre + re;
 				    	totalhw = totalhw + hw;
 				    	totalsh = totalsh + sh;
 				    	totalfr = totalfr + devFr;
-				    	totalpoolhash = totalpoolhash + poolHash;
 				    	
 				    	hash = Math.round(hash/1000);
 				    	
@@ -640,7 +667,7 @@
 				    	var lastShare = Math.max.apply(Math, lastShares);
 
 				    	// these are the single devices stats	
-				    	items[key] = { "serial": serial, "hash": hash, "poolhash": poolHash, "ac": ac, "re": re, "hw": hw, "fr": devFr, "sh": sh, "ls": lastShare };
+				    	items[key] = { "serial": serial, "hash": hash, "ac": ac, "re": re, "hw": hw, "fr": devFr, "sh": sh, "ls": lastShare };
 						hashrates.push(hash);
 						lastTotalShares.push(lastShare);
 				    	
@@ -653,7 +680,7 @@
 					totalhash = Math.round(totalhash/1000);
 					
 					// this is the global stats
-					items["total"] = { "serial": "", "hash": totalhash, "poolhash": totalpoolhash, "ac": totalac, "re": totalre, "hw": totalhw, "fr": avgFr, "sh": totalsh, "ls":  lastTotalShare};
+					items["total"] = { "serial": "", "hash": totalhash, "ac": totalac, "re": totalre, "hw": totalhw, "fr": avgFr, "sh": totalsh, "ls":  lastTotalShare};
 					
 					for (var index in items) 
 					{
@@ -689,7 +716,7 @@
 						    $(document).attr('title', convertHashrate(items[index].hash)+' | Minera - Dashboard');
 						}
 						
-						var devRow = '<tr class="dev-'+index+'"><td class="devs_table_name"><i class="glyphicon glyphicon-hdd"></i>&nbsp;&nbsp;'+index+dev_serial+'</td><td class="devs_table_freq">'+ items[index].fr + ' Mhz</td><td class="devs_table_hash"><strong>'+ convertHashrate(items[index].hash) +'</strong></td><td class="devs_table_poolhash"><small class="text-muted">'+ convertHashrate(items[index].poolhash) +'</small></td><td class="devs_table_sh">'+ items[index].sh +'</td><td class="devs_table_ac">'+ items[index].ac +'</td><td><small class="text-muted">'+parseFloat(percentageAc).toFixed(2)+'%</small></td><td class="devs_table_re">'+ items[index].re +'</td><td><small class="text-muted">'+parseFloat(percentageRe).toFixed(2)+'%</small></td><td class="devs_table_hw">'+ items[index].hw +'</td><td><small class="text-muted">'+parseFloat(percentageHw).toFixed(2)+'%</small></td><td class="devs_table_ls">'+ parseInt(last_share_secs) +' secs ago</td><td><small class="text-muted">'+share_date.toUTCString()+'</small></td></tr>'
+						var devRow = '<tr class="dev-'+index+'"><td class="devs_table_name"><i class="glyphicon glyphicon-hdd"></i>&nbsp;&nbsp;'+index+dev_serial+'</td><td class="devs_table_freq">'+ items[index].fr + ' Mhz</td><td class="devs_table_hash"><strong>'+ convertHashrate(items[index].hash) +'</strong></td><td class="devs_table_sh">'+ items[index].sh +'</td><td class="devs_table_ac">'+ items[index].ac +'</td><td><small class="text-muted">'+parseFloat(percentageAc).toFixed(2)+'%</small></td><td class="devs_table_re">'+ items[index].re +'</td><td><small class="text-muted">'+parseFloat(percentageRe).toFixed(2)+'%</small></td><td class="devs_table_hw">'+ items[index].hw +'</td><td><small class="text-muted">'+parseFloat(percentageHw).toFixed(2)+'%</small></td><td class="devs_table_ls">'+ parseInt(last_share_secs) +' secs ago</td><td><small class="text-muted">'+share_date.toUTCString()+'</small></td></tr>'
 					
 						if (index == "total")
 						{
@@ -703,7 +730,6 @@
 								'<i class="glyphicon glyphicon-hdd"></i>&nbsp;&nbsp;'+index+dev_serial,
 								items[index].fr,
 								items[index].hash,
-								items[index].poolhash,
 								items[index].sh,
 								items[index].ac,
 								parseFloat(percentageAc).toFixed(2),

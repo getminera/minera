@@ -430,6 +430,8 @@ class App extends Main_Controller {
 			break;
 			case "select_pool":
 				$o = json_encode($this->util_model->selectPool($this->input->get('poolId')));
+				// Give to the stats the time to refresh
+				sleep(3);
 			break;
 			case "update_minera":
 				$o = $this->util_model->update();
