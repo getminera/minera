@@ -38,7 +38,7 @@ class Cpuminer_model extends CI_Model {
 		*/
 		$die = 0;
 
-		while(!($str = fgets($fp, 1024)))
+		while(!feof($fp) && !($str = fgets($fp, 2048)))
 			usleep(10000);
 
 		$out .= $str;
