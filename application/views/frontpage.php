@@ -243,7 +243,6 @@
 		                                                <th>PA</th>
 		                                                <th>CR</th>
 		                                                <th>PR</th>
-		                                                <th>Start Time</th>		                                                
 		                                                <th>Username</th>
 		                                            </tr>
 		                                            </thead>

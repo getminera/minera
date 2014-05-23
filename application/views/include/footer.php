@@ -576,7 +576,7 @@
 						}
 						
 						var pstatsId = pval.stats_id;
-						var pstart_time = "Never started"; var pshares = 0; var paccepted = 0; var prejected = 0; var psharesPrev = 0; var pacceptedPrev = 0; var prejectedPrev = 0; var phashData = {}; phashData.hash = 0; phashData.label = 'muted';
+						var pshares = 0; var paccepted = 0; var prejected = 0; var psharesPrev = 0; var pacceptedPrev = 0; var prejectedPrev = 0; var phashData = {}; phashData.hash = 0; phashData.label = 'muted'; phashData.pstart_time = "Never started";
 						// Get the pool stats
 						for (var p = 0; p < pval.stats.length; p++) 
 						{
@@ -584,8 +584,8 @@
 
 							if (pstatsId == pstats.stats_id)
 							{
-								pstart_time = new Date(pstats.start_time*1000);
-								pstart_time = pstart_time.toUTCString();
+								phashData.pstart_time = new Date(pstats.start_time*1000);
+								phashData.pstart_time = phashData.pstart_time.toUTCString();
 								pshares = pstats.shares;
 								paccepted = pstats.accepted;
 								prejected = pstats.rejected;	
@@ -626,7 +626,6 @@
 							pacceptedPrev,
 							prejected,
 							prejectedPrev,
-							'<small class="text-muted">'+pstart_time+'</small>',
 							pval.user
 						] );
 						
