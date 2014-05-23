@@ -716,11 +716,12 @@
 						var percentageRe = (100*items[index].re/totalWorkedShares);
 						var percentageHw = (100*items[index].hw/totalWorkedShares);
 						
-						if (last_share_secs >= 60 && last_share_secs < 90)
+						// Add colored hashrates
+						if (last_share_secs >= 90 && last_share_secs < 120)
 							devData.label = "yellow"
-						else if (last_share_secs >= 90 && last_share_secs < 180)
+						else if (last_share_secs >= 120 && last_share_secs < 240)
 							devData.label = "red"
-						else if (last_share_secs >= 180)
+						else if (last_share_secs >= 240)
 							devData.label = "muted"
 						else
 							devData.label = "green"
