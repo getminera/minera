@@ -17,6 +17,7 @@
                 </a>
 				<div class="navbar-right">
 					<ul class="nav navbar-nav">
+						<?php if (isset($btc->volume)) : ?>
 						<!-- BTC/USD rates -->
 						<li class="messages-menu">
                             <a href="#" class="dropdown-toggle" data-toggle="dropdown">
@@ -67,6 +68,7 @@
                                 <li class="footer"><a href="https://www.bitstamp.net">Go to Bitstamp</a></li>
                             </ul>
                         </li>
+                        <?php endif; ?>
                         
                         <?php if (isset($ltc->return->markets->LTC)) : ?>
                         <!-- LTC/BTC Rates -->

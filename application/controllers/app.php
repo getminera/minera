@@ -331,7 +331,7 @@ class App extends Main_Controller {
 		$data['pageTitle'] = "Reboot Minera";
 		$data['messageEnd'] = "here we go!";
 		$data['htmlTag'] = "lockscreen";
-		$data['seconds'] = 45;
+		$data['seconds'] = 50;
 		$data['refreshUrl'] = site_url("app/index");
 		$this->load->view('include/header', $data);
 		$this->load->view('sysop', $data);
@@ -408,7 +408,7 @@ class App extends Main_Controller {
 			$data['pageTitle'] = "Updating Minera";
 			$data['messageEnd'] = "System updated!";
 			$data['htmlTag'] = "lockscreen";
-			$data['seconds'] = 15;
+			$data['seconds'] = 20;
 			$this->load->view('include/header', $data);
 			$this->load->view('sysop', $data);
 		}
