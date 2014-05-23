@@ -33,11 +33,33 @@ class Cpuminer_model extends CI_Model {
 
 		$out = false;
 		
-		$out = stream_get_contents($fp);
+		/*
+		// Many thanks to Sandor111
+		*/
+		$die = 0;
+
+		while(!($str = fgets($fp, 1024)))
+			usleep(10000);
+
+		$out .= $str;
+
+		while(!feof($fp) && $die < 10)
+		{
+			if(!($str = fgets($fp, 1024)))
+			{
+				$die++;
+				usleep(10000);
+				continue;
+			}
+
+			$die = 0;
+			$out .= $str;
+
+		}
 
 		fclose($fp);
 
-		return json_decode($out);
+		return json_decode($out);		
 	}
 	
 	public function selectPool($poolId)

@@ -1,3 +1,4 @@
 conf/*.json
+conf/index.html
 application/logs
 *.log
