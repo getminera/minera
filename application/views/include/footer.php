@@ -30,6 +30,17 @@
 		    });
 		    $(".sort-attach").css("cursor","move");
 
+		    $(document).on('click', '.del-pool-row', function(e) {
+				e.preventDefault();
+				$(this).closest(".form-group").remove();
+		    });
+		    		    
+		    $(document).on('click', '.add-pool-row', function(e) {
+				e.preventDefault();
+				$(".pool-group-master").first().clone().appendTo(".poolSortable");
+				$(".pool-group-master").last().css("display", "block").removeClass("pool-group-master");
+		    });
+
 		    if ($("#manual_options").val() == "1") $(".guided-options").hide();
 		    if ($("#guided_options").val() == "1") $(".manual-options").hide();
 		    $(".btn-manual-options").click(function() {
@@ -454,7 +465,7 @@
 							"mRender": function ( data, type, full ) {
 								if (type === 'display')
 								{
-									return data +' MHz'
+									return '<small class="label label-light">'+data +' MHz</small>'
 								}
 								return data;
 							},
@@ -464,7 +475,7 @@
 							"mRender": function ( data, type, full ) {
 								if (type === 'display')
 								{
-									return '<strong>'+ convertHashrate(data) +'</strong>'
+									return '<small class="badge bg-'+data.label+'">'+ convertHashrate(data.hash) +'</small>'
 								}
 								return data;
 							}
@@ -509,7 +520,7 @@
 							"mRender": function ( data, type, full ) {
 								if (type === 'display')
 								{
-									return '<small class="text-muted">'+ convertHashrate(data) +'</small>';
+									return '<small class="badge bg-'+data.label+'">'+ convertHashrate(data.hash) +'</small>';
 								}
 								return data;
 							},
@@ -562,18 +573,15 @@
 							pactivelabclass = "disabled";
 							pactivelab = "Selected";
 							purl = '<strong>'+pval.url+'</strong>';
-							
-							//Add Main pool widget
-							$('.widget-main-pool').html(palivelabel);
-							$('.widget-main-pool').next('p').html(pval.url);
 						}
 						
 						var pstatsId = pval.stats_id;
-						var pstart_time = "Never started"; var pshares = 0; var paccepted = 0; var prejected = 0; var phash = 0; var psharesPrev = 0; var pacceptedPrev = 0; var prejectedPrev = 0;
+						var pstart_time = "Never started"; var pshares = 0; var paccepted = 0; var prejected = 0; var psharesPrev = 0; var pacceptedPrev = 0; var prejectedPrev = 0; var phashData = {}; phashData.hash = 0; phashData.label = 'muted';
 						// Get the pool stats
 						for (var p = 0; p < pval.stats.length; p++) 
 						{
 							var pstats = pval.stats[p];
+
 							if (pstatsId == pstats.stats_id)
 							{
 								pstart_time = new Date(pstats.start_time*1000);
@@ -583,7 +591,18 @@
 								prejected = pstats.rejected;	
 								
 								// Calculate the real pool hashrate
-								if (pval.active === 1) phash = parseInt((65536.0 * (pshares/(now/1000-pstats.start_time)))/1000);
+								if (pval.active === 1) 
+								{
+									phashData.hash = parseInt((65536.0 * (pshares/(now/1000-pstats.start_time)))/1000);
+									phashData.label = 'red';
+									//Add Main pool widget
+									$(".widget-total-hashrate").html(convertHashrate(phashData.hash));
+									$('.widget-main-pool').html(palivelabel);
+									$('.widget-main-pool').next('p').html(pval.url);
+									// Changing title page according to hashrate
+									$(document).attr('title', convertHashrate(phashData.hash)+' | Minera - Dashboard');
+								}
+
 							}
 							else
 							{
@@ -600,7 +619,7 @@
 							pval.priority,
 							'<span class="label label-'+plabel+'">'+ptype+'</span>',
 							'<span class="label label-'+paliveclass+'">'+palivelabel+'</span>',
-							phash,
+							phashData,
 							pshares,
 							psharesPrev,
 							paccepted,
@@ -688,6 +707,7 @@
 						createMon(index, items[index].hash, totalhash, maxHashrate, items[index].ac, items[index].re, items[index].hw, items[index].sh, items[index].fr);
 						
 						// Add per device rows in system table
+						var devData = {}; devData.hash = items[index].hash;
 						var share_date = new Date(items[index].ls*1000);
 						var rightnow = new Date().getTime();
 						var last_share_secs = (rightnow - share_date)/1000;
@@ -697,6 +717,15 @@
 						var percentageRe = (100*items[index].re/totalWorkedShares);
 						var percentageHw = (100*items[index].hw/totalWorkedShares);
 						
+						if (last_share_secs >= 60 && last_share_secs < 90)
+							devData.label = "yellow"
+						else if (last_share_secs >= 90 && last_share_secs < 180)
+							devData.label = "red"
+						else if (last_share_secs >= 180)
+							devData.label = "muted"
+						else
+							devData.label = "green"
+													
 						var dev_serial = "";
 						if (index != "total")
 						{
@@ -705,15 +734,11 @@
 						else
 						{
 							// Widgets
-							$(".widget-total-hashrate").html(convertHashrate(items[index].hash));
 							$(".widget-last-share").html(parseInt(last_share_secs) + ' secs');
 							$(".widget-hwre-rates").html(parseFloat(percentageHw).toFixed(2) + '<sup style="font-size: 20px">%</sup> / ' + parseFloat(percentageRe).toFixed(2) + '<sup style="font-size: 20px">%</sup>');
 							
 							//Sidebar hashrate
 							//$('.sidebar-hashrate').html("@ "+convertHashrate(items[index].hash));
-							
-						    // Changing title page according to hashrate
-						    $(document).attr('title', convertHashrate(items[index].hash)+' | Minera - Dashboard');
 						}
 						
 						var devRow = '<tr class="dev-'+index+'"><td class="devs_table_name"><i class="glyphicon glyphicon-hdd"></i>&nbsp;&nbsp;'+index+dev_serial+'</td><td class="devs_table_freq">'+ items[index].fr + ' Mhz</td><td class="devs_table_hash"><strong>'+ convertHashrate(items[index].hash) +'</strong></td><td class="devs_table_sh">'+ items[index].sh +'</td><td class="devs_table_ac">'+ items[index].ac +'</td><td><small class="text-muted">'+parseFloat(percentageAc).toFixed(2)+'%</small></td><td class="devs_table_re">'+ items[index].re +'</td><td><small class="text-muted">'+parseFloat(percentageRe).toFixed(2)+'%</small></td><td class="devs_table_hw">'+ items[index].hw +'</td><td><small class="text-muted">'+parseFloat(percentageHw).toFixed(2)+'%</small></td><td class="devs_table_ls">'+ parseInt(last_share_secs) +' secs ago</td><td><small class="text-muted">'+share_date.toUTCString()+'</small></td></tr>'
@@ -729,7 +754,7 @@
 							$('#miner-table-details').dataTable().fnAddData( [
 								'<i class="glyphicon glyphicon-hdd"></i>&nbsp;&nbsp;'+index+dev_serial,
 								items[index].fr,
-								items[index].hash,
+								devData,
 								items[index].sh,
 								items[index].ac,
 								parseFloat(percentageAc).toFixed(2),

@@ -71,31 +71,64 @@
 										<!-- Main Pool -->
 										<div class="poolSortable ui-sortable">
 										<?php $savedPools = json_decode($minerdPools);?>
-										<?php for ($i=0;$i<=3;$i++) : ?>
+										<?php $s = (count($savedPools) == 0) ? 3 : count($savedPools); ?>
+										<?php for ($i=0;$i<=$s;$i++) : ?>
 										<div class="form-group pool-group">
-										    <div class="row sort-attach">
-										    	<div class="col-xs-6">
+										    <div class="row sort-attach pool-row">
+										    	<div class="col-xs-5">
 										    		<div class="input-group">
 										    			<span class="input-group-addon"><i class="fa fa-cloud-<?php echo ($i == 0) ? "upload" : "download"; ?>"></i></span>
-										    			<input type="text" class="form-control pool_url" placeholder="<?php echo ($i == 0) ? "Main" : "Failover"; ?> url" name="pool_url[<?php echo $i ?>]" value="<?php echo (isset($savedPools[$i]->url)) ? $savedPools[$i]->url : ''; ?>" />
+										    			<input type="text" class="form-control pool_url" placeholder="<?php echo ($i == 0) ? "Main" : "Failover"; ?> url" name="pool_url[]" value="<?php echo (isset($savedPools[$i]->url)) ? $savedPools[$i]->url : ''; ?>" />
 										    		</div>
 										    	</div>
 										    	<div class="col-xs-3">
 										    		<div class="input-group">
 										    			<span class="input-group-addon"><i class="fa fa-user"></i></span>
-										    			<input type="text" class="form-control pool_username" placeholder="username" name="pool_username[<?php echo $i ?>]" value="<?php echo (isset($savedPools[$i]->username)) ? $savedPools[$i]->username : ''; ?>"  />
+										    			<input type="text" class="form-control pool_username" placeholder="username" name="pool_username[]" value="<?php echo (isset($savedPools[$i]->username)) ? $savedPools[$i]->username : ''; ?>"  />
 										    		</div>
 										    	</div>
 										    	<div class="col-xs-3">
 										    		<div class="input-group">
 										    			<span class="input-group-addon"><i class="fa fa-lock"></i></span>
-										    			<input type="text" class="form-control pool_password" placeholder="password" name="pool_password[<?php echo $i ?>]" value="<?php echo (isset($savedPools[$i]->password)) ? $savedPools[$i]->password : ''; ?>"  />
+										    			<input type="text" class="form-control pool_password" placeholder="password" name="pool_password[]" value="<?php echo (isset($savedPools[$i]->password)) ? $savedPools[$i]->password : ''; ?>"  />
 										    		</div>
+										    	</div>
+										    	<div class="col-xs-1">
+										    		<button style="margin-top:5px;" class="btn btn-danger btn-xs del-pool-row" name="del-row" value="1"><i class="fa fa-times"></i></button>
 										    	</div>
 										    </div>
 										</div>
 										<?php endfor; ?>
-										</div><!-- sortable -->											
+										<!-- fake row to be cloned -->
+										<div class="form-group pool-group pool-group-master" style="display:none;">
+										    <div class="row sort-attach pool-row">
+										    	<div class="col-xs-5">
+										    		<div class="input-group">
+										    			<span class="input-group-addon"><i class="fa fa-cloud-download"></i></span>
+										    			<input type="text" class="form-control pool_url" placeholder="Failover url" name="pool_url[]" value="" />
+										    		</div>
+										    	</div>
+										    	<div class="col-xs-3">
+										    		<div class="input-group">
+										    			<span class="input-group-addon"><i class="fa fa-user"></i></span>
+										    			<input type="text" class="form-control pool_username" placeholder="username" name="pool_username[]" value=""  />
+										    		</div>
+										    	</div>
+										    	<div class="col-xs-3">
+										    		<div class="input-group">
+										    			<span class="input-group-addon"><i class="fa fa-lock"></i></span>
+										    			<input type="text" class="form-control pool_password" placeholder="password" name="pool_password[]" value=""  />
+										    		</div>
+										    	</div>
+										    	<div class="col-xs-1">
+										    		<button style="margin-top:5px;" class="btn btn-danger btn-xs del-pool-row" name="del-row" value="1"><i class="fa fa-times"></i></button>
+										    	</div>
+										    </div>
+										</div>
+										</div><!-- sortable -->
+										<div>
+											<button class="btn btn-default btn-sm add-pool-row" name="add-row" value="1"><i class="fa fa-plus"></i> Add row</button>
+										</div>
 	                                </div>
 									<div class="box-footer">
 										<button type="submit" class="btn btn-primary" name="save" value="1">Save</button> <button type="submit" class="btn btn-danger" name="save_restart" value="1">Save & Restart Miner</button>

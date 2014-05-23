@@ -67,7 +67,7 @@
 									<div class="small-box bg-red">
 										<div class="inner">
 											<h3 class="widget-total-hashrate"><i class="ion ion-loading-c"></i></h3>
-											<p>Total Hashrate</p>
+											<p>Pool Hashrate</p>
 										</div>
 										<div class="icon"><i class="ion ion-ios7-speedometer-outline"></i></div>
 										<a href="#hashrate-history" class="small-box-footer">History <i class="fa fa-arrow-circle-right"></i></a>
@@ -198,6 +198,9 @@
                                 </div><!-- /.box-body -->
                                 <?php if ($savedFrequencies) : ?>
 	                                <div class="box-footer">
+	                                	<div class="legend pull-right">
+	                                		<h6>Colors based on last share time: <i class="fa fa-circle text-success"></i> Good&nbsp;&nbsp;&nbsp;<i class="fa fa-circle text-warning"></i> Warning&nbsp;&nbsp;&nbsp;<i class="fa fa-circle text-danger"></i> Critical&nbsp;&nbsp;&nbsp;<i class="fa fa-circle text-muted"></i> Possibly dead</h6>
+	                                	</div>
 	                                	<button class="btn btn-primary btn-sm btn-saved-freq" data-toggle="tooltip" title="" data-original-title="Look at saved frequencies"><i class="fa fa-eye"></i> Saved frequencies</button>
 	                                	<div class="freq-box" style="display:none; margin-top:10px;">
 		                                	<h6>You can find this on the <a href="<?php echo site_url("app/settings") ?>">settings page</a> too.</h6>
