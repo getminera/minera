@@ -477,7 +477,7 @@
 								{
 									return '<small class="badge bg-'+data.label+'">'+ convertHashrate(data.hash) +'</small>'
 								}
-								return data;
+								return data.hash;
 							}
 						},
 						{
@@ -522,7 +522,7 @@
 								{
 									return '<small class="badge bg-'+data.label+'">'+ convertHashrate(data.hash) +'</small>';
 								}
-								return data;
+								return data.hash;
 							},
 						},
 						{
