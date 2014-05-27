@@ -46,6 +46,7 @@ This is a list of some of the Minera's features:
 **Settings**
 
 * Pools setting with main/failovers (pool are live checked)
+* Mobileminer support - Remote monitoring (http://www.mobileminerapp.com/#miners)
 * Guided or Manual miner configuration
 * Device autotune
 * Device autodetection
