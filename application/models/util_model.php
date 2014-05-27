@@ -525,7 +525,7 @@ class Util_model extends CI_Model {
 	{
 		$lines = array();
 		// Pull the latest code from github
-		exec("cd ".FCPATH." && sudo -u " . $this->config->item("system_user") . " sudo git fetch --all && sudo git reset --hard origin/master", $out);
+		$out = shell_exec("cd ".FCPATH." && sudo -u " . $this->config->item("system_user") . " sudo git fetch --all && sudo git reset --hard origin/master");
 		
 		$logmsg = "Update request from ".$this->currentVersion()." to ".$this->redis->command("HGET minera_update new_version")." : ".var_export($out, true);
 		
@@ -534,7 +534,7 @@ class Util_model extends CI_Model {
 		log_message('error', $logmsg);
 				
 		// Run upgrade script
-		exec("cd ".FCPATH." && sudo -u " . $this->config->item("system_user") . " sudo ./upgrade_minera.sh", $out);
+		$out = shell_exec("cd ".FCPATH." && sudo -u " . $this->config->item("system_user") . " sudo ./upgrade_minera.sh");
 
 		$logmsg = "Running upgrade script".var_export($out, true);
 
