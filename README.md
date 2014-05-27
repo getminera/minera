@@ -182,6 +182,11 @@ Please run this commands:
 	script /dev/null
 	screen -r
 	
+If you have guided/manual options both selected in the settings page try run this:
+
+	echo -n "1" | redis-cli -x set guided_options
+	redis-cli del manual_options
+	
 If you wanna check the raw JSON stats from your minerd, please point your browser to:
 
 	http://<your-minera-ip>/minera/index.php/app/stats
