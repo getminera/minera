@@ -1,0 +1,20 @@
+/var/log/minera/*.log {
+	su minera minera
+        daily
+        missingok
+	copytruncate
+        rotate 30
+        compress
+        notifempty
+	create 777 minera minera
+}
+
+/var/log/minera/*.php {
+	su www-data www-data
+        daily
+        missingok
+        rotate 30
+        compress
+        notifempty
+	create 777 www-data www-data
+}

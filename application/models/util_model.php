@@ -70,16 +70,183 @@ class Util_model extends CI_Model {
 		
 		return false;
 	}
+	
+	/*
+	// Parse the CPUMiner stats to get them per device instead per chip
+	// with a summary total and active pool
+	*/
+	public function getParsedStats($stats)
+	{
+		$stats = json_decode($stats);
+
+		$d = 0; $tdevice = array(); $tdfrequency = 0; $tdaccepted = 0; $tdrejected = 0; $tdhwerrors = 0; $tdshares = 0; $tdhashrate = 0;
+		
+		if (isset($stats->pools))
+		{
+			foreach ($stats->pools as $pool)
+			{
+				if ($pool->active == 1)
+				{
+					foreach($pool->stats as $session)
+					{
+						if ($session->stats_id == $pool->stats_id)
+						{
+							// Calculate pool hashrate
+							$poolHashrate = round(65536.0 * ($session->shares / (time() - $session->start_time)), 0);
+						}
+					}
+					$tdevice['pool']['hashrate'] = $poolHashrate;
+					$tdevice['pool']['url'] = $pool->url;
+					$tdevice['pool']['alive'] = $pool->alive;
+				}
+			}
+		}
+		
+		if (isset($stats->devices))
+		{
+			foreach ($stats->devices as $name => $device)
+			{
+				$d++; $c = 0; $tcfrequency = 0; $tcaccepted = 0; $tcrejected = 0; $tchwerrors = 0; $tcshares = 0; $tchashrate = 0;
+				foreach ($device->chips as $chip)
+				{
+					$c++;
+					$tcfrequency += $chip->frequency;
+					$tcaccepted += $chip->accepted;
+					$tcrejected += $chip->rejected;
+					$tchwerrors += $chip->hw_errors;
+					$tcshares += $chip->shares;
+					$tchashrate += $chip->hashrate;
+				}
+				$tdevice['devices'][$name]['frequency'] = round(($tcfrequency/$c), 0);
+				$tdevice['devices'][$name]['accepted'] = $tcaccepted;
+				$tdevice['devices'][$name]['rejected'] = $tcrejected;
+				$tdevice['devices'][$name]['hw_errors'] = $tchwerrors;
+				$tdevice['devices'][$name]['shares'] = $tcshares;
+				$tdevice['devices'][$name]['hashrate'] = $tchashrate;
+				
+				$tdfrequency += $tdevice['devices'][$name]['frequency'];
+				$tdaccepted += $tdevice['devices'][$name]['accepted'];
+				$tdrejected += $tdevice['devices'][$name]['rejected'];
+				$tdhwerrors += $tdevice['devices'][$name]['hw_errors'];
+				$tdshares += $tdevice['devices'][$name]['shares'];
+				$tdhashrate += $tdevice['devices'][$name]['hashrate'];
+			}
+			
+			$tdevice['totals']['frequency'] = round(($tdfrequency/$d), 0);
+			$tdevice['totals']['accepted'] = $tdaccepted;
+			$tdevice['totals']['rejected'] = $tdrejected;
+			$tdevice['totals']['hw_errors'] = $tdhwerrors;
+			$tdevice['totals']['shares'] = $tdshares;
+			$tdevice['totals']['hashrate'] = $tdhashrate;
+			
+			return json_encode($tdevice);
+		}
+		
+		return false;
+	}
 
 	// Get the stored stats from Redis
-	public function getStoredStats($seconds = 3600)
+	public function getStoredStats($seconds = 3600, $startTime = false)
 	{	
-		$now = time();
-		$onehourago = $now-$seconds;
-		$this->load->library('redis');
-		$o = $this->redis->command("ZRANGEBYSCORE minerd_stats $onehourago $now");
+		$current = ($startTime) ? $startTime : time();
+		$time = $current-$seconds;
+
+		$o = $this->redis->command("ZRANGEBYSCORE minerd_delta_stats $time $current");
 		
 		return $o;
+	}
+	
+	// Get the stored stats from Redis
+	public function getHistoryStats($type = "hourly")
+	{	
+		switch ($type)
+		{
+			case "hourly":
+				$period = 300;
+				$range = 12;
+			break;
+			case "daily":
+				$period = 3600;
+				$range = 24;
+			break;
+			case "weekly":
+				$period = 3600*24;
+				$range = 7;
+			break;
+			case "monthly":
+				$period = 3600*24;
+				$range = 30;
+			break;
+			case "yearly":
+				$period = 3600*24*30;
+				$range = 12;
+			break;
+		}
+		
+		$items = array();
+		for ($i=0;$i<=($range*$period);$i+=$period)
+		{
+			$statTime = (time()-$i);
+			$item = json_decode($this->avgStats($period, $statTime));
+			if ($item)
+				$items[] = $item;
+		}
+		
+		$o = json_encode($items);
+		
+		return $o;
+	}
+	
+	public function avgStats($seconds = 900, $startTime = false)
+	{
+		$records = $this->getStoredStats($seconds, $startTime);
+		
+		$i = 0; $timestamp = 0; $poolHashrate = 0; $hashrate = 0; $frequency = 0; $accepted = 0; $errors = 0; $rejected = 0; $shares = 0;
+		
+		if (count($records) > 0)
+		{
+			foreach ($records as $record)
+			{
+				$i++;
+				$obj = json_decode($record);
+				$timestamp += (isset($obj->timestamp)) ? $obj->timestamp : 0;
+				$poolHashrate += (isset($obj->pool_hashrate)) ? $obj->pool_hashrate : 0;
+				$hashrate += (isset($obj->hashrate)) ? $obj->hashrate : 0;
+				$frequency += (isset($obj->avg_freq)) ? $obj->avg_freq : 0;
+				$accepted += (isset($obj->accepted)) ? $obj->accepted : 0;
+				$errors += (isset($obj->errors)) ? $obj->errors : 0;
+				$rejected += (isset($obj->rejected)) ? $obj->rejected : 0;
+				$shares += (isset($obj->shares)) ? $obj->shares : 0;
+			}
+			
+			$timestamp = round(($timestamp/$i), 0);
+			$poolHashrate = round(($poolHashrate/$i), 0);
+			$hashrate = round(($hashrate/$i), 0);
+			$frequency = round(($frequency/$i), 0);
+			$accepted = round(($accepted/$i), 0);
+			$errors = round(($errors/$i), 0);
+			$rejected =round(($rejected/$i), 0);
+			$shares =round(($shares/$i), 0);
+		}
+
+		$o = false;
+		if ($timestamp)
+		{
+			$o = array(
+				"timestamp" => $timestamp,
+				"seconds" => $seconds,
+				"pool_hashrate" => $poolHashrate,
+				"hashrate" => $hashrate,
+				"frequency" => $frequency,
+				"accepted" => $accepted,
+				"errors" => $errors,
+				"rejected" => $rejected,
+				"shares" => $shares
+			);
+		}
+		
+		return json_encode($o);
+		
 	}
 	
 	// Store the live stats on Redis
@@ -87,47 +254,56 @@ class Util_model extends CI_Model {
 	{
 		log_message('error', "Storing stats...");
 		
-		$data = json_decode($this->getStats());
-		
-		$totHash = 0; $totFreq = 0; $totAc = 0; $totHw = 0; $totRe = 0; $totSh = 0; $d = 0; $c = 0;
+		$data = json_decode($this->getParsedStats($this->getStats()));
 
-		if ($data && $data->devices && count($data->devices) > 0)
-		{
-			foreach($data->devices as $device)
-			{
-				$d++;
-				if ($device->chips && count($device->chips) > 0)
-				{
-					foreach($device->chips as $chip)
-					{
-						$c++;
-						$totHash += $chip->hashrate;
-						$totFreq += $chip->frequency;
-						$totAc += $chip->accepted;
-						$totHw += $chip->hw_errors;
-						$totRe += $chip->rejected;
-						$totSh += $chip->shares;
-					}
-				}
-			}
-		}
-
+		// Get totals
 		$o = array(
 			"timestamp" => time(),
-			"hashrate" => $totHash,
-			"avg_freq" => round($totFreq/$c),
-			"accepted" => $totAc,
-			"errors" => $totHw,
-			"rejected" => $totRe,
-			"shares" => $totSh			
+			"pool_hashrate" => $data->pool->hashrate,
+			"hashrate" => $data->totals->hashrate,
+			"avg_freq" => $data->totals->frequency,
+			"accepted" => $data->totals->accepted,
+			"errors" => $data->totals->hw_errors,
+			"rejected" => $data->totals->rejected,
+			"shares" => $data->totals->shares
 		);
 
-		$json = json_encode($o);
+		// Get latest
+		$latest = $this->redis->command("ZREVRANGE minerd_totals_stats 0 0");
+		$lf = 0; $la = 0; $le = 0; $lr = 0; $ls = 0;
+		if ($latest)
+		{
+			$latest = json_decode($latest[0]);
+			$lf = $latest->avg_freq;
+			$la = $latest->accepted;
+			$le = $latest->errors;
+			$lr = $latest->rejected;
+			$ls = $latest->shares;
+		}
 
-		$this->load->library('redis');
-		$this->redis->command("ZADD minerd_stats ".time()." ".$json);
+log_message("error", $data->totals->rejected." - ".$lr);
+
+		// Get delta current-latest
+		$delta = array(
+			"timestamp" => time(),
+			"pool_hashrate" => $data->pool->hashrate,
+			"hashrate" => $data->totals->hashrate,
+			"avg_freq" => max((int)($data->totals->frequency - $lf), 0),
+			"accepted" => max((int)($data->totals->accepted - $la), 0),
+			"errors" => max((int)($data->totals->hw_errors - $le), 0),
+			"rejected" => max((int)($data->totals->rejected - $lr), 0),
+			"shares" => max((int)($data->totals->shares - $ls), 0)
+		);
 		
-		log_message('error', "Stats stored as: $json");
+		// Store delta
+		$this->redis->command("ZADD minerd_delta_stats ".time()." ".json_encode($delta));			
+		
+		log_message('error', "Delta Stats stored as: ".json_encode($delta));
+		
+		// Store totals
+		$this->redis->command("ZADD minerd_totals_stats ".time()." ".json_encode($o));
+		
+		log_message('error', "Total Stats stored as: ".json_encode($o));
 	}
 	
 	function setPools($pools)
@@ -309,15 +485,35 @@ class Util_model extends CI_Model {
 	// Start miner
 	public function minerStart()
 	{
+		$this->resetCounters();		
 		return $this->miner->start();
 	}
 	
 	// Stop minerd
 	public function minerRestart()
 	{
+		$this->resetCounters();
 		return $this->miner->restart();
 	}
-	
+
+	// Save a fake last data to get correct next delta
+	public function resetCounters()
+	{
+		$reset = array(
+			"timestamp" => time(),
+			"pool_hashrate" => 0,
+			"hashrate" => 0,
+			"avg_freq" => 0,
+			"accepted" => 0,
+			"errors" => 0,
+			"rejected" => 0,
+			"shares" => 0
+		);
+		
+		// Reset the counters
+		$this->redis->command("ZADD minerd_totals_stats ".time()." ".json_encode($reset));
+	}
+		
 	// Call update cmd
 	public function update()
 	{
@@ -400,6 +596,94 @@ class Util_model extends CI_Model {
 		{
 			return $this->redis->command("HGET minera_version value");
 		}
+	}
+	
+	/*
+	// Call the Mobileminer API to send device stats
+	*/
+	public function callMobileminer()
+	{
+		if ($this->redis->get("mobileminer_enabled"))
+		{
+			if ($this->redis->get("mobileminer_system_name") && $this->redis->get("mobileminer_email") && $this->redis->get("mobileminer_appkey"))
+			{
+				$rawStats = json_decode($this->getStats());
+				$stats = json_decode($this->getParsedStats(json_encode($rawStats)));
+								
+				$params = array("emailAddress" => $this->redis->get("mobileminer_email"), "applicationKey" => $this->redis->get("mobileminer_appkey"), "apiKey" => $this->config->item('mobileminer_apikey'), "detailed" => true);
+				
+				$poolUrl = (isset($stats->pool->url)) ? $stats->pool->url : "no pool configured";
+				$poolStatus = (isset($stats->pool->alive) && $stats->pool->alive) ? "Alive" : "Dead";
+								
+				$i = 0; $data = array();
+				if (count($stats->devices) > 0)
+				{
+					foreach ($stats->devices as $devName => $device)
+					{
+						$data[] = array(
+							"MachineName" => $this->redis->get("mobileminer_system_name"),
+							"MinerName" => "Minera",
+							"CoinSymbol" => "",
+							"CoinName" => "",
+							"Algorithm" => "Scrypt",
+							"Kind" => "Asic",
+							"Name" => $devName,
+							"FullName" => $devName,
+							"PoolIndex" => 0,
+							"PoolName" => $poolUrl,
+							"Index" => $i,                                            
+							"DeviceID" => $i,
+							"Enabled" => $this->isOnline(),
+							"Status" => $poolStatus,
+							"Temperature" => false,
+							"FanSpeed" => 0,
+							"FanPercent" => 0,
+							"GpuClock" => 0,
+							"MemoryClock" => 0,
+							"GpuVoltage" => 0,
+							"GpuActivity" => 0,
+							"PowerTune" => 0,
+							"AverageHashrate" => round(($device->hashrate/1000), 0),
+							"CurrentHashrate" => round(($device->hashrate/1000), 0),
+							"AcceptedShares" => $device->accepted,
+							"RejectedShares" => $device->rejected,
+							"HardwareErrors" => $device->hw_errors,
+							"Utility" => false,
+							"Intensity" => null,
+							"RejectedSharesPercent" => round(($device->rejected*100/($device->accepted+$device->rejected+$device->hw_errors)), 3),
+							"HardwareErrorsPercent" => round(($device->hw_errors*100/($device->accepted+$device->rejected+$device->hw_errors)), 3)
+						);
+						$i++;
+					}
+				}
+		
+				$data_string = json_encode($data);
+				
+				//log_message('error', $data_string);
+				log_message('error', "Sending data to Mobileminer");
+				
+				$ch = curl_init($this->config->item('mobileminer_url_stats')."?".http_build_query($params));
+
+				curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+				curl_setopt($ch, CURLOPT_POSTFIELDS, $data_string);
+				curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+				curl_setopt($ch, CURLOPT_HTTPHEADER, array(
+				    'Content-Type: application/json',
+				    'Content-Length: ' . strlen($data_string))
+				);
+				 
+				$result = curl_exec($ch);
+				
+				curl_close($ch);
+				
+				log_message('error', var_export($result, true));
+				
+				return $result;
+				
+			}
+		}
+		
+		return false;
 	}
 	
 	// Check Internet connection

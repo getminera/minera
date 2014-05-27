@@ -5,7 +5,7 @@
 echo -e "-----\nSTART Minera Install script\n-----\n"
 
 echo -e "-----\nInstall extra packages\n-----\n"
-apt-get install -y build-essential libtool libcurl4-openssl-dev libjansson-dev libudev-dev libncurses5-dev autoconf automake postfix
+apt-get install -y build-essential libtool libcurl4-openssl-dev libjansson-dev libudev-dev libncurses5-dev autoconf automake postfix redis-server git screen php5-cli php5-curl
 
 echo -e "Adding Minera user\n-----\n"
 adduser minera --gecos "" --disabled-password
@@ -32,6 +32,10 @@ chown -R minera.minera $MINERA_LOGS
 rm -rf $MINERA_OLD_LOGS
 ln -s $MINERA_LOGS $MINERA_OLD_LOGS
 
+echo -e "Adding Minera logrotate\n-----\n"
+cp `pwd`"/minera.logrotate" /etc/logrotate.d/minera
+service rsyslog restart
+
 echo -e "Adding default startup settings to redis\n-----\n"
 echo -n $MINER_OPT | redis-cli -x set minerd_settings
 echo -n "minera" | redis-cli -x set minera_password
@@ -50,6 +54,6 @@ echo -e $RC_LOCAL_CMD >> /etc/rc.local
 
 echo -e "Adding cron file in /etc/cron.d\n-----\n"
 
-echo "*/5 * * * * www-data php `pwd`/index.php app cron" > /etc/cron.d/minera
+echo -e "*/1 * * * * www-data php `pwd`/index.php app cron" > /etc/cron.d/minera
 
 echo -e 'DONE! Minera is ready!\n\nOpen the URL: http://'$(hostname -I | tr -d ' ')'/minera/\n\nAnd happy mining!\n'

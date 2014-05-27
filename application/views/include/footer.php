@@ -65,7 +65,29 @@
 		    // validate signup form on keyup and submit
 			var validator = $("#minersettings").validate({
 				rules: {
-					minerd_manual_settings: "required"
+					minerd_manual_settings: "required",
+					mobileminer_system_name: {
+						required: {
+							depends: function () {
+								return $('.mobileminer-checkbox').is(':checked');
+							}
+						}
+					},
+					mobileminer_email: {
+						required: {
+							depends: function () {
+								return $('.mobileminer-checkbox').is(':checked');
+							}
+						},
+						email: true
+					},
+					mobileminer_appkey: {
+						required: {
+							depends: function () {
+								return $('.mobileminer-checkbox').is(':checked');
+							}
+						}
+					},
 				},
 			    errorPlacement: function(error, element) {
 					error.appendTo( $(element).closest(".input-group").parent().after() );
@@ -83,7 +105,7 @@
 			});
 			
 			$(".pool_url").each(function () {
-				if ($(this).attr("name") == "pool_url[0]")
+				if ($(this).data('ismain'))
 				{
 					$(this).rules('add', 'required');
 				}
@@ -100,7 +122,7 @@
 			});
 			
 			$(".pool_username").each(function () {
-				if ($(this).attr("name") == "pool_username[0]")
+				if ($(this).data('ismain'))
 				{
 					$(this).rules('add', 'required');
 				}
@@ -117,7 +139,7 @@
 			});
 			
 			$(".pool_password").each(function () {
-				if ($(this).attr("name") == "pool_password[0]")
+				if ($(this).data('ismain'))
 				{
 					$(this).rules('add', 'required');
 				}
@@ -702,9 +724,7 @@
 					
 					for (var index in items) 
 					{
-						// Crete Knob graph for devices and total
-						createMon(index, items[index].hash, totalhash, maxHashrate, items[index].ac, items[index].re, items[index].hw, items[index].sh, items[index].fr);
-						
+										
 						// Add per device rows in system table
 						var devData = {}; devData.hash = items[index].hash;
 						var share_date = new Date(items[index].ls*1000);
@@ -766,6 +786,9 @@
 								'<small class="text-muted">'+share_date.toUTCString()+'</small>'
 							] );
 						}
+						
+						// Crete Knob graph for devices and total
+						createMon(index, items[index].hash, totalhash, maxHashrate, items[index].ac, items[index].re, items[index].hw, items[index].sh, items[index].fr, devData.label);
 						
 					}					
 				    
@@ -831,10 +854,10 @@
 						$(".sysload").append(loadBox);
 						
 						var lmax = 1; var lcolor = "rgb(71, 134, 81)"
-						if (lval >= 0 && lval <= 1) { lmax = 1; var lcolor = "rgb(71, 134, 81)"; }
-						else if (lval > 1 && lval <= 5) { lmax = 5; lcolor = "rgb(253, 227, 37)"; }
-						else if (lval > 5 && lval <= 10) { lmax = 10; lcolor = "rgb(253, 167, 37)"; }
-						else { lmax = lval+(lval*10/100); lcolor = "rgb(253, 46, 37)"; }
+						if (lval >= 0 && lval <= 1) { lmax = 1; var lcolor = "#00a65a"; }
+						else if (lval > 1 && lval <= 5) { lmax = 5; lcolor = "#f39c12"; }
+						else if (lval > 5 && lval <= 10) { lmax = 10; lcolor = "#f56954"; }
+						else { lmax = lval+(lval*10/100); lcolor = "#777777"; }
 						
 						$(".loadstep-"+lkey).knob({
 					        "readOnly": true,
@@ -876,39 +899,54 @@
 	        			var data = Object.keys(data).map(function(key) { 
 									data[key]['timestamp'] = data[key]['timestamp']*1000; 
 									data[key]['hashrate'] = (data[key]['hashrate']/1000/1000).toFixed(2);
-									
+									data[key]['pool_hashrate'] = (data[key]['pool_hashrate']/1000/1000).toFixed(2);									
 									return data[key];
 							});
 					
-					
+						
 						if (data.length && errorTriggered === false)
 						{
-							// Hashrate history graph
-							var areaHash = new Morris.Area({
-								element: 'hashrate-chart',
-								resize: true,
-								data: data,
-								xkey: 'timestamp',
-								ykeys: ['hashrate'],
-								ymax: 'auto',
-								postUnits: "Mh/s",
-								labels: ['Hashrate'],
-								lineColors: ['#65b8e7'],
-								hideHover: 'auto',
-							});	
 							
-							// Rejected/Errors graph
-							var areaRej = new Morris.Area({
-								element: 'rehw-chart',
-								resize: true,
-								data: data,
-								xkey: 'timestamp',
-								ykeys: ['rejected', 'errors'],
-								ymax: 'auto',
-								labels: ['Rejected', 'Errors'],
-								lineColors: ['#f5b989', '#f59189'],
-								hideHover: 'auto',
-							});
+							if (refresh === false)
+							{
+								// Hashrate history graph
+								areaHash = new Morris.Area({
+									element: 'hashrate-chart',
+									resize: true,
+									data: data,
+									xkey: 'timestamp',
+									ykeys: ['hashrate', 'pool_hashrate'],
+									ymax: 'auto',
+									postUnits: "Mh/s",
+									labels: ['Devices', 'Pool'],
+									lineColors: ['#3c8dbc', '#00c0ef'],
+									lineWidth: 2,
+									pointSize: 3,
+									hideHover: 'auto',
+									behaveLikeLine: true
+
+								});	
+								
+								// Rejected/Errors graph
+								areaRej = new Morris.Area({
+									element: 'rehw-chart',
+									resize: true,
+									data: data,
+									xkey: 'timestamp',
+									ykeys: ['accepted', 'rejected', 'errors'],
+									ymax: 'auto',
+									labels: ['Accepted', 'Rejected', 'Errors'],
+									lineColors: ['#00a65a', '#f39c12', '#f56954'],
+									lineWidth: 2,
+									pointSize: 3,
+									hideHover: 'auto',
+									behaveLikeLine: true
+								});
+							}
+							else
+							{
+								updateGraphs(data);
+							}
 							
 							$(window).resize(function() {
 								redrawGraphs()
@@ -927,7 +965,15 @@
 						    areaRej.redraw();
 							    
 						    return false;
-						}	
+						}
+						
+						function updateGraphs(data)
+						{
+						    areaHash.setData(data);
+						    areaRej.setData(data);
+							    
+						    return false;
+						}
 	        			
 					}); //End get stored stats
 					
@@ -937,7 +983,7 @@
 			
     	} // End function getStats()
 		
-		function createMon(key, hash, totalhash, maxHashrate, ac, re, hw, sh, freq)
+		function createMon(key, hash, totalhash, maxHashrate, ac, re, hw, sh, freq, color)
 		{
 			if (key == "total")
 			{
@@ -953,7 +999,7 @@
 			{
 				var col = 4;
 				var toAppend = "#devs";
-				var color = "#e6cc64";
+				var color = getExaColor(color);
 				var size = 80;
 				var skin = "basic";
 				var thickness = ".2";
@@ -1084,6 +1130,18 @@
 
 			return { d: d, h: h, m: m, s: s };
 		};
+		
+		function getExaColor(color)
+		{
+			if (color == "green")
+				return "#00a65a";
+			else if (color == "yellow")
+				return "#f39c12";
+			else if (color == "red")
+				return "#f56954";
+			else
+				return "#999";
+		}
 
 
     </script>

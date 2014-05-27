@@ -100,7 +100,7 @@ sudo service lighttpd force-reload
 When your web server is ready you can install Minera:
 
 ```
-sudo apt-get install -y redis-server git screen php5-cli
+sudo apt-get install -y redis-server git screen php5-cli php5-curl
 cd /var/www
 sudo git clone https://github.com/michelem09/minera
 cd minera
@@ -138,7 +138,18 @@ Upgrading
 -------------
 
 Minera will show you a notification icon in the upper right corner if a new version is available. Click the link to run the upgrade.
-Your miner will not be stopped, but you should restart it to take full adavntages of updates.
+Your miner will not be stopped, but you should restart it to take full advantages of updates.
+
+If you wanna run and update manually or if you are in trouble and you wanna get a fresh updated code, just SSH into Minera and run these commands:
+
+```
+cd /var/www/minera
+sudo git fetch --all
+sudo git reset --hard origin/master
+sudo ./upgrade_minera.sh
+```
+
+Your Minera system should be upgraded with the latest commit available.
 
 Configuring
 -------------

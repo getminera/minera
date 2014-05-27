@@ -78,19 +78,19 @@
 										    	<div class="col-xs-5">
 										    		<div class="input-group">
 										    			<span class="input-group-addon"><i class="fa fa-cloud-<?php echo ($i == 0) ? "upload" : "download"; ?>"></i></span>
-										    			<input type="text" class="form-control pool_url" placeholder="<?php echo ($i == 0) ? "Main" : "Failover"; ?> url" name="pool_url[]" value="<?php echo (isset($savedPools[$i]->url)) ? $savedPools[$i]->url : ''; ?>" />
+										    			<input type="text" class="form-control pool_url" placeholder="<?php echo ($i == 0) ? "Main" : "Failover"; ?> url" name="pool_url[]" data-ismain="<?php echo ($i == 0) ? "1" : "0"; ?>" value="<?php echo (isset($savedPools[$i]->url)) ? $savedPools[$i]->url : ''; ?>" />
 										    		</div>
 										    	</div>
 										    	<div class="col-xs-3">
 										    		<div class="input-group">
 										    			<span class="input-group-addon"><i class="fa fa-user"></i></span>
-										    			<input type="text" class="form-control pool_username" placeholder="username" name="pool_username[]" value="<?php echo (isset($savedPools[$i]->username)) ? $savedPools[$i]->username : ''; ?>"  />
+										    			<input type="text" class="form-control pool_username" placeholder="username" name="pool_username[]" data-ismain="<?php echo ($i == 0) ? "1" : "0"; ?>" value="<?php echo (isset($savedPools[$i]->username)) ? $savedPools[$i]->username : ''; ?>"  />
 										    		</div>
 										    	</div>
 										    	<div class="col-xs-3">
 										    		<div class="input-group">
 										    			<span class="input-group-addon"><i class="fa fa-lock"></i></span>
-										    			<input type="text" class="form-control pool_password" placeholder="password" name="pool_password[]" value="<?php echo (isset($savedPools[$i]->password)) ? $savedPools[$i]->password : ''; ?>"  />
+										    			<input type="text" class="form-control pool_password" placeholder="password" name="pool_password[]" data-ismain="<?php echo ($i == 0) ? "1" : "0"; ?>" value="<?php echo (isset($savedPools[$i]->password)) ? $savedPools[$i]->password : ''; ?>"  />
 										    		</div>
 										    	</div>
 										    	<div class="col-xs-1">
@@ -105,19 +105,19 @@
 										    	<div class="col-xs-5">
 										    		<div class="input-group">
 										    			<span class="input-group-addon"><i class="fa fa-cloud-download"></i></span>
-										    			<input type="text" class="form-control pool_url" placeholder="Failover url" name="pool_url[]" value="" />
+										    			<input type="text" class="form-control pool_url" placeholder="Failover url" name="pool_url[]" data-ismain="0" value="" />
 										    		</div>
 										    	</div>
 										    	<div class="col-xs-3">
 										    		<div class="input-group">
 										    			<span class="input-group-addon"><i class="fa fa-user"></i></span>
-										    			<input type="text" class="form-control pool_username" placeholder="username" name="pool_username[]" value=""  />
+										    			<input type="text" class="form-control pool_username" placeholder="username" name="pool_username[]" data-ismain="0" value=""  />
 										    		</div>
 										    	</div>
 										    	<div class="col-xs-3">
 										    		<div class="input-group">
 										    			<span class="input-group-addon"><i class="fa fa-lock"></i></span>
-										    			<input type="text" class="form-control pool_password" placeholder="password" name="pool_password[]" value=""  />
+										    			<input type="text" class="form-control pool_password" placeholder="password" name="pool_password[]" data-ismain="0" value=""  />
 										    		</div>
 										    	</div>
 										    	<div class="col-xs-1">
@@ -343,6 +343,48 @@
 												<h6>(WARNING: you could harm your controller putting wrong strings here.)</h6>
 											</div>
 												
+	                                </div>
+									<div class="box-footer">
+										<button type="submit" class="btn btn-primary" name="save" value="1">Save</button>
+									</div>
+	                            </div>
+	                            
+								<!-- Mobileminer box -->
+								<div class="box box-primary">
+									<div class="box-header">
+										<!-- tools box -->
+	                                    <div class="pull-right box-tools">
+	                                        <button class="btn btn-default btn-xs" data-widget="collapse" data-toggle="tooltip" title="" data-original-title="Collapse"><i class="fa fa-minus"></i></button>
+	                                    </div><!-- /. tools -->
+	                                    <i class="fa fa-mobile-phone"></i>
+	                                    
+	                                    <h3 class="box-title">Mobileminer Settings</h3>
+	                                </div>
+									
+	                                <div class="box-body">
+										<p>If you cannot (or don't want) to completely expose to internet your Minera system you can choose to connect it to the awesome <a href="http://www.mobileminerapp.com/" target="_blank">Mobileminer app</a> to check your stats from everywhere you are.<br />Please follow the instruction on the <a href="http://www.mobileminerapp.com/#gettingStarted" target="_blank">Mobileminer website</a>. To get started you only need to signup with your email address to retrieve your application key.</p>
+	
+											<!-- mobileminer options -->
+											<div class="form-group">
+												<div class="checkbox">
+													<label>
+														<input type="checkbox" class="mobileminer-checkbox" name="mobileminer_enabled" value="1" <?php if ($mobileminerEnabled) : ?>checked=""<?php endif; ?> />
+														Enable Mobileminer
+													</label>                                                
+												</div>
+											</div>	
+											<div class="input-group">
+												<label for="mobileminer_system_name">System Name</label>
+												<input type="text" class="form-control" name="mobileminer_system_name" placeholder="Give a name to this Minera system to identify it" value="<?php echo $mobileminerSystemName ?>">
+											</div>
+											<div class="input-group">
+												<label for="mobileminer_email">Email</label>
+												<input type="text" class="form-control" name="mobileminer_email" placeholder="Email you used to signup Mobileminer" value="<?php echo $mobileminerEmail ?>">
+											</div>
+											<div class="input-group">
+												<label for="mobileminer_appkey">Application Key</label>
+												<input type="password" class="form-control" name="mobileminer_appkey" placeholder="Your Mobileminer Application Key" value="<?php echo $mobileminerAppkey ?>">
+											</div>
 	                                </div>
 									<div class="box-footer">
 										<button type="submit" class="btn btn-primary" name="save" value="1">Save</button>

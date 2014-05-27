@@ -315,9 +315,9 @@
                                     <div class="pull-right box-tools">
                                         <button class="btn btn-default btn-xs" data-widget="collapse" data-toggle="tooltip" title="" data-original-title="Collapse"><i class="fa fa-minus"></i></button>
                                     </div><!-- /. tools -->
-                                    <i class="fa fa-warning"></i>
+                                    <i class="fa fa-bullseye"></i>
                                     
-                                    <h3 class="box-title" id="error-history">Rejected/Errors</h3>
+                                    <h3 class="box-title" id="error-history">Accepted/Rejected/Errors</h3>
                                 </div>
                                 <div class="box-body chart-responsive">
                                 	<div class="chart" id="rehw-chart" style="height:160px;"></div>

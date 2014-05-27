@@ -46,7 +46,7 @@ class App extends Main_Controller {
 		$data['settingsScript'] = false;
 		$data['mineraUpdate'] = $this->util_model->checkUpdate();
 		$data['dashboard_refresh_time'] = $this->redis->get("dashboard_refresh_time");
-		$data['pageTitle'] = "Minera - Dashboard";
+		$data['pageTitle'] = ($this->redis->get("mobileminer_system_name")) ? $this->redis->get("mobileminer_system_name")." > Minera - Dashboard" : "Minera - Dashboard";
 		
 		$this->load->view('include/header', $data);
 		$this->load->view('include/sidebar', $data);
@@ -199,6 +199,36 @@ class App extends Main_Controller {
 						
 			// Startup script rc.local
 			$this->util_model->saveStartupScript($delay, $extracommands);
+			
+			// Mobileminer
+			// Enabled
+			$mobileminerEnabled = false;
+			if ($this->input->post('mobileminer_enabled'))
+			{
+				$mobileminerEnabled = $this->input->post('mobileminer_enabled');
+			}
+			$this->redis->set("mobileminer_enabled", $mobileminerEnabled);
+			// Sys name
+			$mobileminerSysName = false;
+			if ($this->input->post('mobileminer_system_name'))
+			{
+				$mobileminerSysName = $this->input->post('mobileminer_system_name');
+			}
+			$this->redis->set("mobileminer_system_name", $mobileminerSysName);
+			// email
+			$mobileminerEmail = false;
+			if ($this->input->post('mobileminer_email'))
+			{
+				$mobileminerEmail = $this->input->post('mobileminer_email');
+			}
+			$this->redis->set("mobileminer_email", $mobileminerEmail);
+			// Application key
+			$mobileminerAppkey = false;
+			if ($this->input->post('mobileminer_appkey'))
+			{
+				$mobileminerAppkey = $this->input->post('mobileminer_appkey');
+			}
+			$this->redis->set("mobileminer_appkey", $mobileminerAppkey);
 
 			$data['message'] = '<b>Success!</b> Settings saved!';
 			$data['message_type'] = "success";
@@ -267,7 +297,13 @@ class App extends Main_Controller {
 
 		// Load System settings
 		$data['systemExtracommands'] = $this->redis->get("system_extracommands");
-				
+		
+		// Load Mobileminer
+		$data['mobileminerEnabled'] = $this->redis->get("mobileminer_enabled");
+		$data['mobileminerSystemName'] = $this->redis->get("mobileminer_system_name");
+		$data['mobileminerEmail'] = $this->redis->get("mobileminer_email");
+		$data['mobileminerAppkey'] = $this->redis->get("mobileminer_appkey");
+						
 		// Everything else
 		$data['savedFrequencies'] = $this->redis->get('current_frequencies');
 		$data['isOnline'] = $this->util_model->isOnline();
@@ -301,6 +337,7 @@ class App extends Main_Controller {
 			$data['timer'] = false;
 		}
 		
+		$data['onloadFunction'] = false;
 		$data['pageTitle'] = "Shutdown Minera";
 		$data['messageEnd'] = "you can unplug me now.";
 		$data['htmlTag'] = "lockscreen";
@@ -328,6 +365,7 @@ class App extends Main_Controller {
 			$data['timer'] = false;
 		}
 		
+		$data['onloadFunction'] = false;
 		$data['pageTitle'] = "Reboot Minera";
 		$data['messageEnd'] = "here we go!";
 		$data['htmlTag'] = "lockscreen";
@@ -421,20 +459,29 @@ class App extends Main_Controller {
 	/*
 	// API controller
 	*/
-	public function api()
+	public function api($command = false)
 	{
-		switch($this->input->get('command'))
+		$cmd = ($command) ? $command : $this->input->get('command');
+		
+		switch($cmd)
 		{
 			case "save_current_freq":
 				$o = $this->util_model->saveCurrentFreq();
 			break;
 			case "select_pool":
 				$o = json_encode($this->util_model->selectPool($this->input->get('poolId')));
-				// Give to the stats the time to refresh
+				// Give to the miner the time to refresh
 				sleep(3);
 			break;
 			case "update_minera":
 				$o = $this->util_model->update();
+			break;
+			case "notify_mobileminer":
+				$o = $this->util_model->callMobileminer();
+			break;
+			case "test":
+				$o = $this->util_model->getHistoryStats($this->input->get('type'));
+				//$o = $this->util_model->getParsedStats($this->util_model->getStats());
 			break;
 		}
 		
@@ -480,6 +527,9 @@ class App extends Main_Controller {
 		
 		// Store the live stats to be used on time graphs
 		$this->util_model->storeStats();
+		
+		// Call Mobileminer if enabled
+		$this->util_model->callMobileminer();
 	}
 	
 	/*
