@@ -372,7 +372,7 @@
 														Enable Mobileminer
 													</label>                                                
 												</div>
-											</div>	
+											</div>
 											<div class="input-group">
 												<label for="mobileminer_system_name">System Name</label>
 												<input type="text" class="form-control" name="mobileminer_system_name" placeholder="Give a name to this Minera system to identify it" value="<?php echo $mobileminerSystemName ?>">
