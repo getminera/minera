@@ -289,8 +289,6 @@ class Util_model extends CI_Model {
 			$ls = $latest->shares;
 		}
 
-log_message("error", $data->totals->rejected." - ".$lr);
-
 		// Get delta current-latest
 		$delta = array(
 			"timestamp" => time(),
