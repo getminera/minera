@@ -256,16 +256,24 @@ class Util_model extends CI_Model {
 		
 		$data = json_decode($this->getParsedStats($this->getStats()));
 
+		$ph = (isset($data->pool->hashrate)) ? $data->pool->hashrate : 0;
+		$dh = (isset($data->totals->hashrate)) ? $data->totals->hashrate : 0;
+		$fr = (isset($data->totals->frequency)) ? $data->totals->frequency : 0;		
+		$ac = (isset($data->totals->accepted)) ? $data->totals->accepted : 0;		
+		$hw = (isset($data->totals->hw_errors)) ? $data->totals->hw_errors : 0;
+		$re = (isset($data->totals->rejected)) ? $data->totals->rejected : 0;
+		$sh = (isset($data->totals->shares)) ? $data->totals->shares : 0;
+								
 		// Get totals
 		$o = array(
 			"timestamp" => time(),
-			"pool_hashrate" => $data->pool->hashrate,
-			"hashrate" => $data->totals->hashrate,
-			"avg_freq" => $data->totals->frequency,
-			"accepted" => $data->totals->accepted,
-			"errors" => $data->totals->hw_errors,
-			"rejected" => $data->totals->rejected,
-			"shares" => $data->totals->shares
+			"pool_hashrate" => $ph,
+			"hashrate" => $dh,
+			"avg_freq" => $fr,
+			"accepted" => $ac,
+			"errors" => $hw,
+			"rejected" => $re,
+			"shares" => $sh
 		);
 
 		// Get latest
@@ -286,13 +294,13 @@ log_message("error", $data->totals->rejected." - ".$lr);
 		// Get delta current-latest
 		$delta = array(
 			"timestamp" => time(),
-			"pool_hashrate" => $data->pool->hashrate,
-			"hashrate" => $data->totals->hashrate,
-			"avg_freq" => max((int)($data->totals->frequency - $lf), 0),
-			"accepted" => max((int)($data->totals->accepted - $la), 0),
-			"errors" => max((int)($data->totals->hw_errors - $le), 0),
-			"rejected" => max((int)($data->totals->rejected - $lr), 0),
-			"shares" => max((int)($data->totals->shares - $ls), 0)
+			"pool_hashrate" => $ph,
+			"hashrate" => $dh,
+			"avg_freq" => max((int)($fr - $lf), 0),
+			"accepted" => max((int)($ac - $la), 0),
+			"errors" => max((int)($hw - $le), 0),
+			"rejected" => max((int)($re - $lr), 0),
+			"shares" => max((int)($sh - $ls), 0)
 		);
 		
 		// Store delta

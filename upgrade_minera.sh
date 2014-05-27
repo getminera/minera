@@ -6,7 +6,7 @@ echo -e "-----\nSTART Minera Upgrade script\n-----\n"
 
 echo -e "-----\nInstall extra packages\n-----\n"
 #apt-get update
-apt-get install -y build-essential libtool libcurl4-openssl-dev libjansson-dev libudev-dev libncurses5-dev autoconf automake postfix redis-server git screen php5-cli php5-curl
+apt-get -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" install -y build-essential libtool libcurl4-openssl-dev libjansson-dev libudev-dev libncurses5-dev autoconf automake postfix redis-server git screen php5-cli php5-curl
 
 MINERA_LOGS="/var/log/minera"
 MINERA_CONF=`pwd`"/conf"
