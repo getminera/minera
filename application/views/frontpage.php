@@ -67,7 +67,7 @@
 									<div class="small-box bg-red">
 										<div class="inner">
 											<h3 class="widget-total-hashrate"><i class="ion ion-loading-c"></i></h3>
-											<p>Pool Hashrate</p>
+											<p>Pool Hashrate - Miners Hashrate</p>
 										</div>
 										<div class="icon"><i class="ion ion-ios7-speedometer-outline"></i></div>
 										<a href="#hashrate-history" class="small-box-footer">History <i class="fa fa-arrow-circle-right"></i></a>
