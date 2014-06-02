@@ -262,7 +262,7 @@
 			var reverse = false;
 			var log_data = "";
 			var log_size = 0;
-			
+			var poolhashdatas = 0;
 			function get_log() {
 			    if (kill | loading) return;
 			    loading = true;
@@ -618,7 +618,8 @@
 									phashData.hash = parseInt((65536.0 * (pshares/(now/1000-pstats.start_time)))/1000);
 									phashData.label = 'red';
 									//Add Main pool widget
-									$(".widget-total-hashrate").html(convertHashrate(phashData.hash));
+									//$(".widget-total-hashrate").html(convertHashrate(phashData.hash));
+                  							poolhashdatas = convertHashrate(phashData.hash);
 									$('.widget-main-pool').html(palivelabel);
 									$('.widget-main-pool').next('p').html(pval.url);
 									// Changing title page according to hashrate
@@ -792,7 +793,7 @@
 						
 					}					
 				    
-					
+					 $(".widget-total-hashrate").html(poolhashdatas + ' - ' + convertHashrate(totalhash)); 
 					
 					// Add controller temperature
 					if (data['temp'])
