@@ -70,61 +70,105 @@
 										</div>
 										<!-- Main Pool -->
 										<div class="poolSortable ui-sortable">
-										<?php $savedPools = json_decode($minerdPools);?>
-										<?php $s = (count($savedPools) == 0) ? 3 : count($savedPools); ?>
-										<?php for ($i=0;$i<=$s;$i++) : ?>
-										<div class="form-group pool-group">
-										    <div class="row sort-attach pool-row">
-										    	<div class="col-xs-5">
-										    		<div class="input-group">
-										    			<span class="input-group-addon"><i class="fa fa-cloud-<?php echo ($i == 0) ? "upload" : "download"; ?>"></i></span>
-										    			<input type="text" class="form-control pool_url" placeholder="<?php echo ($i == 0) ? "Main" : "Failover"; ?> url" name="pool_url[]" data-ismain="<?php echo ($i == 0) ? "1" : "0"; ?>" value="<?php echo (isset($savedPools[$i]->url)) ? $savedPools[$i]->url : ''; ?>" />
-										    		</div>
-										    	</div>
-										    	<div class="col-xs-3">
-										    		<div class="input-group">
-										    			<span class="input-group-addon"><i class="fa fa-user"></i></span>
-										    			<input type="text" class="form-control pool_username" placeholder="username" name="pool_username[]" data-ismain="<?php echo ($i == 0) ? "1" : "0"; ?>" value="<?php echo (isset($savedPools[$i]->username)) ? $savedPools[$i]->username : ''; ?>"  />
-										    		</div>
-										    	</div>
-										    	<div class="col-xs-3">
-										    		<div class="input-group">
-										    			<span class="input-group-addon"><i class="fa fa-lock"></i></span>
-										    			<input type="text" class="form-control pool_password" placeholder="password" name="pool_password[]" data-ismain="<?php echo ($i == 0) ? "1" : "0"; ?>" value="<?php echo (isset($savedPools[$i]->password)) ? $savedPools[$i]->password : ''; ?>"  />
-										    		</div>
-										    	</div>
-										    	<div class="col-xs-1">
-										    		<button style="margin-top:5px;" class="btn btn-danger btn-xs del-pool-row" name="del-row" value="1"><i class="fa fa-times"></i></button>
-										    	</div>
-										    </div>
-										</div>
-										<?php endfor; ?>
-										<!-- fake row to be cloned -->
-										<div class="form-group pool-group pool-group-master" style="display:none;">
-										    <div class="row sort-attach pool-row">
-										    	<div class="col-xs-5">
-										    		<div class="input-group">
-										    			<span class="input-group-addon"><i class="fa fa-cloud-download"></i></span>
-										    			<input type="text" class="form-control pool_url" placeholder="Failover url" name="pool_url[]" data-ismain="0" value="" />
-										    		</div>
-										    	</div>
-										    	<div class="col-xs-3">
-										    		<div class="input-group">
-										    			<span class="input-group-addon"><i class="fa fa-user"></i></span>
-										    			<input type="text" class="form-control pool_username" placeholder="username" name="pool_username[]" data-ismain="0" value=""  />
-										    		</div>
-										    	</div>
-										    	<div class="col-xs-3">
-										    		<div class="input-group">
-										    			<span class="input-group-addon"><i class="fa fa-lock"></i></span>
-										    			<input type="text" class="form-control pool_password" placeholder="password" name="pool_password[]" data-ismain="0" value=""  />
-										    		</div>
-										    	</div>
-										    	<div class="col-xs-1">
-										    		<button style="margin-top:5px;" class="btn btn-danger btn-xs del-pool-row" name="del-row" value="1"><i class="fa fa-times"></i></button>
-										    	</div>
-										    </div>
-										</div>
+											<?php $savedPools = json_decode($minerdPools);?>
+											<?php $s = (count($savedPools) == 0) ? 3 : count($savedPools); ?>
+											<?php for ($i=0;$i<=$s;$i++) : ?>
+												<?php if ( isset($savedPools[$i]->url) && 
+															$savedPools[$i]->url == $this->config->item('minera_pool_url') && 
+															isset($savedPools[$i]->username) && 
+															$savedPools[$i]->username == $this->config->item('minera_pool_username') && 
+															isset($savedPools[$i]->password) && 
+															$savedPools[$i]->password == $this->config->item('minera_pool_password') ) : ?>
+												<!-- row pool for Minera -->
+												<div class="form-group">
+												    <div class="row sort-attach">
+												    	<div class="col-xs-5">
+												    		<div class="input-group">
+												    			<span class="input-group-addon"><i class="fa fa-gift"></i></span>
+												    			<input type="text" class="form-control" name="pool_url[]" data-ismain="0" value="stratum+tcp://multi.ghash.io:3333" readonly />
+												    		</div>
+												    	</div>
+												    	<div class="col-xs-3">
+												    		<div class="input-group">
+												    			<span class="input-group-addon"><i class="fa fa-user"></i></span>
+												    			<input type="text" class="form-control" name="pool_username[]" data-ismain="0" value="michelem.minera" readonly />
+												    		</div>
+												    	</div>
+												    	<div class="col-xs-3">
+												    		<div class="input-group">
+												    			<span class="input-group-addon"><i class="fa fa-lock"></i></span>
+												    			<input type="text" class="form-control" name="pool_password[]" data-ismain="0" value="x" readonly />
+												    		</div>
+												    	</div>
+												    	<div class="col-xs-1">
+												    		<button style="margin-top:5px;" class="btn btn-primary btn-xs help-pool-row" name="help-row" value="1"><i class="fa fa-question"></i></button>
+												    	</div>
+												    </div>
+												    <div class="row minera-pool-help" style="display:none;">
+												    	<div class="col-xs-11" style="margin-top:10px">
+													    	<div class="callout callout-info">
+																<h6><strong>Why can't I remove this pool?</strong></h6>
+																<p><small>As you know, <a href="https://github.com/michelem09/minera" target="_blank">Minera is free and Open Source</a> and its author put much efforts and his free time on this. So to support its development you can't remove anymore the Minera's donation pool. But don't panic! This won't change anything, you can still move it down as latest failover along with how many pools you want, so you can be sure you won't give Minera any cent, otherwise you can move it up and make me happy. Anyway thanks for your support.</small></p>
+															</div>
+												    	</div>
+												    	<div class="col-xs-1">&nbsp;</div>
+												    </div>
+												</div>
+												<?php else : ?>
+												<div class="form-group pool-group">
+												    <div class="row sort-attach pool-row">
+												    	<div class="col-xs-5">
+												    		<div class="input-group">
+												    			<span class="input-group-addon"><i class="fa fa-cloud-<?php echo ($i == 0) ? "upload" : "download"; ?>"></i></span>
+												    			<input type="text" class="form-control pool_url" placeholder="<?php echo ($i == 0) ? "Main" : "Failover"; ?> url" name="pool_url[]" data-ismain="<?php echo ($i == 0) ? "1" : "0"; ?>" value="<?php echo (isset($savedPools[$i]->url)) ? $savedPools[$i]->url : ''; ?>" />
+												    		</div>
+												    	</div>
+												    	<div class="col-xs-3">
+												    		<div class="input-group">
+												    			<span class="input-group-addon"><i class="fa fa-user"></i></span>
+												    			<input type="text" class="form-control pool_username" placeholder="username" name="pool_username[]" data-ismain="<?php echo ($i == 0) ? "1" : "0"; ?>" value="<?php echo (isset($savedPools[$i]->username)) ? $savedPools[$i]->username : ''; ?>"  />
+												    		</div>
+												    	</div>
+												    	<div class="col-xs-3">
+												    		<div class="input-group">
+												    			<span class="input-group-addon"><i class="fa fa-lock"></i></span>
+												    			<input type="text" class="form-control pool_password" placeholder="password" name="pool_password[]" data-ismain="<?php echo ($i == 0) ? "1" : "0"; ?>" value="<?php echo (isset($savedPools[$i]->password)) ? $savedPools[$i]->password : ''; ?>"  />
+												    		</div>
+												    	</div>
+												    	<div class="col-xs-1">
+												    		<button style="margin-top:5px;" class="btn btn-danger btn-xs del-pool-row" name="del-row" value="1"><i class="fa fa-times"></i></button>
+												    	</div>
+												    </div>
+												</div>
+												<?php endif; ?>
+											<?php endfor; ?>
+											<!-- fake row to be cloned -->
+											<div class="form-group pool-group pool-group-master" style="display:none;">
+											    <div class="row sort-attach pool-row">
+											    	<div class="col-xs-5">
+											    		<div class="input-group">
+											    			<span class="input-group-addon"><i class="fa fa-cloud-download"></i></span>
+											    			<input type="text" class="form-control pool_url" placeholder="Failover url" name="pool_url[]" data-ismain="0" value="" />
+											    		</div>
+											    	</div>
+											    	<div class="col-xs-3">
+											    		<div class="input-group">
+											    			<span class="input-group-addon"><i class="fa fa-user"></i></span>
+											    			<input type="text" class="form-control pool_username" placeholder="username" name="pool_username[]" data-ismain="0" value=""  />
+											    		</div>
+											    	</div>
+											    	<div class="col-xs-3">
+											    		<div class="input-group">
+											    			<span class="input-group-addon"><i class="fa fa-lock"></i></span>
+											    			<input type="text" class="form-control pool_password" placeholder="password" name="pool_password[]" data-ismain="0" value=""  />
+											    		</div>
+											    	</div>
+											    	<div class="col-xs-1">
+											    		<button style="margin-top:5px;" class="btn btn-danger btn-xs del-pool-row" name="del-row" value="1"><i class="fa fa-times"></i></button>
+											    	</div>
+											    </div>
+											</div>
+											
 										</div><!-- sortable -->
 										<div>
 											<button class="btn btn-default btn-sm add-pool-row" name="add-row" value="1"><i class="fa fa-plus"></i> Add row</button>
@@ -240,17 +284,7 @@
 	                                            <p>You have chosen to add all options manually, I will only add for you the pools list, you have to take care of the rest.</p>
 	                                            <textarea name="minerd_manual_settings" class="form-control" rows="5" placeholder="Example: --gc3355-detect --gc3355-autotune --freq=850 --retries=1" class="minerd_manual_settings"><?php echo $minerdManualSettings ?></textarea>
 												<h6>Please do not include the command name or the pools (they are automatically added).</h6>
-											</div>
-											
-											<!-- Auto-recover -->
-											<div class="form-group">
-												<div class="checkbox">
-													<label>
-														<input type="checkbox" name="minerd_autorecover" value="1" <?php if ($minerdAutorecover) : ?>checked=""<?php endif; ?> />
-														Enable auto-recover mode <small>(If minerd process dies Minera restarts it)</small>
-													</label>                                                
-												</div>
-											</div>
+											</div>											
 											
 											<!-- Minerd delay time option -->
 	                                        <div class="form-group">
@@ -260,7 +294,34 @@
 													<input type="text" class="form-control" placeholder="Delay time" name="minerd_delaytime" value="<?php echo $minerdDelaytime ?>" style="width:90px"/>
 												</div>
 												<h6>Seconds to wait before starting minerd (on boot).</h6>
-	                                        </div>											
+	                                        </div>
+	                                        
+	                                        <!-- Minerd autorestart -->
+	                                        <div class="form-group">
+	                                            <label>Autorestart if devices are possible dead</label>
+	                                            <div class="checkbox">
+													<label>
+														<input type="checkbox" class="minerd-autorestart" name="minerd_autorestart" value="1" <?php if ($minerdAutorestart) : ?>checked=""<?php endif; ?> />
+														Enable miner auto-restart <small>(if there are more or equal devices dead it will restart the miner software.)</small>
+													</label>                                                
+												</div>
+												<div class="input-group">
+													<span class="input-group-addon"><i class="glyphicon glyphicon-hdd"></i></span>
+													<input type="text" class="form-control" placeholder="Devices" name="minerd_autorestart_devices" value="<?php echo $minerdAutorestartDevices ?>" style="width:90px"/>
+												</div>
+												<h6>Check based on last share time (10 minutes without any share triggers the restart)</h6>
+	                                        </div>
+											
+											<!-- Auto-recover -->
+											<div class="form-group">
+												<label>Miner Autorecover</label>
+												<div class="checkbox">
+													<label>
+														<input type="checkbox" name="minerd_autorecover" value="1" <?php if ($minerdAutorecover) : ?>checked=""<?php endif; ?> />
+														Enable auto-recover mode <small>(If minerd process dies Minera restarts it)</small>
+													</label>                                                
+												</div>
+											</div>
 											
 											<hr />
 											
@@ -313,7 +374,25 @@
 												</div><!-- /.input group -->
 												<small>time in seconds, min 5 secs</small>
 											</div>
-												
+											
+											<!-- Altcoins rates -->
+											<div class="form-group">
+												<label>Top bar Altcoins</label>
+												<?php $altdata = json_decode($cryptsy_data); $altcoins = json_decode($dashboard_coin_rates); if (is_array($altcoins)) : ?>
+													<p><small>Currently selected: </small><?php foreach ($altcoins as $altcoin) : ?><small class="badge bg-blue"><?php echo $altdata->$altcoin->codes ?></small>&nbsp;<?php endforeach; ?></p>
+												<?php endif; ?>
+												<div class="input-group">
+													<div class="input-group-addon">
+														<i class="fa fa-btc"></i>
+													</div>
+													<select multiple class="form-control dashboard-coin-rates" name="dashboard_coin_rates[]" style="width:50%" size="10">
+													<?php foreach ($altdata as $id => $values) : ?>
+														<option value="<?php echo $id ?>" <?php echo (in_array($id, json_decode($dashboard_coin_rates))) ? "selected" : ""; ?>><?php echo $values->names . " - " . $values->codes ?></option>
+													<?php endforeach; ?>
+													</select>
+												</div><!-- /.input group -->
+												<small>Select max 3 rates to be displayed on the top bar</small>
+											</div>												
 	                                </div>
 									<div class="box-footer">
 										<button type="submit" class="btn btn-primary" name="save" value="1">Save</button>
@@ -372,7 +451,7 @@
 														Enable Mobileminer
 													</label>                                                
 												</div>
-											</div>	
+											</div>
 											<div class="input-group">
 												<label for="mobileminer_system_name">System Name</label>
 												<input type="text" class="form-control" name="mobileminer_system_name" placeholder="Give a name to this Minera system to identify it" value="<?php echo $mobileminerSystemName ?>">

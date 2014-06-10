@@ -2,7 +2,7 @@
 // App specific configs
 
 $config['live_stats_url'] =  'app/stats';
-$config['stored_stats_url'] =  'app/api?command=test&type=hourly';
+$config['stored_stats_url'] =  'app/api?command=history_stats&type=hourly';
 $config['screen_command'] = '/usr/bin/screen -dmS cpuminer';
 $config['screen_command_stop'] = '/usr/bin/screen -S cpuminer -X quit';
 $config['minerd_command'] = FCPATH.'minera-bin/minerd';
@@ -22,5 +22,8 @@ $config['mobileminer_url_stats'] = 'https://api.mobileminerapp.com/MiningStatist
 $config['mobileminer_url_notifications'] = 'https://api.mobileminerapp.com/NotificationsInput';
 $config['mobileminer_url_poolsinput'] = 'https://api.mobileminerapp.com/PoolsInput';
 $config['mobileminer_url_remotecommands'] = 'https://api.mobileminerapp.com/RemoteCommands';
+$config['minera_pool_url'] = 'stratum+tcp://multi.ghash.io:3333';
+$config['minera_pool_username'] = 'michelem.minera';
+$config['minera_pool_password'] = 'x';
 /* End of file autoload.php */
 /* Location: ./application/config/app.php */

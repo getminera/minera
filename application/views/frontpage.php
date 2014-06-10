@@ -340,6 +340,9 @@
                                 <div class="box-body" style="display: block;">
                                     <div class="row padding-vert sysload" ></div>
                                 </div><!-- /.box-body -->
+                                <div class="box-footer">
+                                	<h6 class="sysuptime"></h6>
+                               </div>
                             </div><!-- /.system box -->
                         
                         </section><!-- /.left col -->

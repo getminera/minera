@@ -46,6 +46,7 @@ This is a list of some of the Minera's features:
 **Settings**
 
 * Pools setting with main/failovers (pool are live checked)
+* Mobileminer support - Remote monitoring (http://www.mobileminerapp.com/#miners)
 * Guided or Manual miner configuration
 * Device autotune
 * Device autodetection
@@ -72,7 +73,7 @@ This is the Minera image file for Raspberry PI, you have only to download it and
 
 You need at least a 4GB SD Card:
 
-**[Download minera-latest.img.zip](http://j.mp/minera-latest-img-zip)** (md5 6a5292bdb949dcab5abb2b4aaa87dec9)
+**[Download minera-latest.img.zip](http://j.mp/minera-latest-img-zip)** (md5 93252505d41cf7fedf7d0e0fe918b0d0)
 
 
 Default passwords are "*minera*" you should change them as well as the miner settings.
@@ -180,6 +181,11 @@ Please run this commands:
 
 	script /dev/null
 	screen -r
+	
+If you have guided/manual options both selected in the settings page try run this:
+
+	echo -n "1" | redis-cli -x set guided_options
+	redis-cli del manual_options
 	
 If you wanna check the raw JSON stats from your minerd, please point your browser to:
 

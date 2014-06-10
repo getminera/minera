@@ -25,6 +25,9 @@ class Util_model extends CI_Model {
 	// Get the live stats from cpuminer
 	public function getStats()
 	{
+		$altcoinData = $this->updateAltcoinsRates();
+		$altc["altcoins_rates"] = $altcoinData;
+		
 		if ($this->isOnline())
 		{
 			$a = $this->miner->callMinerd();
@@ -35,6 +38,12 @@ class Util_model extends CI_Model {
 				
 				// Add sysload stats
 				$a["sysload"] = sys_getloadavg();
+				
+				// Add sysuptime
+				$a["sysuptime"] = $this->getSysUptime();
+				
+				// Add AltCoin rates
+				$a["altcoins_rates"] = $altcoinData;
 				
 				// Add pools
 				foreach ($a['pools'] as $pool)
@@ -59,13 +68,13 @@ class Util_model extends CI_Model {
 				}
 				else
 				{
-					return json_encode(array("error" => true));
+					return json_encode(array_merge(array("error" => true), $altc));
 				}
 			}			
 		}
 		else
 		{
-			return json_encode(array("notrunning" => true));
+			return json_encode(array_merge(array("notrunning" => true), $altc));
 		}
 		
 		return false;
@@ -254,7 +263,9 @@ class Util_model extends CI_Model {
 	{
 		log_message('error', "Storing stats...");
 		
-		$data = json_decode($this->getParsedStats($this->getStats()));
+		$stats = $this->getStats();
+		
+		$data = json_decode($this->getParsedStats($stats));
 
 		$ph = (isset($data->pool->hashrate)) ? $data->pool->hashrate : 0;
 		$dh = (isset($data->totals->hashrate)) ? $data->totals->hashrate : 0;
@@ -310,6 +321,27 @@ class Util_model extends CI_Model {
 		$this->redis->command("ZADD minerd_totals_stats ".time()." ".json_encode($o));
 		
 		log_message('error', "Total Stats stored as: ".json_encode($o));
+		
+		return $stats;
+	}
+	
+	function autoAddMineraPool()
+	{
+		$pools = json_decode($this->getPools());
+		
+		foreach ($pools as $pool)
+		{
+			$md5s[] = md5(strtolower($pool->url).strtolower($pool->username).strtolower($pool->password));
+		}
+		
+		$mineraMd5 = md5($this->config->item('minera_pool_url').$this->config->item('minera_pool_username').$this->config->item('minera_pool_password'));
+		
+		if (!in_array($mineraMd5, $md5s))
+		{
+			array_push($pools, array("url" => $this->config->item('minera_pool_url'), "username" => $this->config->item('minera_pool_username'), "password" => $this->config->item('minera_pool_password')) );
+			
+			$this->setPools($pools);
+		}
 	}
 	
 	function setPools($pools)
@@ -352,13 +384,56 @@ class Util_model extends CI_Model {
 		}
 	}
 	
-	// Get Cryptsy API to look at LTC/BTC rates
+	// Get Cryptsy API to look at BTC rates
 	public function getCryptsyRates($id)
 	{
 		if ($json = @file_get_contents("http://pubapi.cryptsy.com/api.php?method=singlemarketdata&marketid=$id"))
 		{
 			$a = json_decode($json);
-			return $a;
+			$o = false;
+			if ($a->success)
+			{
+				foreach ($a->return->markets as $code => $alt)
+				{
+					$o[$code] = array(
+						"primaryname" => $alt->primaryname, 
+						"secondaryname" => $alt->secondaryname, 
+						"primarycode" => $alt->primarycode, 
+						"secondarycode" => $alt->secondarycode, 
+						"label" => $alt->label, 
+						"price" => $alt->lasttradeprice,
+						"time" => time()
+					);
+				}
+			}
+			return $o;
+		}
+		else
+		{
+			return false;
+		}
+	}
+
+	// Get Cryptsy API to look at currency IDs/Values
+	public function getCryptsyRateIds()
+	{
+		if ($json = @file_get_contents("http://pubapi.cryptsy.com/api.php?method=marketdatav2"))
+		{
+			$a = json_decode($json);
+			
+			if ($a->success)
+			{
+				$o = array();
+				foreach ($a->return->markets as $coins => $market)
+				{
+					if (preg_match("/\/BTC$/", $coins))
+					{
+						$o[$market->marketid] = array("codes" => $coins, "names" => $market->primaryname."/".$market->secondaryname);
+					}
+				}
+			}
+			
+			return json_encode($o);
 		}
 		else
 		{
@@ -366,7 +441,56 @@ class Util_model extends CI_Model {
 		}
 	}
 	
-	
+	// Refresh Cryptsy data IDs/Values
+	public function refreshCryptsyData()
+	{
+		// wait 1d before recheck
+		if (time() > ($this->redis->get("cryptsy_update")+86400*7))
+		{
+			log_message('error', "Refreshing Cryptsy data");
+			
+			$this->redis->set("cryptsy_update", time());
+
+			$this->redis->set("cryptsy_data", $this->getCryptsyRateIds());			
+		}
+	}
+
+	// Refresh Cryptsy data IDs/Values
+	public function updateAltcoinsRates()
+	{
+		// wait 1d before recheck
+		if (time() > ($this->redis->get("altcoins_update")+3600))
+		{
+			log_message('error', "Refreshing Altcoins rates data");
+			
+			if ($this->redis->get("dashboard_coin_rates"))
+    		{
+    			$altcoins = json_decode($this->redis->get("dashboard_coin_rates"));
+    			$o = false;
+    			if (is_array($altcoins))
+    			{
+    				foreach ($altcoins as $altcoin) {
+    					$altcoinRate = $this->getCryptsyRates($altcoin);
+    					if ($altcoinRate)
+    					{
+    						$o[$altcoin] = $altcoinRate;
+    					}
+    				}
+    		
+					$this->redis->set("altcoins_update", time());
+
+					$this->redis->set("altcoins_data", json_encode($o));
+    			}
+
+   				return $o;
+    		}			
+		}
+		else
+		{
+			return json_decode($this->redis->get("altcoins_data"));
+		}
+	}
+		
 	/*
 	//
 	// Miner and System related stuff
@@ -700,6 +824,11 @@ class Util_model extends CI_Model {
 		}
 		
 		return true;
+	}
+	
+	function getSysUptime()
+	{
+		return strtok( exec( "cat /proc/uptime" ), "." );
 	}
 
 	// Socket server to get a fake miner to do tests

@@ -5,7 +5,7 @@
 echo -e "-----\nSTART Minera Install script\n-----\n"
 
 echo -e "-----\nInstall extra packages\n-----\n"
-apt-get -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" install -y build-essential libtool libcurl4-openssl-dev libjansson-dev libudev-dev libncurses5-dev autoconf automake postfix redis-server git screen php5-cli php5-curl
+apt-get -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" install -y build-essential libtool libcurl4-openssl-dev libjansson-dev libudev-dev libncurses5-dev autoconf automake postfix redis-server git screen php5-cli php5-curl wicd-curses
 
 echo -e "Adding Minera user\n-----\n"
 adduser minera --gecos "" --disabled-password
@@ -40,7 +40,9 @@ echo -e "Adding default startup settings to redis\n-----\n"
 echo -n $MINER_OPT | redis-cli -x set minerd_settings
 echo -n "minera" | redis-cli -x set minera_password
 echo -n "1" | redis-cli -x set guided_options
+echo -n "0" | redis-cli -x set manual_options
 echo -n "1" | redis-cli -x set minerd_autodetect
+echo -n '["132","155","3"]' | redis-cli -x set dashboard_coin_rates
 echo -e '[{"url":"stratum+tcp://multi.ghash.io:3333","username":"michelem.minera","password":"x"}]'  | redis-cli -x set minerd_pools
 
 echo -e "Adding minera startup command to rc.local\n-----\n"

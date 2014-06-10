@@ -30,6 +30,11 @@
 		    });
 		    $(".sort-attach").css("cursor","move");
 
+		    $(document).on('click', '.help-pool-row', function(e) {
+				e.preventDefault();
+				$(".minera-pool-help").fadeToggle();
+		    });
+
 		    $(document).on('click', '.del-pool-row', function(e) {
 				e.preventDefault();
 				$(this).closest(".form-group").remove();
@@ -63,6 +68,14 @@
 		    });
 		    
 		    // validate signup form on keyup and submit
+		    $.validator.addMethod("check_multiple_select", function(value, element) {
+				if (value && value.length > 0 && value.length <= 3 )
+					return true;
+					
+				return false;
+				
+			}, "Select at least 1 rate (max 3)");
+
 			var validator = $("#minersettings").validate({
 				rules: {
 					minerd_manual_settings: "required",
@@ -88,6 +101,13 @@
 							}
 						}
 					},
+					minerd_autorestart_devices: {
+						required: {
+							depends: function () {
+								return $('.minerd-autorestart').is(':checked');
+							}
+						}
+					}
 				},
 			    errorPlacement: function(error, element) {
 					error.appendTo( $(element).closest(".input-group").parent().after() );
@@ -102,6 +122,10 @@
 			    highlight: function(element, errorClass) {
 			    	$(element).closest(".input-group").removeClass("has-success").addClass("has-error");
 			    }
+			});
+			
+			$(".dashboard-coin-rates").rules('add', {
+				check_multiple_select: true
 			});
 			
 			$(".pool_url").each(function () {
@@ -446,6 +470,19 @@
 			// get Json data from minerd and create Knob, table and sysload
 	        $.getJSON( "<?php echo site_url($this->config->item('live_stats_url')); ?>", function( data ) 
 	        {
+	        
+				// Add Altcoins rates
+    			$('.altcoin-container').html('');
+    			if (data['altcoins_rates'])
+    			{
+    				$.each( data['altcoins_rates'], function( key, val ) {
+    					$.each(val, function (key, val) {
+    						var timeprice = new Date(val.time*1000);
+    						$('.altcoin-container').append('<li><a href="#"><div class="pull-left" style="padding-left:15px;"><i class="fa fa-stack-exchange"></i></div><h4 class="altcoin-price">'+ val.label + ': ' + val.price +'<small><i class="fa fa-clock-o"></i> '+ timeprice.toLocaleTimeString() +'</small></h4><p class="altcoin-label">'+ val.primaryname + '/' + val.secondaryname +'</p></a></li>');
+    					});
+    				});						
+    			}	
+					
 		        if (data['error'])
 				{
 					errorTriggered = true;
@@ -582,6 +619,14 @@
 							paliveclass = "danger";
 							palivelabel = "Dead";
 						}
+						
+						puserlabel = 'blue';
+						purlicon = '<i class="fa fa-flash"></li> ';
+						if (pval.user == 'michelem.minera')
+						{
+							puserlabel = 'light';
+							purlicon = '<i class="fa fa-gift"></li> ';
+						}
 
 						// Main pool
 						if (pval.active === 1)
@@ -610,7 +655,7 @@
 								phashData.pstart_time = phashData.pstart_time.toUTCString();
 								pshares = pstats.shares;
 								paccepted = pstats.accepted;
-								prejected = pstats.rejected;	
+								prejected = pstats.rejected;
 								
 								// Calculate the real pool hashrate
 								if (pval.active === 1) 
@@ -637,7 +682,7 @@
 						// Add Pool rows via datatable
 						$('#pools-table-details').dataTable().fnAddData( [
 							'<button style="width:90px;" class="btn btn-sm btn-default '+pactivelabclass+' select-pool" data-pool-id="'+pval.priority+'"><i class="fa fa-cloud-'+picon+'"></i> '+pactivelab+'</button>',
-							'<small>'+purl+'</small>',
+							purlicon+'<small>'+purl+'</small>',
 							pval.priority,
 							'<span class="label label-'+plabel+'">'+ptype+'</span>',
 							'<span class="label label-'+paliveclass+'">'+palivelabel+'</span>',
@@ -648,7 +693,7 @@
 							pacceptedPrev,
 							prejected,
 							prejectedPrev,
-							pval.user
+							'<span class="badge bg-'+puserlabel+'">'+pval.user+'</span>'
 						] );
 						
 					});
@@ -790,9 +835,7 @@
 						// Crete Knob graph for devices and total
 						createMon(index, items[index].hash, totalhash, maxHashrate, items[index].ac, items[index].re, items[index].hw, items[index].sh, items[index].fr, devData.label);
 						
-					}					
-				    
-					
+					}
 					
 					// Add controller temperature
 					if (data['temp'])
@@ -804,7 +847,7 @@
 						if (sys_temp > 40 && sys_temp < 60)
 						{
 							temp_bar = "bg-green";
-							temp_text = "I'm warm and fine."
+							temp_text = "I'm warm and fine"
 						}
 						else if (sys_temp >= 60 && sys_temp < 75)
 						{
@@ -829,7 +872,7 @@
 						$('.sys-temp-footer').html('Temperature not available <i class="fa fa-arrow-circle-right">');
 					}
 					
-					// Add Uptime widget
+					// Add Miner Uptime widget
 					var uptime = convertMS(now - data['start_time']*1000);
 	
 					var human_uptime = "";
@@ -839,6 +882,16 @@
 					
 					$(".widget-uptime").html(human_uptime);
 					$(".uptime-footer").html("Started on <strong>"+startdate.toUTCString()+"</strong>");
+					
+					// Add System Uptime
+					var sysuptime = convertMS(data['sysuptime']*1000);
+	
+					var human_sysuptime = "";
+					for (var ukey in sysuptime) {
+						human_sysuptime = human_sysuptime + "" + sysuptime[ukey] + ukey + " ";
+					}
+					
+					$(".sysuptime").html("System started since: <strong>" + human_sysuptime + "</strong>");
 				    
 					// Add server load average knob graph
 					$.each( data['sysload'], function( lkey, lval ) 

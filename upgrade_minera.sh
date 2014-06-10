@@ -6,7 +6,10 @@ echo -e "-----\nSTART Minera Upgrade script\n-----\n"
 
 echo -e "-----\nInstall extra packages\n-----\n"
 #apt-get update
+#export DEBIAN_FRONTEND=noninteractive
 apt-get -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" install -y build-essential libtool libcurl4-openssl-dev libjansson-dev libudev-dev libncurses5-dev autoconf automake postfix redis-server git screen php5-cli php5-curl
+
+sudo dpkg --configure -a
 
 MINERA_LOGS="/var/log/minera"
 MINERA_CONF=`pwd`"/conf"
@@ -42,6 +45,7 @@ usermod -a -G www-data minera
 
 echo -e "Adding default settings\n-----\n"
 echo -n "1" | redis-cli -x set guided_options
+echo -n '["132","155","3"]' | redis-cli -x set dashboard_coin_rates
 
 echo -e "Update redis values\n-----\n"
 redis-cli del minera_update
