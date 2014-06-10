@@ -378,7 +378,8 @@
 											<!-- Altcoins rates -->
 											<div class="form-group">
 												<label>Top bar Altcoins</label>
-												<?php $altdata = json_decode($cryptsy_data); if (is_array($dashboard_coin_rates)) : ?>
+												<?php $altdata = json_decode($cryptsy_data); ?>
+												<?php if (is_object($altdata) && is_array($dashboard_coin_rates)) : ?>
 													<p><small>Currently selected: </small><?php foreach ($dashboard_coin_rates as $altcoin) : ?><small class="badge bg-blue"><?php echo $altdata->$altcoin->codes ?></small>&nbsp;<?php endforeach; ?></p>
 	
 													<div class="input-group">
@@ -394,7 +395,7 @@
 													<small>Select max 3 rates to be displayed on the top bar</small>
 												</div>
 											<?php else: ?>
-												<p><small class="badge bg-red">There was a problem with the altcoins.</small></p>
+												<p><small class="badge bg-red">There was a problem with the altcoins. Try refreshing the page.</small></p>
 											<?php endif; ?>
 	                                </div>
 									<div class="box-footer">

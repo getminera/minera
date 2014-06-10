@@ -448,10 +448,13 @@ class Util_model extends CI_Model {
 		if (time() > ($this->redis->get("cryptsy_update")+86400*7))
 		{
 			log_message('error', "Refreshing Cryptsy data");
+			$data = $this->getCryptsyRateIds();
+			if ($data)
+			{
+				$this->redis->set("cryptsy_update", time());
 			
-			$this->redis->set("cryptsy_update", time());
-
-			$this->redis->set("cryptsy_data", $this->getCryptsyRateIds());			
+				$this->redis->set("cryptsy_data", $data);
+			}
 		}
 	}
 
@@ -649,7 +652,7 @@ class Util_model extends CI_Model {
 	{
 		$lines = array();
 		// Pull the latest code from github
-		$out = shell_exec("cd ".FCPATH." && sudo -u " . $this->config->item("system_user") . " sudo git fetch --all && sudo git reset --hard origin/master");
+		exec("cd ".FCPATH." && sudo -u " . $this->config->item("system_user") . " sudo git fetch --all && sudo git reset --hard origin/master", $out);
 		
 		$logmsg = "Update request from ".$this->currentVersion()." to ".$this->redis->command("HGET minera_update new_version")." : ".var_export($out, true);
 		
@@ -658,7 +661,7 @@ class Util_model extends CI_Model {
 		log_message('error', $logmsg);
 				
 		// Run upgrade script
-		$out = shell_exec("cd ".FCPATH." && sudo -u " . $this->config->item("system_user") . " sudo ./upgrade_minera.sh");
+		exec("cd ".FCPATH." && sudo -u " . $this->config->item("system_user") . " sudo ./upgrade_minera.sh", $out);
 
 		$logmsg = "Running upgrade script".var_export($out, true);
 
