@@ -26,6 +26,7 @@ class Util_model extends CI_Model {
 	public function getStats()
 	{
 		$altcoinData = $this->updateAltcoinsRates();
+		$altc["altcoins_rates"] = $altcoinData;
 		
 		if ($this->isOnline())
 		{
@@ -67,13 +68,13 @@ class Util_model extends CI_Model {
 				}
 				else
 				{
-					return json_encode(array("error" => true));
+					return json_encode(array_merge(array("error" => true), $altc));
 				}
 			}			
 		}
 		else
 		{
-			return json_encode(array("notrunning" => true));
+			return json_encode(array_merge(array("notrunning" => true), $altc));
 		}
 		
 		return false;

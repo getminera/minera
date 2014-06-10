@@ -470,6 +470,19 @@
 			// get Json data from minerd and create Knob, table and sysload
 	        $.getJSON( "<?php echo site_url($this->config->item('live_stats_url')); ?>", function( data ) 
 	        {
+	        
+				// Add Altcoins rates
+    			$('.altcoin-container').html('');
+    			if (data['altcoins_rates'])
+    			{
+    				$.each( data['altcoins_rates'], function( key, val ) {
+    					$.each(val, function (key, val) {
+    						var timeprice = new Date(val.time*1000);
+    						$('.altcoin-container').append('<li><a href="#"><div class="pull-left" style="padding-left:15px;"><i class="fa fa-stack-exchange"></i></div><h4 class="altcoin-price">'+ val.label + ': ' + val.price +'<small><i class="fa fa-clock-o"></i> '+ timeprice.toLocaleTimeString() +'</small></h4><p class="altcoin-label">'+ val.primaryname + '/' + val.secondaryname +'</p></a></li>');
+    					});
+    				});						
+    			}	
+					
 		        if (data['error'])
 				{
 					errorTriggered = true;
@@ -822,19 +835,7 @@
 						// Crete Knob graph for devices and total
 						createMon(index, items[index].hash, totalhash, maxHashrate, items[index].ac, items[index].re, items[index].hw, items[index].sh, items[index].fr, devData.label);
 						
-					}					
-				    
-					// Add Altcoins rates
-					$('.altcoin-container').html('');
-					if (data['altcoins_rates'])
-					{
-						$.each( data['altcoins_rates'], function( key, val ) {
-							$.each(val, function (key, val) {
-								var timeprice = new Date(val.time*1000);
-								$('.altcoin-container').append('<li><a href="#"><div class="pull-left" style="padding-left:15px;"><i class="fa fa-stack-exchange"></i></div><h4 class="altcoin-price">'+ val.label + ': ' + val.price +'<small><i class="fa fa-clock-o"></i> '+ timeprice.toLocaleTimeString() +'</small></h4><p class="altcoin-label">'+ val.primaryname + '/' + val.secondaryname +'</p></a></li>');
-							});
-						});						
-					}					
+					}
 					
 					// Add controller temperature
 					if (data['temp'])
