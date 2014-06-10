@@ -25,6 +25,8 @@ class Util_model extends CI_Model {
 	// Get the live stats from cpuminer
 	public function getStats()
 	{
+		$altcoinData = $this->updateAltcoinsRates()
+		
 		if ($this->isOnline())
 		{
 			$a = $this->miner->callMinerd();
@@ -40,7 +42,7 @@ class Util_model extends CI_Model {
 				$a["sysuptime"] = $this->getSysUptime();
 				
 				// Add AltCoin rates
-				$a["altcoins_rates"] = $this->updateAltcoinsRates();
+				$a["altcoins_rates"] = $altcoinData;
 				
 				// Add pools
 				foreach ($a['pools'] as $pool)
