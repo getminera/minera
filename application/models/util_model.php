@@ -25,7 +25,7 @@ class Util_model extends CI_Model {
 	// Get the live stats from cpuminer
 	public function getStats()
 	{
-		$altcoinData = $this->updateAltcoinsRates()
+		$altcoinData = $this->updateAltcoinsRates();
 		
 		if ($this->isOnline())
 		{
