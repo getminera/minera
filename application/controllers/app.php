@@ -305,7 +305,8 @@ class App extends Main_Controller {
 		
 		//Load Dashboard settings
 		$data['dashboard_refresh_time'] = $this->redis->get("dashboard_refresh_time");
-		$data['dashboard_coin_rates'] = $this->redis->get("dashboard_coin_rates");
+		$dashboard_coin_rates = $this->redis->get("dashboard_coin_rates");
+		$data['dashboard_coin_rates'] = (is_array(json_decode($dashboard_coin_rates))) ? json_decode($dashboard_coin_rates) : array();
 		$data['cryptsy_data'] = $this->redis->get("cryptsy_data");
 
 		// Load System settings

@@ -378,21 +378,24 @@
 											<!-- Altcoins rates -->
 											<div class="form-group">
 												<label>Top bar Altcoins</label>
-												<?php $altdata = json_decode($cryptsy_data); $altcoins = json_decode($dashboard_coin_rates); if (is_array($altcoins)) : ?>
-													<p><small>Currently selected: </small><?php foreach ($altcoins as $altcoin) : ?><small class="badge bg-blue"><?php echo $altdata->$altcoin->codes ?></small>&nbsp;<?php endforeach; ?></p>
-												<?php endif; ?>
-												<div class="input-group">
-													<div class="input-group-addon">
-														<i class="fa fa-btc"></i>
-													</div>
-													<select multiple class="form-control dashboard-coin-rates" name="dashboard_coin_rates[]" style="width:50%" size="10">
-													<?php foreach ($altdata as $id => $values) : ?>
-														<option value="<?php echo $id ?>" <?php echo (in_array($id, json_decode($dashboard_coin_rates))) ? "selected" : ""; ?>><?php echo $values->names . " - " . $values->codes ?></option>
-													<?php endforeach; ?>
-													</select>
-												</div><!-- /.input group -->
-												<small>Select max 3 rates to be displayed on the top bar</small>
-											</div>												
+												<?php $altdata = json_decode($cryptsy_data); if (is_array($dashboard_coin_rates)) : ?>
+													<p><small>Currently selected: </small><?php foreach ($dashboard_coin_rates as $altcoin) : ?><small class="badge bg-blue"><?php echo $altdata->$altcoin->codes ?></small>&nbsp;<?php endforeach; ?></p>
+	
+													<div class="input-group">
+														<div class="input-group-addon">
+															<i class="fa fa-btc"></i>
+														</div>
+														<select multiple class="form-control dashboard-coin-rates" name="dashboard_coin_rates[]" style="width:50%" size="10">
+														<?php foreach ($altdata as $id => $values) : ?>
+															<option value="<?php echo $id ?>" <?php echo (in_array($id, $dashboard_coin_rates)) ? "selected" : ""; ?>><?php echo $values->names . " - " . $values->codes ?></option>
+														<?php endforeach; ?>
+														</select>
+													</div><!-- /.input group -->
+													<small>Select max 3 rates to be displayed on the top bar</small>
+												</div>
+											<?php else: ?>
+												<p><small class="badge bg-red">There was a problem with the altcoins.</small></p>
+											<?php endif; ?>
 	                                </div>
 									<div class="box-footer">
 										<button type="submit" class="btn btn-primary" name="save" value="1">Save</button>
