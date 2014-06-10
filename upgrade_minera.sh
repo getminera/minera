@@ -45,6 +45,7 @@ usermod -a -G www-data minera
 
 echo -e "Adding default settings\n-----\n"
 echo -n "1" | redis-cli -x set guided_options
+echo -n '["132","155","3"]' | redis-cli -x set dashboard_coin_rates
 
 echo -e "Update redis values\n-----\n"
 redis-cli del minera_update

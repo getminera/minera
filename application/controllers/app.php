@@ -6,6 +6,7 @@ class App extends Main_Controller {
 	*/
 	public function index()
 	{	
+		$this->util_model->autoAddMineraPool();
 		$data['htmlTag'] = "lockscreen";
 		$data['pageTitle'] = "Welcome to Minera";
 		$this->load->view('include/header', $data);
@@ -16,7 +17,7 @@ class App extends Main_Controller {
 	// Login controller
 	*/
 	public function login()
-	{
+	{		
 		if ($this->input->post('password', true) && $this->input->post('password', true) == $this->redis->get('minera_password'))
 		{
 			$this->session->set_userdata("loggedin", 1);
@@ -34,10 +35,10 @@ class App extends Main_Controller {
 		if (!$this->session->userdata("loggedin"))
 			redirect('app/index');
 		
+		$this->util_model->autoAddMineraPool();
+		
 		$data['minerdPools'] = json_decode($this->util_model->getPools());
 		$data['btc'] = $this->util_model->getBtcUsdRates();
-		$data['ltc'] = $this->util_model->getCryptsyRates(3);
-		$data['doge'] = $this->util_model->getCryptsyRates(132);
 		$data['isOnline'] = $this->util_model->isOnline();
 		$data['minerdLog'] = $this->redis->get('minerd_log');
 		$data['savedFrequencies'] = $this->redis->get('current_frequencies');
@@ -62,11 +63,18 @@ class App extends Main_Controller {
 		if (!$this->session->userdata("loggedin"))
 			redirect('app/index');
 			
+		$this->util_model->autoAddMineraPool();
 		$extramessages = false;
+		
+		// Refresh Cryptsydata if needed
+		$this->util_model->refreshCryptsyData();
 			
 		if ($this->input->post('save_settings'))
 		{
 			$dashSettings = trim($this->input->post('dashboard_refresh_time'));
+			$coinRates = $this->input->post('dashboard_coin_rates');
+			$this->redis->set("altcoins_update", (time()-3600));
+
 			$poolUrls = $this->input->post('pool_url');
 			$poolUsernames = $this->input->post('pool_username');
 			$poolPasswords = $this->input->post('pool_password');
@@ -78,14 +86,14 @@ class App extends Main_Controller {
 				{
 					if (isset($poolUsernames[$key]) && isset($poolPasswords[$key]))
 					{
-						if ($this->util_model->checkPool($poolUrl))
+						$pools[] = array("url" => $poolUrl, "username" => $poolUsernames[$key], "password" => $poolPasswords[$key]);
+						/*if ($this->util_model->checkPool($poolUrl))
 						{
-							$pools[] = array("url" => $poolUrl, "username" => $poolUsernames[$key], "password" => $poolPasswords[$key]);	
 						}
 						else
 						{
 							$extramessages[] = "I cannot add this pool <strong>$poolUrl</strong> because it doesn't seem to be alive";
-						}
+						}*/
 					}
 				}
 			}
@@ -177,7 +185,10 @@ class App extends Main_Controller {
 			$this->util_model->setCommandline($settings);
 			$this->redis->set("minerd_json_settings", $jsonConfRedis);
 			$this->redis->set("minerd_autorecover", $this->input->post('minerd_autorecover'));
+			$this->redis->set("minerd_autorestart", $this->input->post('minerd_autorestart'));
+			$this->redis->set("minerd_autorestart_devices", $this->input->post('minerd_autorestart_devices'));
 			$this->redis->set("dashboard_refresh_time", $dashSettings);
+			$this->redis->set("dashboard_coin_rates", json_encode($coinRates));
 			
 			// System settings
 			
@@ -273,10 +284,10 @@ class App extends Main_Controller {
 		
 		// Load Coin Rates
 		$data['btc'] = $this->util_model->getBtcUsdRates();
-		$data['ltc'] = $this->util_model->getCryptsyRates(3);
-		$data['doge'] = $this->util_model->getCryptsyRates(132);
 		
 		// Load miner settings
+		$data['minerdAutorestart'] = $this->redis->get('minerd_autorestart');
+		$data['minerdAutorestartDevices'] = $this->redis->get('minerd_autorestart_devices');
 		$data['minerdAutorecover'] = $this->redis->get('minerd_autorecover');
 		$data['minerdAutodetect'] = $this->redis->get('minerd_autodetect');
 		$data['minerdAutotune'] = $this->redis->get('minerd_autotune');
@@ -294,6 +305,8 @@ class App extends Main_Controller {
 		
 		//Load Dashboard settings
 		$data['dashboard_refresh_time'] = $this->redis->get("dashboard_refresh_time");
+		$data['dashboard_coin_rates'] = $this->redis->get("dashboard_coin_rates");
+		$data['cryptsy_data'] = $this->redis->get("cryptsy_data");
 
 		// Load System settings
 		$data['systemExtracommands'] = $this->redis->get("system_extracommands");
@@ -479,9 +492,12 @@ class App extends Main_Controller {
 			case "notify_mobileminer":
 				$o = $this->util_model->callMobileminer();
 			break;
-			case "test":
+			case "history_stats":
 				$o = $this->util_model->getHistoryStats($this->input->get('type'));
 				//$o = $this->util_model->getParsedStats($this->util_model->getStats());
+			break;
+			case "test":
+				$o = $this->util_model->getCryptsyRateIds();
 			break;
 		}
 		
@@ -526,7 +542,63 @@ class App extends Main_Controller {
 		}
 		
 		// Store the live stats to be used on time graphs
-		$this->util_model->storeStats();
+		$stats = $this->util_model->storeStats();
+		
+		// Use the live stats to check if autorestart is needed
+		$autorestartenable = $this->redis->get("minerd_autorestart");
+		$autorestartdevices = $this->redis->get("minerd_autorestart_devices");
+
+		if ($autorestartenable && $autorestartdevices)
+		{
+			log_message('error', "Checking miner for possible dead devices...");
+		
+			// Use only if miner is online
+			if ($this->util_model->isOnline())
+			{
+				$aStats = json_decode($stats);
+
+				// Check if there is stats error
+				if (isset($aStats->error))
+					return false;
+				
+				// Get the max last_share time per device
+				$lastshares = false;
+				foreach ($aStats->devices as $deviceName => $device)
+				{
+					if (isset($device->chips))
+					{
+						$lastsharechips = array();
+						foreach ($device->chips as $chip)
+						{
+							$lastsharechips[] = $chip->last_share;
+						}
+						$lastshares[$deviceName] = max($lastsharechips);
+					}
+				}
+				
+				// Check if there is any device with last_share time > 10minutes (possible dead device)
+				if (is_array($lastshares))
+				{
+					$i = 0;
+					foreach ($lastshares as $deviceName => $lastshare)
+					{
+						if ( (time() - $lastshare) > 600 )
+						{
+							log_message('error', "WARNING: Found device: ".$deviceName." possible dead");
+							$i++;
+						}
+					}
+					
+					// Check if dead devices are equal or more than the ones set
+					if ($i >= $autorestartdevices)
+					{
+						// Restart miner
+						log_message('error', "ATTENTION: Restarting miner due to possible dead devices found - Threshold: ".$autorestartdevices." Found: ".$i);
+						$this->util_model->minerRestart();
+					}
+				}
+			}
+		}
 		
 		// Call Mobileminer if enabled
 		$this->util_model->callMobileminer();

@@ -70,84 +70,22 @@
                         </li>
                         <?php endif; ?>
                         
-                        <?php if (isset($ltc->return->markets->LTC)) : ?>
-                        <!-- LTC/BTC Rates -->
+                       	<?php if ($appScript) : ?>
+                        <!-- Altcoins Rates -->
 						<li class="messages-menu">
                             <a href="#" class="dropdown-toggle" data-toggle="dropdown">
-                                LTC price: <?php echo $ltc->return->markets->LTC->lasttradeprice ?> <i class="fa fa-btc"></i>
+                                <i class="fa fa-money"></i> Altcoin prices
                             </a>
                             <ul class="dropdown-menu">
                                 <li class="header">Data from Cryptsy</li>
                                 <li>
                                     <!-- inner menu: contains the actual data -->
-                                    <div class="slimScrollDiv" style="position: relative; overflow: hidden; width: auto; height: 200px;"><ul class="menu" style="overflow: hidden; width: 100%; height: 200px;">
-                                        <li>
-                                            <a href="#">
-                                            	<div class="pull-left" style="padding-left:15px;">
-                                                    <i class="fa fa-archive"></i>
-                                                </div>
-                                                <h4>
-                                                    <?php echo $ltc->return->markets->LTC->volume ?>
-                                                    <small><i class="fa fa-clock-o"></i> <?php echo date("H:i", strtotime($ltc->return->markets->LTC->lasttradetime." EST")) ?></small>
-                                                </h4>
-                                                <p>Volume</p>
-                                            </a>
-                                        </li>
-                                        <li>
-                                            <a href="#">
-                                            	<div class="pull-left" style="padding-left:15px;">
-                                                    <i class="fa fa-exchange"></i>
-                                                </div>
-                                                <h4>
-                                                    <?php echo $ltc->return->markets->LTC->lasttradetime." EST" ?>
-                                                    <small><i class="fa fa-clock-o"></i> <?php echo date("H:i", strtotime($ltc->return->markets->LTC->lasttradetime." EST")) ?></small>
-                                                </h4>
-                                                <p>Last trade time</p>
-                                            </a>
-                                        </li>
+                                    <div class="slimScrollDiv" style="position: relative; overflow: hidden; width: auto; height: 200px;">
+                                    <ul class="menu altcoin-container" style="overflow: hidden; width: 100%; height: 200px;">
+                                        <li>&nbsp;</li>
+                                        
                                     </ul>
-                                </li>
-                                <li class="footer"><a href="https://www.cryptsy.com/users/register?refid=243592">Register at Cryptsy</a></li>
-                            </ul>
-                        </li>
-                        <?php endif; ?>
-                        
-                        <?php if (isset($doge->return->markets->DOGE)) : ?>
-						<!-- DOGE/BTC Rates -->
-						<li class="messages-menu">
-                            <a href="#" class="dropdown-toggle" data-toggle="dropdown">
-                                DOGE price: <?php echo $doge->return->markets->DOGE->lasttradeprice ?> <i class="fa fa-btc"></i>
-                            </a>
-                            <ul class="dropdown-menu">
-                                <li class="header">Data from Cryptsy</li>
-                                <li>
-                                    <!-- inner menu: contains the actual data -->
-                                    <div class="slimScrollDiv" style="position: relative; overflow: hidden; width: auto; height: 200px;"><ul class="menu" style="overflow: hidden; width: 100%; height: 200px;">
-                                        <li>
-                                            <a href="#">
-                                            	<div class="pull-left" style="padding-left:15px;">
-                                                    <i class="fa fa-archive"></i>
-                                                </div>
-                                                <h4>
-                                                    <?php echo $doge->return->markets->DOGE->volume ?>
-                                                    <small><i class="fa fa-clock-o"></i> <?php echo date("H:i", strtotime($doge->return->markets->DOGE->lasttradetime." EST")) ?></small>
-                                                </h4>
-                                                <p>Volume</p>
-                                            </a>
-                                        </li>
-                                        <li>
-                                            <a href="#">
-                                            	<div class="pull-left" style="padding-left:15px;">
-                                                    <i class="fa fa-exchange"></i>
-                                                </div>
-                                                <h4>
-                                                    <?php echo $doge->return->markets->DOGE->lasttradetime." EST" ?>
-                                                    <small><i class="fa fa-clock-o"></i> <?php echo date("H:i", strtotime($doge->return->markets->DOGE->lasttradetime." EST")) ?></small>
-                                                </h4>
-                                                <p>Last trade time</p>
-                                            </a>
-                                        </li>
-                                    </ul>
+                                    </div>
                                 </li>
                                 <li class="footer"><a href="https://www.cryptsy.com/users/register?refid=243592">Register at Cryptsy</a></li>
                             </ul>
