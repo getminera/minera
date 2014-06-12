@@ -69,7 +69,7 @@ class Cpuminer_model extends CI_Model {
 	
 	public function saveCurrentFreq()
 	{
-		$stats = json_decode($this->util_model->getStats());
+		$stats = $this->util_model->getMinerStats();
 
 		$dev = array();
 		foreach ($stats->devices as $d => $device)

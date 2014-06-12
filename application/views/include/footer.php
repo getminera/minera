@@ -498,8 +498,8 @@
 				    var items = [];
 					var hashrates = [];
 					var lastTotalShares = [];
-					var miner_starttime = data['start_time'];
-					var startdate = new Date(data['start_time']*1000);
+					var miner_starttime = data.start_time;
+					var startdate = new Date(data.start_time*1000);
 	
 					$("body").data("stats-loop", 0);
 					
@@ -599,7 +599,7 @@
 					
 					
 					// Add pools data
-					$.each( data['pools'], function( pkey, pval ) 
+					$.each( data.pools, function( pkey, pval ) 
 					{
 						var picon = "download";
 						var ptype = "failover";
@@ -720,52 +720,24 @@
 					});
 					
 					// Add per device stats
-					$.each( data['devices'], function( key, val ) {
-				    	d = d+1;
+					$.each( data.devices, function( key, val ) {
+											
+				    	// these are the single devices stats
+				    	var hashrate = Math.round(val.hashrate/1000);
+				    	items[key] = { "serial": val.serial, "hash": hashrate, "ac": val.accepted, "re": val.rejected, "hw": val.hw_errors, "fr": val.frequency, "sh": val.shares, "ls": val.last_share };
 
-				    	// Build device stats from single chips
-						var lastShares = [];
-				    	var hash = 0; var ac = 0; var re = 0; var hw = 0; var fr = 0; var sh = 0;
-				    	for (var i = 0; i < val['chips'].length; i++) {
-				    		hash = hash + val['chips'][i]['hashrate'];
-				    		ac = ac + val['chips'][i]['accepted'];
-				    		re = re + val['chips'][i]['rejected'];
-				    		hw = hw + val['chips'][i]['hw_errors'];
-				    		fr = fr + val['chips'][i]['frequency'];
-				    		sh = sh + val['chips'][i]['shares'];
-							lastShares.push(val['chips'][i]['last_share'])
-				    	}
+						hashrates.push(hashrate);
 
-						// Data for single device (x chips together)
-				    	devFr = fr/i;
-				    	
-				    	totalhash = totalhash + hash;
-				    	totalac = totalac + ac;
-				    	totalre = totalre + re;
-				    	totalhw = totalhw + hw;
-				    	totalsh = totalsh + sh;
-				    	totalfr = totalfr + devFr;
-				    	
-				    	hash = Math.round(hash/1000);
-				    	
-				    	var serial = val['serial'];
-				    	var lastShare = Math.max.apply(Math, lastShares);
-
-				    	// these are the single devices stats	
-				    	items[key] = { "serial": serial, "hash": hash, "ac": ac, "re": re, "hw": hw, "fr": devFr, "sh": sh, "ls": lastShare };
-						hashrates.push(hash);
-						lastTotalShares.push(lastShare);
-				    	
 				    });
 				    
 			    	var maxHashrate = Math.max.apply(Math, hashrates);
-			    	var lastTotalShare = Math.max.apply(Math, lastTotalShares);
-					var avgFr = Math.round(totalfr/d);
+
+					var avgFr = data.totals.frequency;
 			    	
-					totalhash = Math.round(totalhash/1000);
+					totalhash = Math.round(data.totals.hashrate/1000);
 					
 					// this is the global stats
-					items["total"] = { "serial": "", "hash": totalhash, "ac": totalac, "re": totalre, "hw": totalhw, "fr": avgFr, "sh": totalsh, "ls":  lastTotalShare};
+					items["total"] = { "serial": "", "hash": totalhash, "ac": data.totals.accepted, "re": data.totals.rejected, "hw": data.totals.hw_errors, "fr": data.totals.frequency, "sh": data.totals.shares, "ls":  data.totals.last_share};
 					
 					for (var index in items) 
 					{
@@ -780,7 +752,7 @@
 						var percentageAc = (100*items[index].ac/totalWorkedShares);
 						var percentageRe = (100*items[index].re/totalWorkedShares);
 						var percentageHw = (100*items[index].hw/totalWorkedShares);
-						
+
 						// Add colored hashrates
 						if (last_share_secs >= 120 && last_share_secs < 240)
 							devData.label = "yellow"
@@ -891,7 +863,7 @@
 						human_sysuptime = human_sysuptime + "" + sysuptime[ukey] + ukey + " ";
 					}
 					
-					$(".sysuptime").html("System started since: <strong>" + human_sysuptime + "</strong>");
+					$(".sysuptime").html("System has been up for: <strong>" + human_sysuptime + "</strong>");
 				    
 					// Add server load average knob graph
 					$.each( data['sysload'], function( lkey, lval ) 

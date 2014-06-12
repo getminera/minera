@@ -495,10 +495,9 @@ class App extends Main_Controller {
 			break;
 			case "history_stats":
 				$o = $this->util_model->getHistoryStats($this->input->get('type'));
-				//$o = $this->util_model->getParsedStats($this->util_model->getStats());
 			break;
 			case "test":
-				$o = $this->util_model->getCryptsyRateIds();
+				$o = $this->util_model->getParsedStats($this->util_model->getMinerStats());
 			break;
 		}
 		
@@ -544,7 +543,7 @@ class App extends Main_Controller {
 		
 		// Store the live stats to be used on time graphs
 		$stats = $this->util_model->storeStats();
-		
+
 		// Use the live stats to check if autorestart is needed
 		$autorestartenable = $this->redis->get("minerd_autorestart");
 		$autorestartdevices = $this->redis->get("minerd_autorestart_devices");
@@ -556,24 +555,18 @@ class App extends Main_Controller {
 			// Use only if miner is online
 			if ($this->util_model->isOnline())
 			{
-				$aStats = json_decode($stats);
-
 				// Check if there is stats error
-				if (isset($aStats->error))
+				if (isset($stats->error))
 					return false;
 				
 				// Get the max last_share time per device
 				$lastshares = false;
-				foreach ($aStats->devices as $deviceName => $device)
+				
+				if (isset($stats->devices))
 				{
-					if (isset($device->chips))
+					foreach ($stats->devices as $deviceName => $device)
 					{
-						$lastsharechips = array();
-						foreach ($device->chips as $chip)
-						{
-							$lastsharechips[] = $chip->last_share;
-						}
-						$lastshares[$deviceName] = max($lastsharechips);
+						$lastshares[$deviceName] = $device->last_share;
 					}
 				}
 				
