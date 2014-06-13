@@ -71,7 +71,8 @@ class App extends Main_Controller {
 			
 		if ($this->input->post('save_settings'))
 		{
-			$dashSettings = trim($this->input->post('dashboard_refresh_time'));
+			$dashSettings = substr(trim($this->input->post('dashboard_refresh_time')), strpos(trim($this->input->post('dashboard_refresh_time')), ";") + 1);
+			$mineraDonationTime = substr(trim($this->input->post('minera_donation_time')), strpos(trim($this->input->post('minera_donation_time')), ";") + 1);
 			$coinRates = $this->input->post('dashboard_coin_rates');
 			$this->redis->set("altcoins_update", (time()-3600));
 
@@ -187,6 +188,7 @@ class App extends Main_Controller {
 			$this->redis->set("minerd_autorecover", $this->input->post('minerd_autorecover'));
 			$this->redis->set("minerd_autorestart", $this->input->post('minerd_autorestart'));
 			$this->redis->set("minerd_autorestart_devices", $this->input->post('minerd_autorestart_devices'));
+			$this->redis->set("minera_donation_time", $mineraDonationTime);
 			$this->redis->set("dashboard_refresh_time", $dashSettings);
 			$this->redis->set("dashboard_coin_rates", json_encode($coinRates));
 			
@@ -304,6 +306,7 @@ class App extends Main_Controller {
 		$data['minerdDelaytime'] = $this->redis->get("minerd_delaytime");
 		
 		//Load Dashboard settings
+		$data['mineraDonationTime'] = $this->redis->get("minera_donation_time");
 		$data['dashboard_refresh_time'] = $this->redis->get("dashboard_refresh_time");
 		$dashboard_coin_rates = $this->redis->get("dashboard_coin_rates");
 		$data['dashboard_coin_rates'] = (is_array(json_decode($dashboard_coin_rates))) ? json_decode($dashboard_coin_rates) : array();
@@ -543,8 +546,18 @@ class App extends Main_Controller {
 		
 		// Store the live stats to be used on time graphs
 		$stats = $this->util_model->storeStats();
+		
+		// Activate/Deactivate time donation pool if enable
+		if ($this->util_model->isOnline() && isset($stats->pool_donation_id))
+		{
+			if ($this->redis->get("minera_donation_time") > 0)
+			{
+				$poolDonationId = $stats->pool_donation_id;
+			}
+		}
 
 		// Use the live stats to check if autorestart is needed
+		// (devices possible dead)
 		$autorestartenable = $this->redis->get("minerd_autorestart");
 		$autorestartdevices = $this->redis->get("minerd_autorestart_devices");
 

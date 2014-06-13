@@ -40,7 +40,51 @@
 								
 							<form action="<?php site_url("app/dashboard") ?>" method="post" role="form" id="minersettings">
 								<input type="hidden" name="save_settings" value="1" />                                                    
-	                          
+
+	                            
+								<!-- Miner box -->
+	                            <div class="box box-primary">
+									<div class="box-header">
+										<!-- tools box -->
+	                                    <div class="pull-right box-tools">
+	                                        <button class="btn btn-default btn-xs" data-widget="collapse" data-toggle="tooltip" title="" data-original-title="Collapse"><i class="fa fa-minus"></i></button>
+	                                    </div><!-- /. tools -->
+	                                    <i class="fa fa-gift"></i>
+	                                    
+	                                    <h3 class="box-title">Donation Settings</h3>
+	                                </div>
+
+	                                <div class="box-body">
+	                                
+										<!-- Donation time -->
+										<div class="form-group">
+											<label>Help Minera!</label>
+											<p>Minera needs your help! Give some minutes of your hash power to it and help making Minera even more cool!<br /><a href="#" class="open-readme-donation">Please read how you can give your support and how it works.</a></p>
+											
+											<div class="margin-bottom" style="width:50%">
+												<input type="text" name="minera_donation_time" id="option-minera-donation-time" value="" />
+											</div>
+											
+											<p class="donation-worth"></p>
+											
+											<p><small class="donation-mood badge">&nbsp;</small></p>
+											
+											<div class="callout callout-grey readme-donation" style="display:none;">
+												<h6><strong>How does time donation work?</strong></h6>
+												<p><small>It's really simple, you can select how many minutes per day you want to donate to Minera, you can choose between 15 minutes and 6 hours. If you leave it at zero minutes, time donation will be disabled. If you enabled it, every day at about midnight, Minera will automatically switch to the donation pool for the amount of time you select. When the period is over Minera switches back to your main pool. Pool switches are on the fly, so it doesn't need to restart anything.</small></p>
+												<h6><strong>What does happen if Minera reboot/shutdown during the donation period?</strong></h6>
+												<p><small>Absolutely nothing. I mean, if your Minera system got problems while is running on the donation pool (for example it reboots for power outage), it just restart hashing on the main pool set. It won't retry to switch the donation pool until the day after.</small></p>
+												<h6><strong>What do you do with the money received?</strong></h6>
+												<p><small>Thanks to your kindly donations I can, for example, buy some of the new hardware coming out to add its support in Minera. So next time there will be a new cool hardware, Minera will be ready to accept it. And of course, I need beer to do all this cool stuff :)</small></p>
+												<h6><strong>Anyway, I wanna really thank you for all you support and appreciation. Thank you guys, you all rock!</strong></h6>
+											</div>
+										</div>										
+	                                </div>
+									<div class="box-footer">
+										<button type="submit" class="btn btn-primary" name="save" value="1">Save</button>
+									</div>
+	                            </div>
+	                            	                          
 								<!-- Pools box -->
 	                            <div class="box box-primary">
 									<div class="box-header">
@@ -247,23 +291,13 @@
 													</div>
 												</div>												
 												
-												<!-- Start Frequency -->
+												<!-- Start Frequency -->												
 												<div class="form-group">
 													<label>Select starting frequency</label>
-													<div class="row">
-														<div class="col-xs-4">
-															<div class="input-group">
-																<select class="form-control" name="minerd_startfreq">
-																	<option value="0">default</option>
-																<?php $inc = 15; ?>
-																<?php for ($s=600; $s<=1400; $s++) : ?>
-																	<option value="<?php echo $s ?>" <?php echo ($minerdStartfreq == $s) ? "selected" : ""; ?>><?php echo $s ?>MHz</option>
-																<?php endfor; ?>
-																</select>
-															</div><!-- /.input group -->
-														</div>
-														<div class="col-xs-8"></div>
+													<div class="margin-bottom" style="width:50%">
+														<input type="text" name="minerd_startfreq" id="option-startfreq" value="" />
 													</div>
+													<h6>You can select a default frequency value to start with.</h6>
 												</div>
 												
 		                                        <!-- Minerd extra options -->
@@ -366,19 +400,18 @@
 											<!-- Refresh time -->
 											<div class="form-group">
 												<label>Refresh time</label>
-												<div class="input-group">
-													<div class="input-group-addon">
-														<i class="fa fa-clock-o"></i>
-													</div>
-													<input type="text" class="form-control" name="dashboard_refresh_time" placeholder="seconds" value="<?php echo $dashboard_refresh_time ?>" style="width:90px" />
-												</div><!-- /.input group -->
+												<p>Select automatic refresh time interval.</p>
+												<div class="margin-bottom" style="width:50%">
+													<input type="text" name="dashboard_refresh_time" id="option-dashboard-refresh-time" class="refresh-time" value="" />
+												</div>
 												<small>time in seconds, min 5 secs</small>
 											</div>
 											
 											<!-- Altcoins rates -->
 											<div class="form-group">
 												<label>Top bar Altcoins</label>
-												<?php $altdata = json_decode($cryptsy_data); if (is_array($dashboard_coin_rates)) : ?>
+												<?php $altdata = json_decode($cryptsy_data); ?>
+												<?php if (is_object($altdata) && is_array($dashboard_coin_rates)) : ?>
 													<p><small>Currently selected: </small><?php foreach ($dashboard_coin_rates as $altcoin) : ?><small class="badge bg-blue"><?php echo $altdata->$altcoin->codes ?></small>&nbsp;<?php endforeach; ?></p>
 	
 													<div class="input-group">
@@ -394,7 +427,7 @@
 													<small>Select max 3 rates to be displayed on the top bar</small>
 												</div>
 											<?php else: ?>
-												<p><small class="badge bg-red">There was a problem with the altcoins.</small></p>
+												<p><small class="badge bg-red">There was a problem with the altcoins. Try refreshing the page.</small></p>
 											<?php endif; ?>
 	                                </div>
 									<div class="box-footer">

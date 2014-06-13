@@ -136,6 +136,7 @@ class Util_model extends CI_Model {
 		{
 			foreach ($stats->pools as $pool)
 			{
+				
 				if ($pool->active == 1)
 				{
 					foreach($pool->stats as $session)
@@ -316,7 +317,16 @@ class Util_model extends CI_Model {
 		
 		$stats = $this->getMinerStats();
 		
+		// Add pool donation ID to the stats
+		foreach ($stats->pools as $pool)
+		{
+			if ($pool->url == $this->config->item('minera_pool_url') && $pool->user == $this->config->item('minera_pool_username') && $pool->pass == $this->config->item('minera_pool_password'))
+				$poolDonationId = $pool->priority;
+		}
+		
 		$data = json_decode($this->getParsedStats($stats));
+		
+		$data->pool_donation_id = $poolDonationId;
 
 		$ph = (isset($data->pool->hashrate)) ? $data->pool->hashrate : 0;
 		$dh = (isset($data->totals->hashrate)) ? $data->totals->hashrate : 0;

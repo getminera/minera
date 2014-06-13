@@ -26,6 +26,8 @@ class Cpuminer_model extends CI_Model {
 			$in = json_encode(array("get" => "stats"))."\n";
 		else
 			$in = json_encode($cmd)."\n";
+			
+		log_message("error", "Called Minerd with command: ".$in);
 		
 		fwrite($fp, $in);
 		

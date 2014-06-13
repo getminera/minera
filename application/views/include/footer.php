@@ -14,11 +14,16 @@
 	<!-- jQuery Validation -->
     <script src="<?php echo base_url('assets/js/jquery.validate.min.js') ?>" type="text/javascript"></script>
     
+    <!-- Ion rangeSlider -->
+    <script src="<?php echo base_url('assets/js/ion.rangeSlider.min.js') ?>" type="text/javascript"></script>
+    
     <!-- Settings script -->
     <script type="text/javascript">
     	
 		$(function() {
 		    "use strict";
+		    
+		    $(".box-tools").click( function(e) { e.preventDefault(); });
 		    
 		    //Make the dashboard widgets sortable Using jquery UI
 		    $(".poolSortable").sortable({
@@ -29,7 +34,108 @@
 		        zIndex: 999999
 		    });
 		    $(".sort-attach").css("cursor","move");
+		    
+		    // Initialize options sliders
+		    $(".open-readme-donation").click(function(e) {
+				e.preventDefault();
+				$(".readme-donation").fadeToggle();
+		    });
+		    
+		    function changeDonationMood(value) 
+		    {
+				if (value > 0 && value < 90)
+				{
+					$(".donation-mood").html('<i class="fa fa-smile-o"></i> Your support is much appreciate. Thank you!').removeClass().addClass('donation-mood badge bg-blue');
+				}
+				else if (value >= 90 && value < 180)
+				{
+					$(".donation-mood").html('<i class="fa fa-sun-o"></i> WOW that\'s really cool! Thank you!').removeClass().addClass('donation-mood badge bg-green');
+				}
+				else if (value >= 180 && value < 270)
+				{
+					$(".donation-mood").html('<i class="fa fa-star"></i> That\'s amazing! You are a star! Thank you!').removeClass().addClass('donation-mood badge bg-yellow');
+				}
+				else if (value >= 270 && value <= 360 )
+				{
+					$(".donation-mood").html('<i class="fa fa-heart"></i> You are my hero! You really rock! Thank you so much!').removeClass().addClass('donation-mood badge bg-red');
+				}
+				else
+				{
+					$(".donation-mood").html('<i class="fa fa-frown-o"></i> Time donation is disabled').removeClass().addClass('donation-mood badge');
+				}
+			}
+			
+		    function changeDonationWorth(value) 
+		    {
+		    	var amount = (0.0018 / 24 / 60 * value);
+		    	var string = (value > 0) ? "about" : "exactly";
 
+		    	if (value >= 60)
+		    	{
+		    		var h = Math.floor(value / 60);
+					value = value % 60;
+			    	var period = h + ' hour(s) ' + ((value > 0) ? ' and ' + value + ' minute(s)' : '');
+		    	}
+		    	else
+		    	{
+			    	var period = value + ' minutes';
+		    	}
+		    	
+				$(".donation-worth").html('<small>Mining for ' + period + ' in a day your donation per MH/s worths ' + string + ':</small> <span class="label label-success"><i class="fa fa-btc"></i>&nbsp;' + amount.toFixed(8) + '</span>');
+			}
+		    
+		    $("#option-minera-donation-time").ionRangeSlider({
+				min: 0,
+				max: 360,
+				to: <?php echo (isset($mineraDonationTime)) ? $mineraDonationTime : 0; ?>,
+				type: 'double',
+				step: 15,
+				postfix: " Mins",
+				hasGrid: true,
+				onLoad: function (obj) {
+					changeDonationMood(obj.toNumber);
+					changeDonationWorth(obj.toNumber);
+				},
+				onChange: function (obj) {
+					if (obj.fromNumber > 0)
+					{
+						$("#option-minera-donation-time").ionRangeSlider('update', { from: 0 });
+					}
+					changeDonationMood(obj.toNumber);
+					changeDonationWorth(obj.toNumber);
+				}
+			});
+			
+		    $("#option-startfreq").ionRangeSlider({
+				min: 600,
+				max: 1400,
+				from: <?php echo (isset($minerdStartfreq)) ? $minerdStartfreq : 800; ?>,
+				type: 'single',
+				step: 5,
+				postfix: " Mhz",
+				hasGrid: true,
+			});
+
+		    $("#option-dashboard-refresh-time").ionRangeSlider({
+				min: 0,
+				max: 600,
+				to: <?php echo (isset($dashboard_refresh_time)) ? $dashboard_refresh_time : 60; ?>,
+				type: 'double',
+				step: 5,
+				postfix: " Secs",
+				hasGrid: true,
+				onChange: function (obj) {
+					if (obj.fromNumber > 0)
+					{
+						$("#option-dashboard-refresh-time").ionRangeSlider('update', { from: 0 });
+					}
+					if (obj.toNumber < 5)
+					{
+						$("#option-dashboard-refresh-time").ionRangeSlider('update', { to: 5 });
+					}
+				}
+			});
+			
 		    $(document).on('click', '.help-pool-row', function(e) {
 				e.preventDefault();
 				$(".minera-pool-help").fadeToggle();

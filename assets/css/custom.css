@@ -2,6 +2,7 @@
  * All your custom CSS should go into this file
  */
 .padding-vert { padding-bottom: 20px;}
+.margin-bottom { margin-bottom: 20px;}
 .knob-label { font-size: 10pt !important;}
 .devs_table_foot { background: #666; color: #fff;}
 .box.box-gold { border-top-color: #e6cc64;}
@@ -28,6 +29,7 @@ body > .header .navbar .nav > li > a > .label { padding: 3px !important; }
 .log-box { font-size: 11px; min-height: 220px; overflow: hidden;}
 .sidebar { position: fixed; width: 220px; }
 .donation-pool { background: #E2EDF0; color: #99A5A8; }
+.callout.callout-grey { background-color: #F3F3F3; border-color: #ed5565; }
 
 @media all and (max-width : 960px) { 
 	.messages-menu { display: none !important;}
