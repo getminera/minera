@@ -618,304 +618,309 @@
 						$('#pools-table-details').dataTable().fnClearTable();
 						$('#pools-table-details').dataTable().fnDestroy();					
 					}
-					
-					// Initialize the miner datatable	
-					$('#miner-table-details').dataTable({
-						"lengthMenu": [ 5, 10, 25, 50 ],
-						"pageLength": 5,
-						"stateSave": true,
-						"bAutoWidth": false,
-						"aoColumnDefs": [ 
-						{
-							"aTargets": [ 1 ],	
-							"mRender": function ( data, type, full ) {
-								if (type === 'display')
-								{
-									return '<small class="label label-light">'+data +' MHz</small>'
-								}
-								return data;
-							},
-						},
-						{
-							"aTargets": [ 2 ],	
-							"mRender": function ( data, type, full ) {
-								if (type === 'display')
-								{
-									return '<small class="badge bg-'+data.label+'">'+ convertHashrate(data.hash) +'</small>'
-								}
-								return data.hash;
-							}
-						},
-						{
-							"aTargets": [ 10 ],	
-							"mRender": function ( data, type, full ) {
-								if (type === 'display')
-								{
-									return data +' secs ago'
-								}
-								return data;
-							}
-						},
-						{
-							"aTargets": [ 5, 7, 9 ],	
-							"mRender": function ( data, type, full ) {
-								if (type === 'display')
-								{
-									return '<small class="text-muted">' + data + '%</small>'
-								}
-								return data;
-							}
-						},
-						],
-					});
-					
-					// Initialize the pools datatable	
-					$('#pools-table-details').dataTable({
-						"stateSave": true,
-						"bAutoWidth": false,
-						"sDom": 't',
-						"order": [[ 2, "asc" ]],
-						"fnRowCallback": function( nRow, aData, iDisplayIndex ) {
-							//if(iDisplayIndex === 0)
-							//	nRow.className = "bg-dark";
-							return nRow;
-						},
-						"aoColumnDefs": [ 
-						{
-							"aTargets": [ 5 ],	
-							"mRender": function ( data, type, full ) {
-								if (type === 'display')
-								{
-									return '<small class="badge bg-'+data.label+'">'+ convertHashrate(data.hash) +'</small>';
-								}
-								return data.hash;
-							},
-						},
-						{
-							"aTargets": [ 7, 9, 11 ],	
-							"mRender": function ( data, type, full ) {
-								if (type === 'display')
-								{
-									return '<small class="text-muted">'+ data +'</small>';
-								}
-								return data;
-							},
-						},
-						]
-					});
-					
-					
-					// Add pools data
-					$.each( data.pools, function( pkey, pval ) 
+
+					if (data.pools)
 					{
-						var picon = "download";
-						var ptype = "failover";
-						var pclass = "bg-light";
-						var plabel = "light";
-						var pactivelabclass = "";
-						var pactivelab = "Select This";
-						var purl = pval.url;
-						
-						if (pval.alive)
-						{
-							paliveclass = "success";
-							palivelabel = "Alive";
-						}
-						else
-						{
-							paliveclass = "danger";
-							palivelabel = "Dead";
-						}
-						
-						puserlabel = 'blue';
-						purlicon = '<i class="fa fa-flash"></li> ';
-						if (pval.user == 'michelem.minera')
-						{
-							puserlabel = 'light';
-							purlicon = '<i class="fa fa-gift"></li> ';
-						}
-
-						// Main pool
-						if (pval.active === 1)
-						{	
-							pool_shares_seconds = parseFloat((now/1000)-pval.start_time);
-							pool_shares = pval.shares;
-							picon = "upload";
-							ptype = "active";
-							pclass = "bg-dark";
-							plabel = "primary";
-							pactivelabclass = "disabled";
-							pactivelab = "Selected";
-							purl = '<strong>'+pval.url+'</strong>';
-						}
-						
-						var pstatsId = pval.stats_id;
-						var pshares = 0; var paccepted = 0; var prejected = 0; var psharesPrev = 0; var pacceptedPrev = 0; var prejectedPrev = 0; var phashData = {}; phashData.hash = 0; phashData.label = 'muted'; phashData.pstart_time = "Never started";
-						// Get the pool stats
-						for (var p = 0; p < pval.stats.length; p++) 
-						{
-							var pstats = pval.stats[p];
-
-							if (pstatsId == pstats.stats_id)
+						// Initialize the pools datatable	
+						$('#pools-table-details').dataTable({
+							"stateSave": true,
+							"bAutoWidth": false,
+							"sDom": 't',
+							"order": [[ 2, "asc" ]],
+							"fnRowCallback": function( nRow, aData, iDisplayIndex ) {
+								//if(iDisplayIndex === 0)
+								//	nRow.className = "bg-dark";
+								return nRow;
+							},
+							"aoColumnDefs": [ 
 							{
-								phashData.pstart_time = new Date(pstats.start_time*1000);
-								phashData.pstart_time = phashData.pstart_time.toUTCString();
-								pshares = pstats.shares;
-								paccepted = pstats.accepted;
-								prejected = pstats.rejected;
-								
-								// Calculate the real pool hashrate
-								if (pval.active === 1) 
-								{
-									phashData.hash = parseInt((65536.0 * (pshares/(now/1000-pstats.start_time)))/1000);
-									phashData.label = 'red';
-									//Add Main pool widget
-									$(".widget-total-hashrate").html(convertHashrate(phashData.hash));
-									$('.widget-main-pool').html(palivelabel);
-									$('.widget-main-pool').next('p').html(pval.url);
-									// Changing title page according to hashrate
-									$(document).attr('title', convertHashrate(phashData.hash)+' | Minera - Dashboard');
-								}
-
+								"aTargets": [ 5 ],	
+								"mRender": function ( data, type, full ) {
+									if (type === 'display')
+									{
+										return '<small class="badge bg-'+data.label+'">'+ convertHashrate(data.hash) +'</small>';
+									}
+									return data.hash;
+								},
+							},
+							{
+								"aTargets": [ 7, 9, 11 ],	
+								"mRender": function ( data, type, full ) {
+									if (type === 'display')
+									{
+										return '<small class="text-muted">'+ data +'</small>';
+									}
+									return data;
+								},
+							},
+							]
+						});
+						
+						// Add pools data
+						$.each( data.pools, function( pkey, pval ) 
+						{
+							var picon = "download";
+							var ptype = "failover";
+							var pclass = "bg-light";
+							var plabel = "light";
+							var pactivelabclass = "";
+							var pactivelab = "Select This";
+							var purl = pval.url;
+							
+							if (pval.alive)
+							{
+								paliveclass = "success";
+								palivelabel = "Alive";
 							}
 							else
 							{
-								psharesPrev = psharesPrev + pstats.shares;
-								pacceptedPrev = pacceptedPrev + pstats.accepted;
-								prejectedPrev = prejectedPrev + pstats.rejected;
+								paliveclass = "danger";
+								palivelabel = "Dead";
 							}
-						}
-
-						// Add Pool rows via datatable
-						$('#pools-table-details').dataTable().fnAddData( [
-							'<button style="width:90px;" class="btn btn-sm btn-default '+pactivelabclass+' select-pool" data-pool-id="'+pval.priority+'"><i class="fa fa-cloud-'+picon+'"></i> '+pactivelab+'</button>',
-							purlicon+'<small>'+purl+'</small>',
-							pval.priority,
-							'<span class="label label-'+plabel+'">'+ptype+'</span>',
-							'<span class="label label-'+paliveclass+'">'+palivelabel+'</span>',
-							phashData,
-							pshares,
-							psharesPrev,
-							paccepted,
-							pacceptedPrev,
-							prejected,
-							prejectedPrev,
-							'<span class="badge bg-'+puserlabel+'">'+pval.user+'</span>'
-						] );
-						
-					});
-					
-					// Select Pool on the fly
-					$(".select-pool").click( function() {
-						$('.overlay').show();
-					    var poolId = $(this).data('pool-id');
-					    $.ajax("<?php echo site_url("app/api?command=select_pool&poolId="); ?>"+poolId, {
-					        dataType: "text",
-					        success: function (dataP) {
-					        	if (dataP)
-					        	{
-					        		var dataJ = $.parseJSON(dataP);
-					    			if (dataJ.err === 0)
-					    			{
-						    			getStats(true);
-					    			}
-					    			else
-					    				$(".pool-alert").html('Error: <pre>'+dataP+'</pre>');
-					    		}
-					        }
-					    });
-					});
-					
-					// Add per device stats
-					$.each( data.devices, function( key, val ) {
-											
-				    	// these are the single devices stats
-				    	var hashrate = Math.round(val.hashrate/1000);
-				    	items[key] = { "serial": val.serial, "hash": hashrate, "ac": val.accepted, "re": val.rejected, "hw": val.hw_errors, "fr": val.frequency, "sh": val.shares, "ls": val.last_share };
-
-						hashrates.push(hashrate);
-
-				    });
-				    
-			    	var maxHashrate = Math.max.apply(Math, hashrates);
-
-					var avgFr = data.totals.frequency;
-			    	
-					totalhash = Math.round(data.totals.hashrate/1000);
-					
-					// this is the global stats
-					items["total"] = { "serial": "", "hash": totalhash, "ac": data.totals.accepted, "re": data.totals.rejected, "hw": data.totals.hw_errors, "fr": data.totals.frequency, "sh": data.totals.shares, "ls":  data.totals.last_share};
-					
-					for (var index in items) 
-					{
-										
-						// Add per device rows in system table
-						var devData = {}; devData.hash = items[index].hash;
-						var share_date = new Date(items[index].ls*1000);
-						var rightnow = new Date().getTime();
-
-						var last_share_secs = (items[index].ls > 0) ? (rightnow - share_date.getTime())/1000 : 0;
-						if (last_share_secs < 0) last_share_secs = 0;
-
-						var totalWorkedShares = (items[index].ac+items[index].re+items[index].hw);
-						var percentageAc = (100*items[index].ac/totalWorkedShares);
-						var percentageRe = (100*items[index].re/totalWorkedShares);
-						var percentageHw = (100*items[index].hw/totalWorkedShares);
-
-						// Add colored hashrates
-						if (last_share_secs >= 120 && last_share_secs < 240)
-							devData.label = "yellow"
-						else if (last_share_secs >= 240 && last_share_secs < 480)
-							devData.label = "red"
-						else if (last_share_secs >= 480)
-							devData.label = "muted"
-						else
-							devData.label = "green"
-													
-						var dev_serial = "";
-						if (index != "total")
-						{
-							dev_serial = ' <small class="text-muted">('+items[index].serial+')</small>';	
-						}
-						else
-						{
-							// Widgets
-							$(".widget-last-share").html(parseInt(last_share_secs) + ' secs');
-							$(".widget-hwre-rates").html(parseFloat(percentageHw).toFixed(2) + '<sup style="font-size: 20px">%</sup> / ' + parseFloat(percentageRe).toFixed(2) + '<sup style="font-size: 20px">%</sup>');
 							
-							//Sidebar hashrate
-							//$('.sidebar-hashrate').html("@ "+convertHashrate(items[index].hash));
-						}
-						
-						var devRow = '<tr class="dev-'+index+'"><td class="devs_table_name"><i class="glyphicon glyphicon-hdd"></i>&nbsp;&nbsp;'+index+dev_serial+'</td><td class="devs_table_freq">'+ items[index].fr + ' Mhz</td><td class="devs_table_hash"><strong>'+ convertHashrate(items[index].hash) +'</strong></td><td class="devs_table_sh">'+ items[index].sh +'</td><td class="devs_table_ac">'+ items[index].ac +'</td><td><small class="text-muted">'+parseFloat(percentageAc).toFixed(2)+'%</small></td><td class="devs_table_re">'+ items[index].re +'</td><td><small class="text-muted">'+parseFloat(percentageRe).toFixed(2)+'%</small></td><td class="devs_table_hw">'+ items[index].hw +'</td><td><small class="text-muted">'+parseFloat(percentageHw).toFixed(2)+'%</small></td><td class="devs_table_ls">'+ parseInt(last_share_secs) +' secs ago</td><td><small class="text-muted">'+share_date.toUTCString()+'</small></td></tr>'
-					
-						if (index == "total")
-						{
-							// TODO add row total via datatable
-						    $('.devs_table_foot').html(devRow);		
-						}
-						else
-						{
-							// New add rows via datatable
-							$('#miner-table-details').dataTable().fnAddData( [
-								'<i class="glyphicon glyphicon-hdd"></i>&nbsp;&nbsp;'+index+dev_serial,
-								items[index].fr,
-								devData,
-								items[index].sh,
-								items[index].ac,
-								parseFloat(percentageAc).toFixed(2),
-								items[index].re,
-								parseFloat(percentageRe).toFixed(2),
-								items[index].hw,
-								parseFloat(percentageHw).toFixed(2),
-								parseInt(last_share_secs),
-								'<small class="text-muted">'+share_date.toUTCString()+'</small>'
+							puserlabel = 'blue';
+							purlicon = '<i class="fa fa-flash"></li> ';
+							if (pval.user == 'michelem.minera')
+							{
+								puserlabel = 'light';
+								purlicon = '<i class="fa fa-gift"></li> ';
+							}
+	
+							// Main pool
+							if (pval.active === 1)
+							{	
+								pool_shares_seconds = parseFloat((now/1000)-pval.start_time);
+								pool_shares = pval.shares;
+								picon = "upload";
+								ptype = "active";
+								pclass = "bg-dark";
+								plabel = "primary";
+								pactivelabclass = "disabled";
+								pactivelab = "Selected";
+								purl = '<strong>'+pval.url+'</strong>';
+							}
+							
+							var pstatsId = pval.stats_id;
+							var pshares = 0; var paccepted = 0; var prejected = 0; var psharesPrev = 0; var pacceptedPrev = 0; var prejectedPrev = 0; var phashData = {}; phashData.hash = 0; phashData.label = 'muted'; phashData.pstart_time = "Never started";
+							// Get the pool stats
+							for (var p = 0; p < pval.stats.length; p++) 
+							{
+								var pstats = pval.stats[p];
+	
+								if (pstatsId == pstats.stats_id)
+								{
+									phashData.pstart_time = new Date(pstats.start_time*1000);
+									phashData.pstart_time = phashData.pstart_time.toUTCString();
+									pshares = pstats.shares;
+									paccepted = pstats.accepted;
+									prejected = pstats.rejected;
+									
+									// Calculate the real pool hashrate
+									if (pval.active === 1) 
+									{
+										phashData.hash = parseInt((65536.0 * (pshares/(now/1000-pstats.start_time)))/1000);
+										phashData.label = 'red';
+										//Add Main pool widget
+										$(".widget-total-hashrate").html(convertHashrate(phashData.hash));
+										$('.widget-main-pool').html(palivelabel);
+										$('.widget-main-pool').next('p').html(pval.url);
+										// Changing title page according to hashrate
+										$(document).attr('title', convertHashrate(phashData.hash)+' | Minera - Dashboard');
+									}
+	
+								}
+								else
+								{
+									psharesPrev = psharesPrev + pstats.shares;
+									pacceptedPrev = pacceptedPrev + pstats.accepted;
+									prejectedPrev = prejectedPrev + pstats.rejected;
+								}
+							}
+	
+							// Add Pool rows via datatable
+							$('#pools-table-details').dataTable().fnAddData( [
+								'<button style="width:90px;" class="btn btn-sm btn-default '+pactivelabclass+' select-pool" data-pool-id="'+pval.priority+'"><i class="fa fa-cloud-'+picon+'"></i> '+pactivelab+'</button>',
+								purlicon+'<small>'+purl+'</small>',
+								pval.priority,
+								'<span class="label label-'+plabel+'">'+ptype+'</span>',
+								'<span class="label label-'+paliveclass+'">'+palivelabel+'</span>',
+								phashData,
+								pshares,
+								psharesPrev,
+								paccepted,
+								pacceptedPrev,
+								prejected,
+								prejectedPrev,
+								'<span class="badge bg-'+puserlabel+'">'+pval.user+'</span>'
 							] );
+							
+						});
+						
+						// Select Pool on the fly
+						$(".select-pool").click( function() {
+							$('.overlay').show();
+						    var poolId = $(this).data('pool-id');
+						    $.ajax("<?php echo site_url("app/api?command=select_pool&poolId="); ?>"+poolId, {
+						        dataType: "text",
+						        success: function (dataP) {
+						        	if (dataP)
+						        	{
+						        		var dataJ = $.parseJSON(dataP);
+						    			if (dataJ.err === 0)
+						    			{
+							    			getStats(true);
+						    			}
+						    			else
+						    				$(".pool-alert").html('Error: <pre>'+dataP+'</pre>');
+						    		}
+						        }
+						    });
+						});
+					}
+					
+					if (data.devices)
+					{
+						// Initialize the miner datatable	
+						$('#miner-table-details').dataTable({
+							"lengthMenu": [ 5, 10, 25, 50 ],
+							"pageLength": 5,
+							"stateSave": true,
+							"bAutoWidth": false,
+							"aoColumnDefs": [ 
+							{
+								"aTargets": [ 1 ],	
+								"mRender": function ( data, type, full ) {
+									if (type === 'display')
+									{
+										return '<small class="label label-light">'+data +' MHz</small>'
+									}
+									return data;
+								},
+							},
+							{
+								"aTargets": [ 2 ],	
+								"mRender": function ( data, type, full ) {
+									if (type === 'display')
+									{
+										return '<small class="badge bg-'+data.label+'">'+ convertHashrate(data.hash) +'</small>'
+									}
+									return data.hash;
+								}
+							},
+							{
+								"aTargets": [ 10 ],	
+								"mRender": function ( data, type, full ) {
+									if (type === 'display')
+									{
+										return data +' secs ago'
+									}
+									return data;
+								}
+							},
+							{
+								"aTargets": [ 5, 7, 9 ],	
+								"mRender": function ( data, type, full ) {
+									if (type === 'display')
+									{
+										return '<small class="text-muted">' + data + '%</small>'
+									}
+									return data;
+								}
+							},
+							],
+						});
+						
+						// Add per device stats
+						$.each( data.devices, function( key, val ) {
+												
+					    	// these are the single devices stats
+					    	var hashrate = Math.round(val.hashrate/1000);
+					    	items[key] = { "serial": val.serial, "hash": hashrate, "ac": val.accepted, "re": val.rejected, "hw": val.hw_errors, "fr": val.frequency, "sh": val.shares, "ls": val.last_share };
+	
+							hashrates.push(hashrate);
+	
+					    });
+					    
+				    	var maxHashrate = Math.max.apply(Math, hashrates);
+	
+						var avgFr = data.totals.frequency;
+				    	
+						totalhash = Math.round(data.totals.hashrate/1000);
+						
+						// this is the global stats
+						items["total"] = { "serial": "", "hash": totalhash, "ac": data.totals.accepted, "re": data.totals.rejected, "hw": data.totals.hw_errors, "fr": data.totals.frequency, "sh": data.totals.shares, "ls":  data.totals.last_share};
+						
+						for (var index in items) 
+						{
+											
+							// Add per device rows in system table
+							var devData = {}; devData.hash = items[index].hash;
+							var share_date = new Date(items[index].ls*1000);
+							var rightnow = new Date().getTime();
+	
+							var last_share_secs = (items[index].ls > 0) ? (rightnow - share_date.getTime())/1000 : 0;
+							if (last_share_secs < 0) last_share_secs = 0;
+	
+							var totalWorkedShares = (items[index].ac+items[index].re+items[index].hw);
+							var percentageAc = (100*items[index].ac/totalWorkedShares);
+							var percentageRe = (100*items[index].re/totalWorkedShares);
+							var percentageHw = (100*items[index].hw/totalWorkedShares);
+	
+							// Add colored hashrates
+							if (last_share_secs >= 120 && last_share_secs < 240)
+								devData.label = "yellow"
+							else if (last_share_secs >= 240 && last_share_secs < 480)
+								devData.label = "red"
+							else if (last_share_secs >= 480)
+								devData.label = "muted"
+							else
+								devData.label = "green"
+														
+							var dev_serial = "";
+							if (index != "total")
+							{
+								dev_serial = ' <small class="text-muted">('+items[index].serial+')</small>';	
+							}
+							else
+							{
+								// Widgets
+								$(".widget-last-share").html(parseInt(last_share_secs) + ' secs');
+								$(".widget-hwre-rates").html(parseFloat(percentageHw).toFixed(2) + '<sup style="font-size: 20px">%</sup> / ' + parseFloat(percentageRe).toFixed(2) + '<sup style="font-size: 20px">%</sup>');
+								
+								//Sidebar hashrate
+								//$('.sidebar-hashrate').html("@ "+convertHashrate(items[index].hash));
+							}
+							
+							var devRow = '<tr class="dev-'+index+'"><td class="devs_table_name"><i class="glyphicon glyphicon-hdd"></i>&nbsp;&nbsp;'+index+dev_serial+'</td><td class="devs_table_freq">'+ items[index].fr + ' Mhz</td><td class="devs_table_hash"><strong>'+ convertHashrate(items[index].hash) +'</strong></td><td class="devs_table_sh">'+ items[index].sh +'</td><td class="devs_table_ac">'+ items[index].ac +'</td><td><small class="text-muted">'+parseFloat(percentageAc).toFixed(2)+'%</small></td><td class="devs_table_re">'+ items[index].re +'</td><td><small class="text-muted">'+parseFloat(percentageRe).toFixed(2)+'%</small></td><td class="devs_table_hw">'+ items[index].hw +'</td><td><small class="text-muted">'+parseFloat(percentageHw).toFixed(2)+'%</small></td><td class="devs_table_ls">'+ parseInt(last_share_secs) +' secs ago</td><td><small class="text-muted">'+share_date.toUTCString()+'</small></td></tr>'
+						
+							if (index == "total")
+							{
+								// TODO add row total via datatable
+							    $('.devs_table_foot').html(devRow);		
+							}
+							else
+							{
+								// New add rows via datatable
+								$('#miner-table-details').dataTable().fnAddData( [
+									'<i class="glyphicon glyphicon-hdd"></i>&nbsp;&nbsp;'+index+dev_serial,
+									items[index].fr,
+									devData,
+									items[index].sh,
+									items[index].ac,
+									parseFloat(percentageAc).toFixed(2),
+									items[index].re,
+									parseFloat(percentageRe).toFixed(2),
+									items[index].hw,
+									parseFloat(percentageHw).toFixed(2),
+									parseInt(last_share_secs),
+									'<small class="text-muted">'+share_date.toUTCString()+'</small>'
+								] );
+							}
+							
+							// Crete Knob graph for devices and total
+							createMon(index, items[index].hash, totalhash, maxHashrate, items[index].ac, items[index].re, items[index].hw, items[index].sh, items[index].fr, devData.label);
+							
 						}
-						
-						// Crete Knob graph for devices and total
-						createMon(index, items[index].hash, totalhash, maxHashrate, items[index].ac, items[index].re, items[index].hw, items[index].sh, items[index].fr, devData.label);
-						
 					}
 					
 					// Add controller temperature
