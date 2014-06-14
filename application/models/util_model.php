@@ -139,6 +139,7 @@ class Util_model extends CI_Model {
 				
 				if ($pool->active == 1)
 				{
+					$poolHashrate = 0;
 					foreach($pool->stats as $session)
 					{
 						if ($session->stats_id == $pool->stats_id)

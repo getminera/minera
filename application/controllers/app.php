@@ -549,10 +549,10 @@ class App extends Main_Controller {
 		
 		// Store the live stats to be used on time graphs
 		$stats = $this->util_model->storeStats();
-		
+					
 		// Activate/Deactivate time donation pool if enable
 		if ($this->util_model->isOnline() && isset($stats->pool_donation_id))
-		{
+		{		
 			$donationTime = $this->redis->get("minera_donation_time");
 			if ($donationTime > 0)
 			{
@@ -570,10 +570,16 @@ class App extends Main_Controller {
 				$currentMinute = date("i", $now);
 				
 				// Delete the today flag if time is 00.10/15
-				if ($currentHour == 0 && ( $currentMinute >= 10 && $currentMinute <= 15) ) $this->redis->del("donation_time_done_today");
+				if ($currentHour == 0 && ( $currentMinute >= 10 && $currentMinute <= 15) )
+				{
+					$this->redis->del("donation_time_started");
+					$this->redis->del("donation_time_done_today");	
+					$donationTimeStarted = false;
+					$donationTimeDoneToday = false;
+				}
 				
 				// Stop time donation
-				if ($donationTimeStarted > 0 && $currentHour == $donationStopHour && $currentMinute >= $donationStopMinute)
+				if ($donationTimeStarted > 0 && (int)$currentHour == (int)$donationStopHour && (int)$currentMinute >= (int)$donationStopMinute)
 				{
 					$this->redis->del("donation_time_started");
 					$donationTimeStarted = false;
@@ -584,11 +590,13 @@ class App extends Main_Controller {
 				if ($donationTimeStarted > 0)
 				{
 					// Time donation in progress
-					log_message("error", "[Donation time] In progress..." . round(((($donationTime*60) - ($now - $donationTimeStarted))/60)) . " minutes remaing..." );
+					$remain = round(((($donationTime*60) - ($now - $donationTimeStarted))/60));
+					$this->redis->set("donation_time_remain", $remain);
+					log_message("error", "[Donation time] In progress..." . $remain . " minutes remaing..." );
 				}
 				
 				// Start time donation
-				if (!$donationTimeDoneToday && ($currentHour == $donationStartHour && $currentMinute >= $donationStartMinute))
+				if (!$donationTimeDoneToday && ((int)$currentHour == (int)$donationStartHour && (int)$currentMinute >= (int)$donationStartMinute))
 				{
 					// Starting time donation
 					$this->util_model->selectPool($poolDonationId);
