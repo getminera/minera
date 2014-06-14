@@ -920,28 +920,37 @@
 					{
 						var temp_bar = "bg-blue";
 						var temp_text = "It's cool here, wanna join me?"
-						var sys_temp = parseFloat(data['temp']);
+						var sys_temp = parseFloat(data['temp']['value']);
 						
-						if (sys_temp > 40 && sys_temp < 60)
+						if (data['temp']['scale'] === "c")
+						{
+							var tempthres1 = 40; var tempthres2 = 60; var tempthres3 = 75;
+						}
+						else
+						{
+							var tempthres1 = 104; var tempthres2 = 140; var tempthres3 = 167;
+						}
+						
+						if (sys_temp > tempthres1 && sys_temp < tempthres2)
 						{
 							temp_bar = "bg-green";
 							temp_text = "I'm warm and fine"
 						}
-						else if (sys_temp >= 60 && sys_temp < 75)
+						else if (sys_temp >= tempthres2 && sys_temp < tempthres3)
 						{
 							temp_bar = "bg-yellow";
 							temp_text = "Well, it's going to be hot here..."
 						}
-						else if (sys_temp > 75)
+						else if (sys_temp > tempthres3)
 						{
 							temp_bar = "bg-red";
 							temp_text = "HEY MAN! I'm burning! Blow blow!"
 						}
 						
-						var sys_temp_box = parseFloat(sys_temp).toFixed(2)+'&deg;c';
+						var sys_temp_box = parseFloat(sys_temp).toFixed(2)+'&deg;<?php echo ($this->redis->get("dashboard_temp")) ? $this->redis->get("dashboard_temp") : "c"; ?>';
 						//<div class="progress xs progress-striped active"><div class="progress-bar progress-bar-'+temp_bar+'" role="progressbar" aria-valuenow="'+parseInt(sys_temp)+'" aria-valuemin="0" aria-valuemax="100" style="width: '+parseInt(sys_temp)+'%"></div></div>';
 						$('.sys-temp-box').addClass(temp_bar);
-						$('.sys-temp-footer').html(temp_text+'<i class="fa fa-arrow-circle-right">');
+						$('.sys-temp-footer').html(temp_text+' <i class="fa fa-arrow-circle-right">');
 						$('.widget-sys-temp').html(sys_temp_box);
 					}
 					else

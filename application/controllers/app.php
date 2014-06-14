@@ -75,6 +75,7 @@ class App extends Main_Controller {
 			$mineraDonationTime = substr(trim($this->input->post('minera_donation_time')), strpos(trim($this->input->post('minera_donation_time')), ";") + 1);
 			$coinRates = $this->input->post('dashboard_coin_rates');
 			$this->redis->set("altcoins_update", (time()-3600));
+			$dashboardTemp = $this->input->post('dashboard_temp');
 
 			$poolUrls = $this->input->post('pool_url');
 			$poolUsernames = $this->input->post('pool_username');
@@ -191,6 +192,7 @@ class App extends Main_Controller {
 			$this->redis->set("minera_donation_time", $mineraDonationTime);
 			$this->redis->set("dashboard_refresh_time", $dashSettings);
 			$this->redis->set("dashboard_coin_rates", json_encode($coinRates));
+			$this->redis->set("dashboard_temp", $dashboardTemp);
 			
 			// System settings
 			
@@ -311,6 +313,7 @@ class App extends Main_Controller {
 		$dashboard_coin_rates = $this->redis->get("dashboard_coin_rates");
 		$data['dashboard_coin_rates'] = (is_array(json_decode($dashboard_coin_rates))) ? json_decode($dashboard_coin_rates) : array();
 		$data['cryptsy_data'] = $this->redis->get("cryptsy_data");
+		$data['dashboardTemp'] = ($this->redis->get("dashboard_temp")) ? $this->redis->get("dashboard_temp") : "c";
 
 		// Load System settings
 		$data['systemExtracommands'] = $this->redis->get("system_extracommands");

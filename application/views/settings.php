@@ -396,6 +396,24 @@
 									
 	                                <div class="box-body">
 										<p>Setup the dashboard options</p>
+										
+											<!-- Temperatures scale F°/C°-->
+											<div class="form-group">
+												<label>Temperatures scale</label>
+												<p>Select your preferred scale to display temperatures.</p>
+												<div class="radio">
+													<label>
+														<input type="radio" name="dashboard_temp" value="c" <?php if ($dashboardTemp == "c") : ?>checked=""<?php endif; ?> />
+														Celsius (C°)
+													</label>                                                
+												</div>
+												<div class="radio">
+													<label>
+														<input type="radio" name="dashboard_temp" value="f" <?php if ($dashboardTemp == "f") : ?>checked=""<?php endif; ?> />
+														Fahrenheit (F°)
+													</label>                                                
+												</div>
+											</div>
 	
 											<!-- Refresh time -->
 											<div class="form-group">

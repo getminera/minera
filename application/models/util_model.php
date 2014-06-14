@@ -599,8 +599,13 @@ class Util_model extends CI_Model {
 	{
 		if (file_exists($this->config->item("rpi_temp_file")))
 		{
-			$temp = exec("cat ".$this->config->item("rpi_temp_file"));
-			return number_format($temp/1000, 2);
+			$scale = ($this->redis->get("dashboard_temp")) ? $this->redis->get("dashboard_temp") : "c";
+			$temp = number_format( ( (int)exec("cat ".$this->config->item("rpi_temp_file"))/1000), 2 );
+
+			if ($scale == "f")
+				$temp = intval((9/5)* $temp + 32);
+
+			return array("value" => $temp, "scale" => $scale);
 		}
 		else
 		{
