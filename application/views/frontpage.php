@@ -359,7 +359,7 @@
                                 <div class="box-header" style="cursor: move;">
                                     <!-- tools box -->
                                     <div class="pull-right box-tools">
-										<small class="log-file"><a href="<?php echo base_url($this->config->item("minerd_log_url")); ?>" target="_blank">view raw log</a></small>&nbsp;
+                                    	<a href="<?php echo base_url($this->config->item("minerd_log_url")); ?>" target="_blank" style="padding-right: 20px;"><button class="btn btn-default btn-xs"><i class="fa fa-briefcase"></i> view raw log</button></a>
                                         <button class="btn btn-default btn-xs pause-log" data-widget="pause" data-toggle="tooltip" title="" data-original-title="Pause Log"><i class="fa fa-pause"></i></button>
                                         <button class="btn btn-default btn-xs" data-widget="collapse" data-toggle="tooltip" title="" data-original-title="Collapse"><i class="fa fa-minus"></i></button>
                                     </div><!-- /. tools -->

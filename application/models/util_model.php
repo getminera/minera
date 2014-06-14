@@ -320,8 +320,7 @@ class Util_model extends CI_Model {
 		// Add pool donation ID to the stats
 		foreach ($stats->pools as $pool)
 		{
-			if ($pool->url == $this->config->item('minera_pool_url') && $pool->user == $this->config->item('minera_pool_username') && $pool->pass == $this->config->item('minera_pool_password'))
-				$poolDonationId = $pool->priority;
+			$poolDonationId = ($pool->url == $this->config->item('minera_pool_url') && $pool->user == $this->config->item('minera_pool_username') && $pool->pass == $this->config->item('minera_pool_password')) ? $pool->priority : false;
 		}
 		
 		$data = json_decode($this->getParsedStats($stats));
@@ -386,7 +385,7 @@ class Util_model extends CI_Model {
 		$this->redis->command("ZADD minerd_totals_stats ".time()." ".json_encode($o));
 		
 		log_message('error', "Total Stats stored as: ".json_encode($o));
-		
+
 		return $data;
 	}
 	

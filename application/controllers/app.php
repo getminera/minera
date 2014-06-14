@@ -553,9 +553,44 @@ class App extends Main_Controller {
 		// Activate/Deactivate time donation pool if enable
 		if ($this->util_model->isOnline() && isset($stats->pool_donation_id))
 		{
-			if ($this->redis->get("minera_donation_time") > 0)
+			$donationTime = $this->redis->get("minera_donation_time");
+			if ($donationTime > 0)
 			{
+				$now = time();
 				$poolDonationId = $stats->pool_donation_id;
+				$donationTimeStarted = ($this->redis->get("donation_time_started")) ? $this->redis->get("donation_time_started") : false;
+				echo $donationTimeStarted;
+				$donationTimeDoneToday = $this->redis->get("donation_time_done_today");
+				
+				$donationStartHour = 9;
+				$donationStartMinute = 10;
+				$donationStopHour = date("G", ($donationTimeStarted + $donationTime*60));
+				$donationStopMinute = date("i", ($donationTimeStarted + $donationTime*60));
+				$currentHour = date("G", $now);
+				$currentMinute = date("i", $now);
+				
+				// Stop time donation
+				if ($donationTimeStarted > 0 && $currentHour == $donationStopHour && $currentMinute >= $donationStopMinute)
+				{
+					$this->redis->del("donation_time_started");
+					$donationTimeStarted = false;
+					log_message("error", "[Donation-time] Terminated... Switching back to main ID [0]");
+				}
+
+				if ($donationTimeStarted > 0)
+				{
+					// Time donation in progress
+					log_message("error", "[Donation time] In progress..." . round(((($donationTime*60) - ($now - $donationTimeStarted))/60)) . " minutes remaing..." );
+				}
+				
+				// Start time donation
+				if (!$donationTimeDoneToday && ($currentHour == $donationStartHour && $currentMinute >= $donationStartMinute))
+				{
+					// Starting time donation
+					$this->redis->set("donation_time_started", $now);
+					$this->redis->set("donation_time_done_today", 1);
+					log_message("error", "[Donation time] Started... Switching to donation pool ID [".$poolDonationId."]");
+				}
 			}
 		}
 
