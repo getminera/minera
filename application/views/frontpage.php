@@ -62,7 +62,7 @@
 	                        <div class="row">
 	                        
 	                        	<!-- total hashrate widget -->
-								<div class="col-lg-4 col-xs-4">
+								<div class="col-lg-4 col-sm-4 col-xs-12">
 									<!-- small box -->
 									<div class="small-box bg-red">
 										<div class="inner">
@@ -75,7 +75,7 @@
 								</div>
 								
 								<!-- hw/re widget -->
-								<div class="col-lg-4 col-xs-4">
+								<div class="col-lg-4 col-sm-4 col-xs-12">
 									<!-- small box -->
 									<div class="small-box bg-light">
 										<div class="inner">
@@ -88,7 +88,7 @@
 								</div>
 								
 								<!-- last share widget -->
-								<div class="col-lg-4 col-xs-4">
+								<div class="col-lg-4 col-sm-4 col-xs-12">
 									<!-- small box -->
 									<div class="small-box bg-light-blue">
 										<div class="inner">
@@ -104,7 +104,7 @@
 							<div class="row">
 							
 								<!-- sys temp widget -->
-								<div class="col-lg-4 col-xs-4">
+								<div class="col-lg-4 col-sm-4 col-xs-12">
 									<!-- small box -->
 									<div class="small-box sys-temp-box bg-blue">
 										<div class="inner">
@@ -117,7 +117,7 @@
 								</div>
 								
 								<!-- main pool -->
-								<div class="col-lg-4 col-xs-4">
+								<div class="col-lg-4 col-sm-4 col-xs-12">
 									<!-- small box -->
 									<div class="small-box bg-dark">
 										<div class="inner">
@@ -130,7 +130,7 @@
 								</div>
 								
 								<!-- uptime widget -->
-								<div class="col-lg-4 col-xs-4">
+								<div class="col-lg-4 col-sm-4 col-xs-12">
 									<!-- small box -->
 									<div class="small-box bg-aqua">
 										<div class="inner">
@@ -147,7 +147,7 @@
                         </section>
                         
                         <!-- Top section -->
-                        <section class="col-md-12 connectedSortable ui-sortable top-section">
+                        <section class="hidden-xs col-md-12 connectedSortable ui-sortable top-section">
                         
                         	<!-- Miner box -->
                             <div class="box box-light">
@@ -263,7 +263,7 @@
                         </section>
                         
                         <!-- Right col -->
-                        <section class="col-md-6 connectedSortable ui-sortable right-section">
+                        <section class="col-md-6 col-xs-12 connectedSortable ui-sortable right-section">
                         
                         	<!-- Tree box -->
                             <div class="box box-dark">
@@ -287,7 +287,7 @@
                         </section><!-- Right col -->
                         
 						<!-- Left col -->
-                        <section class="col-md-6 connectedSortable ui-sortable left-section">
+                        <section class="col-md-6 col-xs-12 connectedSortable ui-sortable left-section">
                             
                         	<!-- Hashrate box chart -->
 							<div class="box box-primary">

@@ -175,14 +175,14 @@ class Util_model extends CI_Model {
 					}
 				}
 					
-				$return['devices'][$name]['frequency'] = round(($tcfrequency/$c), 0);
+				$return['devices'][$name]['frequency'] = ($c > 0) ? round(($tcfrequency/$c), 0) : 0;
 				$return['devices'][$name]['accepted'] = $tcaccepted;
 				$return['devices'][$name]['rejected'] = $tcrejected;
 				$return['devices'][$name]['hw_errors'] = $tchwerrors;
 				$return['devices'][$name]['shares'] = $tcshares;
 				$return['devices'][$name]['hashrate'] = $tchashrate;
-				$return['devices'][$name]['last_share'] = max($tclastshares);
-				$return['devices'][$name]['serial'] = $device->serial;
+				$return['devices'][$name]['last_share'] = (count($tclastshares) > 0) ? max($tclastshares) : 0;
+				$return['devices'][$name]['serial'] = (isset($device->serial)) ? $device->serial : false;
 								
 				$tdfrequency += $return['devices'][$name]['frequency'];
 				$tdaccepted += $return['devices'][$name]['accepted'];

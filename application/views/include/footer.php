@@ -1,5 +1,6 @@
 	<script src="<?php echo base_url('assets/js/jquery-2.1.1.min.js') ?>"></script>
 	<script src="<?php echo base_url('assets/js/jquery-ui-1.10.4.min.js') ?>"></script>
+	<script src="<?php echo base_url('assets/js/jquery.ui.touch-punch.min.js') ?>"></script>
 	<script src="<?php echo base_url('assets/js/lodash.min.js') ?>"></script>
 	<script src="<?php echo base_url('assets/js/bootstrap.min.js') ?>"></script>
 	<script src="<?php echo base_url('assets/js/custom.js') ?>"></script>
@@ -852,8 +853,10 @@
 						var devData = {}; devData.hash = items[index].hash;
 						var share_date = new Date(items[index].ls*1000);
 						var rightnow = new Date().getTime();
-						var last_share_secs = (rightnow - share_date)/1000;
+
+						var last_share_secs = (items[index].ls > 0) ? (rightnow - share_date.getTime())/1000 : 0;
 						if (last_share_secs < 0) last_share_secs = 0;
+
 						var totalWorkedShares = (items[index].ac+items[index].re+items[index].hw);
 						var percentageAc = (100*items[index].ac/totalWorkedShares);
 						var percentageRe = (100*items[index].re/totalWorkedShares);
@@ -1028,98 +1031,101 @@
 						    
 						$('.loadstep-'+lkey).css('font-size','10px');
 					});
-			
-					$('.overlay').hide();
-					$('.loading-img').hide();
 					
-					/* Morris.js Charts */
-					// get Json data from stored_stats url (redis) and create the graphs
-					$.getJSON( "<?php echo site_url($this->config->item('stored_stats_url')); ?>", function( data ) 
-	        		{
-	        			var data = Object.keys(data).map(function(key) { 
-									data[key]['timestamp'] = data[key]['timestamp']*1000; 
-									data[key]['hashrate'] = (data[key]['hashrate']/1000/1000).toFixed(2);
-									data[key]['pool_hashrate'] = (data[key]['pool_hashrate']/1000/1000).toFixed(2);									
-									return data[key];
-							});
-					
-						
-						if (data.length && errorTriggered === false)
-						{
-							
-							if (refresh === false)
-							{
-								// Hashrate history graph
-								areaHash = new Morris.Area({
-									element: 'hashrate-chart',
-									resize: true,
-									data: data,
-									xkey: 'timestamp',
-									ykeys: ['hashrate', 'pool_hashrate'],
-									ymax: 'auto',
-									postUnits: "Mh/s",
-									labels: ['Devices', 'Pool'],
-									lineColors: ['#3c8dbc', '#00c0ef'],
-									lineWidth: 2,
-									pointSize: 3,
-									hideHover: 'auto',
-									behaveLikeLine: true
-
-								});	
-								
-								// Rejected/Errors graph
-								areaRej = new Morris.Area({
-									element: 'rehw-chart',
-									resize: true,
-									data: data,
-									xkey: 'timestamp',
-									ykeys: ['accepted', 'rejected', 'errors'],
-									ymax: 'auto',
-									labels: ['Accepted', 'Rejected', 'Errors'],
-									lineColors: ['#00a65a', '#f39c12', '#f56954'],
-									lineWidth: 2,
-									pointSize: 3,
-									hideHover: 'auto',
-									behaveLikeLine: true
-								});
-							}
-							else
-							{
-								updateGraphs(data);
-							}
-							
-							$(window).resize(function() {
-								redrawGraphs()
-							});
-							
-							$('.sidebar-toggle').click(function() { redrawGraphs(); })
-						}
-						else
-						{
-							$('.chart').css({'height': '100%', 'overflow': 'visible', 'margin-top': '10px'}).html('<div class="alert alert-warning"><i class="fa fa-warning"></i><b>Alert!</b> <small>No data collected, wait at least 5 minutes to see the chart.</small></div>');	
-						}
-					
-						function redrawGraphs()
-						{
-						    areaHash.redraw();
-						    areaRej.redraw();
-							    
-						    return false;
-						}
-						
-						function updateGraphs(data)
-						{
-						    areaHash.setData(data);
-						    areaRej.setData(data);
-							    
-						    return false;
-						}
-	        			
-					}); //End get stored stats
-					
-				}
+				} // End if error/notrunning
+				
+				$('.overlay').hide();
+				$('.loading-img').hide();
 			    
 			}); // End get live stats
+			
+			/* Morris.js Charts */
+			// get Json data from stored_stats url (redis) and create the graphs
+			$.getJSON( "<?php echo site_url($this->config->item('stored_stats_url')); ?>", function( data ) 
+    		{
+    			var data = Object.keys(data).map(function(key) { 
+							data[key]['timestamp'] = data[key]['timestamp']*1000; 
+							data[key]['hashrate'] = (data[key]['hashrate']/1000/1000).toFixed(2);
+							data[key]['pool_hashrate'] = (data[key]['pool_hashrate']/1000/1000).toFixed(2);									
+							return data[key];
+					});
+			
+				
+				if (data.length && errorTriggered === false)
+				{
+					
+					if (refresh === false)
+					{
+						// Hashrate history graph
+						areaHash = new Morris.Area({
+							element: 'hashrate-chart',
+							resize: true,
+							data: data,
+							xkey: 'timestamp',
+							ykeys: ['hashrate', 'pool_hashrate'],
+							ymax: 'auto',
+							postUnits: "Mh/s",
+							labels: ['Devices', 'Pool'],
+							lineColors: ['#3c8dbc', '#00c0ef'],
+							lineWidth: 2,
+							pointSize: 3,
+							hideHover: 'auto',
+							behaveLikeLine: true
+
+						});	
+						
+						// Rejected/Errors graph
+						areaRej = new Morris.Area({
+							element: 'rehw-chart',
+							resize: true,
+							data: data,
+							xkey: 'timestamp',
+							ykeys: ['accepted', 'rejected', 'errors'],
+							ymax: 'auto',
+							labels: ['Accepted', 'Rejected', 'Errors'],
+							lineColors: ['#00a65a', '#f39c12', '#f56954'],
+							lineWidth: 2,
+							pointSize: 3,
+							hideHover: 'auto',
+							behaveLikeLine: true
+						});
+					}
+					else
+					{
+						updateGraphs(data);
+					}
+					
+					$(window).resize(function() {
+						redrawGraphs()
+					});
+					
+					$('.sidebar-toggle').click(function() { redrawGraphs(); })
+				}
+				else
+				{
+					$('.chart').css({'height': '100%', 'overflow': 'visible', 'margin-top': '10px'}).html('<div class="alert alert-warning"><i class="fa fa-warning"></i><b>Alert!</b> <small>No data collected, wait at least 5 minutes to see the chart.</small></div>');	
+				}
+			
+				function redrawGraphs()
+				{
+				    areaHash.redraw();
+				    areaRej.redraw();
+					    
+				    return false;
+				}
+				
+				function updateGraphs(data)
+				{
+				    areaHash.setData(data);
+				    areaRej.setData(data);
+					    
+				    return false;
+				}
+				
+				//$('.overlay').hide();
+				//$('.loading-img').hide();
+    			
+			}); //End get stored stats
 			
     	} // End function getStats()
 		
