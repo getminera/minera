@@ -559,21 +559,25 @@ class App extends Main_Controller {
 				$now = time();
 				$poolDonationId = $stats->pool_donation_id;
 				$donationTimeStarted = ($this->redis->get("donation_time_started")) ? $this->redis->get("donation_time_started") : false;
-				echo $donationTimeStarted;
+
 				$donationTimeDoneToday = $this->redis->get("donation_time_done_today");
 				
-				$donationStartHour = 9;
-				$donationStartMinute = 10;
-				$donationStopHour = date("G", ($donationTimeStarted + $donationTime*60));
+				$donationStartHour = "04";
+				$donationStartMinute = "10";
+				$donationStopHour = date("H", ($donationTimeStarted + $donationTime*60));
 				$donationStopMinute = date("i", ($donationTimeStarted + $donationTime*60));
-				$currentHour = date("G", $now);
+				$currentHour = date("H", $now);
 				$currentMinute = date("i", $now);
+				
+				// Delete the today flag if time is 00.10/15
+				if ($currentHour == 0 && ( $currentMinute >= 10 && $currentMinute <= 15) ) $this->redis->del("donation_time_done_today");
 				
 				// Stop time donation
 				if ($donationTimeStarted > 0 && $currentHour == $donationStopHour && $currentMinute >= $donationStopMinute)
 				{
 					$this->redis->del("donation_time_started");
 					$donationTimeStarted = false;
+					$this->util_model->selectPool(0);
 					log_message("error", "[Donation-time] Terminated... Switching back to main ID [0]");
 				}
 
@@ -587,9 +591,10 @@ class App extends Main_Controller {
 				if (!$donationTimeDoneToday && ($currentHour == $donationStartHour && $currentMinute >= $donationStartMinute))
 				{
 					// Starting time donation
+					$this->util_model->selectPool($poolDonationId);
 					$this->redis->set("donation_time_started", $now);
 					$this->redis->set("donation_time_done_today", 1);
-					log_message("error", "[Donation time] Started... Switching to donation pool ID [".$poolDonationId."]");
+					log_message("error", "[Donation time] Started... (for ".$donationTime." minutes) - Switching to donation pool ID [".$poolDonationId."]");
 				}
 			}
 		}
