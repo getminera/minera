@@ -76,7 +76,7 @@
 												<p><small>Absolutely nothing. I mean, if your Minera system got problems while is running on the donation pool (for example it reboots for power outage), it just restart hashing on the main pool set. It won't retry to switch the donation pool until the day after.</small></p>
 												<h6><strong>What do you do with the money received?</strong></h6>
 												<p><small>Thanks to your kindly donations I can, for example, buy some of the new hardware coming out to add its support in Minera. So next time there will be a new cool hardware, Minera will be ready to accept it. And of course, I need beer to do all this cool stuff :)</small></p>
-												<h6><strong>Anyway, I wanna really thank you for all you support and appreciation. Thank you guys, you all rock!</strong></h6>
+												<h6><strong>Anyway, I wanna really thank you for all you support and appreciation!</strong></h6>
 											</div>
 										</div>										
 	                                </div>

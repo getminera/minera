@@ -10,13 +10,13 @@
 
     <!-- ScrollTo -->
     <script src="<?php echo base_url('assets/js/jquery.scrollTo.min.js') ?>" type="text/javascript"></script>
+    
+    <!-- Ion rangeSlider -->
+    <script src="<?php echo base_url('assets/js/ion.rangeSlider.min.js') ?>" type="text/javascript"></script>
 
 	<?php if ($settingsScript) : ?>
 	<!-- jQuery Validation -->
     <script src="<?php echo base_url('assets/js/jquery.validate.min.js') ?>" type="text/javascript"></script>
-    
-    <!-- Ion rangeSlider -->
-    <script src="<?php echo base_url('assets/js/ion.rangeSlider.min.js') ?>" type="text/javascript"></script>
     
     <!-- Settings script -->
     <script type="text/javascript">
@@ -547,6 +547,34 @@
 			/*
 			// End logviewer
 			*/
+			
+			function changeEarnings(value) 
+		    {
+		    	var hashrate = $(".widget-total-hashrate").data('pool-hashrate');
+
+		    	var amount = (value * hashrate / 1000);
+
+				$(".profitability-results").html('<span class="label bg-blue">' + convertHashrate(hashrate) + '</span>&nbsp;x&nbsp;<span class="label bg-green">' + value.toFixed(5) + '</span> = <small>Day: </small><span class="badge bg-red">' + amount.toFixed(8) + '</span> <small>Week: </small><span class="badge bg-light">' + (amount * 7).toFixed(8) + '</span> <small>Month: </small><span class="badge bg-light">' + (amount * 30).toFixed(8) + '</span>');
+				
+			}
+			
+			$(".profitability-question").click(function(e) {
+				e.preventDefault();
+				$(".profitability-help").fadeToggle();
+			});
+		    
+		    $("#profitability-slider").ionRangeSlider({
+				min: 0,
+				max: 0.01,
+				to: 0,
+				type: 'single',
+				step: 0.0001,
+				postfix: ' <i class="fa fa-btc"></i>',
+				hasGrid: true,
+				onChange: function (obj) {
+					changeEarnings(obj.fromNumber);
+				}
+			});
 		    
 		});
 		
@@ -722,6 +750,8 @@
 										phashData.label = 'red';
 										//Add Main pool widget
 										$(".widget-total-hashrate").html(convertHashrate(phashData.hash));
+										$(".widget-total-hashrate").data('pool-hashrate', phashData.hash);
+
 										$('.widget-main-pool').html(palivelabel);
 										$('.widget-main-pool').next('p').html(pval.url);
 										// Changing title page according to hashrate
