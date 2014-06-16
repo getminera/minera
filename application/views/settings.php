@@ -95,6 +95,7 @@
 										    		    					<th>Date</th>
 										    		    					<th>Period</th>
 										    		    					<th>Hashrate</th>
+										    		    					<th>Share</th>
 										    		    				</tr>
 										    		    			</thead>
 										    		    			<tbody>
@@ -110,6 +111,7 @@
 										    		    				<td>
 										    		    					<span class="label bg-green"><?php echo $this->util_model->convertHashrate($donationHr) ?></span>
 										    		    				</td>
+										    		    				<td><a href="https://twitter.com/home?status=<?php echo urlencode("@michelem I just donated ".$donationPeriod." minutes of my hash power to the #Minera project, your next #mining dashboard http://j.mp/mineraweb #bitcoin") ?>" target="_blank" title="Tweet it!"><small class="badge bg-light-blue"><i class="fa fa-twitter"></i> Tweet It!</small></a></td>
 										    		    				</tr>
 										    		    			<?php endforeach; ?>
 										    		    			</tbody>
@@ -494,7 +496,7 @@
 								    		
 							    		<!-- Altcoins rates -->
 							    		<div class="form-group">
-							    			<label>Top bar Altcoins</label>
+							    			<label>Altcoins rates</label>
 							    			<?php $altdata = json_decode($cryptsy_data); ?>
 							    			<?php if (is_object($altdata) && is_array($dashboard_coin_rates)) : ?>
 							    				<p><small>Currently selected: </small><?php foreach ($dashboard_coin_rates as $altcoin) : ?><small class="badge bg-blue"><?php echo $altdata->$altcoin->codes ?></small>&nbsp;<?php endforeach; ?></p>
@@ -509,7 +511,7 @@
 							    					<?php endforeach; ?>
 							    					</select>
 							    				</div><!-- /.input group -->
-							    				<small>Select max 3 rates to be displayed on the top bar</small>
+							    				<small>Select max 5 rates to be displayed on the top bar</small>
 											<?php else: ?>
 							    				<p><small class="badge bg-red">There was a problem with the altcoins. Try refreshing the page.</small></p>
 											<?php endif; ?>

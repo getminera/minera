@@ -27,7 +27,7 @@
                                 <li class="header">Data from Bitstamp</li>
                                 <li>
                                     <!-- inner menu: contains the actual data -->
-                                    <div class="slimScrollDiv" style="position: relative; overflow: hidden; width: auto; height: 200px;"><ul class="menu" style="overflow: hidden; width: 100%; height: 200px;">
+                                    <ul class="menu" style="overflow: hidden; width: 100%; height: 200px;">
                                         <li>
                                             <a href="#">
                                             	<div class="pull-left" style="padding-left:15px;">
@@ -80,12 +80,10 @@
                                 <li class="header">Data from Cryptsy</li>
                                 <li>
                                     <!-- inner menu: contains the actual data -->
-                                    <div class="slimScrollDiv" style="position: relative; overflow: hidden; width: auto; height: 200px;">
                                     <ul class="menu altcoin-container" style="overflow: hidden; width: 100%; height: 200px;">
                                         <li>&nbsp;</li>
                                         
                                     </ul>
-                                    </div>
                                 </li>
                                 <li class="footer"><a href="https://www.cryptsy.com/users/register?refid=243592">Register at Cryptsy</a></li>
                             </ul>

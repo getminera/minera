@@ -189,12 +189,12 @@
 		    
 		    // validate signup form on keyup and submit
 		    $.validator.addMethod("check_multiple_select", function(value, element) {
-				if (value && value.length > 0 && value.length <= 3 )
+				if (value && value.length > 0 && value.length <= 5 )
 					return true;
 					
 				return false;
 				
-			}, "Select at least 1 rate (max 3)");
+			}, "Select at least 1 rate (max 5)");
 
 			var validator = $("#minersettings").validate({
 				rules: {
