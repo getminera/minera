@@ -30,29 +30,31 @@ class Util_model extends CI_Model {
 		
 		if ($this->isOnline())
 		{
-			$a = $this->miner->callMinerd();
+			$miner = $this->getMinerStats();
 
-			if (is_object($a))
-			{
-				$a = (array)$a;
-				
+			$a = json_decode($this->getParsedStats($miner));
+
+			if (is_object($a) && is_object($miner))
+			{				
 				// Add sysload stats
-				$a["sysload"] = sys_getloadavg();
+				$a->sysload = sys_getloadavg();
 				
 				// Add sysuptime
-				$a["sysuptime"] = $this->getSysUptime();
+				$a->sysuptime = $this->getSysUptime();
+				
+				// Add controller temp
+				$a->temp = $this->checkTemp();				
 				
 				// Add AltCoin rates
-				$a["altcoins_rates"] = $altcoinData;
+				$a->altcoins_rates = $altcoinData;
+				
+				$a->pools = $miner->pools;
 				
 				// Add pools
-				foreach ($a['pools'] as $pool)
+				foreach ($a->pools as $pool)
 				{
 					$pool->alive = $this->checkPool($pool->url);
 				}
-				
-				// Add controller temp
-				$a["temp"] = $this->checkTemp();
 				
 				// Encode and save the latest
 				$o = json_encode($a);
@@ -80,22 +82,64 @@ class Util_model extends CI_Model {
 		return false;
 	}
 	
+	// Get the specific miner stats
+	public function getMinerStats()
+	{
+		if ($this->isOnline())
+		{
+			$a = $this->miner->callMinerd();
+
+			if (is_object($a))
+			{
+				// Add Miner pools
+				foreach ($a->pools as $pool)
+				{
+					$pool->alive = $this->checkPool($pool->url);
+				}
+				
+				return $a;
+			}
+			else
+			{
+				return false;
+			}
+		}
+		else
+		{
+			return false;
+		}
+		
+		return false;
+	}
+	
 	/*
 	// Parse the CPUMiner stats to get them per device instead per chip
 	// with a summary total and active pool
 	*/
 	public function getParsedStats($stats)
-	{
-		$stats = json_decode($stats);
-
+	{		
 		$d = 0; $tdevice = array(); $tdfrequency = 0; $tdaccepted = 0; $tdrejected = 0; $tdhwerrors = 0; $tdshares = 0; $tdhashrate = 0;
+		
+		$return = false;
+		
+		if (isset($stats->start_time))
+		{
+			$return['start_time'] = $stats->start_time;
+		}
+
+		if (isset($stats->err))
+		{
+			$return['err'] = $stats->err;
+		}
 		
 		if (isset($stats->pools))
 		{
 			foreach ($stats->pools as $pool)
 			{
+				
 				if ($pool->active == 1)
 				{
+					$poolHashrate = 0;
 					foreach($pool->stats as $session)
 					{
 						if ($session->stats_id == $pool->stats_id)
@@ -104,54 +148,63 @@ class Util_model extends CI_Model {
 							$poolHashrate = round(65536.0 * ($session->shares / (time() - $session->start_time)), 0);
 						}
 					}
-					$tdevice['pool']['hashrate'] = $poolHashrate;
-					$tdevice['pool']['url'] = $pool->url;
-					$tdevice['pool']['alive'] = $pool->alive;
+					$return['pool']['hashrate'] = $poolHashrate;
+					$return['pool']['url'] = $pool->url;
+					$return['pool']['alive'] = $pool->alive;
 				}
 			}
 		}
-		
+				
 		if (isset($stats->devices))
 		{
 			foreach ($stats->devices as $name => $device)
 			{
-				$d++; $c = 0; $tcfrequency = 0; $tcaccepted = 0; $tcrejected = 0; $tchwerrors = 0; $tcshares = 0; $tchashrate = 0;
-				foreach ($device->chips as $chip)
-				{
-					$c++;
-					$tcfrequency += $chip->frequency;
-					$tcaccepted += $chip->accepted;
-					$tcrejected += $chip->rejected;
-					$tchwerrors += $chip->hw_errors;
-					$tcshares += $chip->shares;
-					$tchashrate += $chip->hashrate;
-				}
-				$tdevice['devices'][$name]['frequency'] = round(($tcfrequency/$c), 0);
-				$tdevice['devices'][$name]['accepted'] = $tcaccepted;
-				$tdevice['devices'][$name]['rejected'] = $tcrejected;
-				$tdevice['devices'][$name]['hw_errors'] = $tchwerrors;
-				$tdevice['devices'][$name]['shares'] = $tcshares;
-				$tdevice['devices'][$name]['hashrate'] = $tchashrate;
+				$d++; $c = 0; $tcfrequency = 0; $tcaccepted = 0; $tcrejected = 0; $tchwerrors = 0; $tcshares = 0; $tchashrate = 0; $tclastshares = array();
 				
-				$tdfrequency += $tdevice['devices'][$name]['frequency'];
-				$tdaccepted += $tdevice['devices'][$name]['accepted'];
-				$tdrejected += $tdevice['devices'][$name]['rejected'];
-				$tdhwerrors += $tdevice['devices'][$name]['hw_errors'];
-				$tdshares += $tdevice['devices'][$name]['shares'];
-				$tdhashrate += $tdevice['devices'][$name]['hashrate'];
+				if ($device->chips)
+				{
+					foreach ($device->chips as $chip)
+					{
+						$c++;
+						$tcfrequency += $chip->frequency;
+						$tcaccepted += $chip->accepted;
+						$tcrejected += $chip->rejected;
+						$tchwerrors += $chip->hw_errors;
+						$tcshares += $chip->shares;
+						$tchashrate += $chip->hashrate;
+						$tclastshares[] = $chip->last_share;
+					}
+				}
+					
+				$return['devices'][$name]['frequency'] = ($c > 0) ? round(($tcfrequency/$c), 0) : 0;
+				$return['devices'][$name]['accepted'] = $tcaccepted;
+				$return['devices'][$name]['rejected'] = $tcrejected;
+				$return['devices'][$name]['hw_errors'] = $tchwerrors;
+				$return['devices'][$name]['shares'] = $tcshares;
+				$return['devices'][$name]['hashrate'] = $tchashrate;
+				$return['devices'][$name]['last_share'] = (count($tclastshares) > 0) ? max($tclastshares) : 0;
+				$return['devices'][$name]['serial'] = (isset($device->serial)) ? $device->serial : false;
+								
+				$tdfrequency += $return['devices'][$name]['frequency'];
+				$tdaccepted += $return['devices'][$name]['accepted'];
+				$tdrejected += $return['devices'][$name]['rejected'];
+				$tdhwerrors += $return['devices'][$name]['hw_errors'];
+				$tdshares += $return['devices'][$name]['shares'];
+				$tdhashrate += $return['devices'][$name]['hashrate'];
+				$tdlastshares[] = $return['devices'][$name]['last_share'];
 			}
 			
-			$tdevice['totals']['frequency'] = round(($tdfrequency/$d), 0);
-			$tdevice['totals']['accepted'] = $tdaccepted;
-			$tdevice['totals']['rejected'] = $tdrejected;
-			$tdevice['totals']['hw_errors'] = $tdhwerrors;
-			$tdevice['totals']['shares'] = $tdshares;
-			$tdevice['totals']['hashrate'] = $tdhashrate;
+			$return['totals']['frequency'] = round(($tdfrequency/$d), 0);
+			$return['totals']['accepted'] = $tdaccepted;
+			$return['totals']['rejected'] = $tdrejected;
+			$return['totals']['hw_errors'] = $tdhwerrors;
+			$return['totals']['shares'] = $tdshares;
+			$return['totals']['hashrate'] = $tdhashrate;
+			$return['totals']['last_share'] = max($tdlastshares);
 			
-			return json_encode($tdevice);
 		}
-		
-		return false;
+	
+		return json_encode($return);
 	}
 
 	// Get the stored stats from Redis
@@ -263,9 +316,17 @@ class Util_model extends CI_Model {
 	{
 		log_message('error', "Storing stats...");
 		
-		$stats = $this->getStats();
+		$stats = $this->getMinerStats();
+		
+		// Add pool donation ID to the stats
+		foreach ($stats->pools as $pool)
+		{
+			$poolDonationId = ($pool->url == $this->config->item('minera_pool_url') && $pool->user == $this->config->item('minera_pool_username') && $pool->pass == $this->config->item('minera_pool_password')) ? $pool->priority : false;
+		}
 		
 		$data = json_decode($this->getParsedStats($stats));
+		
+		$data->pool_donation_id = $poolDonationId;
 
 		$ph = (isset($data->pool->hashrate)) ? $data->pool->hashrate : 0;
 		$dh = (isset($data->totals->hashrate)) ? $data->totals->hashrate : 0;
@@ -274,6 +335,7 @@ class Util_model extends CI_Model {
 		$hw = (isset($data->totals->hw_errors)) ? $data->totals->hw_errors : 0;
 		$re = (isset($data->totals->rejected)) ? $data->totals->rejected : 0;
 		$sh = (isset($data->totals->shares)) ? $data->totals->shares : 0;
+		$ls = (isset($data->totals->last_share)) ? $data->totals->last_share : 0;
 								
 		// Get totals
 		$o = array(
@@ -284,7 +346,8 @@ class Util_model extends CI_Model {
 			"accepted" => $ac,
 			"errors" => $hw,
 			"rejected" => $re,
-			"shares" => $sh
+			"shares" => $sh,
+			"last_share" => $ls,
 		);
 
 		// Get latest
@@ -293,11 +356,12 @@ class Util_model extends CI_Model {
 		if ($latest)
 		{
 			$latest = json_decode($latest[0]);
-			$lf = $latest->avg_freq;
-			$la = $latest->accepted;
-			$le = $latest->errors;
-			$lr = $latest->rejected;
-			$ls = $latest->shares;
+			$lfr = $latest->avg_freq;
+			$lac = $latest->accepted;
+			$lhw = $latest->errors;
+			$lre = $latest->rejected;
+			$lsh = $latest->shares;
+			$lls = $latest->last_share;
 		}
 
 		// Get delta current-latest
@@ -305,11 +369,12 @@ class Util_model extends CI_Model {
 			"timestamp" => time(),
 			"pool_hashrate" => $ph,
 			"hashrate" => $dh,
-			"avg_freq" => max((int)($fr - $lf), 0),
-			"accepted" => max((int)($ac - $la), 0),
-			"errors" => max((int)($hw - $le), 0),
-			"rejected" => max((int)($re - $lr), 0),
-			"shares" => max((int)($sh - $ls), 0)
+			"avg_freq" => max((int)($fr - $lfr), 0),
+			"accepted" => max((int)($ac - $lac), 0),
+			"errors" => max((int)($hw - $lhw), 0),
+			"rejected" => max((int)($re - $lre), 0),
+			"shares" => max((int)($sh - $lsh), 0),
+			"last_share" => $lls,
 		);
 		
 		// Store delta
@@ -321,8 +386,13 @@ class Util_model extends CI_Model {
 		$this->redis->command("ZADD minerd_totals_stats ".time()." ".json_encode($o));
 		
 		log_message('error', "Total Stats stored as: ".json_encode($o));
-		
-		return $stats;
+
+		return $data;
+	}
+	
+	function getStoredDonations()
+	{
+		return $this->redis->command("LRANGE saved_donations 0 -1");
 	}
 	
 	function autoAddMineraPool()
@@ -534,8 +604,13 @@ class Util_model extends CI_Model {
 	{
 		if (file_exists($this->config->item("rpi_temp_file")))
 		{
-			$temp = exec("cat ".$this->config->item("rpi_temp_file"));
-			return number_format($temp/1000, 2);
+			$scale = ($this->redis->get("dashboard_temp")) ? $this->redis->get("dashboard_temp") : "c";
+			$temp = number_format( ( (int)exec("cat ".$this->config->item("rpi_temp_file"))/1000), 2 );
+
+			if ($scale == "f")
+				$temp = intval((9/5)* $temp + 32);
+
+			return array("value" => $temp, "scale" => $scale);
 		}
 		else
 		{
@@ -740,8 +815,7 @@ class Util_model extends CI_Model {
 		{
 			if ($this->redis->get("mobileminer_system_name") && $this->redis->get("mobileminer_email") && $this->redis->get("mobileminer_appkey"))
 			{
-				$rawStats = json_decode($this->getStats());
-				$stats = json_decode($this->getParsedStats(json_encode($rawStats)));
+				$stats = json_decode($this->getParsedStats($this->getMinerStats()));
 								
 				$params = array("emailAddress" => $this->redis->get("mobileminer_email"), "applicationKey" => $this->redis->get("mobileminer_appkey"), "apiKey" => $this->config->item('mobileminer_apikey'), "detailed" => true);
 				
@@ -817,6 +891,18 @@ class Util_model extends CI_Model {
 		}
 		
 		return false;
+	}
+	
+	public function convertHashrate($hash)
+	{
+		if ($hash > 900000000)
+			return round($hash/1000000000, 2) . 'Gh/s';
+		elseif ($hash > 900000)
+			return round($hash/1000000, 2) . 'Mh/s';
+		elseif ($hash > 900)
+			return round($hash/1000, 2) . 'Kh/s';
+		else
+			return $hash;
 	}
 	
 	// Check Internet connection

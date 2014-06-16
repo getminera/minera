@@ -21,4 +21,6 @@
 	<link href="<?php echo base_url('assets/css/morris.css') ?>" rel="stylesheet" />
 	<link href="<?php echo base_url('assets/css/jQueryUI/jquery-ui-1.10.3.custom.min.css') ?>" rel="stylesheet" />
 	<link href="<?php echo base_url('assets/css/AdminLTE.css') ?>" rel="stylesheet" />
+	<link href="<?php echo base_url('assets/css/ion.rangeSlider.css') ?>" rel="stylesheet" />
+	<link href="<?php echo base_url('assets/css/ion.rangeSlider.skinFlat.css') ?>" rel="stylesheet" />	
 </head>

@@ -42,8 +42,11 @@
 		<script src="<?php echo base_url('assets/js/bootstrap.min.js') ?>"></script>
 
         <!-- page script -->
-        <script type="text/javascript">
+        <script type="text/javascript">        	
             $(function() {
+            	"use strict";
+            	
+	        	$(".pass-form").trigger("focus");
                 startTime();
                 $(".center").center();
                 $(window).resize(function() {

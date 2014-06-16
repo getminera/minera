@@ -1,7 +1,7 @@
 Minera
 ==============
 
-Minera is a complete system to manage and monitor your Gridseed devices.
+Minera is a complete system to manage and monitor your Gridseed Blade/Mini devices. (Support for much more devices is on roadmap, stay tuned!)
 
 By now Minera supports only the new cpuminer-gc3355 by sandor111 please refer to https://github.com/siklon/cpuminer-gc3355.
 
@@ -234,6 +234,21 @@ Minera is a free and Open Source software, if you like it, please consider a don
     Dogecoin: DLAHwNxfUTUcePewbkvwvAouny19mcosA7
 
 Thanks and happy mining!
+
+Credits
+-------------
+I wish to thank every plugin, libraries, framework, icons, etc authors for their great job, in random order:
+
+* [Codeigniter](http://ellislab.com/codeigniter) PHP Framework
+* [Raspbian](http://www.raspbian.org/) Raspberry Debian distribution
+* [Jquery](http://jquery.com/) Javascript libraries
+* [Morris.js](http://www.oesmith.co.uk/morris.js/) for some of the charts
+* [Ion Rangeslider](https://github.com/IonDen/ion.rangeSlider) for the sliders
+* [AdminLTE](https://github.com/almasaeed2010/AdminLTE) for the awesome HTML/CSS/JS default template
+* [Jquery Knob](https://github.com/aterrien/jQuery-Knob) for circled charts
+* [Jquery DataTables](https://datatables.net/) for the amazing tables
+* [Twitter Bootstrap](http://getbootstrap.com/) for the HTML/CSS theme
+* [Font Awesome](http://fortawesome.github.io/Font-Awesome/), [Ion icons](http://ionicons.com/) and [Glyphicon](http://glyphicons.com/) for the stunning well...icons of course :)
 
 LICENSE
 -------------

@@ -71,9 +71,11 @@ class App extends Main_Controller {
 			
 		if ($this->input->post('save_settings'))
 		{
-			$dashSettings = trim($this->input->post('dashboard_refresh_time'));
+			$dashSettings = substr(trim($this->input->post('dashboard_refresh_time')), strpos(trim($this->input->post('dashboard_refresh_time')), ";") + 1);
+			$mineraDonationTime = substr(trim($this->input->post('minera_donation_time')), strpos(trim($this->input->post('minera_donation_time')), ";") + 1);
 			$coinRates = $this->input->post('dashboard_coin_rates');
 			$this->redis->set("altcoins_update", (time()-3600));
+			$dashboardTemp = $this->input->post('dashboard_temp');
 
 			$poolUrls = $this->input->post('pool_url');
 			$poolUsernames = $this->input->post('pool_username');
@@ -187,8 +189,10 @@ class App extends Main_Controller {
 			$this->redis->set("minerd_autorecover", $this->input->post('minerd_autorecover'));
 			$this->redis->set("minerd_autorestart", $this->input->post('minerd_autorestart'));
 			$this->redis->set("minerd_autorestart_devices", $this->input->post('minerd_autorestart_devices'));
+			$this->redis->set("minera_donation_time", $mineraDonationTime);
 			$this->redis->set("dashboard_refresh_time", $dashSettings);
 			$this->redis->set("dashboard_coin_rates", json_encode($coinRates));
+			$this->redis->set("dashboard_temp", $dashboardTemp);
 			
 			// System settings
 			
@@ -304,10 +308,13 @@ class App extends Main_Controller {
 		$data['minerdDelaytime'] = $this->redis->get("minerd_delaytime");
 		
 		//Load Dashboard settings
+		$data['mineraStoredDonations'] = $this->util_model->getStoredDonations();
+		$data['mineraDonationTime'] = $this->redis->get("minera_donation_time");
 		$data['dashboard_refresh_time'] = $this->redis->get("dashboard_refresh_time");
 		$dashboard_coin_rates = $this->redis->get("dashboard_coin_rates");
 		$data['dashboard_coin_rates'] = (is_array(json_decode($dashboard_coin_rates))) ? json_decode($dashboard_coin_rates) : array();
 		$data['cryptsy_data'] = $this->redis->get("cryptsy_data");
+		$data['dashboardTemp'] = ($this->redis->get("dashboard_temp")) ? $this->redis->get("dashboard_temp") : "c";
 
 		// Load System settings
 		$data['systemExtracommands'] = $this->redis->get("system_extracommands");
@@ -495,10 +502,9 @@ class App extends Main_Controller {
 			break;
 			case "history_stats":
 				$o = $this->util_model->getHistoryStats($this->input->get('type'));
-				//$o = $this->util_model->getParsedStats($this->util_model->getStats());
 			break;
 			case "test":
-				$o = $this->util_model->getCryptsyRateIds();
+				$o = $this->util_model->getStoredDonations(); //$this->util_model->getParsedStats($this->util_model->getMinerStats());
 			break;
 		}
 		
@@ -544,8 +550,72 @@ class App extends Main_Controller {
 		
 		// Store the live stats to be used on time graphs
 		$stats = $this->util_model->storeStats();
-		
+					
+		// Activate/Deactivate time donation pool if enable
+		if ($this->util_model->isOnline() && isset($stats->pool_donation_id))
+		{		
+			$donationTime = $this->redis->get("minera_donation_time");
+			if ($donationTime > 0)
+			{
+				$currentHr = (isset($stats->pool->hashrate)) ? $stats->pool->hashrate : 0;
+				$now = time();
+				$poolDonationId = $stats->pool_donation_id;
+				$donationTimeStarted = ($this->redis->get("donation_time_started")) ? $this->redis->get("donation_time_started") : false;
+
+				$donationTimeDoneToday = ($this->redis->get("donation_time_done_today")) ? $this->redis->get("donation_time_done_today") : false;
+
+				$donationStartHour = "04";
+				$donationStartMinute = "10";
+				$donationStopHour = date("H", ($donationTimeStarted + $donationTime*60));
+				$donationStopMinute = date("i", ($donationTimeStarted + $donationTime*60));
+				$currentHour = date("H", $now);
+				$currentMinute = date("i", $now);
+				
+				// Delete the donation-done flag after 24h
+				if ($now >= ($donationTimeDoneToday+86400))
+				{
+					$this->redis->del("donation_time_started");
+					$this->redis->del("donation_time_done_today");	
+					$donationTimeStarted = false;
+					$donationTimeDoneToday = false;
+				}
+				
+				// Stop time donation
+				if ($donationTimeStarted > 0 && (int)$currentHour >= (int)$donationStopHour && (int)$currentMinute >= (int)$donationStopMinute)
+				{
+					$this->redis->del("donation_time_started");
+					$donationTimeStarted = false;
+					$this->util_model->selectPool(0);
+					log_message("error", "[Donation-time] Terminated... Switching back to main pool ID [0]");
+				}
+
+				if ($donationTimeStarted > 0)
+				{
+					// Time donation in progress
+					$remain = round(((($donationTime*60) - ($now - $donationTimeStarted))/60));
+					$this->redis->set("donation_time_remain", $remain);
+					log_message("error", "[Donation time] In progress..." . $remain . " minutes remaing..." );
+				}
+
+				// Start time donation
+				if ($donationTimeDoneToday === false && ((int)$currentHour >= (int)$donationStartHour && (int)$currentMinute >= (int)$donationStartMinute))
+				{
+					// Starting time donation
+					$this->util_model->selectPool($poolDonationId);
+					$this->redis->set("donation_time_started", $now);
+					
+					// This prevent any re-activation for the current day
+					$this->redis->set("donation_time_done_today", $now);
+					
+					$this->redis->command("LPUSH saved_donations ".$now.":".$donationTime.":".$currentHr);
+					
+					log_message("error", "[Donation time] Started... (for ".$donationTime." minutes) - Switching to donation pool ID [".$poolDonationId."]");
+				}
+			}
+		}
+
 		// Use the live stats to check if autorestart is needed
+		// (devices possible dead)
 		$autorestartenable = $this->redis->get("minerd_autorestart");
 		$autorestartdevices = $this->redis->get("minerd_autorestart_devices");
 
@@ -556,24 +626,18 @@ class App extends Main_Controller {
 			// Use only if miner is online
 			if ($this->util_model->isOnline())
 			{
-				$aStats = json_decode($stats);
-
 				// Check if there is stats error
-				if (isset($aStats->error))
+				if (isset($stats->error))
 					return false;
 				
 				// Get the max last_share time per device
 				$lastshares = false;
-				foreach ($aStats->devices as $deviceName => $device)
+				
+				if (isset($stats->devices))
 				{
-					if (isset($device->chips))
+					foreach ($stats->devices as $deviceName => $device)
 					{
-						$lastsharechips = array();
-						foreach ($device->chips as $chip)
-						{
-							$lastsharechips[] = $chip->last_share;
-						}
-						$lastshares[$deviceName] = max($lastsharechips);
+						$lastshares[$deviceName] = $device->last_share;
 					}
 				}
 				
