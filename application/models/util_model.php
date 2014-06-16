@@ -390,6 +390,11 @@ class Util_model extends CI_Model {
 		return $data;
 	}
 	
+	function getStoredDonations()
+	{
+		return $this->redis->command("LRANGE saved_donations 0 -1");
+	}
+	
 	function autoAddMineraPool()
 	{
 		$pools = json_decode($this->getPools());
@@ -886,6 +891,18 @@ class Util_model extends CI_Model {
 		}
 		
 		return false;
+	}
+	
+	public function convertHashrate($hash)
+	{
+		if ($hash > 900000000)
+			return round($hash/1000000000, 2) . 'Gh/s';
+		elseif ($hash > 900000)
+			return round($hash/1000000, 2) . 'Mh/s';
+		elseif ($hash > 900)
+			return round($hash/1000, 2) . 'Kh/s';
+		else
+			return $hash;
 	}
 	
 	// Check Internet connection

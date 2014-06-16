@@ -35,56 +35,151 @@
 	                        </section>
                         <?php endif; ?>
                         
+                        
                         <!-- Top section -->
                         <section class="col-md-12">
 								
 							<form action="<?php site_url("app/dashboard") ?>" method="post" role="form" id="minersettings">
 								<input type="hidden" name="save_settings" value="1" />                                                    
 
+								<div class="row">
+									<section class="left-section col-xs-12 col-md-6">
+									
+										<!-- Donation box -->
+										<div class="box box-primary">
+										    <div class="box-header">
+										    	<!-- tools box -->
+										        <div class="pull-right box-tools">
+										            <button class="btn btn-default btn-xs" data-widget="collapse" data-toggle="tooltip" title="" data-original-title="Collapse"><i class="fa fa-minus"></i></button>
+										        </div><!-- /. tools -->
+										        <i class="fa fa-gift"></i>
+										        
+										        <h3 class="box-title">Donation Settings</h3>
+										    </div>
+										
+										    <div class="box-body">
+										    
+										    	<!-- Donation time -->
+										    	<div class="form-group">
+										    		<label>Support Minera!</label>
+										    		<p>Minera needs your help! Give some minutes of your hash power to it and help making Minera even more cool!<br /><a href="#" class="open-readme-donation">Please read how you can give your support and how it works.</a></p>
+										    		
+										    		<div class="margin-bottom">
+										    		    <input type="text" name="minera_donation_time" id="option-minera-donation-time" value="" />
+										    		</div>
+										    		
+										    		<p class="donation-worth"></p>
+										    		
+										    		<p><small class="donation-mood badge">&nbsp;</small></p>
+										    		
+										    		<div class="callout callout-grey readme-donation" style="display:none;">
+										    		    <h6><strong>How does time donation work?</strong></h6>
+										    		    <p><small>It's really simple, you can select how many minutes per day you want to donate to Minera, you can choose between 15 minutes and 6 hours. If you leave it at zero minutes, time donation will be disabled. If you enabled it, every day Minera will automatically switch to the donation pool for the amount of time you select. When the period is over Minera switches back to your main pool. Pool switches are on the fly, so it doesn't need to restart anything.</small></p>
+										    		    <h6><strong>What does happen if Minera reboot/shutdown/stop during the donation period?</strong></h6>
+										    		    <p><small>Absolutely nothing. I mean, if your Minera system got problems while is running on the donation pool (for example it reboots for power outage), it just restart hashing on the main pool set. It won't retry to switch the donation pool until the day after.</small></p>
+										    		    <h6><strong>How do you calculate the worth of the donation?</strong></h6>
+										    		    <p><small>It's really approximate because I simply divide the time in minutes you donate per a fixed average profitability of 0.0018 <i class="fa fa-btc"></i>/Day, the function is: <i>0.0018 / 24 / 60 x donation_minutes</i>.</small></p>
+										    		    
+										    		    <h6><strong>What do you do with the money received?</strong></h6>
+										    		    <p><small>Thanks to your kindly donations I could, for example, buy some of the new hardware coming out to add its support in Minera. So next time there will be a new cool hardware, Minera will be ready to accept it. And of course, I need beer to do all this cool stuff :)</small></p>
+										    		    <h6><strong>Anyway, I wanna really thank you for all you support and appreciation!</strong></h6>
+										    		</div>
+										    		
+										    		<?php if ($mineraStoredDonations) : ?>
+										    		    <div class="stored-donations">
+										    		    	<label><a href="#" class="view-stored-donations">View your past donations</a></label>
+										    		    	<div class="table-responsive">
+										    		    		<table id="stored-donation-table" class="table table-striped datatable" style="display:none;">
+										    		    			<thead>
+										    		    				<tr>
+										    		    					<th>Date</th>
+										    		    					<th>Period</th>
+										    		    					<th>Hashrate</th>
+										    		    				</tr>
+										    		    			</thead>
+										    		    			<tbody>
+										    		    			<?php foreach ($mineraStoredDonations as $storedDonation) : ?>
+										    		    				<tr>
+										    		    				<?php list($donationDate, $donationPeriod, $donationHr) = explode(":", $storedDonation); ?>
+										    		    				<td>
+										    		    					<small><?php echo date("r", $donationDate) ?></small>
+										    		    				</td>
+										    		    				<td>
+										    		    					<span class="label bg-blue"><?php echo $donationPeriod ?> minutes</span>
+										    		    				</td>
+										    		    				<td>
+										    		    					<span class="label bg-green"><?php echo $this->util_model->convertHashrate($donationHr) ?></span>
+										    		    				</td>
+										    		    				</tr>
+										    		    			<?php endforeach; ?>
+										    		    			</tbody>
+										    		    			<tfoot>
+										    		    			</tfoot>
+										    		    		</table>
+										    		    	</div>
+										    		    </div>
+										    		<?php endif; ?>
+										    	</div>										
+										    </div>
+										    <div class="box-footer" style="clear:both">
+										    	<button type="submit" class="btn btn-primary" name="save" value="1">Save</button>
+										    </div>
+										</div>
 	                            
-								<!-- Miner box -->
-	                            <div class="box box-primary">
-									<div class="box-header">
-										<!-- tools box -->
-	                                    <div class="pull-right box-tools">
-	                                        <button class="btn btn-default btn-xs" data-widget="collapse" data-toggle="tooltip" title="" data-original-title="Collapse"><i class="fa fa-minus"></i></button>
-	                                    </div><!-- /. tools -->
-	                                    <i class="fa fa-gift"></i>
-	                                    
-	                                    <h3 class="box-title">Donation Settings</h3>
-	                                </div>
+									</section><!-- End left section -->
+									
+									<section class="right-section col-xs-12 col-md-6">			
+															
+			                            <!-- Dashboard box -->
+										<div class="box box-primary">
+											<div class="box-header">
+												<!-- tools box -->
+			                                    <div class="pull-right box-tools">
+			                                        <button class="btn btn-default btn-xs" data-widget="collapse" data-toggle="tooltip" title="" data-original-title="Collapse"><i class="fa fa-minus"></i></button>
+			                                    </div><!-- /. tools -->
+			                                    <i class="fa fa-dashboard"></i>
+			                                    
+			                                    <h3 class="box-title">Dashboard Settings</h3>
+			                                </div>
+											
+			                                <div class="box-body">
+												<!-- Temperatures scale F°/C°-->
+												<div class="form-group">
+													<label>Temperatures scale</label>
+													<p>Select your preferred scale to display temperatures.</p>
+													<div class="radio">
+														<label>
+															<input type="radio" name="dashboard_temp" value="c" <?php if ($dashboardTemp == "c") : ?>checked=""<?php endif; ?> />
+															Celsius (C°)
+														</label>                                                
+													</div>
+													<div class="radio">
+														<label>
+															<input type="radio" name="dashboard_temp" value="f" <?php if ($dashboardTemp == "f") : ?>checked=""<?php endif; ?> />
+															Fahrenheit (F°)
+														</label>                                                
+													</div>
+												</div>
+		
+												<!-- Refresh time -->
+												<div class="form-group">
+													<label>Refresh time</label>
+													<p>Select automatic refresh time interval.</p>
+													<div class="margin-bottom">
+														<input type="text" name="dashboard_refresh_time" id="option-dashboard-refresh-time" class="refresh-time" value="" />
+													</div>
+													<small>time in seconds, min 5 secs</small>
+												</div>
+			                                </div>
+											<div class="box-footer">
+												<button type="submit" class="btn btn-primary" name="save" value="1">Save</button>
+											</div>
+			                            </div>
+		                            
+									</section><!-- End right section -->
 
-	                                <div class="box-body">
-	                                
-										<!-- Donation time -->
-										<div class="form-group">
-											<label>Help Minera!</label>
-											<p>Minera needs your help! Give some minutes of your hash power to it and help making Minera even more cool!<br /><a href="#" class="open-readme-donation">Please read how you can give your support and how it works.</a></p>
-											
-											<div class="margin-bottom" style="width:50%">
-												<input type="text" name="minera_donation_time" id="option-minera-donation-time" value="" />
-											</div>
-											
-											<p class="donation-worth"></p>
-											
-											<p><small class="donation-mood badge">&nbsp;</small></p>
-											
-											<div class="callout callout-grey readme-donation" style="display:none;">
-												<h6><strong>How does time donation work?</strong></h6>
-												<p><small>It's really simple, you can select how many minutes per day you want to donate to Minera, you can choose between 15 minutes and 6 hours. If you leave it at zero minutes, time donation will be disabled. If you enabled it, every day at about midnight, Minera will automatically switch to the donation pool for the amount of time you select. When the period is over Minera switches back to your main pool. Pool switches are on the fly, so it doesn't need to restart anything.</small></p>
-												<h6><strong>What does happen if Minera reboot/shutdown during the donation period?</strong></h6>
-												<p><small>Absolutely nothing. I mean, if your Minera system got problems while is running on the donation pool (for example it reboots for power outage), it just restart hashing on the main pool set. It won't retry to switch the donation pool until the day after.</small></p>
-												<h6><strong>What do you do with the money received?</strong></h6>
-												<p><small>Thanks to your kindly donations I can, for example, buy some of the new hardware coming out to add its support in Minera. So next time there will be a new cool hardware, Minera will be ready to accept it. And of course, I need beer to do all this cool stuff :)</small></p>
-												<h6><strong>Anyway, I wanna really thank you for all you support and appreciation!</strong></h6>
-											</div>
-										</div>										
-	                                </div>
-									<div class="box-footer">
-										<button type="submit" class="btn btn-primary" name="save" value="1">Save</button>
-									</div>
-	                            </div>
-	                            	                          
+								</div><!-- End row -->
+									                            	                          
 								<!-- Pools box -->
 	                            <div class="box box-primary">
 									<div class="box-header">
@@ -381,77 +476,49 @@
 										<button type="submit" class="btn btn-primary" name="save" value="1">Save</button> <button type="submit" class="btn btn-danger" name="save_restart" value="1">Save & Restart Miner</button>
 									</div>
 	                            </div>
-	                            
-	                            <!-- Dashboard box -->
+
+								<!-- Topbar box -->
 								<div class="box box-primary">
-									<div class="box-header">
-										<!-- tools box -->
-	                                    <div class="pull-right box-tools">
-	                                        <button class="btn btn-default btn-xs" data-widget="collapse" data-toggle="tooltip" title="" data-original-title="Collapse"><i class="fa fa-minus"></i></button>
-	                                    </div><!-- /. tools -->
-	                                    <i class="fa fa-dashboard"></i>
-	                                    
-	                                    <h3 class="box-title">Dashboard Settings</h3>
-	                                </div>
-									
-	                                <div class="box-body">
-										<p>Setup the dashboard options</p>
-										
-											<!-- Temperatures scale F°/C°-->
-											<div class="form-group">
-												<label>Temperatures scale</label>
-												<p>Select your preferred scale to display temperatures.</p>
-												<div class="radio">
-													<label>
-														<input type="radio" name="dashboard_temp" value="c" <?php if ($dashboardTemp == "c") : ?>checked=""<?php endif; ?> />
-														Celsius (C°)
-													</label>                                                
-												</div>
-												<div class="radio">
-													<label>
-														<input type="radio" name="dashboard_temp" value="f" <?php if ($dashboardTemp == "f") : ?>checked=""<?php endif; ?> />
-														Fahrenheit (F°)
-													</label>                                                
-												</div>
-											</div>
-	
-											<!-- Refresh time -->
-											<div class="form-group">
-												<label>Refresh time</label>
-												<p>Select automatic refresh time interval.</p>
-												<div class="margin-bottom" style="width:50%">
-													<input type="text" name="dashboard_refresh_time" id="option-dashboard-refresh-time" class="refresh-time" value="" />
-												</div>
-												<small>time in seconds, min 5 secs</small>
-											</div>
-											
-											<!-- Altcoins rates -->
-											<div class="form-group">
-												<label>Top bar Altcoins</label>
-												<?php $altdata = json_decode($cryptsy_data); ?>
-												<?php if (is_object($altdata) && is_array($dashboard_coin_rates)) : ?>
-													<p><small>Currently selected: </small><?php foreach ($dashboard_coin_rates as $altcoin) : ?><small class="badge bg-blue"><?php echo $altdata->$altcoin->codes ?></small>&nbsp;<?php endforeach; ?></p>
-	
-													<div class="input-group">
-														<div class="input-group-addon">
-															<i class="fa fa-btc"></i>
-														</div>
-														<select multiple class="form-control dashboard-coin-rates" name="dashboard_coin_rates[]" style="width:50%" size="10">
-														<?php foreach ($altdata as $id => $values) : ?>
-															<option value="<?php echo $id ?>" <?php echo (in_array($id, $dashboard_coin_rates)) ? "selected" : ""; ?>><?php echo $values->names . " - " . $values->codes ?></option>
-														<?php endforeach; ?>
-														</select>
-													</div><!-- /.input group -->
-													<small>Select max 3 rates to be displayed on the top bar</small>
-												</div>
+								    <div class="box-header">
+								    	<!-- tools box -->
+			                            <div class="pull-right box-tools">
+			                                <button class="btn btn-default btn-xs" data-widget="collapse" data-toggle="tooltip" title="" data-original-title="Collapse"><i class="fa fa-minus"></i></button>
+			                            </div><!-- /. tools -->
+			                            <i class="fa fa-dashboard"></i>
+			                            
+			                            <h3 class="box-title">Top bar Settings</h3>
+			                        </div>
+								    
+			                        <div class="box-body">
+								    	<p>Setup the top bar options</p>
+								    		
+							    		<!-- Altcoins rates -->
+							    		<div class="form-group">
+							    			<label>Top bar Altcoins</label>
+							    			<?php $altdata = json_decode($cryptsy_data); ?>
+							    			<?php if (is_object($altdata) && is_array($dashboard_coin_rates)) : ?>
+							    				<p><small>Currently selected: </small><?php foreach ($dashboard_coin_rates as $altcoin) : ?><small class="badge bg-blue"><?php echo $altdata->$altcoin->codes ?></small>&nbsp;<?php endforeach; ?></p>
+		
+							    				<div class="input-group">
+							    					<div class="input-group-addon">
+							    						<i class="fa fa-btc"></i>
+							    					</div>
+							    					<select multiple class="form-control dashboard-coin-rates" name="dashboard_coin_rates[]" style="width:50%" size="10">
+							    					<?php foreach ($altdata as $id => $values) : ?>
+							    						<option value="<?php echo $id ?>" <?php echo (in_array($id, $dashboard_coin_rates)) ? "selected" : ""; ?>><?php echo $values->names . " - " . $values->codes ?></option>
+							    					<?php endforeach; ?>
+							    					</select>
+							    				</div><!-- /.input group -->
+							    				<small>Select max 3 rates to be displayed on the top bar</small>
 											<?php else: ?>
-												<p><small class="badge bg-red">There was a problem with the altcoins. Try refreshing the page.</small></p>
+							    				<p><small class="badge bg-red">There was a problem with the altcoins. Try refreshing the page.</small></p>
 											<?php endif; ?>
-	                                </div>
-									<div class="box-footer">
-										<button type="submit" class="btn btn-primary" name="save" value="1">Save</button>
-									</div>
-	                            </div>
+										</div>
+			                        </div>
+								    <div class="box-footer">
+								    	<button type="submit" class="btn btn-primary" name="save" value="1">Save</button>
+								    </div>
+			                    </div>
 	                            
 	                            <!-- System box -->
 								<div class="box box-primary">

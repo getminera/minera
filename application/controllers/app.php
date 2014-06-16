@@ -308,6 +308,7 @@ class App extends Main_Controller {
 		$data['minerdDelaytime'] = $this->redis->get("minerd_delaytime");
 		
 		//Load Dashboard settings
+		$data['mineraStoredDonations'] = $this->util_model->getStoredDonations();
 		$data['mineraDonationTime'] = $this->redis->get("minera_donation_time");
 		$data['dashboard_refresh_time'] = $this->redis->get("dashboard_refresh_time");
 		$dashboard_coin_rates = $this->redis->get("dashboard_coin_rates");
@@ -503,7 +504,7 @@ class App extends Main_Controller {
 				$o = $this->util_model->getHistoryStats($this->input->get('type'));
 			break;
 			case "test":
-				$o = $this->util_model->getParsedStats($this->util_model->getMinerStats());
+				$o = $this->util_model->getStoredDonations(); //$this->util_model->getParsedStats($this->util_model->getMinerStats());
 			break;
 		}
 		
@@ -556,12 +557,13 @@ class App extends Main_Controller {
 			$donationTime = $this->redis->get("minera_donation_time");
 			if ($donationTime > 0)
 			{
+				$currentHr = (isset($stats->pool->hashrate)) ? $stats->pool->hashrate : 0;
 				$now = time();
 				$poolDonationId = $stats->pool_donation_id;
 				$donationTimeStarted = ($this->redis->get("donation_time_started")) ? $this->redis->get("donation_time_started") : false;
 
-				$donationTimeDoneToday = $this->redis->get("donation_time_done_today");
-				
+				$donationTimeDoneToday = ($this->redis->get("donation_time_done_today")) ? $this->redis->get("donation_time_done_today") : false;
+
 				$donationStartHour = "04";
 				$donationStartMinute = "10";
 				$donationStopHour = date("H", ($donationTimeStarted + $donationTime*60));
@@ -569,8 +571,8 @@ class App extends Main_Controller {
 				$currentHour = date("H", $now);
 				$currentMinute = date("i", $now);
 				
-				// Delete the today flag if time is 00.10/15
-				if ($currentHour == 0 && ( $currentMinute >= 10 && $currentMinute <= 15) )
+				// Delete the donation-done flag after 24h
+				if ($now >= ($donationTimeDoneToday+86400))
 				{
 					$this->redis->del("donation_time_started");
 					$this->redis->del("donation_time_done_today");	
@@ -579,12 +581,12 @@ class App extends Main_Controller {
 				}
 				
 				// Stop time donation
-				if ($donationTimeStarted > 0 && (int)$currentHour == (int)$donationStopHour && (int)$currentMinute >= (int)$donationStopMinute)
+				if ($donationTimeStarted > 0 && (int)$currentHour >= (int)$donationStopHour && (int)$currentMinute >= (int)$donationStopMinute)
 				{
 					$this->redis->del("donation_time_started");
 					$donationTimeStarted = false;
 					$this->util_model->selectPool(0);
-					log_message("error", "[Donation-time] Terminated... Switching back to main ID [0]");
+					log_message("error", "[Donation-time] Terminated... Switching back to main pool ID [0]");
 				}
 
 				if ($donationTimeStarted > 0)
@@ -594,14 +596,19 @@ class App extends Main_Controller {
 					$this->redis->set("donation_time_remain", $remain);
 					log_message("error", "[Donation time] In progress..." . $remain . " minutes remaing..." );
 				}
-				
+
 				// Start time donation
-				if (!$donationTimeDoneToday && ((int)$currentHour == (int)$donationStartHour && (int)$currentMinute >= (int)$donationStartMinute))
+				if ($donationTimeDoneToday === false && ((int)$currentHour >= (int)$donationStartHour && (int)$currentMinute >= (int)$donationStartMinute))
 				{
 					// Starting time donation
 					$this->util_model->selectPool($poolDonationId);
 					$this->redis->set("donation_time_started", $now);
-					$this->redis->set("donation_time_done_today", 1);
+					
+					// This prevent any re-activation for the current day
+					$this->redis->set("donation_time_done_today", $now);
+					
+					$this->redis->command("LPUSH saved_donations ".$now.":".$donationTime.":".$currentHr);
+					
 					log_message("error", "[Donation time] Started... (for ".$donationTime." minutes) - Switching to donation pool ID [".$poolDonationId."]");
 				}
 			}

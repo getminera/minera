@@ -13,6 +13,10 @@
     
     <!-- Ion rangeSlider -->
     <script src="<?php echo base_url('assets/js/ion.rangeSlider.min.js') ?>" type="text/javascript"></script>
+    
+    <!-- Datatables -->
+	<script src="<?php echo base_url('assets/js/jquery.dataTables.min.js') ?>" type="text/javascript"></script>
+	<script src="<?php echo base_url('assets/js/dataTables.bootstrap.js') ?>" type="text/javascript"></script>
 
 	<?php if ($settingsScript) : ?>
 	<!-- jQuery Validation -->
@@ -41,6 +45,15 @@
 				e.preventDefault();
 				$(".readme-donation").fadeToggle();
 		    });
+		    
+		    $(".view-stored-donations").click(function(e) {
+				e.preventDefault();
+				$("#stored-donation-table_wrapper").toggle();
+				$("#stored-donation-table").fadeToggle();
+		    });
+		    
+			$("#stored-donation-table").dataTable({bFilter: false, bInfo: false, bPaginate: true, "dom": '<"top"i>rt<"bottom"flp><"clear">'});
+			$("#stored-donation-table_wrapper").hide();
 		    
 		    function changeDonationMood(value) 
 		    {
@@ -295,10 +308,6 @@
 	<!-- jQuery Knob -->
     <script src="<?php echo base_url('assets/js/jquery.knob.js') ?>" type="text/javascript"></script>
 
-    <!-- DATA TABES SCRIPT -->
-	<script src="<?php echo base_url('assets/js/jquery.dataTables.min.js') ?>" type="text/javascript"></script>
-	<script src="<?php echo base_url('assets/js/dataTables.bootstrap.js') ?>" type="text/javascript"></script>
-	    
     <!-- jQuery Morris Charts -->
     <script src="<?php echo base_url('assets/js/raphael-min.js') ?>"></script>
     <script src="<?php echo base_url('assets/js/morris.min.js') ?>" type="text/javascript"></script>
@@ -1292,7 +1301,7 @@
 		{
 			if (hash > 900000)
 				return hash/1000000 + 'Gh/s';
-			if (hash > 900)
+			else if (hash > 900)
 				return hash/1000 + 'Mh/s';
 			else
 				return hash + 'Kh/s';

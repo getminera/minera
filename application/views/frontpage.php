@@ -169,7 +169,6 @@
 									<div class="row">
 										<div class="col-sm-12">
 											<div class="table-responsive">
-												  <!-- .table - Uses sparkline charts-->
 												  <table id="miner-table-details" class="table table-striped datatable">
 													  <thead>
 													  <tr>
