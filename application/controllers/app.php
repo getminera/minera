@@ -504,7 +504,7 @@ class App extends Main_Controller {
 				$o = $this->util_model->getHistoryStats($this->input->get('type'));
 			break;
 			case "test":
-				$o = $this->util_model->getStoredDonations(); //$this->util_model->getParsedStats($this->util_model->getMinerStats());
+				$o = $this->util_model->getMinerStats(); //$this->util_model->getParsedStats($this->util_model->getMinerStats());
 			break;
 		}
 		

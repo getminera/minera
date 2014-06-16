@@ -590,7 +590,7 @@
 		function triggerError(msg)
 		{
 			$('.widgets-section').hide();
-			$('.top-section').hide();
+			$('.top-section').attr('style', 'display: none !important');
 			$('.right-section').hide();
 			$('.left-section').hide();
 			$('.warning-message').html(msg);                        
