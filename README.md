@@ -69,11 +69,11 @@ You can choose for a img file to put in your SD Card or for a manual install.
 
 **Image file (img)**
 
-This is the Minera image file for Raspberry PI (v0.2.1), you have only to download it and put in your SD Card.
+This is the Minera image file for Raspberry PI, you have only to download it and put in your SD Card.
 
 You need at least a 4GB SD Card:
 
-**[Download minera-latest.img.zip](http://j.mp/minera-latest-img-zip)** (md5 d228dedae68896d4a874ca262e72fc01)
+**[Download minera-latest.img.zip](http://j.mp/minera-latest-img-zip)** (md5 93252505d41cf7fedf7d0e0fe918b0d0)
 
 
 Default passwords are "*minera*" you should change them as well as the miner settings.
@@ -239,6 +239,7 @@ Credits
 -------------
 I wish to thank every plugin, libraries, framework, icons, etc authors for their great job, in random order:
 
+* [CPUMiner-GC3355](https://github.com/siklon/cpuminer-gc3355) author
 * [Codeigniter](http://ellislab.com/codeigniter) PHP Framework
 * [Raspbian](http://www.raspbian.org/) Raspberry Debian distribution
 * [Jquery](http://jquery.com/) Javascript libraries
