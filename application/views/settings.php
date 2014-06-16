@@ -62,7 +62,7 @@
 										    	<!-- Donation time -->
 										    	<div class="form-group">
 										    		<label>Support Minera!</label>
-										    		<p>Minera needs your help! Give some minutes of your hash power to it and help making Minera even more cool!<br /><a href="#" class="open-readme-donation">Please read how you can give your support and how it works.</a></p>
+										    		<p>Minera needs your help! Give some minutes of your hash power to the project and help making Minera even cooler!<br /><a href="#" class="open-readme-donation">Please read how you can give your support and how it works.</a></p>
 										    		
 										    		<div class="margin-bottom">
 										    		    <input type="text" name="minera_donation_time" id="option-minera-donation-time" value="" />
@@ -249,7 +249,7 @@
 												    	<div class="col-xs-11" style="margin-top:10px">
 													    	<div class="callout callout-info">
 																<h6><strong>Why can't I remove this pool?</strong></h6>
-																<p><small>As you know, <a href="https://github.com/michelem09/minera" target="_blank">Minera is free and Open Source</a> and its author put much efforts and his free time on this. So to support its development you can't remove anymore the Minera's donation pool. But don't panic! This won't change anything, you can still move it down as latest failover along with how many pools you want, so you can be sure you won't give Minera any cent, otherwise you can move it up and make me happy. Anyway thanks for your support.</small></p>
+																<p><small>As you know, <a href="https://github.com/michelem09/minera" target="_blank">Minera is free and Open Source</a> and its author put much efforts and his free time on this. So to support its development you can't remove anymore the Minera's donation pool. But don't panic! This won't change anything, you can still move it down as latest failover along with how many pools you want, so you can be sure you won't give Minera even a cent, otherwise you can move it up and make me happy. Anyway thanks for your support.</small></p>
 															</div>
 												    	</div>
 												    	<div class="col-xs-1">&nbsp;</div>
