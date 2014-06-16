@@ -17,9 +17,15 @@ $(function() {
     //Enable sidebar toggle
     $("[data-toggle='offcanvas']").click(function(e) {
         e.preventDefault();
-
+        
+        var sidebarl = $('.sidebar').offset().left;
+        		
         //If window is small enough, enable sidebar push menu
         if ($(window).width() <= 992) {
+        	if (sidebarl == 0) 
+        		$('.sidebar').css("left", "-220px");
+        	else
+        		$('.sidebar').css("left", "0px");
             $('.row-offcanvas').toggleClass('active');
             $('.left-side').removeClass("collapse-left");
             $(".right-side").removeClass("strech");
