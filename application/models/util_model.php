@@ -316,78 +316,86 @@ class Util_model extends CI_Model {
 	{
 		log_message('error', "Storing stats...");
 		
+		$data = new stdClass();
 		$stats = $this->getMinerStats();
 		
-		// Add pool donation ID to the stats
-		foreach ($stats->pools as $pool)
+		if ($stats)
 		{
-			$poolDonationId = ($pool->url == $this->config->item('minera_pool_url') && $pool->user == $this->config->item('minera_pool_username') && $pool->pass == $this->config->item('minera_pool_password')) ? $pool->priority : false;
+			// Add pool donation ID to the stats
+			if ($stats->pools && count($stats->pools) > 0)
+			{
+				foreach ($stats->pools as $pool)
+				{
+					$poolDonationId = ($pool->url == $this->config->item('minera_pool_url') && $pool->user == $this->config->item('minera_pool_username') && $pool->pass == $this->config->item('minera_pool_password')) ? $pool->priority : false;
+				}			
+			}
+			
+			$data = json_decode($this->getParsedStats($stats));
+			
+			$data->pool_donation_id = $poolDonationId;
+	
+			$ph = (isset($data->pool->hashrate)) ? $data->pool->hashrate : 0;
+			$dh = (isset($data->totals->hashrate)) ? $data->totals->hashrate : 0;
+			$fr = (isset($data->totals->frequency)) ? $data->totals->frequency : 0;
+			$ac = (isset($data->totals->accepted)) ? $data->totals->accepted : 0;
+			$hw = (isset($data->totals->hw_errors)) ? $data->totals->hw_errors : 0;
+			$re = (isset($data->totals->rejected)) ? $data->totals->rejected : 0;
+			$sh = (isset($data->totals->shares)) ? $data->totals->shares : 0;
+			$ls = (isset($data->totals->last_share)) ? $data->totals->last_share : 0;
+									
+			// Get totals
+			$o = array(
+				"timestamp" => time(),
+				"pool_hashrate" => $ph,
+				"hashrate" => $dh,
+				"avg_freq" => $fr,
+				"accepted" => $ac,
+				"errors" => $hw,
+				"rejected" => $re,
+				"shares" => $sh,
+				"last_share" => $ls,
+			);
+	
+			// Get latest
+			$latest = $this->redis->command("ZREVRANGE minerd_totals_stats 0 0");
+			$lf = 0; $la = 0; $le = 0; $lr = 0; $ls = 0;
+			if ($latest)
+			{
+				$latest = json_decode($latest[0]);
+				$lfr = $latest->avg_freq;
+				$lac = $latest->accepted;
+				$lhw = $latest->errors;
+				$lre = $latest->rejected;
+				$lsh = $latest->shares;
+				$lls = $latest->last_share;
+			}
+	
+			// Get delta current-latest
+			$delta = array(
+				"timestamp" => time(),
+				"pool_hashrate" => $ph,
+				"hashrate" => $dh,
+				"avg_freq" => max((int)($fr - $lfr), 0),
+				"accepted" => max((int)($ac - $lac), 0),
+				"errors" => max((int)($hw - $lhw), 0),
+				"rejected" => max((int)($re - $lre), 0),
+				"shares" => max((int)($sh - $lsh), 0),
+				"last_share" => $lls,
+			);
+			
+			// Store delta
+			$this->redis->command("ZADD minerd_delta_stats ".time()." ".json_encode($delta));			
+			
+			log_message('error', "Delta Stats stored as: ".json_encode($delta));
+			
+			// Store totals
+			$this->redis->command("ZADD minerd_totals_stats ".time()." ".json_encode($o));
+			
+			log_message('error', "Total Stats stored as: ".json_encode($o));
 		}
 		
-		$data = json_decode($this->getParsedStats($stats));
-		
-		$data->pool_donation_id = $poolDonationId;
-
-		$ph = (isset($data->pool->hashrate)) ? $data->pool->hashrate : 0;
-		$dh = (isset($data->totals->hashrate)) ? $data->totals->hashrate : 0;
-		$fr = (isset($data->totals->frequency)) ? $data->totals->frequency : 0;		
-		$ac = (isset($data->totals->accepted)) ? $data->totals->accepted : 0;		
-		$hw = (isset($data->totals->hw_errors)) ? $data->totals->hw_errors : 0;
-		$re = (isset($data->totals->rejected)) ? $data->totals->rejected : 0;
-		$sh = (isset($data->totals->shares)) ? $data->totals->shares : 0;
-		$ls = (isset($data->totals->last_share)) ? $data->totals->last_share : 0;
-								
-		// Get totals
-		$o = array(
-			"timestamp" => time(),
-			"pool_hashrate" => $ph,
-			"hashrate" => $dh,
-			"avg_freq" => $fr,
-			"accepted" => $ac,
-			"errors" => $hw,
-			"rejected" => $re,
-			"shares" => $sh,
-			"last_share" => $ls,
-		);
-
-		// Get latest
-		$latest = $this->redis->command("ZREVRANGE minerd_totals_stats 0 0");
-		$lf = 0; $la = 0; $le = 0; $lr = 0; $ls = 0;
-		if ($latest)
-		{
-			$latest = json_decode($latest[0]);
-			$lfr = $latest->avg_freq;
-			$lac = $latest->accepted;
-			$lhw = $latest->errors;
-			$lre = $latest->rejected;
-			$lsh = $latest->shares;
-			$lls = $latest->last_share;
-		}
-
-		// Get delta current-latest
-		$delta = array(
-			"timestamp" => time(),
-			"pool_hashrate" => $ph,
-			"hashrate" => $dh,
-			"avg_freq" => max((int)($fr - $lfr), 0),
-			"accepted" => max((int)($ac - $lac), 0),
-			"errors" => max((int)($hw - $lhw), 0),
-			"rejected" => max((int)($re - $lre), 0),
-			"shares" => max((int)($sh - $lsh), 0),
-			"last_share" => $lls,
-		);
-		
-		// Store delta
-		$this->redis->command("ZADD minerd_delta_stats ".time()." ".json_encode($delta));			
-		
-		log_message('error', "Delta Stats stored as: ".json_encode($delta));
-		
-		// Store totals
-		$this->redis->command("ZADD minerd_totals_stats ".time()." ".json_encode($o));
-		
-		log_message('error', "Total Stats stored as: ".json_encode($o));
-
 		return $data;
+		
 	}
 	
 	function getStoredDonations()
@@ -893,6 +901,12 @@ class Util_model extends CI_Model {
 		return false;
 	}
 	
+	public function setTimezone($timezone)
+	{
+		exec("echo '".$timezone."' | sudo tee /etc/timezone && sudo dpkg-reconfigure -f noninteractive tzdata");
+		$this->redis->set("minera_timezone", $timezone);
+	}
+	
 	public function convertHashrate($hash)
 	{
 		if ($hash > 900000000)
@@ -915,7 +929,7 @@ class Util_model extends CI_Model {
 		return true;
 	}
 	
-	function getSysUptime()
+	public function getSysUptime()
 	{
 		return strtok( exec( "cat /proc/uptime" ), "." );
 	}

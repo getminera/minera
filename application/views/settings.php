@@ -62,7 +62,7 @@
 										    	<!-- Donation time -->
 										    	<div class="form-group">
 										    		<label>Support Minera!</label>
-										    		<p>Minera needs your help! Give some minutes of your hash power to it and help making Minera even more cool!<br /><a href="#" class="open-readme-donation">Please read how you can give your support and how it works.</a></p>
+										    		<p>Minera needs your help! Give some minutes of your hash power to the project and help making Minera even cooler!<br /><a href="#" class="open-readme-donation">Please read how you can give your support and how it works.</a></p>
 										    		
 										    		<div class="margin-bottom">
 										    		    <input type="text" name="minera_donation_time" id="option-minera-donation-time" value="" />
@@ -74,7 +74,7 @@
 										    		
 										    		<div class="callout callout-grey readme-donation" style="display:none;">
 										    		    <h6><strong>How does time donation work?</strong></h6>
-										    		    <p><small>It's really simple, you can select how many minutes per day you want to donate to Minera, you can choose between 15 minutes and 6 hours. If you leave it at zero minutes, time donation will be disabled. If you enabled it, every day Minera will automatically switch to the donation pool for the amount of time you select. When the period is over Minera switches back to your main pool. Pool switches are on the fly, so it doesn't need to restart anything.</small></p>
+										    		    <p><small>It's really simple, you can select how many minutes per day you want to donate to Minera, you can choose between 15 minutes and 6 hours. If you leave it at zero minutes, time donation will be disabled. If you enable it, every day (at about 4.10am system time) Minera will automatically switch to the donation pool for the amount of time you select. When the period is over Minera switches back to your main pool. Pool switches are on the fly, so it doesn't need to save/restart anything.</small></p>
 										    		    <h6><strong>What does happen if Minera reboot/shutdown/stop during the donation period?</strong></h6>
 										    		    <p><small>Absolutely nothing. I mean, if your Minera system got problems while is running on the donation pool (for example it reboots for power outage), it just restart hashing on the main pool set. It won't retry to switch the donation pool until the day after.</small></p>
 										    		    <h6><strong>How do you calculate the worth of the donation?</strong></h6>
@@ -82,7 +82,7 @@
 										    		    
 										    		    <h6><strong>What do you do with the money received?</strong></h6>
 										    		    <p><small>Thanks to your kindly donations I could, for example, buy some of the new hardware coming out to add its support in Minera. So next time there will be a new cool hardware, Minera will be ready to accept it. And of course, I need beer to do all this cool stuff :)</small></p>
-										    		    <h6><strong>Anyway, I wanna really thank you for all you support and appreciation!</strong></h6>
+										    		    <h6><strong>Anyway, I wanna really thank you for all your support and appreciation!</strong></h6>
 										    		</div>
 										    		
 										    		<?php if ($mineraStoredDonations) : ?>
@@ -249,7 +249,7 @@
 												    	<div class="col-xs-11" style="margin-top:10px">
 													    	<div class="callout callout-info">
 																<h6><strong>Why can't I remove this pool?</strong></h6>
-																<p><small>As you know, <a href="https://github.com/michelem09/minera" target="_blank">Minera is free and Open Source</a> and its author put much efforts and his free time on this. So to support its development you can't remove anymore the Minera's donation pool. But don't panic! This won't change anything, you can still move it down as latest failover along with how many pools you want, so you can be sure you won't give Minera any cent, otherwise you can move it up and make me happy. Anyway thanks for your support.</small></p>
+																<p><small>As you know, <a href="https://github.com/michelem09/minera" target="_blank">Minera is free and Open Source</a> and its author put much efforts and his free time on this. So to support its development you can't remove anymore the Minera's donation pool. But don't panic! This won't change anything, you can still move it down as latest failover along with how many pools you want, so you can be sure you won't give Minera even a cent, otherwise you can move it up and make me happy. Anyway thanks for your support.</small></p>
 															</div>
 												    	</div>
 												    	<div class="col-xs-1">&nbsp;</div>
@@ -536,7 +536,18 @@
 									
 	                                <div class="box-body">
 										<p>Setup the system options</p>
-	
+
+											<!-- timezone -->
+	                                        <div class="form-group">
+	                                            <label>System timezone</label>
+	                                            <p>You should change the timezone to reflect yours</p>
+												<select name="minera_timezone" class="form-control">
+													<?php foreach ($timezones as $timezone) : ?>
+														<option<?php echo ($mineraTimezone == $timezone) ? " selected" : ""; ?>><?php echo $timezone ?></option>
+													<?php endforeach; ?>
+												</select>
+											</div>
+											
 											<!-- rc.local extra commands -->
 	                                        <div class="form-group">
 	                                            <label>On boot extra commands (rc.local)</label>

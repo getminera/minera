@@ -62,7 +62,10 @@ class App extends Main_Controller {
 	{
 		if (!$this->session->userdata("loggedin"))
 			redirect('app/index');
-			
+		
+		$this->config->load('timezones');
+		$data['timezones'] = $this->config->item("timezones");
+		
 		$this->util_model->autoAddMineraPool();
 		$extramessages = false;
 		
@@ -75,7 +78,7 @@ class App extends Main_Controller {
 			$mineraDonationTime = substr(trim($this->input->post('minera_donation_time')), strpos(trim($this->input->post('minera_donation_time')), ";") + 1);
 			$coinRates = $this->input->post('dashboard_coin_rates');
 			$this->redis->set("altcoins_update", (time()-3600));
-			$dashboardTemp = $this->input->post('dashboard_temp');
+			$dashboardTemp = $this->input->post('dashboard_temp');			
 
 			$poolUrls = $this->input->post('pool_url');
 			$poolUsernames = $this->input->post('pool_username');
@@ -181,7 +184,7 @@ class App extends Main_Controller {
 			// Save the JSON conf file
 			file_put_contents($this->config->item("minerd_conf_file"), $jsonConfFile);
 
-			// End command options string
+			// End command options string			
 
 			$this->util_model->setPools($pools);
 			$this->util_model->setCommandline($settings);
@@ -195,6 +198,14 @@ class App extends Main_Controller {
 			$this->redis->set("dashboard_temp", $dashboardTemp);
 			
 			// System settings
+			
+			// Set the System Timezone
+			$timezone = $this->input->post('minera_timezone');
+			$currentTimezone = $this->redis->get("minera_timezone");
+			if ($currentTimezone != $timezone)
+			{
+				$this->util_model->setTimezone($timezone);
+			}
 			
 			// Delay time
 			$delay = 5;
@@ -317,6 +328,7 @@ class App extends Main_Controller {
 		$data['dashboardTemp'] = ($this->redis->get("dashboard_temp")) ? $this->redis->get("dashboard_temp") : "c";
 
 		// Load System settings
+		$data['mineraTimezone'] = $this->redis->get("minera_timezone");
 		$data['systemExtracommands'] = $this->redis->get("system_extracommands");
 		
 		// Load Mobileminer
@@ -504,7 +516,7 @@ class App extends Main_Controller {
 				$o = $this->util_model->getHistoryStats($this->input->get('type'));
 			break;
 			case "test":
-				$o = $this->util_model->getStoredDonations(); //$this->util_model->getParsedStats($this->util_model->getMinerStats());
+				$o = $this->util_model->getMinerStats(); //$this->util_model->getParsedStats($this->util_model->getMinerStats());
 			break;
 		}
 		

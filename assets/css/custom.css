@@ -31,6 +31,10 @@ body > .header .navbar .nav > li > a > .label { padding: 3px !important; }
 .donation-pool { background: #E2EDF0; color: #99A5A8; }
 .callout.callout-grey { background-color: #F3F3F3; border-color: #ed5565; }
 
+.lockscreen {background: url(../img/bg-dark.jpg) repeat center center fixed !important;}
+.lockscreen-link, .lockscreen-name { color: #fff;}
+.lockscreen .headline { color: #ccc !important;}
+
 @media all and (max-width : 960px) { 
 	.messages-menu { display: none !important;}
 }
