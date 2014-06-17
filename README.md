@@ -239,6 +239,7 @@ Credits
 -------------
 I wish to thank every plugin, libraries, framework, icons, etc authors for their great job, in random order:
 
+* [CPUMiner-GC3355](https://github.com/siklon/cpuminer-gc3355) author
 * [Codeigniter](http://ellislab.com/codeigniter) PHP Framework
 * [Raspbian](http://www.raspbian.org/) Raspberry Debian distribution
 * [Jquery](http://jquery.com/) Javascript libraries

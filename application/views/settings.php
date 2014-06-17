@@ -74,15 +74,18 @@
 										    		
 										    		<div class="callout callout-grey readme-donation" style="display:none;">
 										    		    <h6><strong>How does time donation work?</strong></h6>
-										    		    <p><small>It's really simple, you can select how many minutes per day you want to donate to Minera, you can choose between 15 minutes and 6 hours. If you leave it at zero minutes, time donation will be disabled. If you enable it, every day (at about 4.10am system time) Minera will automatically switch to the donation pool for the amount of time you select. When the period is over Minera switches back to your main pool. Pool switches are on the fly, so it doesn't need to save/restart anything.</small></p>
+
+										    		    <p><small>It's really simple, you can select how many minutes per day you want to donate to Minera, you can choose between 15 minutes and 6 hours. If you leave it at zero minutes, donation will be disabled. If you enable it, every day (at about 4.10am system time) Minera will automatically switch to the donation pool for the amount of time you have selected. When that period is over Minera will switch back to your main pool. Pool changes are on the fly, so it doesn't need to save/restart anything.</small></p>
+
 										    		    <h6><strong>What does happen if Minera reboot/shutdown/stop during the donation period?</strong></h6>
-										    		    <p><small>Absolutely nothing. I mean, if your Minera system got problems while is running on the donation pool (for example it reboots for power outage), it just restart hashing on the main pool set. It won't retry to switch the donation pool until the day after.</small></p>
-										    		    <h6><strong>How do you calculate the worth of the donation?</strong></h6>
-										    		    <p><small>It's really approximate because I simply divide the time in minutes you donate per a fixed average profitability of 0.0018 <i class="fa fa-btc"></i>/Day, the function is: <i>0.0018 / 24 / 60 x donation_minutes</i>.</small></p>
+										    		    <p><small>Absolutely nothing. I mean, if your Minera system got problems while is running on the donation pool (for example it reboots as a result of a power failure), it just goes back to the main pool. It won't retry to switch the donation pool until the next day.</small></p>
+										    		    <h6><strong>How do you calculate the amount donated?</strong></h6>
+										    		    <p><small>It's just an approximate. I simply divide the time in minutes you donate per fixed average profitability of 0.0018 <i class="fa fa-btc"></i>/Day, the function is: <i>0.0018 / 24 / 60 x donation_minutes</i>.</small></p>
 										    		    
 										    		    <h6><strong>What do you do with the money received?</strong></h6>
-										    		    <p><small>Thanks to your kindly donations I could, for example, buy some of the new hardware coming out to add its support in Minera. So next time there will be a new cool hardware, Minera will be ready to accept it. And of course, I need beer to do all this cool stuff :)</small></p>
+										    		    <p><small>Thanks to your kind donations I can buy some of the new hardware coming out and add its support to Minera. So next time there is a new cool hardware, Minera will be ready for it. I also need beer to do all this cool stuff :)</small></p>
 										    		    <h6><strong>Anyway, I wanna really thank you for all your support and appreciation!</strong></h6>
+										    		    <h6><strong>Michelem</strong></h6>
 										    		</div>
 										    		
 										    		<?php if ($mineraStoredDonations) : ?>
@@ -147,8 +150,8 @@
 			                                <div class="box-body">
 												<!-- Temperatures scale F°/C°-->
 												<div class="form-group">
-													<label>Temperatures scale</label>
-													<p>Select your preferred scale to display temperatures.</p>
+													<label>Temperature units</label>
+													<p>Select your preferred units to display temperature.</p>
 													<div class="radio">
 														<label>
 															<input type="radio" name="dashboard_temp" value="c" <?php if ($dashboardTemp == "c") : ?>checked=""<?php endif; ?> />
@@ -459,7 +462,7 @@
 	                                        <!-- Minerd final config -->
 	                                        <h3>Check your miner settings</h3>
 											<div class="callout callout-info">
-												<h4>Miner will start with this command line:</h4>
+												<h4>Miner will start with this syntax:</h4>
 												<h5><i><?php echo $this->config->item("screen_command") ?> <?php echo $this->config->item("minerd_command")."</i> <strong>".$minerdSettings ?></strong></h5>
 												<h4>JSON Conf:</h4>
 												<pre style="font-size:10px;"><?php $jsonConf =  json_decode($minerdJsonSettings); echo json_encode($jsonConf, JSON_PRETTY_PRINT); ?></pre>
@@ -550,7 +553,7 @@
 											
 											<!-- rc.local extra commands -->
 	                                        <div class="form-group">
-	                                            <label>On boot extra commands (rc.local)</label>
+	                                            <label>Startup extra commands (rc.local)</label>
 	                                            <p>If you need to launch any other extra command on boot, you can place them here. Each line will be appended to the file /etc/rc.local</p>
 	                                            <textarea name="system_extracommands" class="form-control" rows="5" placeholder="There isn't any error control here" class="system_extracommands"><?php echo $systemExtracommands ?></textarea>
 												<h6>(WARNING: you could harm your controller putting wrong strings here.)</h6>
