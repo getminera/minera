@@ -114,7 +114,7 @@
 										    		    				<td>
 										    		    					<span class="label bg-green"><?php echo $this->util_model->convertHashrate($donationHr) ?></span>
 										    		    				</td>
-										    		    				<td><a href="https://twitter.com/home?status=<?php echo urlencode("@michelem I just donated ".$donationPeriod." minutes of my hash power to the #Minera project, your next #mining dashboard http://j.mp/mineraweb #bitcoin") ?>" target="_blank" title="Tweet it!"><small class="badge bg-light-blue"><i class="fa fa-twitter"></i> Tweet It!</small></a></td>
+										    		    				<td><a href="https://twitter.com/home?status=<?php echo urlencode("@michelem I just donated ".$donationPeriod." minutes of my hash power to the #Minera project, your next #mining dashboard http://getminera.com #bitcoin") ?>" target="_blank" title="Tweet it!"><small class="badge bg-light-blue"><i class="fa fa-twitter"></i> Tweet It!</small></a></td>
 										    		    				</tr>
 										    		    			<?php endforeach; ?>
 										    		    			</tbody>

@@ -195,18 +195,20 @@
 										</div>
 									</div><!-- /.row - inside box -->
 								</div><!-- /.box-body -->
-								<?php if ($savedFrequencies) : ?>
 									 <div class="box-footer">
 									 	<div class="legend pull-right">
 									 		<h6>Colors based on last share time: <i class="fa fa-circle text-success"></i> Good&nbsp;&nbsp;&nbsp;<i class="fa fa-circle text-warning"></i> Warning&nbsp;&nbsp;&nbsp;<i class="fa fa-circle text-danger"></i> Critical&nbsp;&nbsp;&nbsp;<i class="fa fa-circle text-muted"></i> Possibly dead</h6>
 									 	</div>
+									 	<?php if ($savedFrequencies) : ?>
 									 	<button class="btn btn-primary btn-sm btn-saved-freq" data-toggle="tooltip" title="" data-original-title="Look at saved frequencies"><i class="fa fa-eye"></i> Saved frequencies</button>
+									 	<?php else: ?>
+									 	&nbsp;
+									 	<?php endif; ?>
 									 	<div class="freq-box" style="display:none; margin-top:10px;">
 										  	<h6>You can find this on the <a href="<?php echo site_url("app/settings") ?>">settings page</a> too.</h6>
 											<pre id="miner-freq" style="font-size:10px; margin-top:10px;">--gc3355-freq=<?php echo $savedFrequencies ?></pre>
 									 	</div>
 									</div>
-								<?php endif; ?>
 							</div><!-- /.miner box -->
 							
 							<!-- Pools box -->
