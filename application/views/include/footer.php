@@ -125,7 +125,7 @@
 				max: 1400,
 				from: <?php echo (isset($minerdStartfreq)) ? $minerdStartfreq : 800; ?>,
 				type: 'single',
-				step: 5,
+				step: 1,
 				postfix: " Mhz",
 				hasGrid: true,
 			});
