@@ -18,6 +18,51 @@
 	<script src="<?php echo base_url('assets/js/jquery.dataTables.min.js') ?>" type="text/javascript"></script>
 	<script src="<?php echo base_url('assets/js/dataTables.bootstrap.js') ?>" type="text/javascript"></script>
 
+    <!-- General script -->
+    <script type="text/javascript">
+    	
+		$(function() {
+		    "use strict";
+			
+			startTime();
+			
+			function startTime()
+            {
+                var today = new Date();
+                var h = today.getHours();
+                var m = today.getMinutes();
+                var s = today.getSeconds();
+
+                // add a zero in front of numbers<10
+                m = checkTime(m);
+                s = checkTime(s);
+
+                //Check for PM and AM
+                var day_or_night = (h > 11) ? "PM" : "AM";
+
+                //Convert to 12 hours system
+                if (h > 12)
+                    h -= 12;
+
+                //Add time to the headline and update every 500 milliseconds
+                $('.toptime').html(h + ":" + m + ":" + s + " " + day_or_night);
+                setTimeout(function() {
+                    startTime()
+                }, 500);
+            }
+
+            function checkTime(i)
+            {
+                if (i < 10)
+                {
+                    i = "0" + i;
+                }
+                return i;
+            }
+
+		});
+	</script>
+	
 	<?php if ($settingsScript) : ?>
 	<!-- jQuery Validation -->
     <script src="<?php echo base_url('assets/js/jquery.validate.min.js') ?>" type="text/javascript"></script>
@@ -166,6 +211,14 @@
 				$(".pool-group-master").last().css("display", "block").removeClass("pool-group-master");
 		    });
 
+			$(".form-donation").prop('disabled', true);
+			
+		    $(document).on('click', '.add-donation-pool-row', function(e) {
+				e.preventDefault();
+				$(".form-donation").prop('readonly', true).prop('disabled', false);
+				$(".pool-donation-group").css("display", "block").removeClass("pool-donation-group");
+		    });
+		    
 		    if ($("#manual_options").val() == "1") $(".guided-options").hide();
 		    if ($("#guided_options").val() == "1") $(".manual-options").hide();
 		    $(".btn-manual-options").click(function() {
@@ -716,11 +769,11 @@
 							}
 							
 							puserlabel = 'blue';
-							purlicon = '<i class="fa fa-flash"></li> ';
+							purlicon = '<i class="fa fa-flash"></i>&nbsp;';
 							if (pval.user == 'michelem.minera')
 							{
 								puserlabel = 'light';
-								purlicon = '<i class="fa fa-gift"></li> ';
+								purlicon = '<i class="fa fa-gift"></i>&nbsp;';
 							}
 	
 							// Main pool

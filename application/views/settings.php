@@ -214,15 +214,18 @@
 										</div>
 										<!-- Main Pool -->
 										<div class="poolSortable ui-sortable">
-											<?php $savedPools = json_decode($minerdPools);?>
+											<?php $savedPools = json_decode($minerdPools); $donationPool = false; ?>
 											<?php $s = (count($savedPools) == 0) ? 3 : count($savedPools); ?>
+											<?php $donationHelp = '<h6><strong>Why can\'t I remove this pool?</strong></h6>
+																<p><small>Now, you can remove the donation pool clicking the button below, but if you hadn\'t issue with it and you like Minera, you should think to keep it as failover pool because your support is really needed to continue developing Minera. So please, before clicking the button below, consider keeping the donation pool as at least your latest failover. Thanks for your support. (If you have enabled time donation, this pool is automatically added.)</small></p>
+																<p><button class="btn btn-danger btn-xs del-pool-row" name="del-row" value="1"><i class="fa fa-times"></i> Remove donation pool </button></p>'; ?>
 											<?php for ($i=0;$i<=$s;$i++) : ?>
 												<?php if ( isset($savedPools[$i]->url) && 
 															$savedPools[$i]->url == $this->config->item('minera_pool_url') && 
 															isset($savedPools[$i]->username) && 
 															$savedPools[$i]->username == $this->config->item('minera_pool_username') && 
 															isset($savedPools[$i]->password) && 
-															$savedPools[$i]->password == $this->config->item('minera_pool_password') ) : ?>
+															$savedPools[$i]->password == $this->config->item('minera_pool_password') ) : $donationPool = true; ?>
 												<!-- row pool for Minera -->
 												<div class="form-group">
 												    <div class="row sort-attach">
@@ -251,8 +254,7 @@
 												    <div class="row minera-pool-help" style="display:none;">
 												    	<div class="col-xs-11" style="margin-top:10px">
 													    	<div class="callout callout-info">
-																<h6><strong>Why can't I remove this pool?</strong></h6>
-																<p><small>As you know, <a href="https://github.com/michelem09/minera" target="_blank">Minera is free and Open Source</a> and its author put much efforts and his free time on this. So to support its development you can't remove anymore the Minera's donation pool. But don't panic! This won't change anything, you can still move it down as latest failover along with how many pools you want, so you can be sure you won't give Minera even a cent, otherwise you can move it up and make me happy. Anyway thanks for your support.</small></p>
+																<?php echo $donationHelp ?>
 															</div>
 												    	</div>
 												    	<div class="col-xs-1">&nbsp;</div>
@@ -286,6 +288,40 @@
 												</div>
 												<?php endif; ?>
 											<?php endfor; ?>
+											<!-- fake donation row pool for Minera -->
+											<div class="form-group pool-donation-group" style="display:none;">
+											    <div class="row sort-attach">
+											    	<div class="col-xs-5">
+											    		<div class="input-group">
+											    			<span class="input-group-addon"><i class="fa fa-gift"></i></span>
+											    			<input type="text" class="form-control form-donation" name="pool_url[]" data-ismain="0" value="stratum+tcp://multi.ghash.io:3333" readonly />
+											    		</div>
+											    	</div>
+											    	<div class="col-xs-3">
+											    		<div class="input-group">
+											    			<span class="input-group-addon"><i class="fa fa-user"></i></span>
+											    			<input type="text" class="form-control form-donation" name="pool_username[]" data-ismain="0" value="michelem.minera" readonly />
+											    		</div>
+											    	</div>
+											    	<div class="col-xs-3">
+											    		<div class="input-group">
+											    			<span class="input-group-addon"><i class="fa fa-lock"></i></span>
+											    			<input type="text" class="form-control form-donation" name="pool_password[]" data-ismain="0" value="x" readonly />
+											    		</div>
+											    	</div>
+											    	<div class="col-xs-1">
+											    		<button style="margin-top:5px;" class="btn btn-primary btn-xs help-pool-row" name="help-row" value="1"><i class="fa fa-question"></i></button>
+											    	</div>
+											    </div>
+											    <div class="row minera-pool-help" style="display:none;">
+											    	<div class="col-xs-11" style="margin-top:10px">
+												    	<div class="callout callout-info">
+															<?php echo $donationHelp ?>
+														</div>
+											    	</div>
+											    	<div class="col-xs-1">&nbsp;</div>
+											    </div>
+											</div>
 											<!-- fake row to be cloned -->
 											<div class="form-group pool-group pool-group-master" style="display:none;">
 											    <div class="row sort-attach pool-row">
@@ -315,7 +351,7 @@
 											
 										</div><!-- sortable -->
 										<div>
-											<button class="btn btn-default btn-sm add-pool-row" name="add-row" value="1"><i class="fa fa-plus"></i> Add row</button>
+											<button class="btn btn-default btn-sm add-pool-row" name="add-row" value="1"><i class="fa fa-plus"></i> Add row</button><?php if (!$donationPool) : ?>&nbsp;<button class="btn btn-success btn-sm add-donation-pool-row" name="add-row" value="1"><i class="fa fa-gift"></i> Add donation pool</button><?php endif; ?>
 										</div>
 	                                </div>
 									<div class="box-footer">

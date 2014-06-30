@@ -17,6 +17,12 @@
                 </a>
 				<div class="navbar-right">
 					<ul class="nav navbar-nav">
+						<!-- Clock -->
+						<li class="messages-menu">
+                            <a href="#" class="clock">
+                                <i class="fa fa-clock-o"></i> <span class="toptime"></span>
+                            </a>
+                        </li>
 						<?php if (isset($btc->volume)) : ?>
 						<!-- BTC/USD rates -->
 						<li class="messages-menu">

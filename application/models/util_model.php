@@ -411,13 +411,13 @@ class Util_model extends CI_Model {
 		{
 			$md5s[] = md5(strtolower($pool->url).strtolower($pool->username).strtolower($pool->password));
 		}
-		
+
 		$mineraMd5 = md5($this->config->item('minera_pool_url').$this->config->item('minera_pool_username').$this->config->item('minera_pool_password'));
 		
 		if (!in_array($mineraMd5, $md5s))
 		{
 			array_push($pools, array("url" => $this->config->item('minera_pool_url'), "username" => $this->config->item('minera_pool_username'), "password" => $this->config->item('minera_pool_password')) );
-			
+	
 			$this->setPools($pools);
 		}
 	}
@@ -465,7 +465,9 @@ class Util_model extends CI_Model {
 	// Get Cryptsy API to look at BTC rates
 	public function getCryptsyRates($id)
 	{
-		if ($json = @file_get_contents("http://pubapi.cryptsy.com/api.php?method=singlemarketdata&marketid=$id"))
+		$ctx = stream_context_create(array('http' => array('timeout' => 3)));
+		
+		if ($json = @file_get_contents("http://pubapi.cryptsy.com/api.php?method=singlemarketdata&marketid=$id", 0, $ctx))
 		{
 			$a = json_decode($json);
 			$o = false;

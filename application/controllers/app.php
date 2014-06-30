@@ -6,7 +6,7 @@ class App extends Main_Controller {
 	*/
 	public function index()
 	{	
-		$this->util_model->autoAddMineraPool();
+		//$this->util_model->autoAddMineraPool();
 		$data['htmlTag'] = "lockscreen";
 		$data['pageTitle'] = "Welcome to Minera";
 		$this->load->view('include/header', $data);
@@ -35,7 +35,7 @@ class App extends Main_Controller {
 		if (!$this->session->userdata("loggedin"))
 			redirect('app/index');
 		
-		$this->util_model->autoAddMineraPool();
+		//$this->util_model->autoAddMineraPool();
 		
 		$data['minerdPools'] = json_decode($this->util_model->getPools());
 		$data['btc'] = $this->util_model->getBtcUsdRates();
@@ -66,7 +66,6 @@ class App extends Main_Controller {
 		$this->config->load('timezones');
 		$data['timezones'] = $this->config->item("timezones");
 		
-		$this->util_model->autoAddMineraPool();
 		$extramessages = false;
 		
 		// Refresh Cryptsydata if needed
@@ -75,7 +74,9 @@ class App extends Main_Controller {
 		if ($this->input->post('save_settings'))
 		{
 			$dashSettings = substr(trim($this->input->post('dashboard_refresh_time')), strpos(trim($this->input->post('dashboard_refresh_time')), ";") + 1);
+			
 			$mineraDonationTime = substr(trim($this->input->post('minera_donation_time')), strpos(trim($this->input->post('minera_donation_time')), ";") + 1);
+			
 			$coinRates = $this->input->post('dashboard_coin_rates');
 			$this->redis->set("altcoins_update", (time()-3600));
 			$dashboardTemp = $this->input->post('dashboard_temp');			
@@ -187,6 +188,12 @@ class App extends Main_Controller {
 			// End command options string			
 
 			$this->util_model->setPools($pools);
+			
+			if ($mineraDonationTime)
+			{
+				$this->util_model->autoAddMineraPool();
+			}			
+			
 			$this->util_model->setCommandline($settings);
 			$this->redis->set("minerd_json_settings", $jsonConfRedis);
 			$this->redis->set("minerd_autorecover", $this->input->post('minerd_autorecover'));
