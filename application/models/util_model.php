@@ -281,8 +281,8 @@ class Util_model extends CI_Model {
 				$avg = 3600;
 			break;
 			case "yearly":
-				$period = 3600*24*30;
-				$range = 12;
+				$period = 3600*24*14;
+				$range = 27;
 				$avg = 86400;
 			break;
 		}

@@ -42,17 +42,26 @@ This is a list of some of the Minera's features:
 * Hashrate history
 * Errors/Rejects history
 * Sysload monitor
+* Bitcoin/Crypto currencies rates
+* Average hashrate stats
+
+**Charts**
+
+* Hashrate and Acceptes/Rejected/Errors
+* Hourly, daily, monthly, yearly
 
 **Settings**
 
-* Pools setting with main/failovers (pool are live checked)
+* Pools setting with main/failovers
 * Mobileminer support - Remote monitoring (http://www.mobileminerapp.com/#miners)
+* Donations time based
 * Guided or Manual miner configuration
 * Device autotune
 * Device autodetection
 * Logging
 * Start frequency
 * Auto-recover mode
+* System timezone
 * Extra options
 * Dashboard refresh time
 * Minera password management
@@ -196,7 +205,7 @@ TODO
 
 * ~~Create an img file “plug&play”~~
 * ~~Add some errors control to installer~~
-* Add daily/weekly/monthly charts
+* ~~Add daily/weekly/monthly charts~~
 * ~~Add more crypto-currencies exchange rates~~
 * Add more system monitor (CPU/Mem)
 * ~~Add system temperature~~
@@ -217,6 +226,10 @@ Lockscreen:
 Dashboard:
 
 [![Dashboard](https://github.com/michelem09/minera/raw/master/assets/img/screen_minera_dashboard.png)](https://github.com/michelem09/minera/raw/master/assets/img/screen_minera_dashboard_hi.png)
+
+Charts:
+
+[![Charts](https://github.com/michelem09/minera/raw/master/assets/img/screen_minera_charts.png)](https://github.com/michelem09/minera/raw/master/assets/img/screen_minera_charts_hi.png)
 
 Settings:
 

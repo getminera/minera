@@ -23,6 +23,7 @@
                                 <i class="fa fa-clock-o"></i> <span class="toptime"></span>
                             </a>
                         </li>
+                        <?php if ($appScript) : ?>
                         <!-- Averages -->
 						<li class="messages-menu messages-avg">
                             <a href="#" class="dropdown-toggle" data-toggle="dropdown">
@@ -37,6 +38,7 @@
                                 <li class="footer"><a href="<?php echo site_url("app/charts") ?>">Go to Charts</a></li>
                             </ul>
                         </li>
+                        <?php endif; ?>
 						<?php if (isset($btc->volume)) : ?>
 						<!-- BTC/USD rates -->
 						<li class="messages-menu">

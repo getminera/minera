@@ -831,8 +831,6 @@
 						
 						$.each( data.avg, function( akey, aval ) 
 						{
-							console.log(aval);
-
 							var avgs = {}; avgs.hrCurrentText = "-"; avgs.hrCurrent = 0; avgs.hrPast = 0;
 							if (aval[0])
 							{
@@ -845,9 +843,9 @@
 							}
 
 							if (avgs.hrPast > avgs.hrCurrent)
-								avgs.arrow = '<i class="fa fa-arrow-circle-o-down" style="color:#f56954;"></i>';
+								avgs.arrow = '<i class="fa fa-chevron-down" style="color:#f56954;"></i>';
 							else if (avgs.hrPast < avgs.hrCurrent)
-								avgs.arrow = '<i class="fa fa-arrow-circle-o-up" style="color:#00a65a;"></i>';
+								avgs.arrow = '<i class="fa fa-chevron-up" style="color:#00a65a;"></i>';
 							else
 								avgs.arrow = '<i class="fa fa-arrows-h"></i>';								
 
