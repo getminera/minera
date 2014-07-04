@@ -62,7 +62,123 @@
 
 		});
 	</script>
+
+	<?php if (isset($chartsScript) && $chartsScript) : ?>
+    <!-- jQuery Morris Charts -->
+    <script src="<?php echo base_url('assets/js/raphael-min.js') ?>"></script>
+    <script src="<?php echo base_url('assets/js/morris.min.js') ?>" type="text/javascript"></script>
+
+    <!-- Charts script -->
+    <script type="text/javascript">
+    	
+		$(function() {
+		    "use strict";
+
+		    createChart('hourly', '5 minutes');		    
+		    createChart('daily', '15 minutes');
+		    createChart('monthly', '1 hour');
+		    createChart('yearly', '1 day');
+		    		    		    
+		    function createChart(period, text_period)
+		    {
+				/* Morris.js Charts */
+				// get Json data from stored_stats url (redis) and create the graphs
+				$.getJSON( "<?php echo site_url('app/api') ?>"+"?command=history_stats&type="+period, function( data ) 
+	    		{
+				    var refresh = false;
+				    var areaHash = {};
+				    var areaRej = {};
+				    
+	    			var data = Object.keys(data).map(function(key) { 
+								data[key]['timestamp'] = data[key]['timestamp']*1000; 
+								data[key]['hashrate'] = (data[key]['hashrate']/1000/1000).toFixed(2);
+								data[key]['pool_hashrate'] = (data[key]['pool_hashrate']/1000/1000).toFixed(2);									
+								return data[key];
+						});
+				
+					if (data.length > 0)
+					{
+						
+						if (refresh === false)
+						{
+							// Hashrate history graph
+							areaHash = new Morris.Area({
+								element: 'hashrate-chart-'+period,
+								resize: true,
+								data: data,
+								xkey: 'timestamp',
+								ykeys: ['hashrate', 'pool_hashrate'],
+								ymax: 'auto',
+								postUnits: "Mh/s",
+								labels: ['Devices', 'Pool'],
+								lineColors: ['#3c8dbc', '#00c0ef'],
+								lineWidth: 2,
+								pointSize: 3,
+								hideHover: 'auto',
+								behaveLikeLine: true
 	
+							});	
+							
+							// Rejected/Errors graph
+							areaRej = new Morris.Area({
+								element: 'rehw-chart-'+period,
+								resize: true,
+								data: data,
+								xkey: 'timestamp',
+								ykeys: ['accepted', 'rejected', 'errors'],
+								ymax: 'auto',
+								labels: ['Accepted', 'Rejected', 'Errors'],
+								lineColors: ['#00a65a', '#f39c12', '#f56954'],
+								lineWidth: 2,
+								pointSize: 3,
+								hideHover: 'auto',
+								behaveLikeLine: true
+							});
+						}
+						else
+						{
+							updateGraphs(data);
+						}
+						
+						$(window).resize(function() {
+							redrawGraphs()
+						});
+						
+						$('.sidebar-toggle').click(function() { redrawGraphs(); })
+					}
+					else
+					{
+						$('#hashrate-chart-'+period).css({'height': '100%', 'overflow': 'visible', 'margin-top': '20px'}).html('<div class="alert alert-warning"><i class="fa fa-warning"></i><b>Alert!</b> <small>No data collected, wait at least '+text_period+' to see the chart.</small></div>');	
+						$('#rehw-chart-'+period).css({'height': '100%', 'overflow': 'visible', 'margin-top': '20px'}).html('<div class="alert alert-warning"><i class="fa fa-warning"></i><b>Alert!</b> <small>No data collected, wait at least '+text_period+' to see the chart.</small></div>');	
+
+					}
+				
+					function redrawGraphs()
+					{
+					    areaHash.redraw();
+					    areaRej.redraw();
+						    
+					    return false;
+					}
+					
+					function updateGraphs(data)
+					{
+					    areaHash.setData(data);
+					    areaRej.setData(data);
+						    
+					    return false;
+					}
+					
+					$('.overlay').hide();
+					$('.loading-img').hide();
+				});
+    			
+			} //End get stored stats
+		});
+		
+	</script>
+	<?php endif; ?>
+		
 	<?php if ($settingsScript) : ?>
 	<!-- jQuery Validation -->
     <script src="<?php echo base_url('assets/js/jquery.validate.min.js') ?>" type="text/javascript"></script>
@@ -707,6 +823,44 @@
 						$('#miner-table-details').dataTable().fnDestroy();		
 						$('#pools-table-details').dataTable().fnClearTable();
 						$('#pools-table-details').dataTable().fnDestroy();					
+					}
+					
+					if (data.avg)
+					{
+						$('.avg-stats').empty();
+						
+						$.each( data.avg, function( akey, aval ) 
+						{
+							console.log(aval);
+
+							var avgs = {}; avgs.hrCurrentText = "-"; avgs.hrCurrent = 0; avgs.hrPast = 0;
+							if (aval[0])
+							{
+								avgs.hrCurrent = parseInt(aval[0].pool_hashrate / 1000);
+								avgs.hrCurrentText = convertHashrate( avgs.hrCurrent );								
+							}
+							if (aval[1])
+							{
+								avgs.hrPast = parseInt(aval[1].pool_hashrate / 1000);				
+							}
+
+							if (avgs.hrPast > avgs.hrCurrent)
+								avgs.arrow = '<i class="fa fa-arrow-circle-o-down" style="color:#f56954;"></i>';
+							else if (avgs.hrPast < avgs.hrCurrent)
+								avgs.arrow = '<i class="fa fa-arrow-circle-o-up" style="color:#00a65a;"></i>';
+							else
+								avgs.arrow = '<i class="fa fa-arrows-h"></i>';								
+
+							if (akey == "1min")
+							{
+								$('.avg-1min').html(akey + ": " + avgs.hrCurrentText + " " + avgs.arrow);
+							}
+							else
+							{
+								var avgStats = '<li><a href="#"><div class="pull-left" style="padding-left:15px;">'+avgs.arrow+'</div><h4>'+avgs.hrCurrentText+'<small><i class="fa fa-dashboard"></i> Pool Hashrate</small></h4><p>'+akey+'</p></a></li>';
+								$('.avg-stats').append(avgStats);
+							}
+						});
 					}
 
 					if (data.pools)

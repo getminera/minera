@@ -23,6 +23,20 @@
                                 <i class="fa fa-clock-o"></i> <span class="toptime"></span>
                             </a>
                         </li>
+                        <!-- Averages -->
+						<li class="messages-menu messages-avg">
+                            <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                                <i class="fa fa-dashboard"></i> <span class="avg-1min">Calculating...</span>
+                            </a>
+                            <ul class="dropdown-menu">
+                                <li class="header">Average stats</li>
+                                <li>
+                                    <!-- inner menu: contains the actual data -->
+                                    <ul class="menu avg-stats" style="overflow: hidden; width: 100%; height: 200px;"></ul>
+                                </li>
+                                <li class="footer"><a href="<?php echo site_url("app/charts") ?>">Go to Charts</a></li>
+                            </ul>
+                        </li>
 						<?php if (isset($btc->volume)) : ?>
 						<!-- BTC/USD rates -->
 						<li class="messages-menu">
@@ -182,6 +196,11 @@
                         <li data-toggle="tooltip" title="" data-original-title="Go to the dashboard page">
                             <a href="<?php echo site_url("app/dashboard") ?>">
                                 <i class="fa fa-dashboard"></i> <span>Dashboard</span>
+                            </a>
+                        </li>
+                        <li data-toggle="tooltip" title="" data-original-title="Go to the dashboard page">
+                            <a href="<?php echo site_url("app/charts") ?>">
+                                <i class="fa fa-bar-chart-o"></i> <span>Charts</span>
                             </a>
                         </li>
                         <li data-toggle="tooltip" title="" data-original-title="Go to the settings page">

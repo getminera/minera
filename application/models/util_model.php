@@ -7,12 +7,13 @@
  */
 class Util_model extends CI_Model {
 
+
 	public function __construct()
 	{
 		// load CPUMiner Model
 		// TODO Switch model for CGMiner/BFGMiner
 		$this->load->model('cpuminer_model', 'miner');
-		
+
 		parent::__construct();
 	}
 
@@ -55,6 +56,9 @@ class Util_model extends CI_Model {
 				{
 					$pool->alive = $this->checkPool($pool->url);
 				}
+				
+				// Add average stats
+				$a->avg = $this->getStoredAvgStats();
 				
 				// Encode and save the latest
 				$o = json_encode($a);
@@ -208,13 +212,46 @@ class Util_model extends CI_Model {
 	}
 
 	// Get the stored stats from Redis
-	public function getStoredStats($seconds = 3600, $startTime = false)
+	public function getStoredAvgStats()
+	{	
+		$periods = array("1min" => 60, "5min" => 300, "1hour" => 3600, "1day" => 86400);
+		
+		foreach ($periods as $period => $seconds)
+		{
+			if ($seconds == 60)
+				$rows = $this->redis->command("ZREVRANGE minerd_delta_stats 0 1");
+			else
+				$rows = $this->redis->command("ZREVRANGE minerd_avg_stats_$seconds 0 1");
+			
+			$avgs[$period] = array();			
+			if (count($rows) > 0)
+			{
+				foreach ($rows as $row)	
+				{
+					$row = json_decode($row);
+					$avgs[$period][] = $row;
+				}
+			}
+		}
+		
+		return $avgs;
+	}
+	
+	// Get the stored stats from Redis
+	public function getStoredStats($seconds = 3600, $startTime = false, $avg = false)
 	{	
 		$current = ($startTime) ? $startTime : time();
-		$time = $current-$seconds;
-
-		$o = $this->redis->command("ZRANGEBYSCORE minerd_delta_stats $time $current");
+		$startTime = $current-$seconds;
 		
+		if ($avg)
+		{
+			$o = $this->redis->command("ZRANGEBYSCORE minerd_avg_stats_$avg $startTime $current");
+		}
+		else
+		{
+			$o = $this->redis->command("ZRANGEBYSCORE minerd_delta_stats $startTime $current");			
+		}
+
 		return $o;
 	}
 	
@@ -226,42 +263,48 @@ class Util_model extends CI_Model {
 			case "hourly":
 				$period = 300;
 				$range = 12;
+				$avg = false;
 			break;
 			case "daily":
 				$period = 3600;
 				$range = 24;
+				$avg = 300;
 			break;
 			case "weekly":
 				$period = 3600*24;
 				$range = 7;
+				$avg = 3600;
 			break;
 			case "monthly":
 				$period = 3600*24;
 				$range = 30;
+				$avg = 3600;
 			break;
 			case "yearly":
 				$period = 3600*24*30;
 				$range = 12;
+				$avg = 86400;
 			break;
 		}
 		
 		$items = array();
+
 		for ($i=0;$i<=($range*$period);$i+=$period)
 		{
 			$statTime = (time()-$i);
-			$item = json_decode($this->avgStats($period, $statTime));
+			$item = json_decode($this->avgStats($period, $statTime, $avg));
 			if ($item)
 				$items[] = $item;
 		}
-		
+
 		$o = json_encode($items);
 		
 		return $o;
 	}
 	
-	public function avgStats($seconds = 900, $startTime = false)
+	public function avgStats($seconds = 900, $startTime = false, $avg = false)
 	{
-		$records = $this->getStoredStats($seconds, $startTime);
+		$records = $this->getStoredStats($seconds, $startTime, $avg);
 		
 		$i = 0; $timestamp = 0; $poolHashrate = 0; $hashrate = 0; $frequency = 0; $accepted = 0; $errors = 0; $rejected = 0; $shares = 0;
 		
@@ -309,6 +352,39 @@ class Util_model extends CI_Model {
 		
 		return json_encode($o);
 		
+	}
+	
+	// Calculate and store the average statistics 5m / 1h / 1d
+	public function storeAvgStats($period = 300, $time = false)
+	{
+		$now = ($time) ? $time : time();
+		
+		// Period is in seconds 5m:300 / 1h:3600 / 1d:86400
+		$startTime = ($now - $period);
+		$stats = $this->avgStats($period, $startTime, false);
+		
+		// Store average stats for period
+		log_message("error", "Stored AVG stats for period ".$period.": ".$stats);
+		
+		$this->redis->command("ZADD minerd_avg_stats_".$period. " ".$now." ".$stats);
+	}
+	
+	// Calculate and store the average statistics 5m / 1h / 1d for old delta stats
+	public function storeOldAvgStats($period)
+	{
+		$last = $this->redis->command("ZRANGE minerd_delta_stats 0 0");
+		$last = json_decode($last[0]);
+		$t = false;
+		if (isset($last->timestamp))
+			$t = $last->timestamp;
+
+		if ($t)
+		{
+			for ($i = time(); $i >= $t; $i-=$period)
+			{
+				$this->storeAvgStats($period, $i);
+			}
+		}
 	}
 	
 	// Store the live stats on Redis

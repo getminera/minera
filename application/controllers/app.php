@@ -1,6 +1,17 @@
 <?php if (!defined('BASEPATH')) die();
+
 class App extends Main_Controller {
 
+	public function __construct()
+	{
+		parent::__construct();
+
+		// Set the general timezone
+		$timezone = ($this->redis->get("minera_timezone")) ? $this->redis->get("minera_timezone") : 'Europe/Rome';
+		date_default_timezone_set($timezone);
+
+	}
+	
 	/*
 	// Index/lock screen controller
 	*/
@@ -52,6 +63,29 @@ class App extends Main_Controller {
 		$this->load->view('include/header', $data);
 		$this->load->view('include/sidebar', $data);
 		$this->load->view('frontpage', $data);
+		$this->load->view('include/footer');
+	}
+	
+	/*
+	// Charts controller
+	*/
+	public function charts()
+	{
+		if (!$this->session->userdata("loggedin"))
+			redirect('app/index');
+		
+		$data['btc'] = $this->util_model->getBtcUsdRates();
+		$data['isOnline'] = $this->util_model->isOnline();
+		$data['htmlTag'] = "charts";
+		$data['chartsScript'] = true;
+		$data['appScript'] = false;
+		$data['settingsScript'] = false;
+		$data['mineraUpdate'] = $this->util_model->checkUpdate();
+		$data['pageTitle'] = ($this->redis->get("mobileminer_system_name")) ? $this->redis->get("mobileminer_system_name")." > Minera - Charts" : "Minera - Charts";
+		
+		$this->load->view('include/header', $data);
+		$this->load->view('include/sidebar', $data);
+		$this->load->view('charts', $data);
 		$this->load->view('include/footer');
 	}
 
@@ -211,6 +245,7 @@ class App extends Main_Controller {
 			$currentTimezone = $this->redis->get("minera_timezone");
 			if ($currentTimezone != $timezone)
 			{
+				date_default_timezone_set($timezone);
 				$this->util_model->setTimezone($timezone);
 			}
 			
@@ -523,7 +558,7 @@ class App extends Main_Controller {
 				$o = $this->util_model->getHistoryStats($this->input->get('type'));
 			break;
 			case "test":
-				$o = $this->util_model->getMinerStats(); //$this->util_model->getParsedStats($this->util_model->getMinerStats());
+				$o = json_encode($this->util_model->storeOldAvgStats(86400)); //$this->util_model->getParsedStats($this->util_model->getMinerStats());
 			break;
 		}
 		
@@ -567,9 +602,32 @@ class App extends Main_Controller {
 			$this->util_model->checkMinerIsUp();	
 		}
 		
-		// Store the live stats to be used on time graphs
+		$now = time();
+		$currentHour = date("H", $now);
+		$currentMinute = date("i", $now);
+						
+		// Store the live stats
 		$stats = $this->util_model->storeStats();
-					
+
+		/*
+		// Store the avg stats
+		*/
+		// Store 5min avg
+		if ( ($currentMinute%5) == 0)
+		{
+			$this->util_model->storeAvgStats(300);
+		}
+		// Store 1hour avg
+		if ( $currentMinute == "00")
+		{
+			$this->util_model->storeAvgStats(3600);
+		}
+		// Store 1day avg
+		if ( $currentHour == "04" && $currentMinute == "00")
+		{
+			$this->util_model->storeAvgStats(86400);
+		}
+		
 		// Activate/Deactivate time donation pool if enable
 		if ($this->util_model->isOnline() && isset($stats->pool_donation_id))
 		{		
@@ -577,7 +635,6 @@ class App extends Main_Controller {
 			if ($donationTime > 0)
 			{
 				$currentHr = (isset($stats->pool->hashrate)) ? $stats->pool->hashrate : 0;
-				$now = time();
 				$poolDonationId = $stats->pool_donation_id;
 				$donationTimeStarted = ($this->redis->get("donation_time_started")) ? $this->redis->get("donation_time_started") : false;
 
@@ -587,8 +644,6 @@ class App extends Main_Controller {
 				$donationStartMinute = "10";
 				$donationStopHour = date("H", ($donationTimeStarted + $donationTime*60));
 				$donationStopMinute = date("i", ($donationTimeStarted + $donationTime*60));
-				$currentHour = date("H", $now);
-				$currentMinute = date("i", $now);
 				
 				// Delete the donation-done flag after 24h
 				if ($now >= ($donationTimeDoneToday+86400))

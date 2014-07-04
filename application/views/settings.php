@@ -579,6 +579,7 @@
 											<!-- timezone -->
 	                                        <div class="form-group">
 	                                            <label>System timezone</label>
+	                                            <p>Current system time is: <span class="badge bg-green"><?php echo date("c", time()); ?></span></p>
 	                                            <p>You should change the timezone to reflect yours</p>
 												<select name="minera_timezone" class="form-control">
 													<?php foreach ($timezones as $timezone) : ?>
