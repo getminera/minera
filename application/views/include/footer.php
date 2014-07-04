@@ -762,6 +762,7 @@
 			$('.top-section').attr('style', 'display: none !important');
 			$('.right-section').hide();
 			$('.left-section').hide();
+			$('.messages-avg').hide();
 			$('.warning-message').html(msg);                        
 			$('.warning-section').fadeIn();
 			
@@ -783,7 +784,6 @@
 			// get Json data from minerd and create Knob, table and sysload
 	        $.getJSON( "<?php echo site_url($this->config->item('live_stats_url')); ?>", function( data ) 
 	        {
-	        
 				// Add Altcoins rates
     			$('.altcoin-container').html('');
     			if (data['altcoins_rates'])
