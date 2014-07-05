@@ -80,7 +80,7 @@
 										    		    <h6><strong>What does happen if Minera reboot/shutdown/stop during the donation period?</strong></h6>
 										    		    <p><small>Absolutely nothing. I mean, if your Minera system got problems while is running on the donation pool (for example it reboots as a result of a power failure), it just goes back to the main pool. It won't retry to switch the donation pool until the next day.</small></p>
 										    		    <h6><strong>How do you calculate the amount donated?</strong></h6>
-										    		    <p><small>It's just an approximate. I simply divide the time in minutes you donate per fixed average profitability of 0.0018 <i class="fa fa-btc"></i>/Day, the function is: <i>0.0018 / 24 / 60 x donation_minutes</i>.</small></p>
+										    		    <p><small>It's just an approximate. I simply divide the time in minutes you donate per fixed average profitability of 0.0008 <i class="fa fa-btc"></i>/Day, the function is: <i>0.0008 / 24 / 60 x donation_minutes</i>.</small></p>
 										    		    
 										    		    <h6><strong>What do you do with the money received?</strong></h6>
 										    		    <p><small>Thanks to your kind donations I can buy some of the new hardware coming out and add its support to Minera. So next time there is a new cool hardware, Minera will be ready for it. I also need beer to do all this cool stuff :)</small></p>
@@ -127,7 +127,7 @@
 										    	</div>										
 										    </div>
 										    <div class="box-footer" style="clear:both">
-										    	<button type="submit" class="btn btn-primary" name="save" value="1">Save</button>
+										    	<button type="submit" class="btn btn-danger" name="save_restart" value="1">Save & Restart Miner</button>
 										    </div>
 										</div>
 	                            

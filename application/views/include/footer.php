@@ -242,7 +242,7 @@
 			
 		    function changeDonationWorth(value) 
 		    {
-		    	var amount = (0.0018 / 24 / 60 * value);
+		    	var amount = (0.0008 / 24 / 60 * value);
 		    	var string = (value > 0) ? "about" : "exactly";
 
 		    	if (value >= 60)
