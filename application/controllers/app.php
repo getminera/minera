@@ -107,6 +107,10 @@ class App extends Main_Controller {
 			
 		if ($this->input->post('save_settings'))
 		{
+			$minerSoftware = $this->input->post('minerd_software');
+			$this->redis->set("minerd_software", $minerSoftware);
+			$this->util_model->switchMinerSoftware();
+			
 			$dashSettings = substr(trim($this->input->post('dashboard_refresh_time')), strpos(trim($this->input->post('dashboard_refresh_time')), ";") + 1);
 			
 			$mineraDonationTime = substr(trim($this->input->post('minera_donation_time')), strpos(trim($this->input->post('minera_donation_time')), ";") + 1);
@@ -142,6 +146,11 @@ class App extends Main_Controller {
 			$settings = null;
 			$confArray = array();
 
+			if ($minerSoftware != "cpuminer")
+			{
+				$confArray["api-listen"] = true;
+			}
+			
 			// Save manual/guided selection
 			$this->redis->set('manual_options', $this->input->post('manual_options'));
 			$this->redis->set('guided_options', $this->input->post('guided_options'));
@@ -157,33 +166,60 @@ class App extends Main_Controller {
 			{
 				// Guided options
 				
-				// Auto-detect
-				if ($this->input->post('minerd_autodetect'))
+				// CPUMiner specific
+				if ($minerSoftware == "cpuminer")
 				{
-					$confArray["gc3355-detect"] = true;			
-				}
-				$this->redis->set('minerd_autodetect', $this->input->post('minerd_autodetect'));
-
-				// Autotune
-				if ($this->input->post('minerd_autotune'))
-				{
-					$confArray["gc3355-autotune"] = true;
-				}
-				$this->redis->set('minerd_autotune', $this->input->post('minerd_autotune'));
+					// Auto-detect
+					if ($this->input->post('minerd_autodetect'))
+					{
+						$confArray["gc3355-detect"] = true;			
+					}
+					$this->redis->set('minerd_autodetect', $this->input->post('minerd_autodetect'));
+	
+					// Autotune
+					if ($this->input->post('minerd_autotune'))
+					{
+						$confArray["gc3355-autotune"] = true;
+					}
+					$this->redis->set('minerd_autotune', $this->input->post('minerd_autotune'));
+						
+					// Start frequency
+					if ($this->input->post('minerd_startfreq'))
+					{
+						$confArray["freq"] = $this->input->post('minerd_startfreq');
+					}
+					$this->redis->set('minerd_startfreq', $this->input->post('minerd_startfreq'));
 					
-				// Start frequency
-				if ($this->input->post('minerd_startfreq'))
-				{
-					$confArray["freq"] = $this->input->post('minerd_startfreq');
+					// Logging
+					if ($this->input->post('minerd_log'))
+					{
+						$confArray["log"] = $this->config->item("minerd_log_file");
+					}
+					$this->redis->set('minerd_log', $this->input->post('minerd_log'));
 				}
-				$this->redis->set('minerd_startfreq', $this->input->post('minerd_startfreq'));
-				
-				// Logging
-				if ($this->input->post('minerd_log'))
-				{
-					$confArray["log"] = $this->config->item("minerd_log_file");
-				}
-				$this->redis->set('minerd_log', $this->input->post('minerd_log'));
+				else
+				{					
+					// Scrypt
+					if ($this->input->post('minerd_scrypt'))
+					{
+						$confArray["scrypt"] = true;			
+					}
+					$this->redis->set('minerd_scrypt', $this->input->post('minerd_scrypt'));
+					
+					// Auto-detect
+					if ($this->input->post('minerd_autodetect'))
+					{
+						$confArray["scan"] = "all";			
+					}
+					$this->redis->set('minerd_autodetect', $this->input->post('minerd_autodetect'));
+	
+					// Logging
+					if ($this->input->post('minerd_log'))
+					{
+						$confArray["log-file"] = $this->config->item("minerd_log_file");
+					}
+					$this->redis->set('minerd_log', $this->input->post('minerd_log'));	
+				}				
 
 				// Debug
 				if ($this->input->post('minerd_debug'))
@@ -343,13 +379,16 @@ class App extends Main_Controller {
 		$data['btc'] = $this->util_model->getBtcUsdRates();
 		
 		// Load miner settings
+		$data['minerdCommand'] = $this->config->item("minerd_command");
 		$data['minerdAutorestart'] = $this->redis->get('minerd_autorestart');
 		$data['minerdAutorestartDevices'] = $this->redis->get('minerd_autorestart_devices');
 		$data['minerdAutorecover'] = $this->redis->get('minerd_autorecover');
+		$data['minerdScrypt'] = $this->redis->get('minerd_scrypt');
 		$data['minerdAutodetect'] = $this->redis->get('minerd_autodetect');
 		$data['minerdAutotune'] = $this->redis->get('minerd_autotune');
 		$data['minerdStartfreq'] = $this->redis->get('minerd_startfreq');
 		$data['minerdExtraoptions'] = $this->redis->get('minerd_extraoptions');
+		$data['minerdSoftware'] = $this->redis->get('minerd_software');
 		$data['minerdLog'] = $this->redis->get('minerd_log');
 		$data['minerdDebug'] = $this->redis->get('minerd_debug');
 		$data['minerdManualSettings'] = $this->redis->get('minerd_manual_settings');

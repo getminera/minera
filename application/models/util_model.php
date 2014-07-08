@@ -7,16 +7,44 @@
  */
 class Util_model extends CI_Model {
 
+	private $_minerdSoftware;
 
 	public function __construct()
 	{
-		// load CPUMiner Model
-		// TODO Switch model for CGMiner/BFGMiner
-		$this->load->model('cpuminer_model', 'miner');
+		// load Miner Model
+		// Switch model for CGMiner/BFGMiner/CPUMiner
+		$this->switchMinerSoftware();
 
 		parent::__construct();
 	}
 
+	public function switchMinerSoftware()
+	{
+		$this->_minerdSoftware = $this->redis->get('minerd_software');
+		if ($this->_minerdSoftware == "bfgminer")
+		{
+			// Config for Bfgminer
+			$this->load->model('bfgminer_model', 'miner');
+			$this->config->set_item('screen_command', '/usr/bin/screen -dmS bfgminer');
+			$this->config->set_item('screen_command_stop', '/usr/bin/screen -S bfgminer -X quit');
+			$this->config->set_item('minerd_command', FCPATH.'minera-bin/bfgminer');
+			$this->config->set_item('minerd_log_file', '/var/log/minera/bfgminer.log');
+			$this->config->set_item('minerd_log_url', 'application/logs/bfgminer.log');			
+		}
+		else
+		{
+			// Default is CPUMiner-gc3355 (cpuminer)
+			$this->load->model('cpuminer_model', 'miner');
+			$this->config->set_item('screen_command', '/usr/bin/screen -dmS cpuminer');
+			$this->config->set_item('screen_command_stop', '/usr/bin/screen -S cpuminer -X quit');
+			$this->config->set_item('minerd_command', FCPATH.'minera-bin/minerd');
+			$this->config->set_item('minerd_log_file', '/var/log/minera/cpuminer.log');
+			$this->config->set_item('minerd_log_url', 'application/logs/cpuminer.log');
+		}
+		
+		return true;
+	}
+	
 	/*
 	//
 	// Stats related stuff
@@ -50,12 +78,6 @@ class Util_model extends CI_Model {
 				$a->altcoins_rates = $altcoinData;
 				
 				$a->pools = $miner->pools;
-				
-				// Add pools
-				foreach ($a->pools as $pool)
-				{
-					$pool->alive = $this->checkPool($pool->url);
-				}
 				
 				// Add average stats
 				$a->avg = $this->getStoredAvgStats();
@@ -95,12 +117,22 @@ class Util_model extends CI_Model {
 
 			if (is_object($a))
 			{
+				if ($this->_minerdSoftware == "cpuminer")
+					$pools = (isset($a->pools)) ? $a->pools : false;
+				else
+					$pools = (isset($a->pools[0]->POOLS)) ? $a->pools[0]->POOLS : false;
+					
 				// Add Miner pools
-				foreach ($a->pools as $pool)
+				if ($pools)
 				{
-					$pool->alive = $this->checkPool($pool->url);
+					foreach ($pools as $pool)
+					{
+						if ($this->_minerdSoftware == "cpuminer")
+							$pool->alive = $this->checkPool($pool->url);
+					}	
 				}
 				
+				$a->pools = $pools;
 				return $a;
 			}
 			else
@@ -130,6 +162,10 @@ class Util_model extends CI_Model {
 		{
 			$return['start_time'] = $stats->start_time;
 		}
+		elseif (isset($stats->summary[0]->SUMMARY[0]->Elapsed))
+		{
+			$return['start_time'] = round((time() - $stats->summary[0]->SUMMARY[0]->Elapsed), 0);
+		}
 
 		if (isset($stats->err))
 		{
@@ -140,8 +176,7 @@ class Util_model extends CI_Model {
 		{
 			foreach ($stats->pools as $pool)
 			{
-				
-				if ($pool->active == 1)
+				if (isset($pool->active) && $pool->active == 1)
 				{
 					$poolHashrate = 0;
 					foreach($pool->stats as $session)
@@ -156,56 +191,100 @@ class Util_model extends CI_Model {
 					$return['pool']['url'] = $pool->url;
 					$return['pool']['alive'] = $pool->alive;
 				}
+				elseif (isset($pool->{'Stratum Active'}) && $pool->{'Stratum Active'} == 1)
+				{
+					// TODO
+					$return['pool']['hashrate'] = 0;
+					$return['pool']['url'] = $pool->URL;
+					$return['pool']['alive'] = $pool->Status;
+				}
 			}
 		}
-				
-		if (isset($stats->devices))
+
+		// CPUminer devices stats
+		if ($this->_minerdSoftware == "cpuminer")
 		{
-			foreach ($stats->devices as $name => $device)
+			if (isset($stats->devices))
 			{
-				$d++; $c = 0; $tcfrequency = 0; $tcaccepted = 0; $tcrejected = 0; $tchwerrors = 0; $tcshares = 0; $tchashrate = 0; $tclastshares = array();
-				
-				if ($device->chips)
+				foreach ($stats->devices as $name => $device)
 				{
-					foreach ($device->chips as $chip)
-					{
-						$c++;
-						$tcfrequency += $chip->frequency;
-						$tcaccepted += $chip->accepted;
-						$tcrejected += $chip->rejected;
-						$tchwerrors += $chip->hw_errors;
-						$tcshares += $chip->shares;
-						$tchashrate += $chip->hashrate;
-						$tclastshares[] = $chip->last_share;
-					}
-				}
+					$d++; $c = 0; $tcfrequency = 0; $tcaccepted = 0; $tcrejected = 0; $tchwerrors = 0; $tcshares = 0; $tchashrate = 0; $tclastshares = array();
 					
-				$return['devices'][$name]['frequency'] = ($c > 0) ? round(($tcfrequency/$c), 0) : 0;
-				$return['devices'][$name]['accepted'] = $tcaccepted;
-				$return['devices'][$name]['rejected'] = $tcrejected;
-				$return['devices'][$name]['hw_errors'] = $tchwerrors;
-				$return['devices'][$name]['shares'] = $tcshares;
-				$return['devices'][$name]['hashrate'] = $tchashrate;
-				$return['devices'][$name]['last_share'] = (count($tclastshares) > 0) ? max($tclastshares) : 0;
-				$return['devices'][$name]['serial'] = (isset($device->serial)) ? $device->serial : false;
-								
-				$tdfrequency += $return['devices'][$name]['frequency'];
-				$tdaccepted += $return['devices'][$name]['accepted'];
-				$tdrejected += $return['devices'][$name]['rejected'];
-				$tdhwerrors += $return['devices'][$name]['hw_errors'];
-				$tdshares += $return['devices'][$name]['shares'];
-				$tdhashrate += $return['devices'][$name]['hashrate'];
-				$tdlastshares[] = $return['devices'][$name]['last_share'];
+					if ($device->chips)
+					{
+						foreach ($device->chips as $chip)
+						{
+							$c++;
+							$tcfrequency += $chip->frequency;
+							$tcaccepted += $chip->accepted;
+							$tcrejected += $chip->rejected;
+							$tchwerrors += $chip->hw_errors;
+							$tcshares += $chip->shares;
+							$tchashrate += $chip->hashrate;
+							$tclastshares[] = $chip->last_share;
+						}
+					}
+						
+					$return['devices'][$name]['frequency'] = ($c > 0) ? round(($tcfrequency/$c), 0) : 0;
+					$return['devices'][$name]['accepted'] = $tcaccepted;
+					$return['devices'][$name]['rejected'] = $tcrejected;
+					$return['devices'][$name]['hw_errors'] = $tchwerrors;
+					$return['devices'][$name]['shares'] = $tcshares;
+					$return['devices'][$name]['hashrate'] = $tchashrate;
+					$return['devices'][$name]['last_share'] = (count($tclastshares) > 0) ? max($tclastshares) : 0;
+					$return['devices'][$name]['serial'] = (isset($device->serial)) ? $device->serial : false;
+									
+					$tdfrequency += $return['devices'][$name]['frequency'];
+					$tdaccepted += $return['devices'][$name]['accepted'];
+					$tdrejected += $return['devices'][$name]['rejected'];
+					$tdhwerrors += $return['devices'][$name]['hw_errors'];
+					$tdshares += $return['devices'][$name]['shares'];
+					$tdhashrate += $return['devices'][$name]['hashrate'];
+					$tdlastshares[] = $return['devices'][$name]['last_share'];
+				}
+				
+				$return['totals']['frequency'] = round(($tdfrequency/$d), 0);
+				$return['totals']['accepted'] = $tdaccepted;
+				$return['totals']['rejected'] = $tdrejected;
+				$return['totals']['hw_errors'] = $tdhwerrors;
+				$return['totals']['shares'] = $tdshares;
+				$return['totals']['hashrate'] = $tdhashrate;
+				$return['totals']['last_share'] = max($tdlastshares);
+				
+			}
+		}
+		else
+		// BFGminer devices stats
+		{
+			if (isset($stats->devs[0]->DEVS))
+			{
+				foreach ($stats->devs[0]->DEVS as $device)
+				{						
+					$name = $device->Name.$device->ID;
+					
+					$return['devices'][$name]['frequency'] = false;
+					$return['devices'][$name]['accepted'] = $device->Accepted;
+					$return['devices'][$name]['rejected'] = $device->Rejected;
+					$return['devices'][$name]['hw_errors'] = $device->{'Hardware Errors'};
+					$return['devices'][$name]['shares'] = round(($device->{'Diff1 Work'}*$device->{'Last Share Difficulty'}),0);
+					$return['devices'][$name]['hashrate'] = ($device->{'MHS av'}*1000);
+					$return['devices'][$name]['last_share'] = $device->{'Last Share Time'};
+					$return['devices'][$name]['serial'] = false;									
+				}				
 			}
 			
-			$return['totals']['frequency'] = round(($tdfrequency/$d), 0);
-			$return['totals']['accepted'] = $tdaccepted;
-			$return['totals']['rejected'] = $tdrejected;
-			$return['totals']['hw_errors'] = $tdhwerrors;
-			$return['totals']['shares'] = $tdshares;
-			$return['totals']['hashrate'] = $tdhashrate;
-			$return['totals']['last_share'] = max($tdlastshares);
-			
+			if (isset($stats->summary[0]->SUMMARY[0]))
+			{
+				$totals = $stats->summary[0]->SUMMARY[0];
+				
+				$return['totals']['frequency'] = false;
+				$return['totals']['accepted'] = $totals->Accepted;
+				$return['totals']['rejected'] = $totals->Rejected;
+				$return['totals']['hw_errors'] = $totals->{'Hardware Errors'};
+				$return['totals']['shares'] = round(($totals->{'Diff1 Work'}*$totals->{'Last Share Difficulty'}),0);
+				$return['totals']['hashrate'] = ($totals->{'MHS av'}*1000);
+				$return['totals']['last_share'] = $totals->{'Last getwork'};
+			}
 		}
 	
 		return json_encode($return);
@@ -443,7 +522,7 @@ class Util_model extends CI_Model {
 				$lhw = $latest->errors;
 				$lre = $latest->rejected;
 				$lsh = $latest->shares;
-				$lls = $latest->last_share;
+				$lls = (isset($latest->last_share)) ? $latest->last_share: 0;
 			}
 	
 			// Get delta current-latest
@@ -668,8 +747,9 @@ class Util_model extends CI_Model {
 			{
 				fclose($conn);
 				return true;
-			}
-		}
+			}			
+			fclose($conn);
+		}		
 		
 		return false;
 	}	
@@ -677,6 +757,7 @@ class Util_model extends CI_Model {
 	// Check if the minerd if running
 	public function isOnline()
 	{
+		sleep(2);
 		if(!($fp = @fsockopen("127.0.0.1", 4028, $errno, $errstr, 1)))
 		{
 			return false;

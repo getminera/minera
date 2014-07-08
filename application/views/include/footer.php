@@ -281,7 +281,7 @@
 				}
 			});
 			
-		    $("#option-startfreq").ionRangeSlider({
+		    $("#ion-startfreq").ionRangeSlider({
 				min: 600,
 				max: 1400,
 				from: <?php echo (isset($minerdStartfreq)) ? $minerdStartfreq : 800; ?>,
@@ -334,6 +334,33 @@
 				$(".form-donation").prop('readonly', true).prop('disabled', false);
 				$(".pool-donation-group").css("display", "block").removeClass("pool-donation-group");
 		    });
+		    
+		    $('#minerd-software').on('change', function() {
+				showHideMinerOptions();
+		    });
+		    
+		    showHideMinerOptions();
+		    
+		    // Show or Hide the options related to the selected miner software
+		    function showHideMinerOptions()
+		    {
+			    if ($('#minerd-software').val() != "cpuminer")
+			    {
+			    	$(".legend-option-autodetect").html("(--scan=all)");
+			    	$(".legend-option-log").html("(--log=application/logs/cpuminer.log)");
+			    	$("#minerd-autotune").hide();
+				    $("#minerd-startfreq").hide();
+				    $("#minerd-scrypt").show();
+			    }
+			    else
+			    {
+			    	$(".legend-option-autodetect").html("(--gc3355-detect)");
+			    	$(".legend-option-log").html("(--log-file=application/logs/bfgminer.log)");
+			    	$("#minerd-autotune").show();
+				    $("#minerd-startfreq").show();
+				    $("#minerd-scrypt").hide();
+			    }
+		    }
 		    
 		    if ($("#manual_options").val() == "1") $(".guided-options").hide();
 		    if ($("#guided_options").val() == "1") $(".manual-options").hide();

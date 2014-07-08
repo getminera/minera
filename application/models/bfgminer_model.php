@@ -1,0 +1,173 @@
+<?php
+/*
+ * Cpuminer_model
+ * CPUminer model for minera
+ *
+ * @author michelem
+ */
+class Bfgminer_model extends CI_Model {
+
+	public function __construct()
+	{
+		parent::__construct();
+	}
+
+	function getsock($addr, $port)
+	{
+		$socket = null;
+		$socket = socket_create(AF_INET, SOCK_STREAM, SOL_TCP);
+		if ($socket === false || $socket === null)
+		{
+			$error = socket_strerror(socket_last_error());
+			$msg = "socket create(TCP) failed";
+			log_message("error", "$msg '$error'");
+			return null;
+		}
+
+		$res = socket_connect($socket, $addr, $port);
+		if ($res === false)
+		{
+			$error = socket_strerror(socket_last_error());
+			$msg = "socket connect($addr,$port) failed";
+			log_message("error", "$msg '$error'");
+			socket_close($socket);
+			return null;
+		}
+
+		return $socket;
+	}
+	
+	function readsockline($socket)
+	{
+		$line = '';
+		while (true)
+		{
+			$byte = socket_read($socket, 1);
+			if ($byte === false || $byte === '')
+				break;
+			if ($byte === "\0")
+				break;
+			$line .= $byte;
+		}
+		return $line;
+	}
+	
+	
+	function callMinerd($cmd = false)
+	{
+		if (!$cmd)
+			$cmd = '{"command":"summary+devs+pools"}';
+ 
+		log_message("error", "Called Minerd with command: ".$cmd);
+		
+		$socket = $this->getsock('127.0.0.1', 4028);
+		if ($socket != null)
+		{
+			socket_write($socket, $cmd, strlen($cmd));
+			$line = $this->readsockline($socket);
+			socket_close($socket);
+
+			if (strlen($line) == 0)
+			{
+				$msg = "WARN: '$cmd' returned nothing\n";
+				return array("error" => true, "msg" => $msg);
+			}
+		
+			//print "$cmd returned '$line'\n";
+		
+			if (substr($line,0,1) == '{')
+				return json_decode($line);
+			
+			$data = array();
+			
+			$objs = explode('|', $line);
+			foreach ($objs as $obj)
+			{
+				if (strlen($obj) > 0)
+				{
+					$items = explode(',', $obj);
+					$item = $items[0];
+					$id = explode('=', $items[0], 2);
+					if (count($id) == 1 or !ctype_digit($id[1]))
+						$name = $id[0];
+					else
+						$name = $id[0].$id[1];
+			
+					if (strlen($name) == 0)
+						$name = 'null';
+			
+					if (isset($data[$name]))
+					{
+						$num = 1;
+						while (isset($data[$name.$num]))
+							$num++;
+						$name .= $num;
+					}
+			
+					$counter = 0;
+					foreach ($items as $item)
+					{
+						$id = explode('=', $item, 2);
+						if (count($id) == 2)
+							$data[$name][$id[0]] = $id[1];
+						else
+							$data[$name][$counter] = $id[0];
+			
+						$counter++;
+					}
+				}
+			}
+			
+			return $data;
+		}
+		
+		return array("error" => true, "msg" => "Bfgminer error");
+	}
+	
+	public function selectPool($poolId)
+	{
+		return $this->callMinerd(array("set" => "pool", "pool" => (int)$poolId));
+	}
+	
+	// Stop minerd
+	public function stop()
+	{
+		exec("sudo -u " . $this->config->item("system_user") . " " . $this->config->item("screen_command_stop"));
+		exec("sudo -u " . $this->config->item("system_user") . " /usr/bin/killall -s9 minerd");
+		
+		$this->redis->del("latest_stats");
+		$this->redis->set("minerd_status", false);
+		
+		log_message('error', "Minerd stopped");
+					
+		return true;
+	}
+	
+	// Start minerd
+	public function start()
+	{
+		$command = array($this->config->item("screen_command"), $this->config->item("minerd_command"), $this->util_model->getCommandline());
+
+		$finalCommand = "sudo -u " . $this->config->item("system_user") . " " . implode(" ", $command);
+		
+		exec($finalCommand, $out);
+		
+		$this->redis->set("minerd_status", true);
+		
+		log_message('error', "Minerd started with command: $finalCommand - Output was: ".var_export($out, true));
+
+		return true;
+	}
+	
+	// Restart minerd
+	public function restart()
+	{
+		$this->stop();
+		sleep(1);
+		$this->start();
+		sleep(1);
+					
+		return true;
+	}
+	
+}

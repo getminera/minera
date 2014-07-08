@@ -372,6 +372,19 @@
 	                                </div>
 	
 		                                <div class="box-body">
+											
+											<div class="callout callout-grey">
+												<h4>Select your preferred miner software</h4>
+												<div class="form-group">
+		                                            <label>Currently selected: <span class="badge bg-green"><?php echo $minerdSoftware ?></span></label>
+													<select name="minerd_software" id="minerd-software" class="form-control">
+														<option value="cpuminer" <?php if ($minerdSoftware == "cpuminer") : ?>selected<?php endif; ?>>CPUMiner-GC3355</option>
+														<option value="bfgminer" <?php if ($minerdSoftware == "bfgminer") : ?>selected<?php endif; ?>>BFGMiner 4.x</option>
+													</select>
+													<h6>CPUMiner is fully optimised and supports only Gridseed devices (Mini and Blade or both), BFGMiner supports a large amount of devices and you should choose it if you haven't Gridseeds. Attention: Minera is not responsible of any problem related to the miner software you are using. Minera acts only as frontend to manage the miner software. Please refer to miner software's related authors if you have question about <a href="https://github.com/siklon/cpuminer-gc3355">CPUMiner</a> or <a href="https://github.com/luke-jr/bfgminer">BFGMiner</a> and how to use them.</h6>
+												</div>
+											</div>
+
 											<p>Select the options to launch the miner command.</p>
 
 											<div class="row row-btn-options">
@@ -387,18 +400,29 @@
 											<hr />
 											
 											<div class="guided-options">
+
+												<!-- Scrypt -->
+												<div class="form-group" id="minerd-scrypt">
+													<div class="checkbox">
+														<label>
+															<input type="checkbox" name="minerd_scrypt" value="1" <?php if ($minerdScrypt) : ?>checked=""<?php endif; ?> />
+															Enable scrypt algo <small>you should select this if you are mining alternate crypto currencies (--scrypt)</small>
+														</label>                                                
+													</div>
+												</div>
+												
 												<!-- Auto-Detect -->
 												<div class="form-group">
 													<div class="checkbox">
 														<label>
 															<input type="checkbox" name="minerd_autodetect" value="1" <?php if ($minerdAutodetect) : ?>checked=""<?php endif; ?> />
-															Enable device auto detection <small>(--gc3355-detect)</small>
+															Enable device auto detection <small class="legend-option-autodetect"></small>
 														</label>                                                
 													</div>
 												</div>
-												
+
 												<!-- Auto-Tune -->
-												<div class="form-group">
+												<div class="form-group" id="minerd-autotune">
 													<div class="checkbox">
 														<label>
 															<input type="checkbox" name="minerd_autotune" value="1" <?php if ($minerdAutotune) : ?>checked=""<?php endif; ?> />
@@ -406,13 +430,13 @@
 														</label>                                                
 													</div>
 												</div>
-												
+
 												<!-- Logging -->
 												<div class="form-group">
 													<div class="checkbox">
 														<label>
 															<input type="checkbox" name="minerd_log" value="1" <?php if ($minerdLog) : ?>checked=""<?php endif; ?> />
-															Enable logging <small>(--log)</small>
+															Enable logging <small class="legend-option-log"></small>
 														</label>                                                
 													</div>
 												</div>
@@ -428,14 +452,14 @@
 												</div>												
 												
 												<!-- Start Frequency -->												
-												<div class="form-group">
+												<div class="form-group" id="minerd-startfreq">
 													<label>Select starting frequency</label>
 													<div class="margin-bottom" style="width:50%">
-														<input type="text" name="minerd_startfreq" id="option-startfreq" value="" />
+														<input type="text" name="minerd_startfreq" id="ion-startfreq" value="" />
 													</div>
 													<h6>You can select a default frequency value to start with.</h6>
 												</div>
-												
+
 		                                        <!-- Minerd extra options -->
 		                                        <div class="form-group">
 		                                            <label>Extra options</label>
@@ -443,7 +467,7 @@
 														<span class="input-group-addon"><i class="fa fa-cogs"></i></span>
 														<input type="text" class="form-control" placeholder="Extra options" name="minerd_extraoptions" value="<?php echo $minerdExtraoptions ?>" />
 													</div>
-		                                            <h6>Write here any other option you want to include please refer to the <a href="https://github.com/siklon/cpuminer-gc3355">Github page</a> for the complete options list.</h6>
+		                                            <h6>Write here any other option you want to include. (suggested: --retries=1)</h6>
 		                                        </div>	                                        
 		                                        
 											</div>
@@ -504,7 +528,7 @@
 												<pre style="font-size:10px;"><?php $jsonConf =  json_decode($minerdJsonSettings); echo json_encode($jsonConf, JSON_PRETTY_PRINT); ?></pre>
 											</div>
 
-											<?php if ($savedFrequencies) : ?>
+											<?php if ($minerdSoftware == "cpuminer" && $savedFrequencies) : ?>
 												<h3>Saved frequencies</h3>
 												<div class="callout callout-light">
 													<h6>Here is the string you can add to the extra options, but remember to uncheck the autotune option:</h6>
