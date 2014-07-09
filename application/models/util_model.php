@@ -33,11 +33,11 @@ class Util_model extends CI_Model {
 			$this->config->set_item('minerd_command', FCPATH.'minera-bin/bfgminer');
 			$this->config->set_item('minerd_log_file', '/var/log/minera/bfgminer.log');
 			$this->config->set_item('minerd_log_url', 'application/logs/bfgminer.log');
-			$this->load->model('bfgminer_model', 'miner');			
+			$this->load->model('cgminer_model', 'miner');			
 		}
 		elseif ($this->_minerdSoftware == "cgminer")
 		{
-			// Default is CPUMiner-gc3355 (cpuminer)
+			// Config for Cgminer
 			$this->config->set_item('screen_command', '/usr/bin/screen -dmS cgminer');
 			$this->config->set_item('screen_command_stop', '/usr/bin/screen -S cgminer -X quit');
 			$this->config->set_item('minerd_command', FCPATH.'minera-bin/cgminer');
@@ -45,9 +45,19 @@ class Util_model extends CI_Model {
 			$this->config->set_item('minerd_log_url', 'application/logs/cgminer.log');
 			$this->load->model('cgminer_model', 'miner');
 		}
+		elseif ($this->_minerdSoftware == "cgdmaxlzeus")
+		{
+			// Config for Cgminer Dmal Zeus
+			$this->config->set_item('screen_command', '/usr/bin/screen -dmS cgminerdmaxlzeus');
+			$this->config->set_item('screen_command_stop', '/usr/bin/screen -S cgminerdmaxlzeus -X quit');
+			$this->config->set_item('minerd_command', FCPATH.'minera-bin/cgminer-dmaxl-zeus');
+			$this->config->set_item('minerd_log_file', '/var/log/minera/cgminerdmaxlzeus.log');
+			$this->config->set_item('minerd_log_url', 'application/logs/cgminerdmaxlzeus.log');
+			$this->load->model('cgminer_model', 'miner');
+		}
 		elseif ($this->_minerdSoftware == "cpuminer")
 		{
-			// Default is CPUMiner-gc3355 (cpuminer)
+			// Config for Cpuminer-gc3355
 			$this->config->set_item('screen_command', '/usr/bin/screen -dmS cpuminer');
 			$this->config->set_item('screen_command_stop', '/usr/bin/screen -S cpuminer -X quit');
 			$this->config->set_item('minerd_command', FCPATH.'minera-bin/minerd');
@@ -287,7 +297,10 @@ class Util_model extends CI_Model {
 					$return['devices'][$name]['accepted'] = $device->Accepted;
 					$return['devices'][$name]['rejected'] = $device->Rejected;
 					$return['devices'][$name]['hw_errors'] = $device->{'Hardware Errors'};
-					$return['devices'][$name]['shares'] = ($device->{'Diff1 Work'}) ? round(($device->{'Diff1 Work'}*71582788/1000),0) : 0;
+					if ($this->_minerdSoftware == "cgdmaxlzeus")
+						$return['devices'][$name]['shares'] = ($device->{'Diff1 Work'}) ? round(($device->{'Diff1 Work'}*71582788/1000/1000),0) : 0;
+					else
+						$return['devices'][$name]['shares'] = ($device->{'Diff1 Work'}) ? round(($device->{'Diff1 Work'}*71582788/1000),0) : 0;
 					$return['devices'][$name]['hashrate'] = ($device->{'MHS av'}*1000*1000);
 					$return['devices'][$name]['last_share'] = $device->{'Last Share Time'};
 					$return['devices'][$name]['serial'] = false;
@@ -308,7 +321,10 @@ class Util_model extends CI_Model {
 				$return['totals']['hashrate'] = $tdhashrate;
 				$return['totals']['last_share'] = $totals->{'Last getwork'};
 				
-				$cgbfgminerPoolHashrate = round(($totals->{'Work Utility'}*71582788), 0);
+				if ($this->_minerdSoftware == "cgdmaxlzeus")
+					$cgbfgminerPoolHashrate = round(($totals->{'Work Utility'}*71582788/1000/2), 0);
+				else
+					$cgbfgminerPoolHashrate = round(($totals->{'Work Utility'}*71582788), 0);
 			}
 		}
 		

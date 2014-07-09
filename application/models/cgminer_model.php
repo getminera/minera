@@ -1,7 +1,7 @@
 <?php
 /*
- * Cpuminer_model
- * CPUminer model for minera
+ * Cgminer_model
+ * CGminer model for minera
  *
  * @author michelem
  */
@@ -121,7 +121,7 @@ class Cgminer_model extends CI_Model {
 			return $data;
 		}
 		
-		return array("error" => true, "msg" => "Cgminer error");
+		return array("error" => true, "msg" => "Miner error");
 	}
 	
 	public function selectPool($poolId)

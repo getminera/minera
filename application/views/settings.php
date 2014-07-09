@@ -381,6 +381,7 @@
 														<option value="cpuminer" <?php if ($minerdSoftware == "cpuminer") : ?>selected<?php endif; ?>>CPUminer (GC3355 fork)</option>
 														<option value="bfgminer" <?php if ($minerdSoftware == "bfgminer") : ?>selected<?php endif; ?>>BFGminer 4.x (Official)</option>
 														<option value="cgminer" <?php if ($minerdSoftware == "cgminer") : ?>selected<?php endif; ?>>CGminer 4.x (Official)</option>
+														<option value="cgdmaxlzeus" <?php if ($minerdSoftware == "cgdmaxlzeus") : ?>selected<?php endif; ?>>CGminer (Dmax Zeus fork)</option>
 													</select>
 													<h6>Pay attention: Minera is not responsible of any problem related to the miner software you are using. Minera acts only as frontend to manage the miner software. Please refer to miner software's related authors if you have question about them and how to use them.</h6>
 												</div>
@@ -433,7 +434,7 @@
 												</div>
 
 												<!-- Logging -->
-												<div class="form-group">
+												<div class="form-group" id="minerd-log">
 													<div class="checkbox">
 														<label>
 															<input type="checkbox" name="minerd_log" value="1" <?php if ($minerdLog) : ?>checked=""<?php endif; ?> />

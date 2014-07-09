@@ -194,11 +194,14 @@ class App extends Main_Controller {
 					$this->redis->set('minerd_startfreq', $this->input->post('minerd_startfreq'));
 					
 					// Logging
+					$minerdLog = false;
 					if ($this->input->post('minerd_log'))
 					{
 						$confArray["log"] = $this->config->item("minerd_log_file");
+						$minerdLog = $this->input->post('minerd_log');
 					}
-					$this->redis->set('minerd_log', $this->input->post('minerd_log'));
+					$this->redis->set('minerd_log', $minerdLog);
+
 				}
 				// CG/BFGminer specific
 				else
@@ -220,9 +223,14 @@ class App extends Main_Controller {
 					// Logging
 					if ($this->input->post('minerd_log'))
 					{
-						$confArray["log-file"] = $this->config->item("minerd_log_file");
+						$confArray["log"] = $this->config->item("minerd_log_file");
+						$this->redis->set('minerd_log', $this->input->post('minerd_log'));
 					}
-					$this->redis->set('minerd_log', $this->input->post('minerd_log'));	
+					else
+					{
+						$this->redis->del('minerd_log');
+					}
+
 				}				
 
 				// Debug

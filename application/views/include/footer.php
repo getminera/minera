@@ -346,19 +346,36 @@
 		    {
 			    if ($('#minerd-software').val() != "cpuminer")
 			    {
+			    	if ($('#minerd-software').val() == "cgdmaxlzeus")
+			    	{
+				    	$("#minerd-log").hide();
+				    	$("input[name='minerd_log']").prop('disabled', true);
+				    }
+				    else
+				    {
+				    	$("#minerd-log").show();
+				    	$("input[name='minerd_log']").prop('disabled', false);
+				    }
 			    	$(".legend-option-autodetect").html("(--scan=all)");
 			    	$(".legend-option-log").html("(--log-file)");
 			    	$("#minerd-autotune").hide();
+			    	$("input[name='minerd_autotune']").prop('disabled', true);
 				    $("#minerd-startfreq").hide();
+			    	$("input[name='minerd_startfreq']").prop('disabled', true);
 				    $("#minerd-scrypt").show();
+			    	$("input[name='minerd_scrypt']").prop('disabled', false);
 			    }
 			    else
 			    {
 			    	$(".legend-option-autodetect").html("(--gc3355-detect)");
 			    	$(".legend-option-log").html("(--log)");
+					$("#minerd-log").show();
 			    	$("#minerd-autotune").show();
+			    	$("input[name='minerd_autotune']").prop('disabled', false);
 				    $("#minerd-startfreq").show();
+			    	$("input[name='minerd_startfreq']").prop('disabled', false);
 				    $("#minerd-scrypt").hide();
+			    	$("input[name='minerd_scrypt']").prop('disabled', true);
 			    }
 
 			    $(".detail-minerdsoftware").remove();
@@ -377,8 +394,12 @@
 					{
 						$(".group-minerdsoftware").append('<h6 class="detail-minerdsoftware"><a href="https://github.com/ckolivas/cgminer" target="_blank"><small class="badge bg-red">CGminer</small></a> is similar to bfgminer, supports a large amount of devices but probably is less updated than bfg. It\'s a stable software. <a href="https://github.com/ckolivas/cgminer" target="_blank">More info</a>.</h6>');
 					}
+					else if ($('#minerd-software').val() == "cgdmaxlzeus")
+					{
+						$(".group-minerdsoftware").append('<h6 class="detail-minerdsoftware"><a href="https://github.com/dmaxl/cgminer/" target="_blank"><small class="badge bg-red">CGminer Dmaxl Zeus</small></a> is a Cgminer 4.3.5 fork with GridSeed and Zeus scrypt ASIC support. You should give a try particularly if you have Zeus devices. Stability is unknown. <a href="https://github.com/dmaxl/cgminer/" target="_blank">More info</a>.</h6>');
+					}
 										
-					$(".group-minerdsoftware").append('<h5 class="note-minerdsoftware">NOTE: remember to review your settings below if you change the miner software because they haven\'t the same config options and process could not start.</5>');
+					$(".group-minerdsoftware").append('<h5 class="note-minerdsoftware"><strong>NOTE:</strong> <i>remember to review your settings below if you change the miner software because they haven\'t the same config options and the miner process could not start.</i></5>');
 				}
 		    }
 		    
@@ -600,6 +621,7 @@
 		    });
 		    $(".box-header, .nav-tabs").css("cursor","move");
 		    
+		    <?php if ($minerdLog) : ?>
 		    /*
 		    // Start logviewer
 		    */
@@ -772,6 +794,7 @@
 			/*
 			// End logviewer
 			*/
+			<?php endif; ?>
 			
 			function changeEarnings(value) 
 		    {
@@ -865,7 +888,6 @@
 					
 					if (refresh)
 					{
-						$(".pool-alert").html('');
 						// Destroy and clear the data tables before you can re-initialize it
 						$('#miner-table-details').dataTable().fnClearTable();
 						$('#miner-table-details').dataTable().fnDestroy();		
@@ -1064,11 +1086,14 @@
 						        	if (dataP)
 						        	{
 						        		var dataJ = $.parseJSON(dataP);
-						        		console.log(dataJ);
+						        		
 						    			getStats(true);
 						    			if (dataJ)
 						    			{
 						    				$(".pool-alert").html('CG/BFGminer could take some minutes to complete the switching process. <pre style="font-size:10px;margin-top:10px;">'+dataP+'</pre>');
+						    				setTimeout(function() {
+												$(".pool-alert").html('');
+							    			}, 30000);
 						    			}
 						    		}
 						        }
