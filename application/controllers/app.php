@@ -59,6 +59,7 @@ class App extends Main_Controller {
 		$data['mineraUpdate'] = $this->util_model->checkUpdate();
 		$data['dashboard_refresh_time'] = $this->redis->get("dashboard_refresh_time");
 		$data['pageTitle'] = ($this->redis->get("mobileminer_system_name")) ? $this->redis->get("mobileminer_system_name")." > Minera - Dashboard" : "Minera - Dashboard";
+		$data['minerdRunning'] = $this->redis->get("minerd_running_software");
 		
 		$this->load->view('include/header', $data);
 		$this->load->view('include/sidebar', $data);
@@ -82,6 +83,7 @@ class App extends Main_Controller {
 		$data['settingsScript'] = false;
 		$data['mineraUpdate'] = $this->util_model->checkUpdate();
 		$data['pageTitle'] = ($this->redis->get("mobileminer_system_name")) ? $this->redis->get("mobileminer_system_name")." > Minera - Charts" : "Minera - Charts";
+		$data['minerdRunning'] = $this->redis->get("minerd_running_software");
 		
 		$this->load->view('include/header', $data);
 		$this->load->view('include/sidebar', $data);
@@ -149,6 +151,7 @@ class App extends Main_Controller {
 			if ($minerSoftware != "cpuminer")
 			{
 				$confArray["api-listen"] = true;
+				$confArray["api-allow"] = "W:127.0.0.1";
 			}
 			
 			// Save manual/guided selection
@@ -197,6 +200,7 @@ class App extends Main_Controller {
 					}
 					$this->redis->set('minerd_log', $this->input->post('minerd_log'));
 				}
+				// CG/BFGminer specific
 				else
 				{					
 					// Scrypt
@@ -426,6 +430,7 @@ class App extends Main_Controller {
 		$data['appScript'] = false;
 		$data['settingsScript'] = true;
 		$data['pageTitle'] = "Minera - Settings";
+		$data['minerdRunning'] = $this->redis->get("minerd_running_software");
 		
 		$this->load->view('include/header', $data);
 		$this->load->view('include/sidebar', $data);
@@ -597,7 +602,8 @@ class App extends Main_Controller {
 				$o = $this->util_model->getHistoryStats($this->input->get('type'));
 			break;
 			case "test":
-				$o = json_encode($this->util_model->storeOldAvgStats(86400)); //$this->util_model->getParsedStats($this->util_model->getMinerStats());
+				$this->load->model('bfgminer_model');
+				$o = json_encode($this->bfgminer_model->callMinerd()); //$this->util_model->getParsedStats($this->util_model->getMinerStats());
 			break;
 		}
 		

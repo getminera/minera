@@ -158,7 +158,7 @@
 									<div class="pull-right box-tools">
 										<small class="auto-refresh-time"></small>&nbsp;
 										<button class="btn btn-danger btn-xs refresh-btn" data-toggle="tooltip" title="" data-original-title="Refresh"><i class="fa fa-refresh"></i></button>
-										<button class="btn btn-default btn-xs save-freq" data-toggle="tooltip" title="" data-original-title="Save current frequencies"><i class="fa fa-pencil"></i></button>
+										<?php if ($minerdRunning == "cpuminer") : ?><button class="btn btn-default btn-xs save-freq" data-toggle="tooltip" title="" data-original-title="Save current frequencies"><i class="fa fa-pencil"></i></button></div><?php endif; ?>
 										<button class="btn btn-default btn-xs" data-widget="collapse" data-toggle="tooltip" title="" data-original-title="Collapse"><i class="fa fa-minus"></i></button>
 									</div><!-- /. tools -->
 									<i class="fa fa-desktop"></i>
@@ -199,7 +199,7 @@
 									 	<div class="legend pull-right">
 									 		<h6>Colors based on last share time: <i class="fa fa-circle text-success"></i> Good&nbsp;&nbsp;&nbsp;<i class="fa fa-circle text-warning"></i> Warning&nbsp;&nbsp;&nbsp;<i class="fa fa-circle text-danger"></i> Critical&nbsp;&nbsp;&nbsp;<i class="fa fa-circle text-muted"></i> Possibly dead</h6>
 									 	</div>
-									 	<?php if ($savedFrequencies) : ?>
+									 	<?php if ($savedFrequencies && $minerdRunning == "cpuminer") : ?>
 									 	<button class="btn btn-primary btn-sm btn-saved-freq" data-toggle="tooltip" title="" data-original-title="Look at saved frequencies"><i class="fa fa-eye"></i> Saved frequencies</button>
 									 	<?php else: ?>
 									 	&nbsp;

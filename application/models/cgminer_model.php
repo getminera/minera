@@ -5,7 +5,7 @@
  *
  * @author michelem
  */
-class Bfgminer_model extends CI_Model {
+class Cgminer_model extends CI_Model {
 
 	public function __construct()
 	{
@@ -121,7 +121,7 @@ class Bfgminer_model extends CI_Model {
 			return $data;
 		}
 		
-		return array("error" => true, "msg" => "Bfgminer error");
+		return array("error" => true, "msg" => "Cgminer error");
 	}
 	
 	public function selectPool($poolId)
@@ -129,5 +129,5 @@ class Bfgminer_model extends CI_Model {
 		log_message("error", "Trying to switch pool ".(int)$poolId." to the main one.");
 		return $this->callMinerd('{"command":"switchpool", "parameter":'.(int)$poolId.'}');
 	}
-		
+	
 }

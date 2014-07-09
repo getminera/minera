@@ -375,13 +375,14 @@
 											
 											<div class="callout callout-grey">
 												<h4>Select your preferred miner software</h4>
-												<div class="form-group">
+												<div class="form-group group-minerdsoftware">
 		                                            <label>Currently selected: <span class="badge bg-green"><?php echo $minerdSoftware ?></span></label>
 													<select name="minerd_software" id="minerd-software" class="form-control">
-														<option value="cpuminer" <?php if ($minerdSoftware == "cpuminer") : ?>selected<?php endif; ?>>CPUMiner-GC3355</option>
-														<option value="bfgminer" <?php if ($minerdSoftware == "bfgminer") : ?>selected<?php endif; ?>>BFGMiner 4.x</option>
+														<option value="cpuminer" <?php if ($minerdSoftware == "cpuminer") : ?>selected<?php endif; ?>>CPUminer (GC3355 fork)</option>
+														<option value="bfgminer" <?php if ($minerdSoftware == "bfgminer") : ?>selected<?php endif; ?>>BFGminer 4.x (Official)</option>
+														<option value="cgminer" <?php if ($minerdSoftware == "cgminer") : ?>selected<?php endif; ?>>CGminer 4.x (Official)</option>
 													</select>
-													<h6>CPUMiner is fully optimised and supports only Gridseed devices (Mini and Blade or both), BFGMiner supports a large amount of devices and you should choose it if you haven't Gridseeds. Attention: Minera is not responsible of any problem related to the miner software you are using. Minera acts only as frontend to manage the miner software. Please refer to miner software's related authors if you have question about <a href="https://github.com/siklon/cpuminer-gc3355">CPUMiner</a> or <a href="https://github.com/luke-jr/bfgminer">BFGMiner</a> and how to use them.</h6>
+													<h6>Pay attention: Minera is not responsible of any problem related to the miner software you are using. Minera acts only as frontend to manage the miner software. Please refer to miner software's related authors if you have question about them and how to use them.</h6>
 												</div>
 											</div>
 
