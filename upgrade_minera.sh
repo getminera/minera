@@ -51,4 +51,12 @@ echo -e "Update redis values\n-----\n"
 redis-cli del minera_update
 redis-cli del minera_version
 
+echo -e "Copying cg/bfgminer udev rules\n-----\n"
+sudo cp conf/01-cgminer.rules /etc/udev/rules.d/
+sudo cp conf/70-bfgminer.rules /etc/udev/rules.d/
+
+echo -e "Installing libblkmaker\n-----\n"
+cd minera-bin/src/libblkmaker
+sudo make install
+
 echo -e 'DONE! Minera is ready!\n\nOpen the URL: http://'$(hostname -I | tr -d ' ')'/minera/\n\nAnd happy mining!\n'

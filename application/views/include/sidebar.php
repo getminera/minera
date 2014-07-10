@@ -213,7 +213,7 @@
                         <li class="treeview">
                             <a href="#">
                                 <i class="fa fa-desktop"></i>
-                                <span>Miner</span><?php if ($minerdRunning) : ?>&nbsp;<small class="badge bg-light-blue"><?php echo $minerdRunning ?></small><?php endif; ?>
+                                <span>Miner</span><?php if ($minerdRunning) : ?>&nbsp;<small class="badge bg-light"><?php echo $minerdRunning ?></small><?php endif; ?>
                                 <i class="fa pull-right fa-angle-left"></i>
                             </a>
                             <ul class="treeview-menu" style="display: none;">

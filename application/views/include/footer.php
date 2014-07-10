@@ -622,6 +622,10 @@
 			    });
 			});
 			
+			// Raw stats click
+			$(".view-raw-stats").click( function() { $(".section-raw-stats").fadeIn() });
+			$(".close-stats").click( function() { $(".section-raw-stats").fadeOut() });
+			
 		    //Make the dashboard widgets sortable Using jquery UI
 		    $(".connectedSortable").sortable({
 		        placeholder: "sort-highlight",
@@ -855,6 +859,10 @@
 			var errorTriggered = false;
 			var pool_shares_seconds;
 			
+			// Raw stats
+			var boxStats = $(".section-raw-stats");
+			boxStats.hide();
+			
 			$('.overlay').show();
 			// Show loaders
 			//$('.loading-img').show();
@@ -863,6 +871,8 @@
 			// get Json data from minerd and create Knob, table and sysload
 	        $.getJSON( "<?php echo site_url($this->config->item('live_stats_url')); ?>", function( data ) 
 	        {
+				boxStats.find("span").html('<pre style="font-size:10px;">' + JSON.stringify(data, undefined, 2) + '</pre>');
+				
 				// Add Altcoins rates
     			$('.altcoin-container').html('');
     			if (data['altcoins_rates'])
