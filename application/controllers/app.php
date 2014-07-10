@@ -312,6 +312,32 @@ class App extends Main_Controller {
 				$extracommands = $this->input->post('system_extracommands');
 			}
 			$this->redis->set("system_extracommands", $extracommands);
+			
+			// Scheduled event
+			$scheduledEventTime = false; $scheduledEventAction = false; $scheduledEventStartTime = false;
+			if ($this->input->post('scheduled_event_time'))
+			{
+				$scheduledEventStartTime = time();
+				$scheduledEventTime = $this->input->post('scheduled_event_time');
+				$scheduledEventAction = $this->input->post('scheduled_event_action');
+			}
+			if ($this->redis->get("scheduled_event_time") != $scheduledEventTime)
+				$this->redis->set("scheduled_event_start_time", $scheduledEventStartTime);
+			$this->redis->set("scheduled_event_time", $scheduledEventTime);
+			$this->redis->set("scheduled_event_action", $scheduledEventAction);
+			
+			// Anonymous stats
+			$anonymousStats = false;
+			if ($this->input->post('anonymous_stats'))
+			{
+				$anonymousStats = $this->input->post('anonymous_stats');
+				if (!$this->redis->get("minera_system_id"))
+				{
+					$mineraSystemId = $this->util_model->generateMineraId();
+					$this->redis->set("minera_system_id", $mineraSystemId);
+				}
+			}
+			$this->redis->set("anonymous_stats", $anonymousStats);
 						
 			// Startup script rc.local
 			$this->util_model->saveStartupScript($delay, $extracommands);
@@ -423,7 +449,12 @@ class App extends Main_Controller {
 		// Load System settings
 		$data['mineraTimezone'] = $this->redis->get("minera_timezone");
 		$data['systemExtracommands'] = $this->redis->get("system_extracommands");
-		
+		$data['scheduledEventStartTime'] = $this->redis->get("scheduled_event_start_time");
+		$data['scheduledEventTime'] = $this->redis->get("scheduled_event_time");
+		$data['scheduledEventAction'] = $this->redis->get("scheduled_event_action");
+		$data['anonymousStats'] = $this->redis->get("anonymous_stats");
+		$data['mineraSystemId'] = $this->redis->get("minera_system_id");
+				
 		// Load Mobileminer
 		$data['mobileminerEnabled'] = $this->redis->get("mobileminer_enabled");
 		$data['mobileminerSystemName'] = $this->redis->get("mobileminer_system_name");
@@ -741,6 +772,48 @@ class App extends Main_Controller {
 			}
 		}
 
+		// Scheduled event
+		$scheduledEventStartTime = $this->redis->get("scheduled_event_start_time");
+		$scheduledEventTime = $this->redis->get("scheduled_event_time");
+		$scheduledEventAction = $this->redis->get("scheduled_event_action");
+		if ($scheduledEventTime > 0)
+		{
+			$timeToRunEvent = (($scheduledEventTime*3600) + $scheduledEventStartTime);
+			if (time() >= $timeToRunEvent)
+			{
+				log_message("error", "Running scheduled event -> ".strtoupper($scheduledEventAction));
+				$this->redis->set("scheduled_event_start_time", time());
+				if ($scheduledEventAction == "restart")
+				{
+					$this->util_model->minerRestart();
+				}
+				else
+				{
+					$this->util_model->reboot();
+				}
+			}
+		}
+		
+		// Send anonymous stats
+		$anonynousStatsEnabled = $this->redis->get("anonymous_stats");
+		$mineraSystemId = $this->redis->get("minera_system_id");
+
+		if ($this->util_model->isOnline() && $anonynousStatsEnabled && $mineraSystemId)
+		{
+			if (isset($stats->totals->hashrate))
+				$totalHashrate = $stats->totals->hashrate;
+			if (isset($stats->devices))
+				$totalDevices = count(($stats->devices));
+			$minerdRunning = $this->redis->get("minerd_running_software");
+
+			$anonStats = array("id" => $mineraSystemId, "hashrate" => $totalHashrate, "devices" => $totalDevices);
+			
+			if ( $currentMinute == "00")
+			{
+				//$this->util_model->sendAnonymousStats($mineraSystemId, $anonStats);
+			}
+		}
+				
 		// Use the live stats to check if autorestart is needed
 		// (devices possible dead)
 		$autorestartenable = $this->redis->get("minerd_autorestart");

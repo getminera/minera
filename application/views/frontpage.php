@@ -158,7 +158,7 @@
 									<div class="pull-right box-tools">
 										<small class="auto-refresh-time"></small>&nbsp;
 										<button class="btn btn-danger btn-xs refresh-btn" data-toggle="tooltip" title="" data-original-title="Refresh"><i class="fa fa-refresh"></i></button>
-										<?php if ($minerdRunning == "cpuminer") : ?><button class="btn btn-default btn-xs save-freq" data-toggle="tooltip" title="" data-original-title="Save current frequencies"><i class="fa fa-pencil"></i></button></div><?php endif; ?>
+										<?php if ($minerdRunning == "cpuminer") : ?><button class="btn btn-default btn-xs save-freq" data-toggle="tooltip" title="" data-original-title="Save current frequencies"><i class="fa fa-pencil"></i></button><?php endif; ?>
 										<button class="btn btn-default btn-xs" data-widget="collapse" data-toggle="tooltip" title="" data-original-title="Collapse"><i class="fa fa-minus"></i></button>
 									</div><!-- /. tools -->
 									<i class="fa fa-desktop"></i>

@@ -605,7 +605,7 @@
 											<!-- timezone -->
 	                                        <div class="form-group">
 	                                            <label>System timezone</label>
-	                                            <p>Current system time is: <span class="badge bg-green"><?php echo date("c", time()); ?></span></p>
+	                                            <p>Current system time is: <span class="badge bg-dark"><?php echo date("c", time()); ?></span></p>
 	                                            <p>You should change the timezone to reflect yours</p>
 												<select name="minera_timezone" class="form-control">
 													<?php foreach ($timezones as $timezone) : ?>
@@ -621,7 +621,40 @@
 	                                            <textarea name="system_extracommands" class="form-control" rows="5" placeholder="There isn't any error control here" class="system_extracommands"><?php echo $systemExtracommands ?></textarea>
 												<h6>(WARNING: you could harm your controller putting wrong strings here.)</h6>
 											</div>
-												
+											
+											<!-- scheduled event -->
+											<div class="form-group">
+	                                            <label>Scheduled event</label>
+	                                            <p>Here you can schedule to reboot the system or restart the miner every X hours</p>
+	                                            <p><?php if ($scheduledEventTime > 0) : ?><span class="badge bg-green"><?php echo strtoupper($scheduledEventAction) ?> every <?php echo $scheduledEventTime ?> hour(s)</span>  Next event at about: <small class="label label-light"><?php echo date("c", (($scheduledEventTime*3600) + $scheduledEventStartTime))?></small><?php else : ?><span class="badge bg-muted">Disabled</span><?php endif; ?></p>
+												<div class="input-group">
+													<span class="input-group-addon"><i class="fa fa-clock-o"></i></span>
+													<input type="text" class="form-control scheduled-event-time" placeholder="Hour(s)" name="scheduled_event_time" value="<?php echo $scheduledEventTime ?>" style="width:90px">&nbsp;
+													<label>
+														<input type="radio" class="event-reboot-radio" name="scheduled_event_action" value="reboot" <?php if ($scheduledEventAction == "reboot") : ?>checked=""<?php endif; ?> />
+														Reboot System
+													</label>&nbsp;
+													<label>
+														<input type="radio" class="event-restart-radio" name="scheduled_event_action" value="restart" <?php if ($scheduledEventAction == "restart") : ?>checked=""<?php endif; ?> />
+														Restart Miner
+													</label>
+												</div>
+												<h6>If you leave the hours empty it will be disabled.</h6>
+											</div>
+											
+											<!-- anonymus stats -->
+	                                        <div class="form-group">
+	                                            <label>Send anonymous stats</label>
+	                                            <p>Join the Minera community! Send your completely anonymous stats to help grow the total Minera hashrate. (available soon)</p>
+												<div class="checkbox">
+													<label>
+														<input type="checkbox" class="anonymous-checkbox" name="anonymous_stats" value="1" <?php if ($anonymousStats) : ?>checked=""<?php endif; ?> />
+														Enable Anonymous Stats
+													</label>                                                
+												</div>
+												<h6>(Stats included are total hashrate, devices count and miner used, no IP, host or any private data will be sent. With the stats you will be able to see an aggregated charts on the Minera website as soon as it will be available.)</h6>
+											</div>
+														
 	                                </div>
 									<div class="box-footer">
 										<button type="submit" class="btn btn-primary" name="save" value="1">Save</button>

@@ -7,7 +7,7 @@ echo -e "-----\nSTART Minera Upgrade script\n-----\n"
 echo -e "-----\nInstall extra packages\n-----\n"
 #apt-get update
 #export DEBIAN_FRONTEND=noninteractive
-apt-get -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" install -y build-essential libtool libcurl4-openssl-dev libjansson-dev libudev-dev libncurses5-dev autoconf automake postfix redis-server git screen php5-cli php5-curl
+apt-get -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" install -y build-essential libtool libcurl4-openssl-dev libjansson-dev libudev-dev libncurses5-dev autoconf automake postfix redis-server git screen php5-cli php5-curl uthash-dev libmicrohttpd-dev libevent-dev libusb-1.0-0-dev libusb-dev
 
 sudo dpkg --configure -a
 

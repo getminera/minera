@@ -370,6 +370,7 @@
 			    	$(".legend-option-autodetect").html("(--gc3355-detect)");
 			    	$(".legend-option-log").html("(--log)");
 					$("#minerd-log").show();
+				    	$("input[name='minerd_log']").prop('disabled', false);
 			    	$("#minerd-autotune").show();
 			    	$("input[name='minerd_autotune']").prop('disabled', false);
 				    $("#minerd-startfreq").show();
@@ -464,6 +465,16 @@
 								return $('.minerd-autorestart').is(':checked');
 							}
 						}
+					},
+					scheduled_event_action: {
+						required: {
+							depends: function () {
+								return $('.scheduled-event-time').val();
+							}
+						}
+					},
+					scheduled_event_time: {
+						number: true
 					}
 				},
 			    errorPlacement: function(error, element) {
@@ -621,7 +632,6 @@
 		    });
 		    $(".box-header, .nav-tabs").css("cursor","move");
 		    
-		    <?php if ($minerdLog) : ?>
 		    /*
 		    // Start logviewer
 		    */
@@ -629,7 +639,7 @@
 			var pausetoggle = "#pause";
 			var scrollelems = [".real-time-log-data"];
 			
-			var url = "<?php echo base_url($this->config->item("minerd_log_url")); ?>";
+			var url = "<?php echo ($minerdLog) ? base_url($this->config->item("minerd_log_url")) : null; ?>";
 			var fix_rn = true;
 			var load_log = 1 * 1024; /* 30KB */
 			var poll = 1000; /* 1s */
@@ -794,7 +804,6 @@
 			/*
 			// End logviewer
 			*/
-			<?php endif; ?>
 			
 			function changeEarnings(value) 
 		    {

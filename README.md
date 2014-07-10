@@ -1,9 +1,14 @@
 Minera
 ==============
 
-Minera is a complete system to manage and monitor your Gridseed Blade/Mini devices. (Support for much more devices is on roadmap, stay tuned!)
+Minera is a complete system to manage and monitor your mining hardware.
 
-By now Minera supports only the new cpuminer-gc3355 by sandor111 please refer to https://github.com/siklon/cpuminer-gc3355.
+Since the 0.3.0 version Minera supports the following miner softwares:
+
+* [CPUminer-GC3355 fork](https://github.com/siklon/cpuminer-gc3355)
+* [BFGminer latest original version](https://github.com/luke-jr/bfgminer)
+* [CGminer latest original version](https://github.com/ckolivas/cgminer)
+* [CGminer Dmaxl Zeus fork](https://github.com/dmaxl/cgminer/)
 
 If you like it, please consider a donation:
 
@@ -63,20 +68,21 @@ This is a list of some of the Minera's features:
 * Auto-recover mode
 * System timezone
 * Extra options
+* Scheduled event (reboot/restart)
 * Dashboard refresh time
 * Minera password management
 
 Requirements
 -------------
 
-Minera should be installed on the Gridseed controller, usually a Raspberry, with a Debian-like Linux distribution and of course an internet connection.
+Minera should be installed on the mining controller, usually a Raspberry, with a Debian-like Linux distribution and of course an internet connection.
 
 Installing
 -------------
 
 You can choose for a img file to put in your SD Card or for a manual install.
 
-**Image file (img) v0.2.3**
+**Image file (img) v0.2.3 (Recommended)**
 
 This is the Minera image file for Raspberry PI, you have only to download it and put in your SD Card.
 
@@ -87,7 +93,7 @@ You need at least a 4GB SD Card:
 
 Default passwords are "*minera*" you should change them as well as the miner settings.
 
-**Manual install**
+**Manual install (Some skills needed)**
 
 If you prefer you can simply install Minera on your current Linux controller. Check if it's a debian based one otherwise download and install a right distribution.
 If you have a Raspberry, I suggest you to install Raspbian you can get it here: 
@@ -129,13 +135,28 @@ The installer will configure the system requirements and will tell you the URL t
 	
 This isn't the web password, to change the web password, login into the web interface and go to *Miner -> Settings*
 
-**Minerd (CPUMiner-gc3355)**
+**Miner command**
 
-The *minerd* binary path is:
+The *miner command* binary path is:
 
-	minera-bin/minerd 
+	minera-bin/<miner> 
 	
-It's pre-compiled for Raspberry (ARM) with the latest version available, please refer to https://github.com/siklon/cpuminer-gc3355 if you wanna recompile it.
+They are pre-compiled for Raspberry (ARM) with the latest version available, please refer to each one if you wanna recompile it.
+
+**NOTE: If it's your first install**, you need to compile and install at least bfgminer to install every libraries needed by the cg/bfgminers.
+
+````
+cd /tmp
+git clone https://github.com/luke-jr/bfgminer
+cd bfgminer
+./autogen.sh
+./configure --enable-scypt
+make
+sudo make install
+````
+
+After this you can use any miner Minera supports.
+
 
 **For Ubuntu user only**
 
@@ -143,6 +164,8 @@ In the same path you can find also *minerd-ubuntu-64bit* file, this one is pre-c
 
 	cd /var/www/minera/minera-bin
 	sudo cp minerd-ubuntu-64bit minerd
+
+If you wanna use any other miner software on Ubuntu (or any other system architecture) you need to compile it and put the binary file in "minera-bin/" directory.
 
 Upgrading
 -------------
@@ -209,9 +232,10 @@ TODO
 * ~~Add more crypto-currencies exchange rates~~
 * Add more system monitor (CPU/Mem)
 * ~~Add system temperature~~
-* Add cgminer/bfgminer support
+* ~~Add cgminer/bfgminer support~~
 * Add email notification
 * Add start/stop daemon
+* Add Mobileminer actions
 * ~~Add JSON config support~~
 
 Screenshots

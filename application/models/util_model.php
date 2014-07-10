@@ -1070,6 +1070,14 @@ class Util_model extends CI_Model {
 				return false;
 		}
 	}
+	
+	// Generate a uniq hash ID for Minera System ID
+	public function generateMineraId()
+	{
+		$id1 = uniqid('', true);
+		$id2 = uniqid('', true);
+		return md5($id1.$id2);
+	}
 
 	// Get local Minera version
 	public function currentVersion()
