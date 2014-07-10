@@ -4,3 +4,9 @@
 [submodule "minera-bin/src/bfgminer"]
 	path = minera-bin/src/bfgminer
 	url = https://github.com/luke-jr/bfgminer
+[submodule "minera-bin/src/cgminer"]
+	path = minera-bin/src/cgminer
+	url = https://github.com/ckolivas/cgminer
+[submodule "minera-bin/src/cgminer-dmaxl-zeus"]
+	path = minera-bin/src/cgminer-dmaxl-zeus
+	url = https://github.com/dmaxl/cgminer/
