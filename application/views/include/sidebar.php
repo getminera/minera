@@ -1,5 +1,22 @@
     <body class="skin-black"<?php if ($appScript) : ?> onload="getStats(false);"<?php endif; ?>>
 
+		<!-- Modal -->
+		<div class="modal fade" id="modal-saving" tabindex="-1" role="dialog" aria-labelledby="SavingData" aria-hidden="true">
+			<div class="modal-dialog modal-dialog-center modal-sm">
+				<div class="modal-content">
+					<div class="modal-header bg-red">
+						<h4 class="modal-title" id="myModalLabel">Saving data, please wait...</h4>
+					</div>
+					<div class="modal-body" style="text-align:center;">
+						<img src="<?php echo base_url("assets/img/ajax-loader1.gif") ?>" alt="Loading..." />
+					</div>
+					<div class="modal-footer modal-footer-center">
+						<h6>Page will automatically reload as soon as the process terminate.</h6>
+					</div>
+				</div>
+			</div>
+		</div>
+		
         <!-- header logo: style can be found in header.less -->
         <header class="header">
             <a href="<?php echo site_url() ?>" class="logo">

@@ -15,13 +15,22 @@
                 <section class="content">
 
 					<div class="row">
-                        
-                        <?php if (isset($message)) : ?>
+
+                        <?php if ($message) : ?>
 	                        <section class="col-md-12">
     	                    	<div class="alert alert-<?php echo $message_type ?> alert-dismissable">
 									<i class="fa fa-check"></i>
 									<button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
 									<?php echo $message ?>.
+								</div>
+	                        </section>
+                        <?php endif; ?>                        
+                        <?php if ($this->session->flashdata('message')) : ?>
+	                        <section class="col-md-12">
+    	                    	<div class="alert alert-<?php echo $this->session->flashdata('message_type') ?> alert-dismissable">
+									<i class="fa fa-check"></i>
+									<button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
+									<?php echo $this->session->flashdata('message') ?>.
 								</div>
 	                        </section>
                         <?php endif; ?>
@@ -39,7 +48,7 @@
                         <!-- Top section -->
                         <section class="col-md-12">
 								
-							<form action="<?php site_url("app/dashboard") ?>" method="post" role="form" id="minersettings">
+							<form action="#" method="post" role="form" id="minersettings">
 								<input type="hidden" name="save_settings" value="1" />                                                    
 
 								<div class="row">
@@ -127,7 +136,7 @@
 										    	</div>										
 										    </div>
 										    <div class="box-footer" style="clear:both">
-										    	<button type="submit" class="btn btn-danger" name="save_restart" value="1">Save & Restart Miner</button>
+										    	<button type="submit" class="btn btn-danger save-minera-settings-restart" name="save_restart" value="1">Save & Restart Miner</button>
 										    </div>
 										</div>
 	                            
@@ -177,7 +186,7 @@
 												</div>
 			                                </div>
 											<div class="box-footer">
-												<button type="submit" class="btn btn-primary" name="save" value="1">Save</button>
+												<button type="submit" class="btn btn-primary save-minera-settings" name="save" value="1">Save</button>
 											</div>
 			                            </div>
 		                            
@@ -355,7 +364,7 @@
 										</div>
 	                                </div>
 									<div class="box-footer">
-										<button type="submit" class="btn btn-primary" name="save" value="1">Save</button> <button type="submit" class="btn btn-danger" name="save_restart" value="1">Save & Restart Miner</button>
+										<button type="submit" class="btn btn-primary save-minera-settings" name="save" value="1">Save</button> <button type="submit" class="btn btn-danger save-minera-settings-restart" name="save_restart" value="1">Save & Restart Miner</button>
 									</div>
 	                            </div>
 	                            
@@ -540,7 +549,7 @@
 												
 	                                </div>
 									<div class="box-footer">
-										<button type="submit" class="btn btn-primary" name="save" value="1">Save</button> <button type="submit" class="btn btn-danger" name="save_restart" value="1">Save & Restart Miner</button>
+										<button type="submit" class="btn btn-primary save-minera-settings" name="save" value="1">Save</button> <button type="submit" class="btn btn-danger save-minera-settings-restart" name="save_restart" value="1">Save & Restart Miner</button>
 									</div>
 	                            </div>
 
@@ -583,7 +592,7 @@
 										</div>
 			                        </div>
 								    <div class="box-footer">
-								    	<button type="submit" class="btn btn-primary" name="save" value="1">Save</button>
+								    	<button type="submit" class="btn btn-primary save-minera-settings" name="save" value="1">Save</button>
 								    </div>
 			                    </div>
 	                            
@@ -643,7 +652,7 @@
 											</div>
 											
 											<!-- anonymus stats -->
-	                                        <div class="form-group">
+	                                        <!-- div class="form-group">
 	                                            <label>Send anonymous stats</label>
 	                                            <p>Join the Minera community! Send your completely anonymous stats to help grow the total Minera hashrate. (available soon)</p>
 												<div class="checkbox">
@@ -653,11 +662,11 @@
 													</label>                                                
 												</div>
 												<h6>(Stats included are total hashrate, devices count and miner used, no IP, host or any private data will be sent. With the stats you will be able to see an aggregated charts on the Minera website as soon as it will be available.)</h6>
-											</div>
+											</div -->
 														
 	                                </div>
 									<div class="box-footer">
-										<button type="submit" class="btn btn-primary" name="save" value="1">Save</button>
+										<button type="submit" class="btn btn-primary save-minera-settings" name="save" value="1">Save</button>
 									</div>
 	                            </div>
 	                            
@@ -699,7 +708,7 @@
 											</div>
 	                                </div>
 									<div class="box-footer">
-										<button type="submit" class="btn btn-primary" name="save" value="1">Save</button>
+										<button type="submit" class="btn btn-primary save-minera-settings" name="save" value="1">Save</button>
 									</div>
 	                            </div>
 
@@ -717,7 +726,7 @@
                                     <h3 class="box-title">User</h3>
                                 </div>
 								
-								<form action="<?php site_url("app/dashboard") ?>" method="post" role="form">
+								<form action="<?php echo site_url("app/settings") ?>" method="post" role="form" id="minerapassword">
 									<input type="hidden" name="save_password" value="1" />
 	                                <div class="box-body">
 										<p>Change the Minera lock screen password</p>
@@ -731,7 +740,7 @@
 										</div>
 	                                </div>
 									<div class="box-footer">
-										<button type="submit" class="btn btn-primary">Save password</button>
+										<button type="submit" class="btn btn-primary save-minera-password">Save password</button>
 									</div>
 								
 								</form>

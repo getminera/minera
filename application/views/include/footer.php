@@ -59,8 +59,28 @@
                 }
                 return i;
             }
+            
 
 		});
+		
+        function saveSettings()
+        {
+        	$('#modal-saving').modal('show');
+        	
+        	var saveUrl = "<?php echo site_url("app/save_settings") ?>";
+        	var formData = $("#minersettings").serialize();
+        	console.log(formData);
+			$.ajax({
+				type: "POST",
+				url: saveUrl,
+				data: formData,
+				cache: false,
+				success:  function(resp){
+					$('#modal-saving').modal('hide');
+					window.location.reload();
+				}
+			});
+        }
 	</script>
 
 	<?php if (isset($chartsScript) && $chartsScript) : ?>
@@ -424,7 +444,7 @@
 				$("#guided_options").val(1);
 				return false;
 		    });
-		    
+			
 		    // validate signup form on keyup and submit
 		    $.validator.addMethod("check_multiple_select", function(value, element) {
 				if (value && value.length > 0 && value.length <= 5 )
@@ -481,9 +501,9 @@
 					error.appendTo( $(element).closest(".input-group").parent().after() );
 			    },
 			    // specifying a submitHandler prevents the default submit, good for the demo
-			    /*submitHandler: function() {
-			    	alert("submitted!");
-			    },*/
+			    submitHandler: function() {
+			    	saveSettings();
+			    },
 			    unhighlight: function(element) {
 					$(element).closest(".input-group").removeClass("has-error").addClass("has-success");
 			    },
