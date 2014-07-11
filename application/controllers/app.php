@@ -475,8 +475,11 @@ class App extends Main_Controller {
 				
 				$this->session->set_flashdata('message', '<b>Success!</b> Settings saved and miner restarted!');
 				$this->session->set_flashdata('message_type', 'success');
-				
-				sleep(5);
+			}
+			else
+			{
+				$this->session->set_flashdata('message', '<b>Success!</b> Settings saved!');
+				$this->session->set_flashdata('message_type', 'success');
 			}
 
 		}
@@ -659,7 +662,7 @@ class App extends Main_Controller {
 						$o = $this->util_model->minerStart();
 					break;
 					case "stop":
-						$o = $this->util_model->minerSop();
+						$o = $this->util_model->minerStop();
 					break;
 					case "restart":
 						$o = $this->util_model->minerRestart();

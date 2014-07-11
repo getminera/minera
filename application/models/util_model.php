@@ -967,7 +967,7 @@ class Util_model extends CI_Model {
 		
 		log_message('error', "Minerd started with command: $finalCommand - Output was: ".var_export($out, true));
 		
-		sleep(5);
+		sleep(9);
 		
 		return true;
 	}

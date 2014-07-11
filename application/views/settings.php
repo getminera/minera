@@ -33,17 +33,7 @@
 									<?php echo $this->session->flashdata('message') ?>.
 								</div>
 	                        </section>
-                        <?php endif; ?>
-                        <?php if ($this->session->flashdata('message')) : ?>
-	                        <section class="col-md-12 pop-message">
-    	                    	<div class="alert alert-warning alert-dismissable">
-									<i class="fa fa-check"></i>
-									<button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
-									<?php echo $this->session->flashdata('message'); ?>.
-								</div>
-	                        </section>
-                        <?php endif; ?>
-                        
+                        <?php endif; ?>                        
                         
                         <!-- Top section -->
                         <section class="col-md-12">

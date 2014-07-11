@@ -60,16 +60,36 @@
                 return i;
             }
             
+            $(".miner-action").click(function(e) {
+	           	e.preventDefault();
+	           	var action =  $(this).data("miner-action");
+	        	
+			   	$("#modal-saving-label").html("Sending action: "+action+" , please wait...");
+	        	$('#modal-saving').modal('show');
+	        	
+	        	var apiUrl = "<?php echo site_url("app/api") ?>?command=miner_action&action="+action;
+
+				$.ajax({
+					type: "GET",
+					url: apiUrl,
+					cache: false,
+					success:  function(resp){
+						$('#modal-saving').modal('hide');
+						window.location.reload();
+					}
+				});
+            });
 
 		});
 		
         function saveSettings()
         {
+        	$("#modal-saving-label").html("Saving data, please wait...");
         	$('#modal-saving').modal('show');
         	
         	var saveUrl = "<?php echo site_url("app/save_settings") ?>";
         	var formData = $("#minersettings").serialize();
-        	console.log(formData);
+
 			$.ajax({
 				type: "POST",
 				url: saveUrl,
