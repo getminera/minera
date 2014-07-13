@@ -317,7 +317,7 @@ class App extends Main_Controller {
 					// Logging
 					if ($this->input->post('minerd_log'))
 					{
-						$confArray["log"] = $this->config->item("minerd_log_file");
+						$confArray["log-file"] = $this->config->item("minerd_log_file");
 						$this->redis->set('minerd_log', $this->input->post('minerd_log'));
 					}
 					else
