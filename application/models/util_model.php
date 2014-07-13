@@ -959,7 +959,7 @@ class Util_model extends CI_Model {
 
 		$this->switchMinerSoftware();
 				
-		$command = array($this->config->item("screen_command"), $this->config->item("minerd_command"), $this->util_model->getCommandline());
+		$command = array($this->config->item("screen_command"), $this->config->item("minerd_command"), $this->getCommandline());
 
 		$finalCommand = "sudo -u " . $this->config->item("system_user") . " " . implode(" ", $command);
 		
@@ -968,6 +968,11 @@ class Util_model extends CI_Model {
 		log_message('error', "Minerd started with command: $finalCommand - Output was: ".var_export($out, true));
 		
 		sleep(9);
+		
+		if (file_exists($this->config->item('minerd_log_file')))
+		{
+			shell_exec("sudo -u " . $this->config->item("system_user") . " chmod 666 " . $this->config->item('minerd_log_file'));
+		}
 		
 		return true;
 	}
