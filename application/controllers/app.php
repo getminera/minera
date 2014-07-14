@@ -134,6 +134,7 @@ class App extends Main_Controller {
 		$data['minerdCommand'] = $this->config->item("minerd_command");
 		$data['minerdAutorestart'] = $this->redis->get('minerd_autorestart');
 		$data['minerdAutorestartDevices'] = $this->redis->get('minerd_autorestart_devices');
+		$data['minerdAutorestartTime'] = $this->redis->get('minerd_autorestart_time');
 		$data['minerdAutorecover'] = $this->redis->get('minerd_autorecover');
 		$data['minerdScrypt'] = $this->redis->get('minerd_scrypt');
 		$data['minerdAutodetect'] = $this->redis->get('minerd_autodetect');
@@ -372,6 +373,7 @@ class App extends Main_Controller {
 			$this->redis->set("minerd_autorecover", $this->input->post('minerd_autorecover'));
 			$this->redis->set("minerd_autorestart", $this->input->post('minerd_autorestart'));
 			$this->redis->set("minerd_autorestart_devices", $this->input->post('minerd_autorestart_devices'));
+			($this->input->post('minerd_autorestart_time') > 0) ? $this->redis->set("minerd_autorestart_time", $this->input->post('minerd_autorestart_time')) : 600;
 			$this->redis->set("minera_donation_time", $mineraDonationTime);
 			$this->redis->set("dashboard_refresh_time", $dashSettings);
 			$this->redis->set("dashboard_coin_rates", json_encode($coinRates));
@@ -850,6 +852,7 @@ class App extends Main_Controller {
 		// (devices possible dead)
 		$autorestartenable = $this->redis->get("minerd_autorestart");
 		$autorestartdevices = $this->redis->get("minerd_autorestart_devices");
+		$autorestarttime = $this->redis->get("minerd_autorestart_time");
 
 		if ($autorestartenable && $autorestartdevices)
 		{
@@ -879,7 +882,7 @@ class App extends Main_Controller {
 					$i = 0;
 					foreach ($lastshares as $deviceName => $lastshare)
 					{
-						if ( (time() - $lastshare) > 600 )
+						if ( (time() - $lastshare) > $autorestarttime )
 						{
 							log_message('error', "WARNING: Found device: ".$deviceName." possible dead");
 							$i++;

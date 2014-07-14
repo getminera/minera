@@ -500,11 +500,23 @@
 														Enable miner auto-restart <small>(if there are more or equal devices dead it will restart the miner software.)</small>
 													</label>                                                
 												</div>
-												<div class="input-group">
-													<span class="input-group-addon"><i class="glyphicon glyphicon-hdd"></i></span>
-													<input type="text" class="form-control" placeholder="Devices" name="minerd_autorestart_devices" value="<?php echo $minerdAutorestartDevices ?>" style="width:90px"/>
+												<div class="row">
+													<div class="col-xs-3 col-md-2">
+														<small>Dead devices</small>
+														<div class="input-group">
+															<span class="input-group-addon"><i class="glyphicon glyphicon-hdd"></i></span>
+															<input type="text" class="form-control" placeholder="Devices" name="minerd_autorestart_devices" value="<?php echo $minerdAutorestartDevices ?>" style="width:90px"/>
+														</div>
+													</div>
+													<div class="col-xs-3 col-md-2">
+														<small>Seconds to wait</small>
+														<div class="input-group">
+															<span class="input-group-addon"><i class="fa fa-clock-o"></i></span>
+															<input type="text" class="form-control" placeholder="Seconds" name="minerd_autorestart_time" value="<?php echo ($minerdAutorestartTime>0) ? $minerdAutorestartTime : 600; ?>" style="width:90px"/>
+														</div>
+													</div>
 												</div>
-												<h6>Check based on last share time (10 minutes without any share triggers the restart)</h6>
+												<h6>Check based on last share time (seconds selected without any share sent triggers the restart)</h6>
 	                                        </div>
 											
 											<!-- Auto-recover -->

@@ -1125,6 +1125,13 @@ class Util_model extends CI_Model {
 		}
 	}
 	
+	// Get local Minera version
+	public function getRemoteJsonConfig()
+	{
+		$remoteConfig = json_decode(file_get_contents('https://raw.githubusercontent.com/michelem09/minera/master/minera.json'));		
+		return $remoteConfig;
+	}
+	
 	/*
 	// Call the Mobileminer API to send device stats
 	*/
