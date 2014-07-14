@@ -577,7 +577,7 @@
 							    				</div><!-- /.input group -->
 							    				<small>Select max 5 rates to be displayed on the top bar</small>
 											<?php else: ?>
-							    				<p><small class="badge bg-red">There was a problem with the altcoins. Try refreshing the page.</small></p>
+							    				<p><small class="badge bg-red">Updating altcoins data. Please wait some minutes and try refreshing the page.</small></p>
 											<?php endif; ?>
 										</div>
 			                        </div>

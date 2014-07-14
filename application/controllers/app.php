@@ -102,9 +102,6 @@ class App extends Main_Controller {
 		$this->config->load('timezones');
 		$data['timezones'] = $this->config->item("timezones");
 
-		// Refresh Cryptsydata if needed
-		$this->util_model->refreshCryptsyData();
-
 		$data['message'] = false;
 		$data['message_type'] = false;
 
@@ -720,6 +717,10 @@ class App extends Main_Controller {
 		$now = time();
 		$currentHour = date("H", $now);
 		$currentMinute = date("i", $now);
+		
+		// Refresh Cryptsydata if needed
+		$this->util_model->refreshCryptsyData();
+		$this->util_model->updateAltcoinsRates();
 						
 		// Store the live stats
 		$stats = $this->util_model->storeStats();
