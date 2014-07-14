@@ -143,21 +143,6 @@ The *miner command* binary path is:
 	
 They are pre-compiled for Raspberry (ARM) with the latest version available, please refer to each one if you wanna recompile it.
 
-**NOTE: If it's your first install**, you need to compile and install at least bfgminer to install every libraries needed by the cg/bfgminers.
-
-````
-cd /tmp
-git clone https://github.com/luke-jr/bfgminer
-cd bfgminer
-./autogen.sh
-./configure --enable-scypt
-make
-sudo make install
-````
-
-After this you can use any miner Minera supports.
-
-
 **For Ubuntu user only**
 
 In the same path you can find also *minerd-ubuntu-64bit* file, this one is pre-compiled for Ubuntu 64bit, you should copy it overwriting *minerd* if you run Minera on Ubuntu.
@@ -165,7 +150,7 @@ In the same path you can find also *minerd-ubuntu-64bit* file, this one is pre-c
 	cd /var/www/minera/minera-bin
 	sudo cp minerd-ubuntu-64bit minerd
 
-If you wanna use any other miner software on Ubuntu (or any other system architecture) you need to compile it and put the binary file in "minera-bin/" directory.
+**NOTE**: If you wanna use any other miner software on Ubuntu (or any other system architecture) you need to compile it and put the binary file in "minera-bin/" directory.
 
 Upgrading
 -------------
@@ -276,7 +261,7 @@ Credits
 -------------
 I wish to thank every plugin, libraries, framework, icons, etc authors for their great job, in random order:
 
-* [CPUMiner-GC3355](https://github.com/siklon/cpuminer-gc3355) author
+* [CPUMiner-GC3355](https://github.com/siklon/cpuminer-gc3355), [BFGminer](https://github.com/luke-jr/bfgminer), [CGminer](https://github.com/ckolivas/cgminer), [CGminer Dmaxl Zeus fork](https://github.com/dmaxl/cgminer/) authors
 * [Codeigniter](http://ellislab.com/codeigniter) PHP Framework
 * [Raspbian](http://www.raspbian.org/) Raspberry Debian distribution
 * [Jquery](http://jquery.com/) Javascript libraries
