@@ -7,23 +7,75 @@
  */
 class Util_model extends CI_Model {
 
+	private $_minerdSoftware;
 
 	public function __construct()
 	{
-		// load CPUMiner Model
-		// TODO Switch model for CGMiner/BFGMiner
-		$this->load->model('cpuminer_model', 'miner');
+		// load Miner Model
+		// Switch model for CGMiner/BFGMiner/CPUMiner
+		$this->switchMinerSoftware();
 
 		parent::__construct();
 	}
 
+	public function switchMinerSoftware($software = false)
+	{
+		if ($software)
+			$this->_minerdSoftware = $software;
+		else
+			$this->_minerdSoftware = $this->redis->get('minerd_software');
+			
+		if ($this->_minerdSoftware == "bfgminer")
+		{
+			// Config for Bfgminer
+			$this->config->set_item('screen_command', '/usr/bin/screen -dmS bfgminer');
+			$this->config->set_item('screen_command_stop', '/usr/bin/screen -S bfgminer -X quit');
+			$this->config->set_item('minerd_command', FCPATH.'minera-bin/bfgminer');
+			$this->config->set_item('minerd_log_file', '/var/log/minera/bfgminer.log');
+			$this->config->set_item('minerd_log_url', 'application/logs/bfgminer.log');
+			$this->load->model('cgminer_model', 'miner');			
+		}
+		elseif ($this->_minerdSoftware == "cgminer")
+		{
+			// Config for Cgminer
+			$this->config->set_item('screen_command', '/usr/bin/screen -dmS cgminer');
+			$this->config->set_item('screen_command_stop', '/usr/bin/screen -S cgminer -X quit');
+			$this->config->set_item('minerd_command', FCPATH.'minera-bin/cgminer');
+			$this->config->set_item('minerd_log_file', '/var/log/minera/cgminer.log');
+			$this->config->set_item('minerd_log_url', 'application/logs/cgminer.log');
+			$this->load->model('cgminer_model', 'miner');
+		}
+		elseif ($this->_minerdSoftware == "cgdmaxlzeus")
+		{
+			// Config for Cgminer Dmal Zeus
+			$this->config->set_item('screen_command', '/usr/bin/screen -dmS cgminerdmaxlzeus');
+			$this->config->set_item('screen_command_stop', '/usr/bin/screen -S cgminerdmaxlzeus -X quit');
+			$this->config->set_item('minerd_command', FCPATH.'minera-bin/cgminer-dmaxl-zeus');
+			$this->config->set_item('minerd_log_file', '/var/log/minera/cgminerdmaxlzeus.log');
+			$this->config->set_item('minerd_log_url', 'application/logs/cgminerdmaxlzeus.log');
+			$this->load->model('cgminer_model', 'miner');
+		}
+		elseif ($this->_minerdSoftware == "cpuminer")
+		{
+			// Config for Cpuminer-gc3355
+			$this->config->set_item('screen_command', '/usr/bin/screen -dmS cpuminer');
+			$this->config->set_item('screen_command_stop', '/usr/bin/screen -S cpuminer -X quit');
+			$this->config->set_item('minerd_command', FCPATH.'minera-bin/minerd');
+			$this->config->set_item('minerd_log_file', '/var/log/minera/cpuminer.log');
+			$this->config->set_item('minerd_log_url', 'application/logs/cpuminer.log');
+			$this->load->model('cpuminer_model', 'miner');
+		}
+		
+		return true;
+	}
+	
 	/*
 	//
 	// Stats related stuff
 	//
 	*/
 	
-	// Get the live stats from cpuminer
+	// Get the live stats from miner
 	public function getStats()
 	{
 		$altcoinData = $this->updateAltcoinsRates();
@@ -50,12 +102,6 @@ class Util_model extends CI_Model {
 				$a->altcoins_rates = $altcoinData;
 				
 				$a->pools = $miner->pools;
-				
-				// Add pools
-				foreach ($a->pools as $pool)
-				{
-					$pool->alive = $this->checkPool($pool->url);
-				}
 				
 				// Add average stats
 				$a->avg = $this->getStoredAvgStats();
@@ -95,12 +141,56 @@ class Util_model extends CI_Model {
 
 			if (is_object($a))
 			{
-				// Add Miner pools
-				foreach ($a->pools as $pool)
+				if ($this->_minerdSoftware == "cpuminer")
+					$pools = (isset($a->pools)) ? $a->pools : false;
+				else
 				{
-					$pool->alive = $this->checkPool($pool->url);
+					// Parse cg/bfgminer pools to be the same as cpuminer
+					$tmpPools = (isset($a->pools[0]->POOLS)) ? $a->pools[0]->POOLS : false;
+					if ($tmpPools)
+					{
+						$pools = array();
+						foreach ($tmpPools as $tmpPool)
+						{
+							$stats = new stdClass();
+							$stats->start_time = false;
+							$stats->accepted = $tmpPool->Accepted;
+							$stats->rejected = $tmpPool->Rejected;
+							$stats->shares = $tmpPool->Works;
+							$stats->stop_time = false;
+							$stats->stats_id = 1;
+							
+							$newpool = new stdClass();
+							$newpool->priority = $tmpPool->Priority;
+							$newpool->url = $tmpPool->URL;
+							$newpool->active = $tmpPool->{'Stratum Active'};
+							$newpool->user = $tmpPool->User;
+							$newpool->pass = false;
+							$newpool->stats = array($stats);
+							$newpool->stats_id = 1;
+							$newpool->alive = ($tmpPool->Status == "Alive") ? 1 : 0;
+							
+							$pools[] = $newpool;
+							
+							unset($newpool);
+							unset($stats);
+						}
+					}
+				}
+
+				// Add Alive status for cpuminer pools
+				if ($this->_minerdSoftware == "cpuminer")
+				{
+					if ($pools)
+					{
+						foreach ($pools as $pool)
+						{
+							$pool->alive = $this->checkPool($pool->url);
+						}	
+					}
 				}
 				
+				$a->pools = $pools;
 				return $a;
 			}
 			else
@@ -130,82 +220,141 @@ class Util_model extends CI_Model {
 		{
 			$return['start_time'] = $stats->start_time;
 		}
+		elseif (isset($stats->summary[0]->SUMMARY[0]->Elapsed))
+		{
+			$return['start_time'] = round((time() - $stats->summary[0]->SUMMARY[0]->Elapsed), 0);
+		}
 
 		if (isset($stats->err))
 		{
 			$return['err'] = $stats->err;
 		}
 		
+		$poolHashrate = 0;
+
+		// CPUminer devices stats
+		if ($this->_minerdSoftware == "cpuminer")
+		{
+			if (isset($stats->devices))
+			{
+				foreach ($stats->devices as $name => $device)
+				{
+					$d++; $c = 0; $tcfrequency = 0; $tcaccepted = 0; $tcrejected = 0; $tchwerrors = 0; $tcshares = 0; $tchashrate = 0; $tclastshares = array();
+					
+					if ($device->chips)
+					{
+						foreach ($device->chips as $chip)
+						{
+							$c++;
+							$tcfrequency += $chip->frequency;
+							$tcaccepted += $chip->accepted;
+							$tcrejected += $chip->rejected;
+							$tchwerrors += $chip->hw_errors;
+							$tcshares += $chip->shares;
+							$tchashrate += $chip->hashrate;
+							$tclastshares[] = $chip->last_share;
+						}
+					}
+						
+					$return['devices'][$name]['frequency'] = ($c > 0) ? round(($tcfrequency/$c), 0) : 0;
+					$return['devices'][$name]['accepted'] = $tcaccepted;
+					$return['devices'][$name]['rejected'] = $tcrejected;
+					$return['devices'][$name]['hw_errors'] = $tchwerrors;
+					$return['devices'][$name]['shares'] = $tcshares;
+					$return['devices'][$name]['hashrate'] = $tchashrate;
+					$return['devices'][$name]['last_share'] = (count($tclastshares) > 0) ? max($tclastshares) : 0;
+					$return['devices'][$name]['serial'] = (isset($device->serial)) ? $device->serial : false;
+									
+					$tdfrequency += $return['devices'][$name]['frequency'];
+					$tdaccepted += $return['devices'][$name]['accepted'];
+					$tdrejected += $return['devices'][$name]['rejected'];
+					$tdhwerrors += $return['devices'][$name]['hw_errors'];
+					$tdshares += $return['devices'][$name]['shares'];
+					$tdhashrate += $return['devices'][$name]['hashrate'];
+					$tdlastshares[] = $return['devices'][$name]['last_share'];
+				}
+				
+				$return['totals']['frequency'] = round(($tdfrequency/$d), 0);
+				$return['totals']['accepted'] = $tdaccepted;
+				$return['totals']['rejected'] = $tdrejected;
+				$return['totals']['hw_errors'] = $tdhwerrors;
+				$return['totals']['shares'] = $tdshares;
+				$return['totals']['hashrate'] = $tdhashrate;
+				$return['totals']['last_share'] = max($tdlastshares);
+				
+			}
+		}
+		else
+		// BFGminer devices stats
+		{
+			if (isset($stats->devs[0]->DEVS))
+			{
+				foreach ($stats->devs[0]->DEVS as $device)
+				{						
+					$name = $device->Name.$device->ID;
+					
+					$return['devices'][$name]['frequency'] = false;
+					$return['devices'][$name]['accepted'] = $device->Accepted;
+					$return['devices'][$name]['rejected'] = $device->Rejected;
+					$return['devices'][$name]['hw_errors'] = $device->{'Hardware Errors'};
+					if ($this->_minerdSoftware == "cgdmaxlzeus")
+						$return['devices'][$name]['shares'] = ($device->{'Diff1 Work'}) ? round(($device->{'Diff1 Work'}*71582788/1000/1000),0) : 0;
+					else
+						$return['devices'][$name]['shares'] = ($device->{'Diff1 Work'}) ? round(($device->{'Diff1 Work'}*71582788/1000),0) : 0;
+					$return['devices'][$name]['hashrate'] = ($device->{'MHS av'}*1000*1000);
+					$return['devices'][$name]['last_share'] = $device->{'Last Share Time'};
+					$return['devices'][$name]['serial'] = false;
+					$tdshares += $return['devices'][$name]['shares'];
+					$tdhashrate += $return['devices'][$name]['hashrate'];
+				}				
+			}
+			
+			if (isset($stats->summary[0]->SUMMARY[0]))
+			{
+				$totals = $stats->summary[0]->SUMMARY[0];
+				
+				$return['totals']['frequency'] = false;
+				$return['totals']['accepted'] = $totals->Accepted;
+				$return['totals']['rejected'] = $totals->Rejected;
+				$return['totals']['hw_errors'] = $totals->{'Hardware Errors'};
+				$return['totals']['shares'] = $tdshares;
+				$return['totals']['hashrate'] = $tdhashrate;
+				$return['totals']['last_share'] = $totals->{'Last getwork'};
+				
+				if ($this->_minerdSoftware == "cgdmaxlzeus")
+					$cgbfgminerPoolHashrate = round(($totals->{'Work Utility'}*71582788/1000/2), 0);
+				else
+					$cgbfgminerPoolHashrate = round(($totals->{'Work Utility'}*71582788), 0);
+			}
+		}
+		
 		if (isset($stats->pools))
 		{
 			foreach ($stats->pools as $pool)
 			{
-				
-				if ($pool->active == 1)
+				if (isset($pool->active) && $pool->active == 1)
 				{
-					$poolHashrate = 0;
-					foreach($pool->stats as $session)
+					if ($this->_minerdSoftware == "cpuminer")
 					{
-						if ($session->stats_id == $pool->stats_id)
+						foreach($pool->stats as $session)
 						{
-							// Calculate pool hashrate
-							$poolHashrate = round(65536.0 * ($session->shares / (time() - $session->start_time)), 0);
+							if ($session->stats_id == $pool->stats_id)
+							{
+								// Calculate pool hashrate
+								$poolHashrate = round(65536.0 * ($session->shares / (time() - $session->start_time)), 0);
+							}
 						}
 					}
+					else
+					{
+						$poolHashrate = $cgbfgminerPoolHashrate;
+					}
+					
 					$return['pool']['hashrate'] = $poolHashrate;
 					$return['pool']['url'] = $pool->url;
 					$return['pool']['alive'] = $pool->alive;
 				}
 			}
-		}
-				
-		if (isset($stats->devices))
-		{
-			foreach ($stats->devices as $name => $device)
-			{
-				$d++; $c = 0; $tcfrequency = 0; $tcaccepted = 0; $tcrejected = 0; $tchwerrors = 0; $tcshares = 0; $tchashrate = 0; $tclastshares = array();
-				
-				if ($device->chips)
-				{
-					foreach ($device->chips as $chip)
-					{
-						$c++;
-						$tcfrequency += $chip->frequency;
-						$tcaccepted += $chip->accepted;
-						$tcrejected += $chip->rejected;
-						$tchwerrors += $chip->hw_errors;
-						$tcshares += $chip->shares;
-						$tchashrate += $chip->hashrate;
-						$tclastshares[] = $chip->last_share;
-					}
-				}
-					
-				$return['devices'][$name]['frequency'] = ($c > 0) ? round(($tcfrequency/$c), 0) : 0;
-				$return['devices'][$name]['accepted'] = $tcaccepted;
-				$return['devices'][$name]['rejected'] = $tcrejected;
-				$return['devices'][$name]['hw_errors'] = $tchwerrors;
-				$return['devices'][$name]['shares'] = $tcshares;
-				$return['devices'][$name]['hashrate'] = $tchashrate;
-				$return['devices'][$name]['last_share'] = (count($tclastshares) > 0) ? max($tclastshares) : 0;
-				$return['devices'][$name]['serial'] = (isset($device->serial)) ? $device->serial : false;
-								
-				$tdfrequency += $return['devices'][$name]['frequency'];
-				$tdaccepted += $return['devices'][$name]['accepted'];
-				$tdrejected += $return['devices'][$name]['rejected'];
-				$tdhwerrors += $return['devices'][$name]['hw_errors'];
-				$tdshares += $return['devices'][$name]['shares'];
-				$tdhashrate += $return['devices'][$name]['hashrate'];
-				$tdlastshares[] = $return['devices'][$name]['last_share'];
-			}
-			
-			$return['totals']['frequency'] = round(($tdfrequency/$d), 0);
-			$return['totals']['accepted'] = $tdaccepted;
-			$return['totals']['rejected'] = $tdrejected;
-			$return['totals']['hw_errors'] = $tdhwerrors;
-			$return['totals']['shares'] = $tdshares;
-			$return['totals']['hashrate'] = $tdhashrate;
-			$return['totals']['last_share'] = max($tdlastshares);
-			
 		}
 	
 		return json_encode($return);
@@ -443,7 +592,7 @@ class Util_model extends CI_Model {
 				$lhw = $latest->errors;
 				$lre = $latest->rejected;
 				$lsh = $latest->shares;
-				$lls = $latest->last_share;
+				$lls = (isset($latest->last_share)) ? $latest->last_share: 0;
 			}
 	
 			// Get delta current-latest
@@ -668,19 +817,20 @@ class Util_model extends CI_Model {
 			{
 				fclose($conn);
 				return true;
-			}
-		}
+			}			
+			fclose($conn);
+		}		
 		
 		return false;
 	}	
 	
 	// Check if the minerd if running
-	public function isOnline()
+	public function isOnline($count = 0)
 	{
 		if(!($fp = @fsockopen("127.0.0.1", 4028, $errno, $errstr, 1)))
 		{
-			return false;
-		}
+				return false;
+		}		
 		
 		return true;
 	}
@@ -773,21 +923,72 @@ class Util_model extends CI_Model {
 	// Stop miner
 	public function minerStop()
 	{
-		return $this->miner->stop();
+		// Check if there is a running miner and 
+		// stop that before start another one
+		$software = $this->redis->get("minerd_running_software");
+		if ($software)
+		{
+			log_message("error", "Stopping running software: ".$software);
+			$this->switchMinerSoftware($software);
+		}
+		else
+		{
+			$this->switchMinerSoftware();
+		}
+
+		exec("sudo -u " . $this->config->item("system_user") . " " . $this->config->item("screen_command_stop"));
+		exec("sudo -u " . $this->config->item("system_user") . " /usr/bin/killall -s9 minerd");
+		
+		$this->redis->del("latest_stats");
+		$this->redis->set("minerd_status", false);
+		$this->redis->set("minerd_running_software", false);
+		
+		log_message('error', $this->_minerdSoftware." stopped");
+					
+		return true;
 	}
 	
 	// Start miner
 	public function minerStart()
 	{
-		$this->resetCounters();		
-		return $this->miner->start();
+		$this->resetCounters();
+		$software = $this->redis->get("minerd_software");
+
+		$this->redis->set("minerd_status", true);
+		$this->redis->set("minerd_running_software", $software);
+
+		$this->switchMinerSoftware();
+				
+		$command = array($this->config->item("screen_command"), $this->config->item("minerd_command"), $this->getCommandline());
+
+		$finalCommand = "sudo -u " . $this->config->item("system_user") . " " . implode(" ", $command);
+		
+		exec($finalCommand, $out);
+		
+		log_message('error', "Minerd started with command: $finalCommand - Output was: ".var_export($out, true));
+		
+		sleep(9);
+		
+		if (file_exists($this->config->item('minerd_log_file')))
+		{
+			shell_exec("sudo -u " . $this->config->item("system_user") . " chmod 666 " . $this->config->item('minerd_log_file'));
+		}
+		
+		return true;
 	}
 	
-	// Stop minerd
+	// Restart minerd
 	public function minerRestart()
 	{
 		$this->resetCounters();
-		return $this->miner->restart();
+	
+		$this->minerStop();
+		sleep(1);
+	
+		$this->minerStart();
+		sleep(1);
+		
+		return true;
 	}
 
 	// Save a fake last data to get correct next delta
@@ -873,6 +1074,14 @@ class Util_model extends CI_Model {
 			else
 				return false;
 		}
+	}
+	
+	// Generate a uniq hash ID for Minera System ID
+	public function generateMineraId()
+	{
+		$id1 = uniqid('', true);
+		$id2 = uniqid('', true);
+		return md5($id1.$id2);
 	}
 
 	// Get local Minera version

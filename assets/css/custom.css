@@ -30,6 +30,9 @@ body > .header .navbar .nav > li > a > .label { padding: 3px !important; }
 .sidebar { position: fixed; width: 220px; }
 .donation-pool { background: #E2EDF0; color: #99A5A8; }
 .callout.callout-grey { background-color: #F3F3F3; border-color: #ed5565; }
+.section-raw-stats { display: none;}
+.modal-dialog-center { margin-top: 15%;}
+.modal-footer-center { margin: 0; padding: 6px 0 !important; text-align: center;}
 
 .lockscreen {background: url(../img/bg-dark.jpg) repeat center center fixed !important;}
 .lockscreen-link, .lockscreen-name { color: #fff;}

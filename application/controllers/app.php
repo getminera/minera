@@ -59,6 +59,7 @@ class App extends Main_Controller {
 		$data['mineraUpdate'] = $this->util_model->checkUpdate();
 		$data['dashboard_refresh_time'] = $this->redis->get("dashboard_refresh_time");
 		$data['pageTitle'] = ($this->redis->get("mobileminer_system_name")) ? $this->redis->get("mobileminer_system_name")." > Minera - Dashboard" : "Minera - Dashboard";
+		$data['minerdRunning'] = $this->redis->get("minerd_running_software");
 		
 		$this->load->view('include/header', $data);
 		$this->load->view('include/sidebar', $data);
@@ -82,6 +83,7 @@ class App extends Main_Controller {
 		$data['settingsScript'] = false;
 		$data['mineraUpdate'] = $this->util_model->checkUpdate();
 		$data['pageTitle'] = ($this->redis->get("mobileminer_system_name")) ? $this->redis->get("mobileminer_system_name")." > Minera - Charts" : "Minera - Charts";
+		$data['minerdRunning'] = $this->redis->get("minerd_running_software");
 		
 		$this->load->view('include/header', $data);
 		$this->load->view('include/sidebar', $data);
@@ -99,14 +101,112 @@ class App extends Main_Controller {
 		
 		$this->config->load('timezones');
 		$data['timezones'] = $this->config->item("timezones");
-		
-		$extramessages = false;
-		
+
 		// Refresh Cryptsydata if needed
 		$this->util_model->refreshCryptsyData();
+
+		$data['message'] = false;
+		$data['message_type'] = false;
+
+		if ($this->input->post('save_password'))
+		{
+			$password = trim($this->input->post('password'));
+			$password2 = trim($this->input->post('password2'));
+			if (empty($password) && empty($password2))
+			{
+				$data['message'] = "<b>Warning!</b> Password can't be empty";
+				$data['message_type'] = "warning";
+			}
+			elseif ($password != $password2)
+			{
+				$data['message'] = "<b>Warning!</b> Password mismatch";
+				$data['message_type'] = "warning";				
+			}
+			else
+			{
+				$this->redis->set("minera_password", $password);
+				$data['message'] = '<b>Success!</b> Password saved!';
+				$data['message_type'] = "success";
+			}
+		}
+		
+		// Load Coin Rates
+		$data['btc'] = $this->util_model->getBtcUsdRates();
+		
+		// Load miner settings
+		$data['minerdCommand'] = $this->config->item("minerd_command");
+		$data['minerdAutorestart'] = $this->redis->get('minerd_autorestart');
+		$data['minerdAutorestartDevices'] = $this->redis->get('minerd_autorestart_devices');
+		$data['minerdAutorecover'] = $this->redis->get('minerd_autorecover');
+		$data['minerdScrypt'] = $this->redis->get('minerd_scrypt');
+		$data['minerdAutodetect'] = $this->redis->get('minerd_autodetect');
+		$data['minerdAutotune'] = $this->redis->get('minerd_autotune');
+		$data['minerdStartfreq'] = $this->redis->get('minerd_startfreq');
+		$data['minerdExtraoptions'] = $this->redis->get('minerd_extraoptions');
+		$data['minerdSoftware'] = $this->redis->get('minerd_software');
+		$data['minerdLog'] = $this->redis->get('minerd_log');
+		$data['minerdDebug'] = $this->redis->get('minerd_debug');
+		$data['minerdManualSettings'] = $this->redis->get('minerd_manual_settings');
+		$data['minerdSettings'] = $this->util_model->getCommandline();
+		$data['minerdJsonSettings'] = $this->redis->get("minerd_json_settings");
+		$data['minerdPools'] = $this->util_model->getPools();
+		$data['minerdGuidedOptions'] = $this->redis->get("guided_options");
+		$data['minerdManualOptions'] = $this->redis->get("manual_options");
+		$data['minerdDelaytime'] = $this->redis->get("minerd_delaytime");
+		
+		//Load Dashboard settings
+		$data['mineraStoredDonations'] = $this->util_model->getStoredDonations();
+		$data['mineraDonationTime'] = $this->redis->get("minera_donation_time");
+		$data['dashboard_refresh_time'] = $this->redis->get("dashboard_refresh_time");
+		$dashboard_coin_rates = $this->redis->get("dashboard_coin_rates");
+		$data['dashboard_coin_rates'] = (is_array(json_decode($dashboard_coin_rates))) ? json_decode($dashboard_coin_rates) : array();
+		$data['cryptsy_data'] = $this->redis->get("cryptsy_data");
+		$data['dashboardTemp'] = ($this->redis->get("dashboard_temp")) ? $this->redis->get("dashboard_temp") : "c";
+
+		// Load System settings
+		$data['mineraTimezone'] = $this->redis->get("minera_timezone");
+		$data['systemExtracommands'] = $this->redis->get("system_extracommands");
+		$data['scheduledEventStartTime'] = $this->redis->get("scheduled_event_start_time");
+		$data['scheduledEventTime'] = $this->redis->get("scheduled_event_time");
+		$data['scheduledEventAction'] = $this->redis->get("scheduled_event_action");
+		$data['anonymousStats'] = $this->redis->get("anonymous_stats");
+		$data['mineraSystemId'] = $this->redis->get("minera_system_id");
+				
+		// Load Mobileminer
+		$data['mobileminerEnabled'] = $this->redis->get("mobileminer_enabled");
+		$data['mobileminerSystemName'] = $this->redis->get("mobileminer_system_name");
+		$data['mobileminerEmail'] = $this->redis->get("mobileminer_email");
+		$data['mobileminerAppkey'] = $this->redis->get("mobileminer_appkey");
+						
+		// Everything else
+		$data['savedFrequencies'] = $this->redis->get('current_frequencies');
+		$data['isOnline'] = $this->util_model->isOnline();
+		$data['mineraUpdate'] = $this->util_model->checkUpdate();
+		$data['htmlTag'] = "settings";
+		$data['appScript'] = false;
+		$data['settingsScript'] = true;
+		$data['pageTitle'] = "Minera - Settings";
+		$data['minerdRunning'] = $this->redis->get("minerd_running_software");
+		
+		$this->load->view('include/header', $data);
+		$this->load->view('include/sidebar', $data);
+		$this->load->view('settings', $data);
+		$this->load->view('include/footer');
+	}
+	
+	/*
+	// Save Settings controller
+	*/
+	public function save_settings()
+	{
+		$extramessages = false;
 			
 		if ($this->input->post('save_settings'))
 		{
+			$minerSoftware = $this->input->post('minerd_software');
+			$this->redis->set("minerd_software", $minerSoftware);
+			$this->util_model->switchMinerSoftware();
+			
 			$dashSettings = substr(trim($this->input->post('dashboard_refresh_time')), strpos(trim($this->input->post('dashboard_refresh_time')), ";") + 1);
 			
 			$mineraDonationTime = substr(trim($this->input->post('minera_donation_time')), strpos(trim($this->input->post('minera_donation_time')), ";") + 1);
@@ -142,6 +242,12 @@ class App extends Main_Controller {
 			$settings = null;
 			$confArray = array();
 
+			if ($minerSoftware != "cpuminer")
+			{
+				$confArray["api-listen"] = true;
+				$confArray["api-allow"] = "W:127.0.0.1";
+			}
+			
 			// Save manual/guided selection
 			$this->redis->set('manual_options', $this->input->post('manual_options'));
 			$this->redis->set('guided_options', $this->input->post('guided_options'));
@@ -157,33 +263,69 @@ class App extends Main_Controller {
 			{
 				// Guided options
 				
-				// Auto-detect
-				if ($this->input->post('minerd_autodetect'))
+				// CPUMiner specific
+				if ($minerSoftware == "cpuminer")
 				{
-					$confArray["gc3355-detect"] = true;			
-				}
-				$this->redis->set('minerd_autodetect', $this->input->post('minerd_autodetect'));
-
-				// Autotune
-				if ($this->input->post('minerd_autotune'))
-				{
-					$confArray["gc3355-autotune"] = true;
-				}
-				$this->redis->set('minerd_autotune', $this->input->post('minerd_autotune'));
+					// Auto-detect
+					if ($this->input->post('minerd_autodetect'))
+					{
+						$confArray["gc3355-detect"] = true;			
+					}
+					$this->redis->set('minerd_autodetect', $this->input->post('minerd_autodetect'));
+	
+					// Autotune
+					if ($this->input->post('minerd_autotune'))
+					{
+						$confArray["gc3355-autotune"] = true;
+					}
+					$this->redis->set('minerd_autotune', $this->input->post('minerd_autotune'));
+						
+					// Start frequency
+					if ($this->input->post('minerd_startfreq'))
+					{
+						$confArray["freq"] = $this->input->post('minerd_startfreq');
+					}
+					$this->redis->set('minerd_startfreq', $this->input->post('minerd_startfreq'));
 					
-				// Start frequency
-				if ($this->input->post('minerd_startfreq'))
-				{
-					$confArray["freq"] = $this->input->post('minerd_startfreq');
+					// Logging
+					$minerdLog = false;
+					if ($this->input->post('minerd_log'))
+					{
+						$confArray["log"] = $this->config->item("minerd_log_file");
+						$minerdLog = $this->input->post('minerd_log');
+					}
+					$this->redis->set('minerd_log', $minerdLog);
+
 				}
-				$this->redis->set('minerd_startfreq', $this->input->post('minerd_startfreq'));
-				
-				// Logging
-				if ($this->input->post('minerd_log'))
-				{
-					$confArray["log"] = $this->config->item("minerd_log_file");
-				}
-				$this->redis->set('minerd_log', $this->input->post('minerd_log'));
+				// CG/BFGminer specific
+				else
+				{					
+					// Scrypt
+					if ($this->input->post('minerd_scrypt'))
+					{
+						$confArray["scrypt"] = true;			
+					}
+					$this->redis->set('minerd_scrypt', $this->input->post('minerd_scrypt'));
+					
+					// Auto-detect
+					if ($this->input->post('minerd_autodetect'))
+					{
+						$confArray["scan"] = "all";			
+					}
+					$this->redis->set('minerd_autodetect', $this->input->post('minerd_autodetect'));
+	
+					// Logging
+					if ($this->input->post('minerd_log'))
+					{
+						$confArray["log-file"] = $this->config->item("minerd_log_file");
+						$this->redis->set('minerd_log', $this->input->post('minerd_log'));
+					}
+					else
+					{
+						$this->redis->del('minerd_log');
+					}
+
+				}				
 
 				// Debug
 				if ($this->input->post('minerd_debug'))
@@ -264,6 +406,32 @@ class App extends Main_Controller {
 				$extracommands = $this->input->post('system_extracommands');
 			}
 			$this->redis->set("system_extracommands", $extracommands);
+			
+			// Scheduled event
+			$scheduledEventTime = false; $scheduledEventAction = false; $scheduledEventStartTime = false;
+			if ($this->input->post('scheduled_event_time'))
+			{
+				$scheduledEventStartTime = time();
+				$scheduledEventTime = $this->input->post('scheduled_event_time');
+				$scheduledEventAction = $this->input->post('scheduled_event_action');
+			}
+			if ($this->redis->get("scheduled_event_time") != $scheduledEventTime)
+				$this->redis->set("scheduled_event_start_time", $scheduledEventStartTime);
+			$this->redis->set("scheduled_event_time", $scheduledEventTime);
+			$this->redis->set("scheduled_event_action", $scheduledEventAction);
+			
+			// Anonymous stats
+			$anonymousStats = false;
+			if ($this->input->post('anonymous_stats'))
+			{
+				$anonymousStats = $this->input->post('anonymous_stats');
+				if (!$this->redis->get("minera_system_id"))
+				{
+					$mineraSystemId = $this->util_model->generateMineraId();
+					$this->redis->set("minera_system_id", $mineraSystemId);
+				}
+			}
+			$this->redis->set("anonymous_stats", $anonymousStats);
 						
 			// Startup script rc.local
 			$this->util_model->saveStartupScript($delay, $extracommands);
@@ -305,93 +473,22 @@ class App extends Main_Controller {
 			{
 				$this->util_model->minerRestart();
 				
-				$data['message'] = '<b>Success!</b> Settings saved and miner restarted!';
-				$data['message_type'] = "success";
-			}
-
-		}
-
-		if ($this->input->post('save_password'))
-		{
-			$password = trim($this->input->post('password'));
-			$password2 = trim($this->input->post('password2'));
-			if (empty($password) && empty($password2))
-			{
-				$data['message'] = "<b>Warning!</b> Password can't be empty";
-				$data['message_type'] = "warning";
-			}
-			elseif ($password != $password2)
-			{
-				$data['message'] = "<b>Warning!</b> Password mismatch";
-				$data['message_type'] = "warning";				
+				$this->session->set_flashdata('message', '<b>Success!</b> Settings saved and miner restarted!');
+				$this->session->set_flashdata('message_type', 'success');
 			}
 			else
 			{
-				$this->redis->set("minera_password", $password);
-				$data['message'] = '<b>Success!</b> Password saved!';
-				$data['message_type'] = "success";
+				$this->session->set_flashdata('message', '<b>Success!</b> Settings saved!');
+				$this->session->set_flashdata('message_type', 'success');
 			}
+
 		}
 		
 		if (is_array($extramessages))
 		{
-			$data['message'] = '<b>Warning!</b> '.implode(" ", $extramessages);
-			$data['message_type'] = "warning";
+			$this->session->set_flashdata('message', '<b>Warning!</b> '.implode(" ", $extramessages));
+			$this->session->set_flashdata('message_type', 'warning');
 		}
-		
-		// Load Coin Rates
-		$data['btc'] = $this->util_model->getBtcUsdRates();
-		
-		// Load miner settings
-		$data['minerdAutorestart'] = $this->redis->get('minerd_autorestart');
-		$data['minerdAutorestartDevices'] = $this->redis->get('minerd_autorestart_devices');
-		$data['minerdAutorecover'] = $this->redis->get('minerd_autorecover');
-		$data['minerdAutodetect'] = $this->redis->get('minerd_autodetect');
-		$data['minerdAutotune'] = $this->redis->get('minerd_autotune');
-		$data['minerdStartfreq'] = $this->redis->get('minerd_startfreq');
-		$data['minerdExtraoptions'] = $this->redis->get('minerd_extraoptions');
-		$data['minerdLog'] = $this->redis->get('minerd_log');
-		$data['minerdDebug'] = $this->redis->get('minerd_debug');
-		$data['minerdManualSettings'] = $this->redis->get('minerd_manual_settings');
-		$data['minerdSettings'] = $this->util_model->getCommandline();
-		$data['minerdJsonSettings'] = $this->redis->get("minerd_json_settings");
-		$data['minerdPools'] = $this->util_model->getPools();
-		$data['minerdGuidedOptions'] = $this->redis->get("guided_options");
-		$data['minerdManualOptions'] = $this->redis->get("manual_options");
-		$data['minerdDelaytime'] = $this->redis->get("minerd_delaytime");
-		
-		//Load Dashboard settings
-		$data['mineraStoredDonations'] = $this->util_model->getStoredDonations();
-		$data['mineraDonationTime'] = $this->redis->get("minera_donation_time");
-		$data['dashboard_refresh_time'] = $this->redis->get("dashboard_refresh_time");
-		$dashboard_coin_rates = $this->redis->get("dashboard_coin_rates");
-		$data['dashboard_coin_rates'] = (is_array(json_decode($dashboard_coin_rates))) ? json_decode($dashboard_coin_rates) : array();
-		$data['cryptsy_data'] = $this->redis->get("cryptsy_data");
-		$data['dashboardTemp'] = ($this->redis->get("dashboard_temp")) ? $this->redis->get("dashboard_temp") : "c";
-
-		// Load System settings
-		$data['mineraTimezone'] = $this->redis->get("minera_timezone");
-		$data['systemExtracommands'] = $this->redis->get("system_extracommands");
-		
-		// Load Mobileminer
-		$data['mobileminerEnabled'] = $this->redis->get("mobileminer_enabled");
-		$data['mobileminerSystemName'] = $this->redis->get("mobileminer_system_name");
-		$data['mobileminerEmail'] = $this->redis->get("mobileminer_email");
-		$data['mobileminerAppkey'] = $this->redis->get("mobileminer_appkey");
-						
-		// Everything else
-		$data['savedFrequencies'] = $this->redis->get('current_frequencies');
-		$data['isOnline'] = $this->util_model->isOnline();
-		$data['mineraUpdate'] = $this->util_model->checkUpdate();
-		$data['htmlTag'] = "settings";
-		$data['appScript'] = false;
-		$data['settingsScript'] = true;
-		$data['pageTitle'] = "Minera - Settings";
-		
-		$this->load->view('include/header', $data);
-		$this->load->view('include/sidebar', $data);
-		$this->load->view('settings', $data);
-		$this->load->view('include/footer');
 	}
 	
 	/*
@@ -557,8 +654,26 @@ class App extends Main_Controller {
 			case "history_stats":
 				$o = $this->util_model->getHistoryStats($this->input->get('type'));
 			break;
+			case "miner_action":
+				$action = ($this->input->get('action')) ? $this->input->get('action') : false;
+				switch($action)
+				{					
+					case "start":
+						$o = $this->util_model->minerStart();
+					break;
+					case "stop":
+						$o = $this->util_model->minerStop();
+					break;
+					case "restart":
+						$o = $this->util_model->minerRestart();
+					break;
+					default:
+						$o = json_encode(array("err" => true));
+				}
+			break;
 			case "test":
-				$o = json_encode($this->util_model->storeOldAvgStats(86400)); //$this->util_model->getParsedStats($this->util_model->getMinerStats());
+				$this->load->model('bfgminer_model');
+				$o = json_encode($this->bfgminer_model->callMinerd()); //$this->util_model->getParsedStats($this->util_model->getMinerStats());
 			break;
 		}
 		
@@ -688,6 +803,48 @@ class App extends Main_Controller {
 			}
 		}
 
+		// Scheduled event
+		$scheduledEventStartTime = $this->redis->get("scheduled_event_start_time");
+		$scheduledEventTime = $this->redis->get("scheduled_event_time");
+		$scheduledEventAction = $this->redis->get("scheduled_event_action");
+		if ($scheduledEventTime > 0)
+		{
+			$timeToRunEvent = (($scheduledEventTime*3600) + $scheduledEventStartTime);
+			if (time() >= $timeToRunEvent)
+			{
+				log_message("error", "Running scheduled event -> ".strtoupper($scheduledEventAction));
+				$this->redis->set("scheduled_event_start_time", time());
+				if ($scheduledEventAction == "restart")
+				{
+					$this->util_model->minerRestart();
+				}
+				else
+				{
+					$this->util_model->reboot();
+				}
+			}
+		}
+		
+		// Send anonymous stats
+		$anonynousStatsEnabled = $this->redis->get("anonymous_stats");
+		$mineraSystemId = $this->redis->get("minera_system_id");
+
+		if ($this->util_model->isOnline() && $anonynousStatsEnabled && $mineraSystemId)
+		{
+			if (isset($stats->totals->hashrate))
+				$totalHashrate = $stats->totals->hashrate;
+			if (isset($stats->devices))
+				$totalDevices = count(($stats->devices));
+			$minerdRunning = $this->redis->get("minerd_running_software");
+
+			$anonStats = array("id" => $mineraSystemId, "hashrate" => $totalHashrate, "devices" => $totalDevices);
+			
+			if ( $currentMinute == "00")
+			{
+				//$this->util_model->sendAnonymousStats($mineraSystemId, $anonStats);
+			}
+		}
+				
 		// Use the live stats to check if autorestart is needed
 		// (devices possible dead)
 		$autorestartenable = $this->redis->get("minerd_autorestart");

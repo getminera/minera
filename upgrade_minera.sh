@@ -7,7 +7,7 @@ echo -e "-----\nSTART Minera Upgrade script\n-----\n"
 echo -e "-----\nInstall extra packages\n-----\n"
 #apt-get update
 #export DEBIAN_FRONTEND=noninteractive
-apt-get -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" install -y build-essential libtool libcurl4-openssl-dev libjansson-dev libudev-dev libncurses5-dev autoconf automake postfix redis-server git screen php5-cli php5-curl
+apt-get -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" install -y build-essential libtool libcurl4-openssl-dev libjansson-dev libudev-dev libncurses5-dev autoconf automake postfix redis-server git screen php5-cli php5-curl uthash-dev libmicrohttpd-dev libevent-dev libusb-1.0-0-dev libusb-dev
 
 sudo dpkg --configure -a
 
@@ -50,5 +50,15 @@ echo -n '["132","155","3"]' | redis-cli -x set dashboard_coin_rates
 echo -e "Update redis values\n-----\n"
 redis-cli del minera_update
 redis-cli del minera_version
+
+echo -e "Copying cg/bfgminer udev rules\n-----\n"
+sudo cp conf/01-cgminer.rules /etc/udev/rules.d/
+sudo cp conf/70-bfgminer.rules /etc/udev/rules.d/
+sudo service udev restart
+
+echo -e "Installing libblkmaker\n-----\n"
+cd minera-bin/src/libblkmaker
+sudo make install
+sudo ldconfig
 
 echo -e 'DONE! Minera is ready!\n\nOpen the URL: http://'$(hostname -I | tr -d ' ')'/minera/\n\nAnd happy mining!\n'

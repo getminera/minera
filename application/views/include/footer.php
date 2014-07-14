@@ -59,8 +59,48 @@
                 }
                 return i;
             }
+            
+            $(".miner-action").click(function(e) {
+	           	e.preventDefault();
+	           	var action =  $(this).data("miner-action");
+	        	
+			   	$("#modal-saving-label").html("Sending action: "+action+" , please wait...");
+	        	$('#modal-saving').modal('show');
+	        	
+	        	var apiUrl = "<?php echo site_url("app/api") ?>?command=miner_action&action="+action;
+
+				$.ajax({
+					type: "GET",
+					url: apiUrl,
+					cache: false,
+					success:  function(resp){
+						$('#modal-saving').modal('hide');
+						window.location.reload();
+					}
+				});
+            });
 
 		});
+		
+        function saveSettings()
+        {
+        	$("#modal-saving-label").html("Saving data, please wait...");
+        	$('#modal-saving').modal('show');
+        	
+        	var saveUrl = "<?php echo site_url("app/save_settings") ?>";
+        	var formData = $("#minersettings").serialize();
+
+			$.ajax({
+				type: "POST",
+				url: saveUrl,
+				data: formData,
+				cache: false,
+				success:  function(resp){
+					$('#modal-saving').modal('hide');
+					window.location.reload();
+				}
+			});
+        }
 	</script>
 
 	<?php if (isset($chartsScript) && $chartsScript) : ?>
@@ -281,7 +321,7 @@
 				}
 			});
 			
-		    $("#option-startfreq").ionRangeSlider({
+		    $("#ion-startfreq").ionRangeSlider({
 				min: 600,
 				max: 1400,
 				from: <?php echo (isset($minerdStartfreq)) ? $minerdStartfreq : 800; ?>,
@@ -335,6 +375,75 @@
 				$(".pool-donation-group").css("display", "block").removeClass("pool-donation-group");
 		    });
 		    
+		    $('#minerd-software').on('change', function() {
+				showHideMinerOptions(true);
+		    });
+		    
+		    showHideMinerOptions(false);
+		    
+		    // Show or Hide the options related to the selected miner software
+		    function showHideMinerOptions(change)
+		    {
+			    if ($('#minerd-software').val() != "cpuminer")
+			    {
+			    	if ($('#minerd-software').val() == "cgdmaxlzeus")
+			    	{
+				    	$("#minerd-log").hide();
+				    	$("input[name='minerd_log']").prop('disabled', true);
+				    }
+				    else
+				    {
+				    	$("#minerd-log").show();
+				    	$("input[name='minerd_log']").prop('disabled', false);
+				    }
+			    	$(".legend-option-autodetect").html("(--scan=all)");
+			    	$(".legend-option-log").html("(--log-file)");
+			    	$("#minerd-autotune").hide();
+			    	$("input[name='minerd_autotune']").prop('disabled', true);
+				    $("#minerd-startfreq").hide();
+			    	$("input[name='minerd_startfreq']").prop('disabled', true);
+				    $("#minerd-scrypt").show();
+			    	$("input[name='minerd_scrypt']").prop('disabled', false);
+			    }
+			    else
+			    {
+			    	$(".legend-option-autodetect").html("(--gc3355-detect)");
+			    	$(".legend-option-log").html("(--log)");
+					$("#minerd-log").show();
+				    	$("input[name='minerd_log']").prop('disabled', false);
+			    	$("#minerd-autotune").show();
+			    	$("input[name='minerd_autotune']").prop('disabled', false);
+				    $("#minerd-startfreq").show();
+			    	$("input[name='minerd_startfreq']").prop('disabled', false);
+				    $("#minerd-scrypt").hide();
+			    	$("input[name='minerd_scrypt']").prop('disabled', true);
+			    }
+
+			    $(".detail-minerdsoftware").remove();
+			    $(".note-minerdsoftware").remove();
+			    if (change)
+			    {
+			    	if ($('#minerd-software').val() == "cpuminer")
+					{
+						$(".group-minerdsoftware").append('<h6 class="detail-minerdsoftware"><a href="https://github.com/siklon/cpuminer-gc3355" target="_blank"><small class="badge bg-red">CPUminer-GC3355</small></a> is a fork of Cpuminer and is the best software for gridseed devices like Minis and Blades. It is fully optimised and supports autotune, autodetection, frequency and it\'s really stable. <a href="https://github.com/siklon/cpuminer-gc3355" target="_blank">More info</a>.</h6>');
+					}
+					else if ($('#minerd-software').val() == "bfgminer")
+					{
+						$(".group-minerdsoftware").append('<h6 class="detail-minerdsoftware"><a href="https://github.com/luke-jr/bfgminer" target="_blank"><small class="badge bg-red">BFGminer</small></a> has a really large amount of devices supported, it has also a lot of features you can use to get the best from your devices. It\'s a stable software. <a href="https://github.com/luke-jr/bfgminer" target="_blank">More info</a>.</h6>');
+					}
+					else if ($('#minerd-software').val() == "cgminer")
+					{
+						$(".group-minerdsoftware").append('<h6 class="detail-minerdsoftware"><a href="https://github.com/ckolivas/cgminer" target="_blank"><small class="badge bg-red">CGminer</small></a> is similar to bfgminer, supports a large amount of devices but probably is less updated than bfg. It\'s a stable software. <a href="https://github.com/ckolivas/cgminer" target="_blank">More info</a>.</h6>');
+					}
+					else if ($('#minerd-software').val() == "cgdmaxlzeus")
+					{
+						$(".group-minerdsoftware").append('<h6 class="detail-minerdsoftware"><a href="https://github.com/dmaxl/cgminer/" target="_blank"><small class="badge bg-red">CGminer Dmaxl Zeus</small></a> is a Cgminer 4.3.5 fork with GridSeed and Zeus scrypt ASIC support. You should give a try particularly if you have Zeus devices. Stability is unknown. <a href="https://github.com/dmaxl/cgminer/" target="_blank">More info</a>.</h6>');
+					}
+										
+					$(".group-minerdsoftware").append('<h5 class="note-minerdsoftware"><strong>NOTE:</strong> <i>remember to review your settings below if you change the miner software because they haven\'t the same config options and the miner process could not start.</i></5>');
+				}
+		    }
+		    
 		    if ($("#manual_options").val() == "1") $(".guided-options").hide();
 		    if ($("#guided_options").val() == "1") $(".manual-options").hide();
 		    $(".btn-manual-options").click(function() {
@@ -355,7 +464,7 @@
 				$("#guided_options").val(1);
 				return false;
 		    });
-		    
+			
 		    // validate signup form on keyup and submit
 		    $.validator.addMethod("check_multiple_select", function(value, element) {
 				if (value && value.length > 0 && value.length <= 5 )
@@ -396,15 +505,25 @@
 								return $('.minerd-autorestart').is(':checked');
 							}
 						}
+					},
+					scheduled_event_action: {
+						required: {
+							depends: function () {
+								return $('.scheduled-event-time').val();
+							}
+						}
+					},
+					scheduled_event_time: {
+						number: true
 					}
 				},
 			    errorPlacement: function(error, element) {
 					error.appendTo( $(element).closest(".input-group").parent().after() );
 			    },
 			    // specifying a submitHandler prevents the default submit, good for the demo
-			    /*submitHandler: function() {
-			    	alert("submitted!");
-			    },*/
+			    submitHandler: function() {
+			    	saveSettings();
+			    },
 			    unhighlight: function(element) {
 					$(element).closest(".input-group").removeClass("has-error").addClass("has-success");
 			    },
@@ -543,6 +662,10 @@
 			    });
 			});
 			
+			// Raw stats click
+			$(".view-raw-stats").click( function() { $(".section-raw-stats").fadeIn() });
+			$(".close-stats").click( function() { $(".section-raw-stats").fadeOut() });
+			
 		    //Make the dashboard widgets sortable Using jquery UI
 		    $(".connectedSortable").sortable({
 		        placeholder: "sort-highlight",
@@ -560,7 +683,7 @@
 			var pausetoggle = "#pause";
 			var scrollelems = [".real-time-log-data"];
 			
-			var url = "<?php echo base_url($this->config->item("minerd_log_url")); ?>";
+			var url = "<?php echo ($minerdLog) ? base_url($this->config->item("minerd_log_url")) : null; ?>";
 			var fix_rn = true;
 			var load_log = 1 * 1024; /* 30KB */
 			var poll = 1000; /* 1s */
@@ -776,6 +899,10 @@
 			var errorTriggered = false;
 			var pool_shares_seconds;
 			
+			// Raw stats
+			var boxStats = $(".section-raw-stats");
+			boxStats.hide();
+			
 			$('.overlay').show();
 			// Show loaders
 			//$('.loading-img').show();
@@ -784,6 +911,8 @@
 			// get Json data from minerd and create Knob, table and sysload
 	        $.getJSON( "<?php echo site_url($this->config->item('live_stats_url')); ?>", function( data ) 
 	        {
+				boxStats.find("span").html('<pre style="font-size:10px;">' + JSON.stringify(data, undefined, 2) + '</pre>');
+				
 				// Add Altcoins rates
     			$('.altcoin-container').html('');
     			if (data['altcoins_rates'])
@@ -898,6 +1027,12 @@
 							]
 						});
 						
+						// Get main/active pool data
+						if (data.pool)
+						{
+							var poolhashrate = (data.pool.hashrate) ? data.pool.hashrate : 0;
+						}
+						
 						// Add pools data
 						$.each( data.pools, function( pkey, pval ) 
 						{
@@ -929,7 +1064,7 @@
 							}
 	
 							// Main pool
-							if (pval.active === 1)
+							if (pval.active === true || pval.active === 1)
 							{	
 								pool_shares_seconds = parseFloat((now/1000)-pval.start_time);
 								pool_shares = pval.shares;
@@ -958,9 +1093,9 @@
 									prejected = pstats.rejected;
 									
 									// Calculate the real pool hashrate
-									if (pval.active === 1) 
+									if (pval.active === true || pval.active === 1) 
 									{
-										phashData.hash = parseInt((65536.0 * (pshares/(now/1000-pstats.start_time)))/1000);
+										phashData.hash = parseInt(poolhashrate/1000); //parseInt((65536.0 * (pshares/(now/1000-pstats.start_time)))/1000);
 										phashData.label = 'red';
 										//Add Main pool widget
 										$(".widget-total-hashrate").html(convertHashrate(phashData.hash));
@@ -983,7 +1118,7 @@
 	
 							// Add Pool rows via datatable
 							$('#pools-table-details').dataTable().fnAddData( [
-								'<button style="width:90px;" class="btn btn-sm btn-default '+pactivelabclass+' select-pool" data-pool-id="'+pval.priority+'"><i class="fa fa-cloud-'+picon+'"></i> '+pactivelab+'</button>',
+								'<button style="width:90px;" class="btn btn-sm btn-default '+pactivelabclass+' select-pool" data-pool-id="'+pkey+'"><i class="fa fa-cloud-'+picon+'"></i> '+pactivelab+'</button>',
 								purlicon+'<small>'+purl+'</small>',
 								pval.priority,
 								'<span class="label label-'+plabel+'">'+ptype+'</span>',
@@ -1010,12 +1145,15 @@
 						        	if (dataP)
 						        	{
 						        		var dataJ = $.parseJSON(dataP);
-						    			if (dataJ.err === 0)
+						        		
+						    			getStats(true);
+						    			if (dataJ)
 						    			{
-							    			getStats(true);
+						    				$(".pool-alert").html('CG/BFGminer could take some minutes to complete the switching process. <pre style="font-size:10px;margin-top:10px;">'+dataP+'</pre>');
+						    				setTimeout(function() {
+												$(".pool-alert").html('');
+							    			}, 30000);
 						    			}
-						    			else
-						    				$(".pool-alert").html('Error: <pre>'+dataP+'</pre>');
 						    		}
 						        }
 						    });
@@ -1036,7 +1174,10 @@
 								"mRender": function ( data, type, full ) {
 									if (type === 'display')
 									{
-										return '<small class="label label-light">'+data +' MHz</small>'
+										if (data)
+											return '<small class="label label-light">'+data +' MHz</small>'
+										else
+											return '<small class="label label-light">not available</small>'
 									}
 									return data;
 								},
@@ -1079,6 +1220,7 @@
 												
 					    	// these are the single devices stats
 					    	var hashrate = Math.round(val.hashrate/1000);
+
 					    	items[key] = { "serial": val.serial, "hash": hashrate, "ac": val.accepted, "re": val.rejected, "hw": val.hw_errors, "fr": val.frequency, "sh": val.shares, "ls": val.last_share };
 	
 							hashrates.push(hashrate);
@@ -1087,12 +1229,12 @@
 					    
 				    	var maxHashrate = Math.max.apply(Math, hashrates);
 	
-						var avgFr = data.totals.frequency;
-				    	
+						var avgFr = (data.totals.frequency) ? data.totals.frequency + ' MHz' : "not available";
+
 						totalhash = Math.round(data.totals.hashrate/1000);
 						
 						// this is the global stats
-						items["total"] = { "serial": "", "hash": totalhash, "ac": data.totals.accepted, "re": data.totals.rejected, "hw": data.totals.hw_errors, "fr": data.totals.frequency, "sh": data.totals.shares, "ls":  data.totals.last_share};
+						items["total"] = { "serial": "", "hash": totalhash, "ac": data.totals.accepted, "re": data.totals.rejected, "hw": data.totals.hw_errors, "fr": avgFr, "sh": data.totals.shares, "ls":  data.totals.last_share};
 						
 						for (var index in items) 
 						{
@@ -1121,7 +1263,7 @@
 								devData.label = "green"
 														
 							var dev_serial = "";
-							if (index != "total")
+							if (index != "total" && items[index].serial)
 							{
 								dev_serial = ' <small class="text-muted">('+items[index].serial+')</small>';	
 							}
@@ -1135,7 +1277,7 @@
 								//$('.sidebar-hashrate').html("@ "+convertHashrate(items[index].hash));
 							}
 							
-							var devRow = '<tr class="dev-'+index+'"><td class="devs_table_name"><i class="glyphicon glyphicon-hdd"></i>&nbsp;&nbsp;'+index+dev_serial+'</td><td class="devs_table_freq">'+ items[index].fr + ' Mhz</td><td class="devs_table_hash"><strong>'+ convertHashrate(items[index].hash) +'</strong></td><td class="devs_table_sh">'+ items[index].sh +'</td><td class="devs_table_ac">'+ items[index].ac +'</td><td><small class="text-muted">'+parseFloat(percentageAc).toFixed(2)+'%</small></td><td class="devs_table_re">'+ items[index].re +'</td><td><small class="text-muted">'+parseFloat(percentageRe).toFixed(2)+'%</small></td><td class="devs_table_hw">'+ items[index].hw +'</td><td><small class="text-muted">'+parseFloat(percentageHw).toFixed(2)+'%</small></td><td class="devs_table_ls">'+ parseInt(last_share_secs) +' secs ago</td><td><small class="text-muted">'+share_date.toUTCString()+'</small></td></tr>'
+							var devRow = '<tr class="dev-'+index+'"><td class="devs_table_name"><i class="glyphicon glyphicon-hdd"></i>&nbsp;&nbsp;'+index+dev_serial+'</td><td class="devs_table_freq">'+ items[index].fr + '</td><td class="devs_table_hash"><strong>'+ convertHashrate(items[index].hash) +'</strong></td><td class="devs_table_sh">'+ items[index].sh +'</td><td class="devs_table_ac">'+ items[index].ac +'</td><td><small class="text-muted">'+parseFloat(percentageAc).toFixed(2)+'%</small></td><td class="devs_table_re">'+ items[index].re +'</td><td><small class="text-muted">'+parseFloat(percentageRe).toFixed(2)+'%</small></td><td class="devs_table_hw">'+ items[index].hw +'</td><td><small class="text-muted">'+parseFloat(percentageHw).toFixed(2)+'%</small></td><td class="devs_table_ls">'+ parseInt(last_share_secs) +' secs ago</td><td><small class="text-muted">'+share_date.toUTCString()+'</small></td></tr>'
 						
 							if (index == "total")
 							{

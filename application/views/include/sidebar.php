@@ -1,11 +1,26 @@
     <body class="skin-black"<?php if ($appScript) : ?> onload="getStats(false);"<?php endif; ?>>
 
-        <!-- header logo: style can be found in header.less -->
+		<!-- Modal -->
+		<div class="modal fade" id="modal-saving" tabindex="-1" role="dialog" aria-labelledby="SavingData" aria-hidden="true" data-backdrop="static" data-keyboard="false" >
+			<div class="modal-dialog modal-dialog-center modal-sm">
+				<div class="modal-content">
+					<div class="modal-header bg-red">
+						<h4 class="modal-title" id="modal-saving-label"></h4>
+					</div>
+					<div class="modal-body" style="text-align:center;">
+						<img src="<?php echo base_url("assets/img/ajax-loader1.gif") ?>" alt="Loading..." />
+					</div>
+					<div class="modal-footer modal-footer-center">
+						<h6>Page will automatically reload as soon as the process terminate.</h6>
+					</div>
+				</div>
+			</div>
+		</div>
+		
         <header class="header">
-            <a href="<?php echo site_url() ?>" class="logo">
-                <!-- Add the class icon to your logo image or logo icon to add the margining -->
-                Minera
-            </a>
+
+            <a href="<?php echo site_url() ?>" class="logo">Minera</a>
+
             <!-- Header Navbar: style can be found in header.less -->
             <nav class="navbar navbar-static-top" role="navigation">
                 <!-- Sidebar toggle button-->
@@ -213,14 +228,14 @@
                         <li class="treeview">
                             <a href="#">
                                 <i class="fa fa-desktop"></i>
-                                <span>Miner</span>
+                                <span>Miner</span><?php if ($minerdRunning) : ?>&nbsp;<small class="badge bg-light"><?php echo $minerdRunning ?></small><?php endif; ?>
                                 <i class="fa pull-right fa-angle-left"></i>
                             </a>
                             <ul class="treeview-menu" style="display: none;">
 
-                                <li data-toggle="tooltip" title="" data-original-title="<?php echo ($isOnline) ? "It seems your miner is mining. To restart it click below" : "Start your miner"; ?>"><a href="<?php echo ($isOnline) ? "#" : site_url("app/start_miner"); ?>" style="margin-left: 10px;"><i class="fa fa-arrow-circle-o-up"></i> Start miner</a></li>
-                                <li data-toggle="tooltip" title="" data-original-title="<?php echo ($isOnline) ? "Stop your miner" : "Your miner is stopped"; ?>"><a href="<?php echo site_url("app/stop_miner") ?>" style="margin-left: 10px;"><i class="fa fa-arrow-circle-o-down"></i> Stop miner</a></li>
-                                <li data-toggle="tooltip" title="" data-original-title="Restart your miner"><a href="<?php echo site_url("app/restart_miner") ?>" style="margin-left: 10px;"><i class="fa fa-repeat"></i> Restart miner</a></li>
+                                <li data-toggle="tooltip" title="" data-original-title="<?php echo ($isOnline) ? "It seems your miner is mining. To restart it click below" : "Start your miner"; ?>"><a href="#" <?php echo ($isOnline) ? '' : 'class="miner-action" data-miner-action="start"'; ?> style="margin-left: 10px;"><i class="fa fa-arrow-circle-o-up"></i> Start miner</a></li>
+                                <li data-toggle="tooltip" title="" data-original-title="<?php echo ($isOnline) ? "Stop your miner" : "Your miner is stopped"; ?>"><a href="<?php echo site_url("app/stop_miner") ?>" class="miner-action" data-miner-action="stop" style="margin-left: 10px;"><i class="fa fa-arrow-circle-o-down"></i> Stop miner</a></li>
+                                <li data-toggle="tooltip" title="" data-original-title="Restart your miner"><a href="<?php echo site_url("app/restart_miner") ?>" class="miner-action" data-miner-action="restart" style="margin-left: 10px;"><i class="fa fa-repeat"></i> Restart miner</a></li>
                             </ul>
                         </li>
                         <li class="treeview">

@@ -15,8 +15,8 @@
                 <section class="content">
 
 					<div class="row">
-                        
-                        <?php if (isset($message)) : ?>
+
+                        <?php if ($message) : ?>
 	                        <section class="col-md-12">
     	                    	<div class="alert alert-<?php echo $message_type ?> alert-dismissable">
 									<i class="fa fa-check"></i>
@@ -24,22 +24,21 @@
 									<?php echo $message ?>.
 								</div>
 	                        </section>
-                        <?php endif; ?>
+                        <?php endif; ?>                        
                         <?php if ($this->session->flashdata('message')) : ?>
-	                        <section class="col-md-12 pop-message">
-    	                    	<div class="alert alert-warning alert-dismissable">
+	                        <section class="col-md-12">
+    	                    	<div class="alert alert-<?php echo $this->session->flashdata('message_type') ?> alert-dismissable">
 									<i class="fa fa-check"></i>
 									<button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
-									<?php echo $this->session->flashdata('message'); ?>.
+									<?php echo $this->session->flashdata('message') ?>.
 								</div>
 	                        </section>
-                        <?php endif; ?>
-                        
+                        <?php endif; ?>                        
                         
                         <!-- Top section -->
                         <section class="col-md-12">
 								
-							<form action="<?php site_url("app/dashboard") ?>" method="post" role="form" id="minersettings">
+							<form action="#" method="post" role="form" id="minersettings">
 								<input type="hidden" name="save_settings" value="1" />                                                    
 
 								<div class="row">
@@ -127,7 +126,7 @@
 										    	</div>										
 										    </div>
 										    <div class="box-footer" style="clear:both">
-										    	<button type="submit" class="btn btn-danger" name="save_restart" value="1">Save & Restart Miner</button>
+										    	<button type="submit" class="btn btn-danger save-minera-settings-restart" name="save_restart" value="1">Save & Restart Miner</button>
 										    </div>
 										</div>
 	                            
@@ -177,7 +176,7 @@
 												</div>
 			                                </div>
 											<div class="box-footer">
-												<button type="submit" class="btn btn-primary" name="save" value="1">Save</button>
+												<button type="submit" class="btn btn-primary save-minera-settings" name="save" value="1">Save</button>
 											</div>
 			                            </div>
 		                            
@@ -355,7 +354,7 @@
 										</div>
 	                                </div>
 									<div class="box-footer">
-										<button type="submit" class="btn btn-primary" name="save" value="1">Save</button> <button type="submit" class="btn btn-danger" name="save_restart" value="1">Save & Restart Miner</button>
+										<button type="submit" class="btn btn-primary save-minera-settings" name="save" value="1">Save</button> <button type="submit" class="btn btn-danger save-minera-settings-restart" name="save_restart" value="1">Save & Restart Miner</button>
 									</div>
 	                            </div>
 	                            
@@ -372,6 +371,21 @@
 	                                </div>
 	
 		                                <div class="box-body">
+											
+											<div class="callout callout-grey">
+												<h4>Select your preferred miner software</h4>
+												<div class="form-group group-minerdsoftware">
+		                                            <label>Currently selected: <span class="badge bg-green"><?php echo $minerdSoftware ?></span></label>
+													<select name="minerd_software" id="minerd-software" class="form-control">
+														<option value="cpuminer" <?php if ($minerdSoftware == "cpuminer") : ?>selected<?php endif; ?>>CPUminer (GC3355 fork)</option>
+														<option value="bfgminer" <?php if ($minerdSoftware == "bfgminer") : ?>selected<?php endif; ?>>BFGminer 4.x (Official)</option>
+														<option value="cgminer" <?php if ($minerdSoftware == "cgminer") : ?>selected<?php endif; ?>>CGminer 4.x (Official)</option>
+														<option value="cgdmaxlzeus" <?php if ($minerdSoftware == "cgdmaxlzeus") : ?>selected<?php endif; ?>>CGminer (Dmax Zeus fork)</option>
+													</select>
+													<h6>Pay attention: Minera is not responsible of any problem related to the miner software you are using. Minera acts only as frontend to manage the miner software. Please refer to miner software's related authors if you have question about them and how to use them.</h6>
+												</div>
+											</div>
+
 											<p>Select the options to launch the miner command.</p>
 
 											<div class="row row-btn-options">
@@ -387,18 +401,29 @@
 											<hr />
 											
 											<div class="guided-options">
+
+												<!-- Scrypt -->
+												<div class="form-group" id="minerd-scrypt">
+													<div class="checkbox">
+														<label>
+															<input type="checkbox" name="minerd_scrypt" value="1" <?php if ($minerdScrypt) : ?>checked=""<?php endif; ?> />
+															Enable scrypt algo <small>you should select this if you are mining alternate crypto currencies (--scrypt)</small>
+														</label>                                                
+													</div>
+												</div>
+												
 												<!-- Auto-Detect -->
 												<div class="form-group">
 													<div class="checkbox">
 														<label>
 															<input type="checkbox" name="minerd_autodetect" value="1" <?php if ($minerdAutodetect) : ?>checked=""<?php endif; ?> />
-															Enable device auto detection <small>(--gc3355-detect)</small>
+															Enable device auto detection <small class="legend-option-autodetect"></small>
 														</label>                                                
 													</div>
 												</div>
-												
+
 												<!-- Auto-Tune -->
-												<div class="form-group">
+												<div class="form-group" id="minerd-autotune">
 													<div class="checkbox">
 														<label>
 															<input type="checkbox" name="minerd_autotune" value="1" <?php if ($minerdAutotune) : ?>checked=""<?php endif; ?> />
@@ -406,13 +431,13 @@
 														</label>                                                
 													</div>
 												</div>
-												
+
 												<!-- Logging -->
-												<div class="form-group">
+												<div class="form-group" id="minerd-log">
 													<div class="checkbox">
 														<label>
 															<input type="checkbox" name="minerd_log" value="1" <?php if ($minerdLog) : ?>checked=""<?php endif; ?> />
-															Enable logging <small>(--log)</small>
+															Enable logging <small class="legend-option-log"></small>
 														</label>                                                
 													</div>
 												</div>
@@ -428,14 +453,14 @@
 												</div>												
 												
 												<!-- Start Frequency -->												
-												<div class="form-group">
+												<div class="form-group" id="minerd-startfreq">
 													<label>Select starting frequency</label>
 													<div class="margin-bottom" style="width:50%">
-														<input type="text" name="minerd_startfreq" id="option-startfreq" value="" />
+														<input type="text" name="minerd_startfreq" id="ion-startfreq" value="" />
 													</div>
 													<h6>You can select a default frequency value to start with.</h6>
 												</div>
-												
+
 		                                        <!-- Minerd extra options -->
 		                                        <div class="form-group">
 		                                            <label>Extra options</label>
@@ -443,7 +468,7 @@
 														<span class="input-group-addon"><i class="fa fa-cogs"></i></span>
 														<input type="text" class="form-control" placeholder="Extra options" name="minerd_extraoptions" value="<?php echo $minerdExtraoptions ?>" />
 													</div>
-		                                            <h6>Write here any other option you want to include please refer to the <a href="https://github.com/siklon/cpuminer-gc3355">Github page</a> for the complete options list.</h6>
+		                                            <h6>Write here any other option you want to include. (suggested: --retries=1)</h6>
 		                                        </div>	                                        
 		                                        
 											</div>
@@ -504,7 +529,7 @@
 												<pre style="font-size:10px;"><?php $jsonConf =  json_decode($minerdJsonSettings); echo json_encode($jsonConf, JSON_PRETTY_PRINT); ?></pre>
 											</div>
 
-											<?php if ($savedFrequencies) : ?>
+											<?php if ($minerdSoftware == "cpuminer" && $savedFrequencies) : ?>
 												<h3>Saved frequencies</h3>
 												<div class="callout callout-light">
 													<h6>Here is the string you can add to the extra options, but remember to uncheck the autotune option:</h6>
@@ -514,7 +539,7 @@
 												
 	                                </div>
 									<div class="box-footer">
-										<button type="submit" class="btn btn-primary" name="save" value="1">Save</button> <button type="submit" class="btn btn-danger" name="save_restart" value="1">Save & Restart Miner</button>
+										<button type="submit" class="btn btn-primary save-minera-settings" name="save" value="1">Save</button> <button type="submit" class="btn btn-danger save-minera-settings-restart" name="save_restart" value="1">Save & Restart Miner</button>
 									</div>
 	                            </div>
 
@@ -557,7 +582,7 @@
 										</div>
 			                        </div>
 								    <div class="box-footer">
-								    	<button type="submit" class="btn btn-primary" name="save" value="1">Save</button>
+								    	<button type="submit" class="btn btn-primary save-minera-settings" name="save" value="1">Save</button>
 								    </div>
 			                    </div>
 	                            
@@ -579,7 +604,7 @@
 											<!-- timezone -->
 	                                        <div class="form-group">
 	                                            <label>System timezone</label>
-	                                            <p>Current system time is: <span class="badge bg-green"><?php echo date("c", time()); ?></span></p>
+	                                            <p>Current system time is: <span class="badge bg-dark"><?php echo date("c", time()); ?></span></p>
 	                                            <p>You should change the timezone to reflect yours</p>
 												<select name="minera_timezone" class="form-control">
 													<?php foreach ($timezones as $timezone) : ?>
@@ -595,10 +620,43 @@
 	                                            <textarea name="system_extracommands" class="form-control" rows="5" placeholder="There isn't any error control here" class="system_extracommands"><?php echo $systemExtracommands ?></textarea>
 												<h6>(WARNING: you could harm your controller putting wrong strings here.)</h6>
 											</div>
-												
+											
+											<!-- scheduled event -->
+											<div class="form-group">
+	                                            <label>Scheduled event</label>
+	                                            <p>Here you can schedule to reboot the system or restart the miner every X hours</p>
+	                                            <p><?php if ($scheduledEventTime > 0) : ?><span class="badge bg-green"><?php echo strtoupper($scheduledEventAction) ?> every <?php echo $scheduledEventTime ?> hour(s)</span>  Next event at about: <small class="label label-light"><?php echo date("c", (($scheduledEventTime*3600) + $scheduledEventStartTime))?></small><?php else : ?><span class="badge bg-muted">Disabled</span><?php endif; ?></p>
+												<div class="input-group">
+													<span class="input-group-addon"><i class="fa fa-clock-o"></i></span>
+													<input type="text" class="form-control scheduled-event-time" placeholder="Hour(s)" name="scheduled_event_time" value="<?php echo $scheduledEventTime ?>" style="width:90px">&nbsp;
+													<label>
+														<input type="radio" class="event-reboot-radio" name="scheduled_event_action" value="reboot" <?php if ($scheduledEventAction == "reboot") : ?>checked=""<?php endif; ?> />
+														Reboot System
+													</label>&nbsp;
+													<label>
+														<input type="radio" class="event-restart-radio" name="scheduled_event_action" value="restart" <?php if ($scheduledEventAction == "restart") : ?>checked=""<?php endif; ?> />
+														Restart Miner
+													</label>
+												</div>
+												<h6>If you leave the hours empty it will be disabled.</h6>
+											</div>
+											
+											<!-- anonymus stats -->
+	                                        <!-- div class="form-group">
+	                                            <label>Send anonymous stats</label>
+	                                            <p>Join the Minera community! Send your completely anonymous stats to help grow the total Minera hashrate. (available soon)</p>
+												<div class="checkbox">
+													<label>
+														<input type="checkbox" class="anonymous-checkbox" name="anonymous_stats" value="1" <?php if ($anonymousStats) : ?>checked=""<?php endif; ?> />
+														Enable Anonymous Stats
+													</label>                                                
+												</div>
+												<h6>(Stats included are total hashrate, devices count and miner used, no IP, host or any private data will be sent. With the stats you will be able to see an aggregated charts on the Minera website as soon as it will be available.)</h6>
+											</div -->
+														
 	                                </div>
 									<div class="box-footer">
-										<button type="submit" class="btn btn-primary" name="save" value="1">Save</button>
+										<button type="submit" class="btn btn-primary save-minera-settings" name="save" value="1">Save</button>
 									</div>
 	                            </div>
 	                            
@@ -640,7 +698,7 @@
 											</div>
 	                                </div>
 									<div class="box-footer">
-										<button type="submit" class="btn btn-primary" name="save" value="1">Save</button>
+										<button type="submit" class="btn btn-primary save-minera-settings" name="save" value="1">Save</button>
 									</div>
 	                            </div>
 
@@ -658,7 +716,7 @@
                                     <h3 class="box-title">User</h3>
                                 </div>
 								
-								<form action="<?php site_url("app/dashboard") ?>" method="post" role="form">
+								<form action="<?php echo site_url("app/settings") ?>" method="post" role="form" id="minerapassword">
 									<input type="hidden" name="save_password" value="1" />
 	                                <div class="box-body">
 										<p>Change the Minera lock screen password</p>
@@ -672,7 +730,7 @@
 										</div>
 	                                </div>
 									<div class="box-footer">
-										<button type="submit" class="btn btn-primary">Save password</button>
+										<button type="submit" class="btn btn-primary save-minera-password">Save password</button>
 									</div>
 								
 								</form>

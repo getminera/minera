@@ -7,6 +7,7 @@
 						<small>Dashboard</small>
 					</h1>
 					<ol class="breadcrumb">
+						<li><button class="btn btn-default btn-xs view-raw-stats"><i class="fa fa-list"></i> raw stats</button></li>
 						<li><a href="<?php echo site_url("app/settings") ?>"><i class="fa fa-gear"></i> Settings</a></li>
 					</ol>
 				</section>
@@ -15,7 +16,16 @@
 				<section class="content">
 
 					<div class="row">
-						
+
+						 <section class="col-md-12 section-raw-stats">
+						 	<div class="alert alert-info alert-dismissable">
+								<i class="fa fa-list"></i>
+								<button type="button" class="close close-stats" aria-hidden="true">×</button>
+								<p style="margin:20px 0;">The raw JSON parsed to display the dashboard is also available <a href="<?php echo site_url("app/stats") ?>" target="_blank">here</a>.</p>
+								<span></span>
+							</div>
+						</section>
+							 						
 						<?php if (isset($message)) : ?>
 							 <section class="col-md-12 pop-message">
 							 	<div class="alert alert-<?php echo $message_type ?> alert-dismissable">
@@ -158,7 +168,7 @@
 									<div class="pull-right box-tools">
 										<small class="auto-refresh-time"></small>&nbsp;
 										<button class="btn btn-danger btn-xs refresh-btn" data-toggle="tooltip" title="" data-original-title="Refresh"><i class="fa fa-refresh"></i></button>
-										<button class="btn btn-default btn-xs save-freq" data-toggle="tooltip" title="" data-original-title="Save current frequencies"><i class="fa fa-pencil"></i></button>
+										<?php if ($minerdRunning == "cpuminer") : ?><button class="btn btn-default btn-xs save-freq" data-toggle="tooltip" title="" data-original-title="Save current frequencies"><i class="fa fa-pencil"></i></button><?php endif; ?>
 										<button class="btn btn-default btn-xs" data-widget="collapse" data-toggle="tooltip" title="" data-original-title="Collapse"><i class="fa fa-minus"></i></button>
 									</div><!-- /. tools -->
 									<i class="fa fa-desktop"></i>
@@ -199,7 +209,7 @@
 									 	<div class="legend pull-right">
 									 		<h6>Colors based on last share time: <i class="fa fa-circle text-success"></i> Good&nbsp;&nbsp;&nbsp;<i class="fa fa-circle text-warning"></i> Warning&nbsp;&nbsp;&nbsp;<i class="fa fa-circle text-danger"></i> Critical&nbsp;&nbsp;&nbsp;<i class="fa fa-circle text-muted"></i> Possibly dead</h6>
 									 	</div>
-									 	<?php if ($savedFrequencies) : ?>
+									 	<?php if ($savedFrequencies && $minerdRunning == "cpuminer") : ?>
 									 	<button class="btn btn-primary btn-sm btn-saved-freq" data-toggle="tooltip" title="" data-original-title="Look at saved frequencies"><i class="fa fa-eye"></i> Saved frequencies</button>
 									 	<?php else: ?>
 									 	&nbsp;
