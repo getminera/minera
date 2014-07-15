@@ -49,6 +49,7 @@ This is a list of some of the Minera's features:
 * Sysload monitor
 * Bitcoin/Crypto currencies rates
 * Average hashrate stats
+* Web terminal window (SSH)
 
 **Charts**
 
