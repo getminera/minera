@@ -84,7 +84,7 @@
 	           	e.preventDefault();
 
 	           	if (!$('iframe').attr("src"))
-					$('iframe').attr("src", "https://<?php echo $_SERVER['SERVER_ADDR'] ?>:4200/");
+					$('iframe').attr("src", "http://<?php echo $_SERVER['SERVER_ADDR'] ?>:4200/");
 
 				$('#modal-terminal').modal('show');
 			});

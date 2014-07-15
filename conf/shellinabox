@@ -15,4 +15,4 @@ SHELLINABOX_PORT=4200
 #
 #   Beeps are disabled because of reports of the VLC plugin crashing
 #   Firefox on Linux/x86_64.
-SHELLINABOX_ARGS="--no-beep --css=/var/www/minera/assets/css/terminal.css"
+SHELLINABOX_ARGS="--no-beep --css=/var/www/minera/assets/css/terminal.css --disable-ssl"
