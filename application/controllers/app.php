@@ -617,7 +617,7 @@ class App extends Main_Controller {
 			$data['pageTitle'] = "Updating Minera";
 			$data['messageEnd'] = "System updated!";
 			$data['htmlTag'] = "lockscreen";
-			$data['seconds'] = 20;
+			$data['seconds'] = 180;
 			$this->load->view('include/header', $data);
 			$this->load->view('sysop', $data);
 		}
