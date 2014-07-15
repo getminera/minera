@@ -911,6 +911,7 @@
 			// get Json data from minerd and create Knob, table and sysload
 	        $.getJSON( "<?php echo site_url($this->config->item('live_stats_url')); ?>", function( data ) 
 	        {
+	        	// Add raw stats box
 				boxStats.find("span").html('<pre style="font-size:10px;">' + JSON.stringify(data, undefined, 2) + '</pre>');
 				
 				// Add Altcoins rates
@@ -918,12 +919,19 @@
     			if (data['altcoins_rates'])
     			{
     				$.each( data['altcoins_rates'], function( key, val ) {
-    					$.each(val, function (key, val) {
-    						var timeprice = new Date(val.time*1000);
-    						$('.altcoin-container').append('<li><a href="#"><div class="pull-left" style="padding-left:15px;"><i class="fa fa-stack-exchange"></i></div><h4 class="altcoin-price">'+ val.label + ': ' + val.price +'<small><i class="fa fa-clock-o"></i> '+ timeprice.toLocaleTimeString() +'</small></h4><p class="altcoin-label">'+ val.primaryname + '/' + val.secondaryname +'</p></a></li>');
-    					});
+    					if (key != "error")
+    					{
+	    					$.each(val, function (key, val) {
+    							var timeprice = new Date(val.time*1000);
+								$('.altcoin-container').append('<li><a href="#"><div class="pull-left" style="padding-left:15px;"><i class="fa fa-stack-exchange"></i></div><h4 class="altcoin-price">'+ val.label + ': ' + val.price +'<small><i class="fa fa-clock-o"></i> '+ timeprice.toLocaleTimeString() +'</small></h4><p class="altcoin-label">'+ val.primaryname + '/' + val.secondaryname +'</p></a></li>');
+							});
+    					}
+    					else
+    					{
+	    					$('.altcoin-container').append('<li><a href="#"><div class="pull-left" style="padding-left:15px;"><i class="fa fa-warning"></i></div><h4>There was an error getting<br />the Cryptsy data.</h4></a></li>');
+    					}
     				});						
-    			}	
+    			}
 					
 		        if (data['error'])
 				{

@@ -787,10 +787,10 @@ class Util_model extends CI_Model {
 			
 			log_message('error', "Refreshing Altcoins rates data");
 			
+   			$o = false;
 			if ($this->redis->get("dashboard_coin_rates"))
     		{
     			$altcoins = json_decode($this->redis->get("dashboard_coin_rates"));
-    			$o = false;
     			if (is_array($altcoins))
     			{
     				foreach ($altcoins as $altcoin) {
@@ -805,11 +805,10 @@ class Util_model extends CI_Model {
 
 					$this->redis->set("altcoins_data", json_encode($o));
     			}
-
-   				return $o;
     		}
     		
 			$this->redis->del("altcoins_data_lock");
+			return $o;
 		}
 		else
 		{
