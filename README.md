@@ -82,13 +82,13 @@ Installing
 
 You can choose for a img file to put in your SD Card or for a manual install.
 
-**Image file (img) v0.2.3 (Recommended)**
+**Image file (img) v0.3.0 (Recommended)**
 
 This is the Minera image file for Raspberry PI, you have only to download it and put in your SD Card.
 
 You need at least a 4GB SD Card:
 
-**[Download minera-latest.img.zip](http://j.mp/minera-latest-img-zip)** (md5 d7deb0b8be91286972e4531643b059b2)
+**[Download minera-latest.img.zip](http://j.mp/minera-latest-img-zip)** (md5 f9c95651d9f22a11f88ffaa8b0ea42ba)
 
 
 Default passwords are "*minera*" you should change them as well as the miner settings.
