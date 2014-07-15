@@ -15,6 +15,7 @@
 .bg-dark { background-color: #666 !important;  color: #fff !important; }
 .bg-light { background-color: #f0f0f0 !important; color: #434343 !important; }
 .bg-light >.box-header { color: #434343 !important;}
+.bg-really-black {background-color: #000;}
 .navbar-nav > .user-menu > .dropdown-menu > li.user-body { padding: 25px 15px 20px !important; }
 .pass-form { padding-left: 90px;}
 .box > .loading-img { background: transparent url('../img/ajax-loader.gif') 50% 50% no-repeat !important;}
@@ -32,6 +33,7 @@ body > .header .navbar .nav > li > a > .label { padding: 3px !important; }
 .callout.callout-grey { background-color: #F3F3F3; border-color: #ed5565; }
 .section-raw-stats { display: none;}
 .modal-dialog-center { margin-top: 15%;}
+.modal-terminal { margin-top: 5%; width: 75%; }
 .modal-footer-center { margin: 0; padding: 6px 0 !important; text-align: center;}
 
 .lockscreen {background: url(../img/bg-dark.jpg) repeat center center fixed !important;}

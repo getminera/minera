@@ -5,7 +5,7 @@
 echo -e "-----\nSTART Minera Install script\n-----\n"
 
 echo -e "-----\nInstall extra packages\n-----\n"
-apt-get -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" install -y build-essential libtool libcurl4-openssl-dev libjansson-dev libudev-dev libncurses5-dev autoconf automake postfix redis-server git screen php5-cli php5-curl wicd-curses uthash-dev libmicrohttpd-dev libevent-dev libusb-1.0-0-dev libusb-dev
+apt-get -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" install -y build-essential libtool libcurl4-openssl-dev libjansson-dev libudev-dev libncurses5-dev autoconf automake postfix redis-server git screen php5-cli php5-curl wicd-curses uthash-dev libmicrohttpd-dev libevent-dev libusb-1.0-0-dev libusb-dev shellinabox
 
 echo -e "Adding Minera user\n-----\n"
 adduser minera --gecos "" --disabled-password
@@ -57,6 +57,10 @@ echo -e $RC_LOCAL_CMD >> /etc/rc.local
 echo -e "Adding cron file in /etc/cron.d\n-----\n"
 
 echo -e "*/1 * * * * www-data php `pwd`/index.php app cron" > /etc/cron.d/minera
+
+echo -e "Configuring shellinabox\n-----\n"
+sudo cp conf/shellinabox /etc/default/
+sudo service shellinabox restart
 
 echo -e "Copying cg/bfgminer udev rules\n-----\n"
 sudo cp conf/01-cgminer.rules /etc/udev/rules.d/

@@ -17,6 +17,23 @@
 			</div>
 		</div>
 		
+		<div id="modal-terminal" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true" data-backdrop="static">
+			<div class="modal-dialog modal-dialog-center modal-terminal">
+				<div class="modal-content">
+					<div class="modal-header bg-blue">
+						<button type="button" class="close modal-hide"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+						<h4 class="modal-title" id="modal-saving-label"><i class="fa fa-terminal"></i> Minera terminal window</h4>
+					</div>
+					<div class="modal-body bg-black" style="text-align:center;">
+						<iframe src="" style="" width="100%" height="450" frameborder="0"></iframe>
+					</div>
+					<div class="modal-footer modal-footer-center">
+						<h6>This is a full terminal window running on your Minera system, use any user you want to login, but remember Minera runs as user "minera" and you should use this for each operation you wanna do.</h6>
+					</div>
+				</div>
+			</div>
+		</div>
+		
         <header class="header">
 
             <a href="<?php echo site_url() ?>" class="logo">Minera</a>
@@ -245,6 +262,7 @@
                                 <i class="fa pull-right fa-angle-left"></i>
                             </a>
                             <ul class="treeview-menu" style="display: none;">
+                                <li data-toggle="tooltip" title="" data-original-title="Reboot Minera"><a href="#" class="system-open-terminal" style="margin-left: 10px;"><i class="fa fa-terminal"></i> Open terminal</a></li>
                                 <li data-toggle="tooltip" title="" data-original-title="Reboot Minera"><a href="<?php echo site_url("app/reboot") ?>" style="margin-left: 10px;"><i class="fa fa-flash"></i> Reboot</a></li>
                                 <li data-toggle="tooltip" title="" data-original-title="Shutdown Minera"><a href="<?php echo site_url("app/shutdown") ?>" style="margin-left: 10px;"><i class="fa fa-power-off"></i> Shutdown</a></li>
                             </ul>

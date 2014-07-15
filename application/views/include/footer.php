@@ -79,6 +79,19 @@
 					}
 				});
             });
+            
+			$('.system-open-terminal').click(function(e){
+	           	e.preventDefault();
+	           	console.log($('iframe').attr("src"));
+	           	if (!$('iframe').attr("src"))
+					$('iframe').attr("src", "https://192.168.1.10:4200/");
+				$('#modal-terminal').modal('show');
+			});
+			
+			$('.modal-hide').click(function(e){
+	           	e.preventDefault();
+				$('#modal-terminal').modal('hide');
+			});
 
 		});
 		

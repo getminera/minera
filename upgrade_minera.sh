@@ -7,7 +7,7 @@ echo -e "-----\nSTART Minera Upgrade script\n-----\n"
 echo -e "-----\nInstall extra packages\n-----\n"
 #apt-get update
 #export DEBIAN_FRONTEND=noninteractive
-apt-get -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" install -y build-essential libtool libcurl4-openssl-dev libjansson-dev libudev-dev libncurses5-dev autoconf automake postfix redis-server git screen php5-cli php5-curl uthash-dev libmicrohttpd-dev libevent-dev libusb-1.0-0-dev libusb-dev
+apt-get -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" install -y build-essential libtool libcurl4-openssl-dev libjansson-dev libudev-dev libncurses5-dev autoconf automake postfix redis-server git screen php5-cli php5-curl uthash-dev libmicrohttpd-dev libevent-dev libusb-1.0-0-dev libusb-dev shellinabox
 
 sudo dpkg --configure -a
 
@@ -37,6 +37,10 @@ if ! grep -q 'minera ALL = (ALL) NOPASSWD: ALL' '/etc/sudoers'; then
 	echo -e "minera ALL = (ALL) NOPASSWD: ALL" >> /etc/sudoers
 fi
 
+echo -e "Configuring shellinabox\n-----\n"
+sudo cp conf/shellinabox /etc/default/
+sudo service shellinabox restart
+
 echo -e "Changing cron file\n-----\n"
 echo -e "*/1 * * * * www-data php `pwd`/index.php app cron" > /etc/cron.d/minera
 
@@ -54,15 +58,9 @@ redis-cli del minera_version
 echo -e "Copying cg/bfgminer udev rules\n-----\n"
 sudo cp conf/01-cgminer.rules /etc/udev/rules.d/
 sudo cp conf/70-bfgminer.rules /etc/udev/rules.d/
-sudo service udev restart
 
 echo -e "Installing libblkmaker\n-----\n"
-LIBCOUNT=`strings -n5 /etc/ld.so.cache|grep -i libblkmaker|wc -l`
-if [ $LIBCOUNT -lt 2 ];
-then
-	cd minera-bin/src/libblkmaker
-	sudo make install
-	sudo ldconfig
-fi
+cd minera-bin/src/libblkmaker
+sudo make install
 
 echo -e 'DONE! Minera is ready!\n\nOpen the URL: http://'$(hostname -I | tr -d ' ')'/minera/\n\nAnd happy mining!\n'
