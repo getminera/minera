@@ -480,7 +480,25 @@
 	                                            <textarea name="minerd_manual_settings" class="form-control" rows="5" placeholder="Example: --gc3355-detect --gc3355-autotune --freq=850 --retries=1" class="minerd_manual_settings"><?php echo $minerdManualSettings ?></textarea>
 												<h6>Please do not include the command name or the pools (they are automatically added).</h6>
 											</div>											
-											
+
+											<!-- Minerd API Allow -->
+	                                        <div class="form-group" id="minerd-api-allow">
+	                                            <label>API Allow</label>
+												<div class="row">
+													<div class="col-xs-12 col-md-4">
+														<div class="input-group margin-bottom">
+															<span class="input-group-addon"><i class="fa fa-crosshairs"></i></span>
+															<input type="text" class="form-control" placeholder="" readonly="readonly" name="minerd_api_allow" value="W:127.0.0.1" />
+														</div>
+														<div class="input-group">
+															<span class="input-group-addon"><i class="fa fa-crosshairs"></i></span>
+															<input type="text" class="form-control" placeholder="[W:]IP[/Prefix] address[/subnets]" name="minerd_api_allow_extra" value="<?php echo $minerApiAllowExtra ?>" />
+														</div>
+													</div>
+												</div>
+												<h6>If you need to allow API to listen to more ip/networks you can add them here. (First one must stay for Minera)</h6>
+	                                        </div>
+	                                        											
 											<!-- Minerd delay time option -->
 	                                        <div class="form-group">
 	                                            <label>Autostart Delay Time</label>

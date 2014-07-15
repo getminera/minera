@@ -417,6 +417,7 @@
 				    $("#minerd-startfreq").hide();
 			    	$("input[name='minerd_startfreq']").prop('disabled', true);
 				    $("#minerd-scrypt").show();
+				    $("#minerd-api-allow").show();
 			    	$("input[name='minerd_scrypt']").prop('disabled', false);
 			    }
 			    else
@@ -430,6 +431,7 @@
 				    $("#minerd-startfreq").show();
 			    	$("input[name='minerd_startfreq']").prop('disabled', false);
 				    $("#minerd-scrypt").hide();
+				    $("#minerd-api-allow").hide();
 			    	$("input[name='minerd_scrypt']").prop('disabled', true);
 			    }
 

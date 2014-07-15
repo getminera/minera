@@ -151,6 +151,7 @@ class App extends Main_Controller {
 		$data['minerdGuidedOptions'] = $this->redis->get("guided_options");
 		$data['minerdManualOptions'] = $this->redis->get("manual_options");
 		$data['minerdDelaytime'] = $this->redis->get("minerd_delaytime");
+		$data['minerApiAllowExtra'] = $this->redis->get("minerd_api_allow_extra");
 		
 		//Load Dashboard settings
 		$data['mineraStoredDonations'] = $this->util_model->getStoredDonations();
@@ -298,6 +299,13 @@ class App extends Main_Controller {
 				// CG/BFGminer specific
 				else
 				{					
+					// API Allow
+					if ($this->input->post('minerd_api_allow_extra'))
+					{
+						$confArray["api-allow"] .= ",".$this->input->post('minerd_api_allow_extra');			
+					}
+					$this->redis->set('minerd_api_allow_extra', $this->input->post('minerd_api_allow_extra'));
+					
 					// Scrypt
 					if ($this->input->post('minerd_scrypt'))
 					{
