@@ -49,7 +49,7 @@ This is a list of some of the Minera's features:
 * Sysload monitor
 * Bitcoin/Crypto currencies rates
 * Average hashrate stats
-* Web terminal window (SSH)
+* Web terminal window (like full SSH login)
 
 **Charts**
 
@@ -244,6 +244,10 @@ Charts:
 Settings:
 
 [![Settings](https://github.com/michelem09/minera/raw/master/assets/img/screen_minera_settings.png)](https://github.com/michelem09/minera/raw/master/assets/img/screen_minera_settings_hi.png)
+
+Web Terminal:
+
+[![Settings](https://github.com/michelem09/minera/raw/master/assets/img/screen_minera_terminal.png)](https://github.com/michelem09/minera/raw/master/assets/img/screen_minera_terminal_hi.png)
 
 Donations
 -------------
