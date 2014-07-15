@@ -78,7 +78,7 @@ class Util_model extends CI_Model {
 	// Get the live stats from miner
 	public function getStats()
 	{
-		$altcoinData = $this->updateAltcoinsRates();
+		$altcoinData = $this->getAltcoinsRates();
 		$altc["altcoins_rates"] = $altcoinData;
 		
 		if ($this->isOnline())
@@ -752,23 +752,39 @@ class Util_model extends CI_Model {
 		// wait 1d before recheck
 		if (time() > ($this->redis->get("cryptsy_update")+86400*7))
 		{
+			if ($this->redis->get("cryptsy_data_lock"))
+				return true;
+				
 			log_message('error', "Refreshing Cryptsy data");
+			
+			$this->redis->set("cryptsy_data_lock", true);
+			
 			$data = $this->getCryptsyRateIds();
+			
 			if ($data)
 			{
 				$this->redis->set("cryptsy_update", time());
 			
 				$this->redis->set("cryptsy_data", $data);
 			}
+			
+			$this->redis->del("cryptsy_data_lock");
 		}
 	}
 
 	// Refresh Cryptsy data IDs/Values
 	public function updateAltcoinsRates()
 	{
+		$oldData = ($this->redis->get("altcoins_data")) ? $this->redis->get("altcoins_data") : array("error" => "true");
+		
 		// wait 1d before recheck
 		if (time() > ($this->redis->get("altcoins_update")+3600))
 		{
+			if ($this->redis->get("altcoins_data_lock"))
+				return $oldData;
+
+			$this->redis->set("altcoins_data_lock", true);
+			
 			log_message('error', "Refreshing Altcoins rates data");
 			
 			if ($this->redis->get("dashboard_coin_rates"))
@@ -791,12 +807,20 @@ class Util_model extends CI_Model {
     			}
 
    				return $o;
-    		}			
+    		}
+    		
+			$this->redis->del("altcoins_data_lock");
 		}
 		else
 		{
-			return json_decode($this->redis->get("altcoins_data"));
+			return json_decode($oldData);
 		}
+	}
+	
+	// Get Cryptsy altdata saved
+	public function getAltcoinsRates()
+	{
+		return ($this->redis->get("altcoins_data")) ? json_decode($this->redis->get("altcoins_data")) : array("error" => "true");
 	}
 		
 	/*
@@ -1099,6 +1123,13 @@ class Util_model extends CI_Model {
 		{
 			return $this->redis->command("HGET minera_version value");
 		}
+	}
+	
+	// Get local Minera version
+	public function getRemoteJsonConfig()
+	{
+		$remoteConfig = json_decode(@file_get_contents('https://raw.githubusercontent.com/michelem09/minera/master/minera.json'));		
+		return $remoteConfig;
 	}
 	
 	/*
