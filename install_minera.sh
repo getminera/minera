@@ -42,6 +42,7 @@ echo -n "minera" | redis-cli -x set minera_password
 echo -n "1" | redis-cli -x set guided_options
 echo -n "0" | redis-cli -x set manual_options
 echo -n "1" | redis-cli -x set minerd_autodetect
+echo -n "cpuminer" | redis-cli -x set minerd_software
 echo -n '["132","155","3"]' | redis-cli -x set dashboard_coin_rates
 echo -e '[{"url":"stratum+tcp://multi.ghash.io:3333","username":"michelem.minera","password":"x"}]'  | redis-cli -x set minerd_pools
 
