@@ -956,10 +956,16 @@
 					if (refresh)
 					{
 						// Destroy and clear the data tables before you can re-initialize it
-						$('#miner-table-details').dataTable().fnClearTable();
-						$('#miner-table-details').dataTable().fnDestroy();		
-						$('#pools-table-details').dataTable().fnClearTable();
-						$('#pools-table-details').dataTable().fnDestroy();					
+						if ( $.fn.dataTable.isDataTable('#miner-table-details') )
+						{
+							$('#miner-table-details').dataTable().fnClearTable();
+							$('#miner-table-details').dataTable().fnDestroy();							
+						}
+						if ( $.fn.dataTable.isDataTable('#pools-table-details') )
+						{
+							$('#pools-table-details').dataTable().fnClearTable();
+							$('#pools-table-details').dataTable().fnDestroy();	
+						}
 					}
 					
 					if (data.avg)
@@ -1000,40 +1006,43 @@
 
 					if (data.pools)
 					{
-						// Initialize the pools datatable	
-						$('#pools-table-details').dataTable({
-							"stateSave": true,
-							"bAutoWidth": false,
-							"sDom": 't',
-							"order": [[ 2, "asc" ]],
-							"fnRowCallback": function( nRow, aData, iDisplayIndex ) {
-								//if(iDisplayIndex === 0)
-								//	nRow.className = "bg-dark";
-								return nRow;
-							},
-							"aoColumnDefs": [ 
-							{
-								"aTargets": [ 5 ],	
-								"mRender": function ( data, type, full ) {
-									if (type === 'display')
-									{
-										return '<small class="badge bg-'+data.label+'">'+ convertHashrate(data.hash) +'</small>';
-									}
-									return data.hash;
+						if ( !$.fn.dataTable.isDataTable('#pools-table-details') )
+						{
+							// Initialize the pools datatable	
+							$('#pools-table-details').dataTable({
+								"stateSave": true,
+								"bAutoWidth": false,
+								"sDom": 't',
+								"order": [[ 2, "asc" ]],
+								"fnRowCallback": function( nRow, aData, iDisplayIndex ) {
+									//if(iDisplayIndex === 0)
+									//	nRow.className = "bg-dark";
+									return nRow;
 								},
-							},
-							{
-								"aTargets": [ 7, 9, 11 ],	
-								"mRender": function ( data, type, full ) {
-									if (type === 'display')
-									{
-										return '<small class="text-muted">'+ data +'</small>';
-									}
-									return data;
+								"aoColumnDefs": [ 
+								{
+									"aTargets": [ 5 ],	
+									"mRender": function ( data, type, full ) {
+										if (type === 'display')
+										{
+											return '<small class="badge bg-'+data.label+'">'+ convertHashrate(data.hash) +'</small>';
+										}
+										return data.hash;
+									},
 								},
-							},
-							]
-						});
+								{
+									"aTargets": [ 7, 9, 11 ],	
+									"mRender": function ( data, type, full ) {
+										if (type === 'display')
+										{
+											return '<small class="text-muted">'+ data +'</small>';
+										}
+										return data;
+									},
+								},
+								]
+							});
+						}	
 						
 						// Get main/active pool data
 						if (data.pool)
@@ -1124,22 +1133,25 @@
 								}
 							}
 	
-							// Add Pool rows via datatable
-							$('#pools-table-details').dataTable().fnAddData( [
-								'<button style="width:90px;" class="btn btn-sm btn-default '+pactivelabclass+' select-pool" data-pool-id="'+pkey+'"><i class="fa fa-cloud-'+picon+'"></i> '+pactivelab+'</button>',
-								purlicon+'<small>'+purl+'</small>',
-								pval.priority,
-								'<span class="label label-'+plabel+'">'+ptype+'</span>',
-								'<span class="label label-'+paliveclass+'">'+palivelabel+'</span>',
-								phashData,
-								pshares,
-								psharesPrev,
-								paccepted,
-								pacceptedPrev,
-								prejected,
-								prejectedPrev,
-								'<span class="badge bg-'+puserlabel+'">'+pval.user+'</span>'
-							] );
+							if ( $.fn.dataTable.isDataTable('#pools-table-details') )
+							{
+								// Add Pool rows via datatable
+								$('#pools-table-details').dataTable().fnAddData( [
+									'<button style="width:90px;" class="btn btn-sm btn-default '+pactivelabclass+' select-pool" data-pool-id="'+pkey+'"><i class="fa fa-cloud-'+picon+'"></i> '+pactivelab+'</button>',
+									purlicon+'<small>'+purl+'</small>',
+									pval.priority,
+									'<span class="label label-'+plabel+'">'+ptype+'</span>',
+									'<span class="label label-'+paliveclass+'">'+palivelabel+'</span>',
+									phashData,
+									pshares,
+									psharesPrev,
+									paccepted,
+									pacceptedPrev,
+									prejected,
+									prejectedPrev,
+									'<span class="badge bg-'+puserlabel+'">'+pval.user+'</span>'
+								] );
+							}
 							
 						});
 						
@@ -1170,58 +1182,61 @@
 					
 					if (data.devices)
 					{
-						// Initialize the miner datatable	
-						$('#miner-table-details').dataTable({
-							"lengthMenu": [ 5, 10, 25, 50 ],
-							"pageLength": 5,
-							"stateSave": true,
-							"bAutoWidth": false,
-							"aoColumnDefs": [ 
-							{
-								"aTargets": [ 1 ],	
-								"mRender": function ( data, type, full ) {
-									if (type === 'display')
-									{
-										if (data)
-											return '<small class="label label-light">'+data +' MHz</small>'
-										else
-											return '<small class="label label-light">not available</small>'
-									}
-									return data;
+						if ( !$.fn.dataTable.isDataTable('#miner-table-details') )
+						{
+							// Initialize the miner datatable	
+							$('#miner-table-details').dataTable({
+								"lengthMenu": [ 5, 10, 25, 50 ],
+								"pageLength": 5,
+								"stateSave": true,
+								"bAutoWidth": false,
+								"aoColumnDefs": [ 
+								{
+									"aTargets": [ 1 ],	
+									"mRender": function ( data, type, full ) {
+										if (type === 'display')
+										{
+											if (data)
+												return '<small class="label label-light">'+data +' MHz</small>'
+											else
+												return '<small class="label label-light">not available</small>'
+										}
+										return data;
+									},
 								},
-							},
-							{
-								"aTargets": [ 2 ],	
-								"mRender": function ( data, type, full ) {
-									if (type === 'display')
-									{
-										return '<small class="badge bg-'+data.label+'">'+ convertHashrate(data.hash) +'</small>'
+								{
+									"aTargets": [ 2 ],	
+									"mRender": function ( data, type, full ) {
+										if (type === 'display')
+										{
+											return '<small class="badge bg-'+data.label+'">'+ convertHashrate(data.hash) +'</small>'
+										}
+										return data.hash;
 									}
-									return data.hash;
-								}
-							},
-							{
-								"aTargets": [ 10 ],	
-								"mRender": function ( data, type, full ) {
-									if (type === 'display')
-									{
-										return data +' secs ago'
+								},
+								{
+									"aTargets": [ 10 ],	
+									"mRender": function ( data, type, full ) {
+										if (type === 'display')
+										{
+											return data +' secs ago'
+										}
+										return data;
 									}
-									return data;
-								}
-							},
-							{
-								"aTargets": [ 5, 7, 9 ],	
-								"mRender": function ( data, type, full ) {
-									if (type === 'display')
-									{
-										return '<small class="text-muted">' + data + '%</small>'
+								},
+								{
+									"aTargets": [ 5, 7, 9 ],	
+									"mRender": function ( data, type, full ) {
+										if (type === 'display')
+										{
+											return '<small class="text-muted">' + data + '%</small>'
+										}
+										return data;
 									}
-									return data;
-								}
-							},
-							],
-						});
+								},
+								],
+							});
+						}
 						
 						// Add per device stats
 						$.each( data.devices, function( key, val ) {
@@ -1294,21 +1309,24 @@
 							}
 							else
 							{
-								// New add rows via datatable
-								$('#miner-table-details').dataTable().fnAddData( [
-									'<i class="glyphicon glyphicon-hdd"></i>&nbsp;&nbsp;'+index+dev_serial,
-									items[index].fr,
-									devData,
-									items[index].sh,
-									items[index].ac,
-									parseFloat(percentageAc).toFixed(2),
-									items[index].re,
-									parseFloat(percentageRe).toFixed(2),
-									items[index].hw,
-									parseFloat(percentageHw).toFixed(2),
-									parseInt(last_share_secs),
-									'<small class="text-muted">'+share_date.toUTCString()+'</small>'
-								] );
+								if ( $.fn.dataTable.isDataTable('#miner-table-details') )
+								{
+									// New add rows via datatable
+									$('#miner-table-details').dataTable().fnAddData( [
+										'<i class="glyphicon glyphicon-hdd"></i>&nbsp;&nbsp;'+index+dev_serial,
+										items[index].fr,
+										devData,
+										items[index].sh,
+										items[index].ac,
+										parseFloat(percentageAc).toFixed(2),
+										items[index].re,
+										parseFloat(percentageRe).toFixed(2),
+										items[index].hw,
+										parseFloat(percentageHw).toFixed(2),
+										parseInt(last_share_secs),
+										'<small class="text-muted">'+share_date.toUTCString()+'</small>'
+									] );
+								}
 							}
 							
 							// Crete Knob graph for devices and total
