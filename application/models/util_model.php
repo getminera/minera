@@ -840,8 +840,7 @@ class Util_model extends CI_Model {
 			{
 				fclose($conn);
 				return true;
-			}			
-			fclose($conn);
+			}
 		}		
 		
 		return false;
