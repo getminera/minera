@@ -679,8 +679,8 @@ class App extends Main_Controller {
 				}
 			break;
 			case "test":
-				$this->load->model('bfgminer_model');
-				$o = json_encode($this->bfgminer_model->callMinerd()); //$this->util_model->getParsedStats($this->util_model->getMinerStats());
+				//$this->load->model('bfgminer_model');
+				$o = $this->util_model->sendAnonymousStats(123, "hello world!"); //json_encode($this->bfgminer_model->callMinerd()); //$this->util_model->getParsedStats($this->util_model->getMinerStats());
 			break;
 		}
 		
@@ -718,6 +718,18 @@ class App extends Main_Controller {
 	*/
 	public function cron()
 	{
+		if ($this->redis->get("cron_lock"))
+		{
+			log_message('error', "CRON locked waiting previous process to terminate...");			
+			return true;
+		}
+	
+		$time_start = microtime(true); 
+			
+		log_message('error', "--- START CRON TASKS ---");
+			
+		$this->redis->set("cron_lock", true);
+			
 		// Check and restart the minerd if it's dead
 		if ($this->redis->get('minerd_autorecover'))
 		{
@@ -846,13 +858,14 @@ class App extends Main_Controller {
 				$totalHashrate = $stats->totals->hashrate;
 			if (isset($stats->devices))
 				$totalDevices = count(($stats->devices));
+
 			$minerdRunning = $this->redis->get("minerd_running_software");
 
-			$anonStats = array("id" => $mineraSystemId, "hashrate" => $totalHashrate, "devices" => $totalDevices);
+			$anonStats = array("id" => $mineraSystemId, "hashrate" => $totalHashrate, "devices" => $totalDevices, "miner" => $minerdRunning, "timestamp" => time());
 			
 			if ( $currentMinute == "00")
 			{
-				//$this->util_model->sendAnonymousStats($mineraSystemId, $anonStats);
+				$this->util_model->sendAnonymousStats($mineraSystemId, $anonStats);
 			}
 		}
 				
@@ -910,6 +923,13 @@ class App extends Main_Controller {
 		
 		// Call Mobileminer if enabled
 		$this->util_model->callMobileminer();
+
+		$this->redis->del("cron_lock");
+
+		$time_end = microtime(true);
+		$execution_time = ($time_end - $time_start);
+		
+		log_message('error', "--- END CRON TASKS (".round($execution_time, 2)." secs) ---");
 	}
 	
 	/*

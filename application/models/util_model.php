@@ -998,6 +998,24 @@ class Util_model extends CI_Model {
 			shell_exec("sudo -u " . $this->config->item("system_user") . " chmod 666 " . $this->config->item('minerd_log_file'));
 		}
 		
+		if ($this->isEnableMobileminer())
+		{
+			$pools = json_decode($this->getPools());
+			if (count($pools) > 0)
+			{
+				foreach ($pools as $key => $pool)
+				{
+					$mmPools[] = $key."||".$pool->username."@".$pool->url;
+				}
+				
+				$params = array("emailAddress" => $this->redis->get("mobileminer_email"), "applicationKey" => $this->redis->get("mobileminer_appkey"), "apiKey" => $this->config->item('mobileminer_apikey'), "machineName" => $this->redis->get("mobileminer_system_name"));
+				
+				$this->useCurl($this->config->item('mobileminer_url_poolsinput'), $params, "POST", json_encode($mmPools));
+				
+				log_message("error", "Sent MobileMiner pools: ".json_encode($mmPools));
+			}			
+		}
+		
 		return true;
 	}
 	
@@ -1076,7 +1094,7 @@ class Util_model extends CI_Model {
 			
 			$this->redis->command("HSET minera_update timestamp ".time());
 
-			$latestConfig = json_decode(file_get_contents($this->config->item("remote_config_url")));
+			$latestConfig = $this->getRemoteJsonConfig();
 
 			$localVersion = $this->currentVersion();
 			$this->redis->command("HSET minera_update new_version ".$latestConfig->version);
@@ -1099,14 +1117,6 @@ class Util_model extends CI_Model {
 				return false;
 		}
 	}
-	
-	// Generate a uniq hash ID for Minera System ID
-	public function generateMineraId()
-	{
-		$id1 = uniqid('', true);
-		$id2 = uniqid('', true);
-		return md5($id1.$id2);
-	}
 
 	// Get local Minera version
 	public function currentVersion()
@@ -1125,11 +1135,47 @@ class Util_model extends CI_Model {
 		}
 	}
 	
+	// Generate a uniq hash ID for Minera System ID
+	public function generateMineraId()
+	{
+		$id1 = uniqid('', true);
+		$id2 = uniqid('', true);
+		return md5($id1.$id2);
+	}
+	
 	// Get local Minera version
 	public function getRemoteJsonConfig()
 	{
-		$remoteConfig = json_decode(@file_get_contents('https://raw.githubusercontent.com/michelem09/minera/master/minera.json'));		
+		$remoteConfig = json_decode(@file_get_contents($this->config->item('remote_config_url')));		
 		return $remoteConfig;
+	}
+	
+	// Send anonymous stats to Minera main system
+	public function sendAnonymousStats($id, $stats)
+	{
+		$params = array("id" => $id);
+
+		$result = $this->useCurl($this->config->item('minera_anonymous_url'), $params, "POST", json_encode($stats));
+
+		log_message("error", "Sending anonymous stats");
+
+		return $result;
+	}
+
+	/*
+	// Check Mobileminer is enabled
+	*/
+	public function isEnableMobileminer()
+	{
+		if ($this->redis->get("mobileminer_enabled"))
+		{
+			if ($this->redis->get("mobileminer_system_name") && $this->redis->get("mobileminer_email") && $this->redis->get("mobileminer_appkey"))
+			{
+				return true;
+			}
+		}
+		
+		return false;
 	}
 	
 	/*
@@ -1137,83 +1183,129 @@ class Util_model extends CI_Model {
 	*/
 	public function callMobileminer()
 	{
-		if ($this->redis->get("mobileminer_enabled"))
+		if ($this->isEnableMobileminer())
 		{
-			if ($this->redis->get("mobileminer_system_name") && $this->redis->get("mobileminer_email") && $this->redis->get("mobileminer_appkey"))
+			$stats = json_decode($this->getParsedStats($this->getMinerStats()));
+							
+			$params = array("emailAddress" => $this->redis->get("mobileminer_email"), "applicationKey" => $this->redis->get("mobileminer_appkey"), "apiKey" => $this->config->item('mobileminer_apikey'), "detailed" => true);
+			
+			$poolUrl = (isset($stats->pool->url)) ? $stats->pool->url : "no pool configured";
+			$poolStatus = (isset($stats->pool->alive) && $stats->pool->alive) ? "Alive" : "Dead";
+							
+			$i = 0; $data = array();
+			if (count($stats->devices) > 0)
 			{
-				$stats = json_decode($this->getParsedStats($this->getMinerStats()));
-								
-				$params = array("emailAddress" => $this->redis->get("mobileminer_email"), "applicationKey" => $this->redis->get("mobileminer_appkey"), "apiKey" => $this->config->item('mobileminer_apikey'), "detailed" => true);
-				
-				$poolUrl = (isset($stats->pool->url)) ? $stats->pool->url : "no pool configured";
-				$poolStatus = (isset($stats->pool->alive) && $stats->pool->alive) ? "Alive" : "Dead";
-								
-				$i = 0; $data = array();
-				if (count($stats->devices) > 0)
+				foreach ($stats->devices as $devName => $device)
 				{
-					foreach ($stats->devices as $devName => $device)
-					{
-						$data[] = array(
-							"MachineName" => $this->redis->get("mobileminer_system_name"),
-							"MinerName" => "Minera",
-							"CoinSymbol" => "",
-							"CoinName" => "",
-							"Algorithm" => "Scrypt",
-							"Kind" => "Asic",
-							"Name" => $devName,
-							"FullName" => $devName,
-							"PoolIndex" => 0,
-							"PoolName" => $poolUrl,
-							"Index" => $i,                                            
-							"DeviceID" => $i,
-							"Enabled" => $this->isOnline(),
-							"Status" => $poolStatus,
-							"Temperature" => false,
-							"FanSpeed" => 0,
-							"FanPercent" => 0,
-							"GpuClock" => 0,
-							"MemoryClock" => 0,
-							"GpuVoltage" => 0,
-							"GpuActivity" => 0,
-							"PowerTune" => 0,
-							"AverageHashrate" => round(($device->hashrate/1000), 0),
-							"CurrentHashrate" => round(($device->hashrate/1000), 0),
-							"AcceptedShares" => $device->accepted,
-							"RejectedShares" => $device->rejected,
-							"HardwareErrors" => $device->hw_errors,
-							"Utility" => false,
-							"Intensity" => null,
-							"RejectedSharesPercent" => round(($device->rejected*100/($device->accepted+$device->rejected+$device->hw_errors)), 3),
-							"HardwareErrorsPercent" => round(($device->hw_errors*100/($device->accepted+$device->rejected+$device->hw_errors)), 3)
-						);
-						$i++;
-					}
+					$data[] = array(
+						"MachineName" => $this->redis->get("mobileminer_system_name"),
+						"MinerName" => "Minera",
+						"CoinSymbol" => "",
+						"CoinName" => "",
+						"Algorithm" => "Scrypt",
+						"Kind" => "Asic",
+						"Name" => $devName,
+						"FullName" => $devName,
+						"PoolIndex" => 0,
+						"PoolName" => $poolUrl,
+						"Index" => $i,                                            
+						"DeviceID" => $i,
+						"Enabled" => $this->isOnline(),
+						"Status" => $poolStatus,
+						"Temperature" => false,
+						"FanSpeed" => 0,
+						"FanPercent" => 0,
+						"GpuClock" => 0,
+						"MemoryClock" => 0,
+						"GpuVoltage" => 0,
+						"GpuActivity" => 0,
+						"PowerTune" => 0,
+						"AverageHashrate" => ($device->hashrate > 0) ? round(($device->hashrate/1000), 0) : 0,
+						"CurrentHashrate" => ($device->hashrate > 0) ? round(($device->hashrate/1000), 0) : 0,
+						"AcceptedShares" => $device->accepted,
+						"RejectedShares" => $device->rejected,
+						"HardwareErrors" => $device->hw_errors,
+						"Utility" => false,
+						"Intensity" => null,
+						"RejectedSharesPercent" => (($device->accepted+$device->rejected+$device->hw_errors) > 0) ? round(($device->rejected*100/($device->accepted+$device->rejected+$device->hw_errors)), 3) : 0,
+						"HardwareErrorsPercent" => (($device->accepted+$device->rejected+$device->hw_errors) > 0) ? round(($device->hw_errors*100/($device->accepted+$device->rejected+$device->hw_errors)), 3) : 0
+					);
+					$i++;
 				}
-		
-				$data_string = json_encode($data);
-				
-				//log_message('error', $data_string);
-				log_message('error', "Sending data to Mobileminer");
-				
-				$ch = curl_init($this->config->item('mobileminer_url_stats')."?".http_build_query($params));
-
-				curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
-				curl_setopt($ch, CURLOPT_POSTFIELDS, $data_string);
-				curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-				curl_setopt($ch, CURLOPT_HTTPHEADER, array(
-				    'Content-Type: application/json',
-				    'Content-Length: ' . strlen($data_string))
-				);
-				 
-				$result = curl_exec($ch);
-				
-				curl_close($ch);
-				
-				log_message('error', var_export($result, true));
-				
-				return $result;
-				
 			}
+	
+			$data_string = json_encode($data);
+			
+			// Sending data to Mobile Miner
+			log_message('error', "Sending data to Mobileminer");
+
+			$result = $this->useCurl($this->config->item('mobileminer_url_stats'), $params, "POST", $data_string);
+			
+			if ($result)
+				log_message('error', var_export($result, true));
+			else
+				log_message('error', 'MobileMiner data sent.');
+			
+			/*	
+			// Looking for actions to do
+			*/
+			$paramsGetActions = array("emailAddress" => $this->redis->get("mobileminer_email"), "applicationKey" => $this->redis->get("mobileminer_appkey"), "apiKey" => $this->config->item('mobileminer_apikey'), "machineName" => $this->redis->get("mobileminer_system_name"));
+			
+			$resultGetActions = $this->useCurl($this->config->item('mobileminer_url_remotecommands'), $paramsGetActions, "GET");
+			
+			if ($resultGetActions)
+			{
+				$resultGetActions = json_decode($resultGetActions);
+				if (is_array($resultGetActions) && count($resultGetActions) > 0)
+				{
+					$actionToDo = $resultGetActions[0];
+					
+					// Do the mobileMiner action
+					if ($actionToDo->CommandText == "START")
+					{
+						if (!$this->isOnline()) $this->minerStart();
+					}
+					elseif ($actionToDo->CommandText == "STOP")
+					{
+						$this->minerStop();
+					}
+					elseif ($actionToDo->CommandText == "RESTART")
+					{
+						$this->minerRestart();
+					}
+					elseif (preg_match("/SWITCH/", $actionToDo->CommandText))
+					{
+						$switch = explode("|", $actionToDo->CommandText);
+						if (isset($switch[1]))
+						{
+							$array = explode("||", $switch[1]);
+							if (isset($array[0]))
+							{
+								$this->selectPool($array[0]);
+							}
+						}
+					}
+					
+					log_message('error', 'Action done: '.json_encode($resultGetActions));
+					
+					/*
+					// Remove MobileMiner action by ID
+					*/
+					$paramsGetActions['commandId'] = $actionToDo->Id;
+					
+					$this->useCurl($this->config->item('mobileminer_url_remotecommands'), $paramsGetActions, "DELETE");
+
+					log_message('error', 'Removed MobileMiner actions with ID: '.$actionToDo->Id);
+					
+				}
+				else
+				{
+					log_message('error', 'No MobileMiner actions to do.');						
+				}
+			}
+
+			return true;
+				
 		}
 		
 		return false;
@@ -1278,5 +1370,39 @@ class Util_model extends CI_Model {
 		        fclose($client);
 		    }
 		}
+	}
+	
+	public function useCurl($url, $params, $method, $post = false)
+	{
+		$ch = curl_init($url."?".http_build_query($params));
+
+		curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+		curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+		curl_setopt($ch, CURLOPT_CONNECTTIMEOUT ,3); 
+		curl_setopt($ch, CURLOPT_TIMEOUT, 10);
+		if ($post)
+		{
+			curl_setopt($ch, CURLOPT_POSTFIELDS, $post);
+			curl_setopt($ch, CURLOPT_HTTPHEADER, array(
+		    	'Content-Type: application/json',
+				'Content-Length: ' . strlen($post))
+			);
+		}
+		if ($method == "DELETE")
+		{
+			curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "DELETE");
+		}
+
+		$result = curl_exec($ch);
+		
+		if(!curl_errno($ch))
+		{
+			$http_status = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+			// Not used
+		}
+		
+		curl_close($ch);
+		
+		return $result;
 	}
 }
