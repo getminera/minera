@@ -854,6 +854,8 @@ class Util_model extends CI_Model {
 				return false;
 		}		
 		
+		if (is_resource($fp)) fclose($fp);
+		
 		return true;
 	}
 	
@@ -1238,9 +1240,11 @@ class Util_model extends CI_Model {
 	// Check Internet connection
 	public function checkConn()
 	{
-		if(!fsockopen("www.google.com", 80)) {
+		if(!$fp = fsockopen("www.google.com", 80)) {
 			return false;
 		}
+		
+		if (is_resource($fp)) fclose($fp);
 		
 		return true;
 	}
