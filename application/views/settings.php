@@ -523,7 +523,7 @@
 												</div>
 												<div class="row">
 													<div class="col-xs-3 col-md-2">
-														<small>Dead devices</small>
+														<small>Number of Dead devices</small>
 														<div class="input-group">
 															<span class="input-group-addon"><i class="glyphicon glyphicon-hdd"></i></span>
 															<input type="text" class="form-control" placeholder="Devices" name="minerd_autorestart_devices" value="<?php echo $minerdAutorestartDevices ?>" style="width:90px"/>

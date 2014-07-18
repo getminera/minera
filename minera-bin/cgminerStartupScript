@@ -1,3 +1,3 @@
 #!/bin/bash
 
-/var/www/minera/minera-bin/cgminer  --retries=1  -c /var/www/minera/conf/miner_conf.json 2>/var/log/minera/cgminer.log
+/var/www/minera/minera-bin/cgminer-dmaxl-zeus  --retries=1 --gridseed-freq=838  -c /var/www/minera/conf/miner_conf.json 2>/var/log/minera/cgminerdmaxlzeus.log

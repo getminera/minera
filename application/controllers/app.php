@@ -20,6 +20,7 @@ class App extends Main_Controller {
 		//$this->util_model->autoAddMineraPool();
 		$data['htmlTag'] = "lockscreen";
 		$data['pageTitle'] = "Welcome to Minera";
+		$data['isOnline'] = $this->util_model->isOnline();
 		$this->load->view('include/header', $data);
 		$this->load->view('lockscreen');
 	}
@@ -208,7 +209,7 @@ class App extends Main_Controller {
 		{
 			$minerSoftware = $this->input->post('minerd_software');
 			$this->redis->set("minerd_software", $minerSoftware);
-			$this->util_model->switchMinerSoftware();
+			$this->util_model->switchMinerSoftware($minerSoftware);
 			
 			$dashSettings = substr(trim($this->input->post('dashboard_refresh_time')), strpos(trim($this->input->post('dashboard_refresh_time')), ";") + 1);
 			

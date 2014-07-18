@@ -35,7 +35,11 @@
 			<div class="lockscreen-link">
 				Welcome to Minera
 			</div> 
-			
+
+			<div class="lockscreen-link">
+				<?php if ($isOnline) : ?><i class="fa fa-circle text-success"></i> Online<?php else: ?><i class="fa fa-circle text-muted"></i> Offline<?php endif; ?>
+			</div> 
+						
         </div><!-- /.center -->
 
 		<script src="<?php echo base_url('assets/js/jquery-2.1.1.min.js') ?>"></script>
