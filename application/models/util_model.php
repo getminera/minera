@@ -216,7 +216,7 @@ class Util_model extends CI_Model {
 	*/
 	public function getParsedStats($stats)
 	{		
-		$d = 0; $tdevice = array(); $tdfrequency = 0; $tdaccepted = 0; $tdrejected = 0; $tdhwerrors = 0; $tdshares = 0; $tdhashrate = 0;
+		$d = 0; $tdevice = array(); $tdtemperature = 0; $tdfrequency = 0; $tdaccepted = 0; $tdrejected = 0; $tdhwerrors = 0; $tdshares = 0; $tdhashrate = 0;
 		
 		$return = false;
 		
@@ -259,7 +259,8 @@ class Util_model extends CI_Model {
 							$tclastshares[] = $chip->last_share;
 						}
 					}
-						
+					
+					$return['devices'][$name]['temperature'] = false;
 					$return['devices'][$name]['frequency'] = ($c > 0) ? round(($tcfrequency/$c), 0) : 0;
 					$return['devices'][$name]['accepted'] = $tcaccepted;
 					$return['devices'][$name]['rejected'] = $tcrejected;
@@ -278,6 +279,7 @@ class Util_model extends CI_Model {
 					$tdlastshares[] = $return['devices'][$name]['last_share'];
 				}
 				
+				$return['totals']['temprature'] = false;
 				$return['totals']['frequency'] = round(($tdfrequency/$d), 0);
 				$return['totals']['accepted'] = $tdaccepted;
 				$return['totals']['rejected'] = $tdrejected;
@@ -294,10 +296,13 @@ class Util_model extends CI_Model {
 			if (isset($stats->devs[0]->DEVS))
 			{
 				foreach ($stats->devs[0]->DEVS as $device)
-				{						
+				{
+					$d++; $c = 0; $tcfrequency = 0; $tcaccepted = 0; $tcrejected = 0; $tchwerrors = 0; $tcshares = 0; $tchashrate = 0; $tclastshares = array();
+									
 					$name = $device->Name.$device->ID;
 					
-					$return['devices'][$name]['frequency'] = false;
+					$return['devices'][$name]['temperature'] = (isset($device->Temperature)) ? $device->Temperature : false;
+					$return['devices'][$name]['frequency'] = (isset($device->Frequency)) ? $device->Frequency : false;
 					$return['devices'][$name]['accepted'] = $device->Accepted;
 					$return['devices'][$name]['rejected'] = $device->Rejected;
 					$return['devices'][$name]['hw_errors'] = $device->{'Hardware Errors'};
@@ -307,7 +312,10 @@ class Util_model extends CI_Model {
 						$return['devices'][$name]['shares'] = ($device->{'Diff1 Work'}) ? round(($device->{'Diff1 Work'}*71582788/1000),0) : 0;
 					$return['devices'][$name]['hashrate'] = ($device->{'MHS av'}*1000*1000);
 					$return['devices'][$name]['last_share'] = $device->{'Last Share Time'};
-					$return['devices'][$name]['serial'] = false;
+					$return['devices'][$name]['serial'] = (isset($device->Serial)) ? $device->Serial : false;;
+
+					$tdtemperature += $return['devices'][$name]['temperature'];					
+					$tdfrequency += $return['devices'][$name]['frequency'];
 					$tdshares += $return['devices'][$name]['shares'];
 					$tdhashrate += $return['devices'][$name]['hashrate'];
 				}				
@@ -316,8 +324,9 @@ class Util_model extends CI_Model {
 			if (isset($stats->summary[0]->SUMMARY[0]))
 			{
 				$totals = $stats->summary[0]->SUMMARY[0];
-				
-				$return['totals']['frequency'] = false;
+
+				$return['totals']['temperature'] = ($tdtemperature) ? round(($tdtemperature/$d), 0) : false;				
+				$return['totals']['frequency'] = ($tdfrequency) ? round(($tdfrequency/$d), 0) : false;
 				$return['totals']['accepted'] = $totals->Accepted;
 				$return['totals']['rejected'] = $totals->Rejected;
 				$return['totals']['hw_errors'] = $totals->{'Hardware Errors'};
@@ -326,7 +335,7 @@ class Util_model extends CI_Model {
 				$return['totals']['last_share'] = $totals->{'Last getwork'};
 				
 				if ($this->_minerdSoftware == "cgdmaxlzeus")
-					$cgbfgminerPoolHashrate = round(($totals->{'Work Utility'}*71582788/1000/2), 0);
+					$cgbfgminerPoolHashrate = $tdhashrate; //round(($totals->{'Work Utility'}*71582788/1000/2), 0);
 				else
 					$cgbfgminerPoolHashrate = round(($totals->{'Work Utility'}*71582788), 0);
 			}
@@ -986,17 +995,23 @@ class Util_model extends CI_Model {
 		$this->redis->set("minerd_running_software", $software);
 
 		$this->switchMinerSoftware();
-				
-		$command = array($this->config->item("screen_command"), $this->config->item("minerd_command"), $this->getCommandline());
 		
+		// If it's cgminer with logging we need to create a script and give that to screen
 		$specialLog = null;
 		if ($this->config->item("minerd_special_log") && $this->redis->get("minerd_log"))
 		{
-			// Won't work with screen
-			//$specialLog = " 2>".$this->config->item("minerd_log_file");
+			$script = "#!/bin/bash\n\n".$this->config->item("minerd_command")." ".$this->getCommandline()." 2>".$this->config->item("minerd_log_file");
+			
+			file_put_contents(FCPATH."minera-bin/cgminerStartupScript", $script);
+			
+			$command = array($this->config->item("screen_command"), FCPATH."minera-bin/cgminerStartupScript");
+		}
+		else
+		{
+			$command = array($this->config->item("screen_command"), $this->config->item("minerd_command"), $this->getCommandline());
 		}
 		
-		$finalCommand = "sudo -u " . $this->config->item("system_user") . " " . implode(" ", $command) . $specialLog;
+		$finalCommand = "sudo -u " . $this->config->item("system_user") . " " . implode(" ", $command);
 		
 		exec($finalCommand, $out);
 		

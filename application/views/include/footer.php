@@ -1337,6 +1337,12 @@
 							
 						}
 					}
+					else
+					{
+						var nodevsMsg = '<div class="alert alert-warning"><i class="fa fa-warning"></i><b>Warning!</b> No devices found, check your settings.</div>';
+						$('#miner-table-details').html(nodevsMsg);
+						$('#devs').html(nodevsMsg).removeClass("row");
+					}
 					
 					// Add controller temperature
 					if (data['temp'])
