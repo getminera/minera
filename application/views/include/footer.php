@@ -633,7 +633,7 @@
 					seconds = parseInt(seconds_left % 60);
 			     
 					// format countdown string + set tag value
-					$('.auto-refresh-time').html("auto-refreshing in " + minutes + "m / " + seconds + "s ");	
+					$('.auto-refresh-time').html(minutes + "m : " + seconds + "s ");	
 				}
 				else
 				{
@@ -644,7 +644,7 @@
 			}, 1000);
 			
 			// Refresh button
-			$(".refresh-btn").click( function() { getStats(true); target_date = new Date().getTime(); });
+			$(".refresh-btn").click( function(e) { e.preventDefault(); getStats(true); target_date = new Date().getTime(); });
 			
 			// Save frequency table button
 			$(".btn-saved-freq").click( function() {
@@ -915,7 +915,7 @@
 	        $.getJSON( "<?php echo site_url($this->config->item('live_stats_url')); ?>", function( data ) 
 	        {
 	        	// Add raw stats box
-				boxStats.find("span").html('<pre style="font-size:10px;">' + JSON.stringify(data, undefined, 2) + '</pre>');
+				boxStats.find("span").html('<pre style="height:350px; overflow: scroll; font-size:10px;">' + JSON.stringify(data, undefined, 2) + '</pre>');
 				
 				// Add Altcoins rates
     			$('.altcoin-container').html('');
@@ -1193,9 +1193,22 @@
 								"pageLength": 5,
 								"stateSave": true,
 								"bAutoWidth": false,
-								"aoColumnDefs": [ 
+								"aoColumnDefs": [
 								{
 									"aTargets": [ 1 ],	
+									"mRender": function ( data, type, full ) {
+										if (type === 'display')
+										{
+											if (data)
+												return '<small class="label bg-blue">'+data +'°</small>'
+											else
+												return '<small class="label label-muted">n.a.</small>'
+										}
+										return data;
+									},
+								},
+								{
+									"aTargets": [ 2 ],	
 									"mRender": function ( data, type, full ) {
 										if (type === 'display')
 										{
@@ -1208,7 +1221,7 @@
 									},
 								},
 								{
-									"aTargets": [ 2 ],	
+									"aTargets": [ 3 ],	
 									"mRender": function ( data, type, full ) {
 										if (type === 'display')
 										{
@@ -1218,7 +1231,7 @@
 									}
 								},
 								{
-									"aTargets": [ 10 ],	
+									"aTargets": [ 11 ],	
 									"mRender": function ( data, type, full ) {
 										if (type === 'display')
 										{
@@ -1228,7 +1241,7 @@
 									}
 								},
 								{
-									"aTargets": [ 5, 7, 9 ],	
+									"aTargets": [ 6, 8, 10 ],	
 									"mRender": function ( data, type, full ) {
 										if (type === 'display')
 										{
@@ -1246,8 +1259,8 @@
 												
 					    	// these are the single devices stats
 					    	var hashrate = Math.round(val.hashrate/1000);
-
-					    	items[key] = { "serial": val.serial, "hash": hashrate, "ac": val.accepted, "re": val.rejected, "hw": val.hw_errors, "fr": val.frequency, "sh": val.shares, "ls": val.last_share };
+							
+					    	items[key] = { "temp": val.temperature, "serial": val.serial, "hash": hashrate, "ac": val.accepted, "re": val.rejected, "hw": val.hw_errors, "fr": val.frequency, "sh": val.shares, "ls": val.last_share };
 	
 							hashrates.push(hashrate);
 	
@@ -1255,12 +1268,13 @@
 					    
 				    	var maxHashrate = Math.max.apply(Math, hashrates);
 	
-						var avgFr = (data.totals.frequency) ? data.totals.frequency + ' MHz' : "not available";
-
-						totalhash = Math.round(data.totals.hashrate/1000);
+						var avgFr = (data.totals.frequency) ? data.totals.frequency + ' MHz' : "n.a.";
+						var totTemp = (data.totals.temperature) ? data.totals.temperature : "n.a."
 						
+						totalhash = Math.round(data.totals.hashrate/1000);
+
 						// this is the global stats
-						items["total"] = { "serial": "", "hash": totalhash, "ac": data.totals.accepted, "re": data.totals.rejected, "hw": data.totals.hw_errors, "fr": avgFr, "sh": data.totals.shares, "ls":  data.totals.last_share};
+						items["total"] = { "temp": totTemp, "serial": "", "hash": totalhash, "ac": data.totals.accepted, "re": data.totals.rejected, "hw": data.totals.hw_errors, "fr": avgFr, "sh": data.totals.shares, "ls":  data.totals.last_share};
 						
 						for (var index in items) 
 						{
@@ -1288,22 +1302,22 @@
 							else
 								devData.label = "green"
 														
-							var dev_serial = "";
+							var dev_serial = "serial not available";
 							if (index != "total" && items[index].serial)
 							{
-								dev_serial = ' <small class="text-muted">('+items[index].serial+')</small>';	
+								dev_serial = "serial: "+items[index].serial;
 							}
 							else
 							{
 								// Widgets
 								$(".widget-last-share").html(parseInt(last_share_secs) + ' secs');
 								$(".widget-hwre-rates").html(parseFloat(percentageHw).toFixed(2) + '<sup style="font-size: 20px">%</sup> / ' + parseFloat(percentageRe).toFixed(2) + '<sup style="font-size: 20px">%</sup>');
-								
+								dev_serial = "";
 								//Sidebar hashrate
 								//$('.sidebar-hashrate').html("@ "+convertHashrate(items[index].hash));
 							}
 							
-							var devRow = '<tr class="dev-'+index+'"><td class="devs_table_name"><i class="glyphicon glyphicon-hdd"></i>&nbsp;&nbsp;'+index+dev_serial+'</td><td class="devs_table_freq">'+ items[index].fr + '</td><td class="devs_table_hash"><strong>'+ convertHashrate(items[index].hash) +'</strong></td><td class="devs_table_sh">'+ items[index].sh +'</td><td class="devs_table_ac">'+ items[index].ac +'</td><td><small class="text-muted">'+parseFloat(percentageAc).toFixed(2)+'%</small></td><td class="devs_table_re">'+ items[index].re +'</td><td><small class="text-muted">'+parseFloat(percentageRe).toFixed(2)+'%</small></td><td class="devs_table_hw">'+ items[index].hw +'</td><td><small class="text-muted">'+parseFloat(percentageHw).toFixed(2)+'%</small></td><td class="devs_table_ls">'+ parseInt(last_share_secs) +' secs ago</td><td><small class="text-muted">'+share_date.toUTCString()+'</small></td></tr>'
+							var devRow = '<tr class="dev-'+index+'"><td class="devs_table_name"><i class="glyphicon glyphicon-hdd"></i>&nbsp;&nbsp;'+index+dev_serial+'</td><td class="devs_table_temp">'+ items[index].temp + '</td><td class="devs_table_freq">'+ items[index].fr + '</td><td class="devs_table_hash"><strong>'+ convertHashrate(items[index].hash) +'</strong></td><td class="devs_table_sh">'+ items[index].sh +'</td><td class="devs_table_ac">'+ items[index].ac +'</td><td><small class="text-muted">'+parseFloat(percentageAc).toFixed(2)+'%</small></td><td class="devs_table_re">'+ items[index].re +'</td><td><small class="text-muted">'+parseFloat(percentageRe).toFixed(2)+'%</small></td><td class="devs_table_hw">'+ items[index].hw +'</td><td><small class="text-muted">'+parseFloat(percentageHw).toFixed(2)+'%</small></td><td class="devs_table_ls">'+ parseInt(last_share_secs) +' secs ago</td><td><small class="text-muted">'+share_date.toUTCString()+'</small></td></tr>'
 						
 							if (index == "total")
 							{
@@ -1316,7 +1330,8 @@
 								{
 									// New add rows via datatable
 									$('#miner-table-details').dataTable().fnAddData( [
-										'<i class="glyphicon glyphicon-hdd"></i>&nbsp;&nbsp;'+index+dev_serial,
+										'<span data-toggle="tooltip" title="'+dev_serial+'" data-placement="top"><i class="glyphicon glyphicon-hdd"></i>&nbsp;&nbsp;'+index+'</span>',
+										items[index].temp,
 										items[index].fr,
 										devData,
 										items[index].sh,
@@ -1336,6 +1351,7 @@
 							createMon(index, items[index].hash, totalhash, maxHashrate, items[index].ac, items[index].re, items[index].hw, items[index].sh, items[index].fr, devData.label);
 							
 						}
+						$("[data-toggle='tooltip']").tooltip();
 					}
 					else
 					{

@@ -60,6 +60,7 @@ class App extends Main_Controller {
 		$data['dashboard_refresh_time'] = $this->redis->get("dashboard_refresh_time");
 		$data['pageTitle'] = ($this->redis->get("mobileminer_system_name")) ? $this->redis->get("mobileminer_system_name")." > Minera - Dashboard" : "Minera - Dashboard";
 		$data['minerdRunning'] = $this->redis->get("minerd_running_software");
+		$data['minerdSoftware'] = $this->redis->get("minerd_software");
 		
 		$this->load->view('include/header', $data);
 		$this->load->view('include/sidebar', $data);
@@ -84,6 +85,7 @@ class App extends Main_Controller {
 		$data['mineraUpdate'] = $this->util_model->checkUpdate();
 		$data['pageTitle'] = ($this->redis->get("mobileminer_system_name")) ? $this->redis->get("mobileminer_system_name")." > Minera - Charts" : "Minera - Charts";
 		$data['minerdRunning'] = $this->redis->get("minerd_running_software");
+		$data['minerdSoftware'] = $this->redis->get("minerd_software");
 		
 		$this->load->view('include/header', $data);
 		$this->load->view('include/sidebar', $data);
@@ -186,6 +188,7 @@ class App extends Main_Controller {
 		$data['settingsScript'] = true;
 		$data['pageTitle'] = "Minera - Settings";
 		$data['minerdRunning'] = $this->redis->get("minerd_running_software");
+		$data['minerdSoftware'] = $this->redis->get("minerd_software");
 		$data['donationProfitability'] = ($prof = $this->util_model->returnRemoteJsonConfig()) ? $prof->donation_profitability : "0.00075";
 		
 		$this->load->view('include/header', $data);

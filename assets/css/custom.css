@@ -24,6 +24,7 @@
 body > .header .navbar .nav > li > a > .label { padding: 3px !important; }
 .row-btn-options { margin: 15px 0;}
 .label-white { background-color: #f7f7f7; color: #434343; }
+.label-muted { background-color: #f7f7f7; color: #999; }
 .label-light { background-color: #E0E0E0; color: #7a7a7a; }
 .label-dark { background-color: #434343; color: #f7f7f7; }
 .small-box h4 { font-size: 28px; font-weight: bold; margin: 0 0 10px 0; white-space: nowrap; padding: 0; }

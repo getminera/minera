@@ -279,7 +279,7 @@ class Util_model extends CI_Model {
 					$tdlastshares[] = $return['devices'][$name]['last_share'];
 				}
 				
-				$return['totals']['temprature'] = false;
+				$return['totals']['temperature'] = false;
 				$return['totals']['frequency'] = round(($tdfrequency/$d), 0);
 				$return['totals']['accepted'] = $tdaccepted;
 				$return['totals']['rejected'] = $tdrejected;

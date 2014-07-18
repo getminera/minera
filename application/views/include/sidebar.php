@@ -218,9 +218,9 @@
                         <div class="pull-left info">
                             <p>Hello, your miner is</p>
 							<?php if ($isOnline) : ?>
-	                            <a href="#"><i class="fa fa-circle text-success"></i> Online <span class="sidebar-hashrate"></span></a>
+	                            <a href="#"><i class="fa fa-circle text-success"></i> Online <?php if ($minerdRunning) : ?><small class="pull-right badge bg-green"><?php echo $minerdRunning ?></small><?php endif; ?></a>
 	                        <?php else: ?>
-	                            <a href="#"><i class="fa fa-circle text-danger"></i> Offline</a>
+	                            <a href="#"><i class="fa fa-circle text-muted"></i> Offline <?php if ($minerdSoftware) : ?><small class="pull-right badge bg-muted"><?php echo $minerdSoftware ?></small><?php endif; ?></a>
 							<?php endif; ?>
                         </div>
                     </div>
@@ -232,7 +232,7 @@
                                 <i class="fa fa-dashboard"></i> <span>Dashboard</span>
                             </a>
                         </li>
-                        <li data-toggle="tooltip" title="" data-original-title="Go to the dashboard page">
+                        <li data-toggle="tooltip" title="" data-original-title="Go to the charts page">
                             <a href="<?php echo site_url("app/charts") ?>">
                                 <i class="fa fa-bar-chart-o"></i> <span>Charts</span>
                             </a>
@@ -245,14 +245,26 @@
                         <li class="treeview">
                             <a href="#">
                                 <i class="fa fa-desktop"></i>
-                                <span>Miner</span><?php if ($minerdRunning) : ?>&nbsp;<small class="badge bg-light"><?php echo $minerdRunning ?></small><?php endif; ?>
+                                <span>Miner</span>
                                 <i class="fa pull-right fa-angle-left"></i>
                             </a>
                             <ul class="treeview-menu" style="display: none;">
 
-                                <li data-toggle="tooltip" title="" data-original-title="<?php echo ($isOnline) ? "It seems your miner is mining. To restart it click below" : "Start your miner"; ?>"><a href="#" <?php echo ($isOnline) ? '' : 'class="miner-action" data-miner-action="start"'; ?> style="margin-left: 10px;"><i class="fa fa-arrow-circle-o-up"></i> Start miner</a></li>
-                                <li data-toggle="tooltip" title="" data-original-title="<?php echo ($isOnline) ? "Stop your miner" : "Your miner is stopped"; ?>"><a href="<?php echo site_url("app/stop_miner") ?>" class="miner-action" data-miner-action="stop" style="margin-left: 10px;"><i class="fa fa-arrow-circle-o-down"></i> Stop miner</a></li>
-                                <li data-toggle="tooltip" title="" data-original-title="Restart your miner"><a href="<?php echo site_url("app/restart_miner") ?>" class="miner-action" data-miner-action="restart" style="margin-left: 10px;"><i class="fa fa-repeat"></i> Restart miner</a></li>
+                                <li data-toggle="tooltip" title="" data-original-title="<?php echo ($isOnline) ? "It seems your miner is mining. To restart it click below" : "Start your miner"; ?>">
+                                	<a href="#" <?php echo ($isOnline) ? '' : 'class="miner-action" data-miner-action="start"'; ?> style="margin-left: 10px;">
+                                		<i class="fa fa-arrow-circle-o-up"></i> Start miner
+                                	</a>
+                                </li>
+                                <li data-toggle="tooltip" title="" data-original-title="<?php echo ($isOnline) ? "Stop your miner" : "Your miner is stopped"; ?>">
+                                	<a href="<?php echo site_url("app/stop_miner") ?>" class="miner-action" data-miner-action="stop" style="margin-left: 10px;">
+                                		<i class="fa fa-arrow-circle-o-down"></i> Stop miner
+                                	</a>
+                                </li>
+                                <li data-toggle="tooltip" title="" data-original-title="Restart your miner">
+                                	<a href="<?php echo site_url("app/restart_miner") ?>" class="miner-action" data-miner-action="restart" style="margin-left: 10px;">
+                                		<i class="fa fa-repeat"></i> Restart miner
+                                	</a>
+                                </li>
                             </ul>
                         </li>
                         <li class="treeview">
@@ -262,11 +274,30 @@
                                 <i class="fa pull-right fa-angle-left"></i>
                             </a>
                             <ul class="treeview-menu" style="display: none;">
-                                <li data-toggle="tooltip" title="" data-original-title="Open Minera's terminal"><a href="#" class="system-open-terminal" style="margin-left: 10px;"><i class="fa fa-terminal"></i> Open terminal</a></li>
-                                <li data-toggle="tooltip" title="" data-original-title="Reboot Minera"><a href="<?php echo site_url("app/reboot") ?>" style="margin-left: 10px;"><i class="fa fa-flash"></i> Reboot</a></li>
-                                <li data-toggle="tooltip" title="" data-original-title="Shutdown Minera"><a href="<?php echo site_url("app/shutdown") ?>" style="margin-left: 10px;"><i class="fa fa-power-off"></i> Shutdown</a></li>
+                                <li data-toggle="tooltip" title="" data-original-title="Open Minera's terminal">
+                                	<a href="#" class="system-open-terminal" style="margin-left: 10px;">
+                                		<i class="fa fa-terminal"></i> Open terminal
+                                	</a>
+                                </li>
+                                <li data-toggle="tooltip" title="" data-original-title="Reboot Minera">
+                                	<a href="<?php echo site_url("app/reboot") ?>" style="margin-left: 10px;">
+                                		<i class="fa fa-flash"></i> Reboot
+                                	</a>
+                                </li>
+                                <li data-toggle="tooltip" title="" data-original-title="Shutdown Minera">
+                                	<a href="<?php echo site_url("app/shutdown") ?>" style="margin-left: 10px;">
+                                		<i class="fa fa-power-off"></i> Shutdown
+                                	</a>
+                                </li>
                             </ul>
                         </li>
+						<?php if ($isOnline && $appScript) : ?>
+                        	<li data-toggle="tooltip" title="" data-original-title="Refresh Dashboard">
+                            	<a href="#" class="refresh-btn">
+                                	<i class="fa fa-refresh"></i> <span>Refresh</span><span class="badge bg-muted pull-right auto-refresh-time">auto in</span>
+								</a>
+							</li>
+						<?php endif; ?>
                     </ul>
                 </section>
                 
