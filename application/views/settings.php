@@ -64,7 +64,7 @@
 										    		<p>Minera needs your help! Give some minutes of your hash power to the project and help making Minera even cooler!<br /><a href="#" class="open-readme-donation">Please read how you can give your support and how it works.</a></p>
 										    		
 										    		<div class="margin-bottom">
-										    		    <input type="text" name="minera_donation_time" id="option-minera-donation-time" value="" />
+										    		    <input data-donation-profitability="<?php echo $donationProfitability ?>" type="text" name="minera_donation_time" id="option-minera-donation-time" value="" />
 										    		</div>
 										    		
 										    		<p class="donation-worth"></p>
@@ -74,15 +74,18 @@
 										    		<div class="callout callout-grey readme-donation" style="display:none;">
 										    		    <h6><strong>How does time donation work?</strong></h6>
 
-										    		    <p><small>It's really simple, you can select how many minutes per day you want to donate to Minera, you can choose between 15 minutes and 6 hours. If you leave it at zero minutes, donation will be disabled. If you enable it, every day (at about 4.10am system time) Minera will automatically switch to the donation pool for the amount of time you have selected. When that period is over Minera will switch back to your main pool. Pool changes are on the fly, so it doesn't need to save/restart anything.</small></p>
+										    		    <p><small>It's really simple, you can select how many minutes per day you want to donate to Minera, you can choose between 10 minutes and 6 hours. If you leave it at zero minutes, donation will be disabled. If you enable it, every day (at about 4.10am system time) Minera will automatically switch to the donation pool for the amount of time you have selected. When that period is over Minera will switch back to your main pool. Pool changes are on the fly, so it doesn't need to save/restart anything.</small></p>
 
 										    		    <h6><strong>What does happen if Minera reboot/shutdown/stop during the donation period?</strong></h6>
 										    		    <p><small>Absolutely nothing. I mean, if your Minera system got problems while is running on the donation pool (for example it reboots as a result of a power failure), it just goes back to the main pool. It won't retry to switch the donation pool until the next day.</small></p>
 										    		    <h6><strong>How do you calculate the amount donated?</strong></h6>
-										    		    <p><small>It's just an approximate. I simply divide the time in minutes you donate per fixed average profitability of 0.0008 <i class="fa fa-btc"></i>/Day, the function is: <i>0.0008 / 24 / 60 x donation_minutes</i>.</small></p>
+										    		    <p><small>It's just an approximate. I simply divide the time in minutes you donate per fixed average profitability of <?php echo $donationProfitability ?> <i class="fa fa-btc"></i>/Day, the function is: <i><?php echo $donationProfitability ?> / 24 / 60 x donation_minutes</i>.</small></p>
+										    		    
+										    		    <h6><strong>Is there a prize for who donate?</strong></h6>
+										    		    <p><small>Well, my appreciation first of all, then yes you'll get a tiny prize, donation box on dashboard disappears if you have donations active.</small></p>
 										    		    
 										    		    <h6><strong>What do you do with the money received?</strong></h6>
-										    		    <p><small>Thanks to your kind donations I can buy some of the new hardware coming out and add its support to Minera. So next time there is a new cool hardware, Minera will be ready for it. I also need beer to do all this cool stuff :)</small></p>
+										    		    <p><small>Thanks to your kind donations I could buy some of the new hardware coming out and add its support to Minera. So next time there is a new cool hardware, Minera will be ready for it. I also need beer to do all this cool stuff :)</small></p>
 										    		    <h6><strong>Anyway, I wanna really thank you for all your support and appreciation!</strong></h6>
 										    		    <h6><strong>Michelem</strong></h6>
 										    		</div>

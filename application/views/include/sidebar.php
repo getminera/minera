@@ -262,7 +262,7 @@
                                 <i class="fa pull-right fa-angle-left"></i>
                             </a>
                             <ul class="treeview-menu" style="display: none;">
-                                <li data-toggle="tooltip" title="" data-original-title="Reboot Minera"><a href="#" class="system-open-terminal" style="margin-left: 10px;"><i class="fa fa-terminal"></i> Open terminal</a></li>
+                                <li data-toggle="tooltip" title="" data-original-title="Open Minera's terminal"><a href="#" class="system-open-terminal" style="margin-left: 10px;"><i class="fa fa-terminal"></i> Open terminal</a></li>
                                 <li data-toggle="tooltip" title="" data-original-title="Reboot Minera"><a href="<?php echo site_url("app/reboot") ?>" style="margin-left: 10px;"><i class="fa fa-flash"></i> Reboot</a></li>
                                 <li data-toggle="tooltip" title="" data-original-title="Shutdown Minera"><a href="<?php echo site_url("app/shutdown") ?>" style="margin-left: 10px;"><i class="fa fa-power-off"></i> Shutdown</a></li>
                             </ul>

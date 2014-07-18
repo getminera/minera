@@ -186,6 +186,7 @@ class App extends Main_Controller {
 		$data['settingsScript'] = true;
 		$data['pageTitle'] = "Minera - Settings";
 		$data['minerdRunning'] = $this->redis->get("minerd_running_software");
+		$data['donationProfitability'] = ($prof = $this->util_model->returnRemoteJsonConfig()) ? $prof->donation_profitability : "0.00075";
 		
 		$this->load->view('include/header', $data);
 		$this->load->view('include/sidebar', $data);

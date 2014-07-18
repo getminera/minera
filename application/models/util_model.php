@@ -32,6 +32,7 @@ class Util_model extends CI_Model {
 			$this->config->set_item('screen_command_stop', '/usr/bin/screen -S bfgminer -X quit');
 			$this->config->set_item('minerd_command', FCPATH.'minera-bin/bfgminer');
 			$this->config->set_item('minerd_log_file', '/var/log/minera/bfgminer.log');
+			$this->config->set_item('minerd_special_log', false);
 			$this->config->set_item('minerd_log_url', 'application/logs/bfgminer.log');
 			$this->load->model('cgminer_model', 'miner');			
 		}
@@ -42,6 +43,7 @@ class Util_model extends CI_Model {
 			$this->config->set_item('screen_command_stop', '/usr/bin/screen -S cgminer -X quit');
 			$this->config->set_item('minerd_command', FCPATH.'minera-bin/cgminer');
 			$this->config->set_item('minerd_log_file', '/var/log/minera/cgminer.log');
+			$this->config->set_item('minerd_special_log', true);
 			$this->config->set_item('minerd_log_url', 'application/logs/cgminer.log');
 			$this->load->model('cgminer_model', 'miner');
 		}
@@ -52,6 +54,7 @@ class Util_model extends CI_Model {
 			$this->config->set_item('screen_command_stop', '/usr/bin/screen -S cgminerdmaxlzeus -X quit');
 			$this->config->set_item('minerd_command', FCPATH.'minera-bin/cgminer-dmaxl-zeus');
 			$this->config->set_item('minerd_log_file', '/var/log/minera/cgminerdmaxlzeus.log');
+			$this->config->set_item('minerd_special_log', true);
 			$this->config->set_item('minerd_log_url', 'application/logs/cgminerdmaxlzeus.log');
 			$this->load->model('cgminer_model', 'miner');
 		}
@@ -62,6 +65,7 @@ class Util_model extends CI_Model {
 			$this->config->set_item('screen_command_stop', '/usr/bin/screen -S cpuminer -X quit');
 			$this->config->set_item('minerd_command', FCPATH.'minera-bin/minerd');
 			$this->config->set_item('minerd_log_file', '/var/log/minera/cpuminer.log');
+			$this->config->set_item('minerd_special_log', false);
 			$this->config->set_item('minerd_log_url', 'application/logs/cpuminer.log');
 			$this->load->model('cpuminer_model', 'miner');
 		}
@@ -984,8 +988,15 @@ class Util_model extends CI_Model {
 		$this->switchMinerSoftware();
 				
 		$command = array($this->config->item("screen_command"), $this->config->item("minerd_command"), $this->getCommandline());
-
-		$finalCommand = "sudo -u " . $this->config->item("system_user") . " " . implode(" ", $command);
+		
+		$specialLog = null;
+		if ($this->config->item("minerd_special_log") && $this->redis->get("minerd_log"))
+		{
+			// Won't work with screen
+			//$specialLog = " 2>".$this->config->item("minerd_log_file");
+		}
+		
+		$finalCommand = "sudo -u " . $this->config->item("system_user") . " " . implode(" ", $command) . $specialLog;
 		
 		exec($finalCommand, $out);
 		
@@ -995,7 +1006,7 @@ class Util_model extends CI_Model {
 		
 		if (file_exists($this->config->item('minerd_log_file')))
 		{
-			shell_exec("sudo -u " . $this->config->item("system_user") . " chmod 666 " . $this->config->item('minerd_log_file'));
+			shell_exec("sudo -u " . $this->config->item("system_user") . " sudo chmod 666 " . $this->config->item('minerd_log_file'));
 		}
 		
 		if ($this->isEnableMobileminer())
@@ -1143,11 +1154,20 @@ class Util_model extends CI_Model {
 		return md5($id1.$id2);
 	}
 	
-	// Get local Minera version
+	// Get Remote configuration from Github 
 	public function getRemoteJsonConfig()
 	{
-		$remoteConfig = json_decode(@file_get_contents($this->config->item('remote_config_url')));		
-		return $remoteConfig;
+		$remoteConfig = @file_get_contents($this->config->item('remote_config_url'));
+
+		$this->redis->set("minera_remote_config", $remoteConfig);
+
+		return json_decode($remoteConfig);
+	}
+	
+	// Return saved remote configuration from local Redis 
+	public function returnRemoteJsonConfig()
+	{
+		return json_decode($this->redis->get("minera_remote_config"));
 	}
 	
 	// Send anonymous stats to Minera main system

@@ -270,8 +270,24 @@
 			$("#stored-donation-table").dataTable({bFilter: false, bInfo: false, bPaginate: true, "dom": '<"top"i>rt<"bottom"flp><"clear">'});
 			$("#stored-donation-table_wrapper").hide();
 		    
-		    function changeDonationMood(value) 
+		    function changeDonationWorth(profitability, value) 
 		    {
+		    	var amount = (profitability / 24 / 60 * value);
+		    	var string = (value > 0) ? "about" : "exactly";
+
+		    	if (value >= 60)
+		    	{
+		    		var h = Math.floor(value / 60);
+					var new_value = value % 60;
+			    	var period = h + ' hour(s) ' + ((new_value > 0) ? ' and ' + new_value + ' minute(s)' : '');
+		    	}
+		    	else
+		    	{
+			    	var period = value + ' minutes';
+		    	}
+		    	
+				$(".donation-worth").html('<small>Mining for ' + period + ' in a day your donation per MH/s worths ' + string + ':</small> <span class="label label-success"><i class="fa fa-btc"></i>&nbsp;' + amount.toFixed(8) + '</span>');
+				
 				if (value > 0 && value < 90)
 				{
 					$(".donation-mood").html('<i class="fa fa-smile-o"></i> Your support is much appreciate. Thank you!').removeClass().addClass('donation-mood badge bg-blue');
@@ -293,45 +309,26 @@
 					$(".donation-mood").html('<i class="fa fa-frown-o"></i> Time donation is disabled').removeClass().addClass('donation-mood badge');
 				}
 			}
-			
-		    function changeDonationWorth(value) 
-		    {
-		    	var amount = (0.0008 / 24 / 60 * value);
-		    	var string = (value > 0) ? "about" : "exactly";
-
-		    	if (value >= 60)
-		    	{
-		    		var h = Math.floor(value / 60);
-					value = value % 60;
-			    	var period = h + ' hour(s) ' + ((value > 0) ? ' and ' + value + ' minute(s)' : '');
-		    	}
-		    	else
-		    	{
-			    	var period = value + ' minutes';
-		    	}
-		    	
-				$(".donation-worth").html('<small>Mining for ' + period + ' in a day your donation per MH/s worths ' + string + ':</small> <span class="label label-success"><i class="fa fa-btc"></i>&nbsp;' + amount.toFixed(8) + '</span>');
-			}
+		    
+		    var donation_profitability = $("#option-minera-donation-time").data("donation-profitability");
 		    
 		    $("#option-minera-donation-time").ionRangeSlider({
 				min: 0,
 				max: 360,
 				to: <?php echo (isset($mineraDonationTime)) ? $mineraDonationTime : 0; ?>,
 				type: 'double',
-				step: 15,
+				step: 10,
 				postfix: " Mins",
 				hasGrid: true,
 				onLoad: function (obj) {
-					changeDonationMood(obj.toNumber);
-					changeDonationWorth(obj.toNumber);
+					changeDonationWorth(donation_profitability, obj.toNumber);
 				},
 				onChange: function (obj) {
 					if (obj.fromNumber > 0)
 					{
 						$("#option-minera-donation-time").ionRangeSlider('update', { from: 0 });
 					}
-					changeDonationMood(obj.toNumber);
-					changeDonationWorth(obj.toNumber);
+					changeDonationWorth(donation_profitability, obj.toNumber);
 				}
 			});
 			
@@ -400,16 +397,6 @@
 		    {
 			    if ($('#minerd-software').val() != "cpuminer")
 			    {
-			    	if ($('#minerd-software').val() == "cgdmaxlzeus")
-			    	{
-				    	$("#minerd-log").hide();
-				    	$("input[name='minerd_log']").prop('disabled', true);
-				    }
-				    else
-				    {
-				    	$("#minerd-log").show();
-				    	$("input[name='minerd_log']").prop('disabled', false);
-				    }
 			    	$(".legend-option-autodetect").html("(--scan=all)");
 			    	$(".legend-option-log").html("(--log-file)");
 			    	$("#minerd-autotune").hide();
