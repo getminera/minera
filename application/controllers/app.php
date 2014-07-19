@@ -446,7 +446,7 @@ class App extends Main_Controller {
 			$this->redis->set("anonymous_stats", $anonymousStats);
 						
 			// Startup script rc.local
-			$this->util_model->saveStartupScript($delay, $extracommands);
+			$this->util_model->saveStartupScript($minerSoftware, $delay, $extracommands);
 			
 			// Mobileminer
 			// Enabled

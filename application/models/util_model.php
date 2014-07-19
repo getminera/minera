@@ -916,6 +916,8 @@ class Util_model extends CI_Model {
 	{
 		log_message('error', "Shutdown cmd called");
 		
+		$this->minerStop();
+		sleep(2);
 		exec("sudo shutdown -h now");
 
 		return true;
@@ -925,6 +927,10 @@ class Util_model extends CI_Model {
 	public function reboot()
 	{
 		log_message('error', "Reboot cmd called");
+
+		$this->minerStop();
+		sleep(2);
+		$this->redis->del("cron_lock");
 		
 		exec("sudo reboot");
 
@@ -932,13 +938,13 @@ class Util_model extends CI_Model {
 	}
 	
 	// Write rc.local startup file
-	public function saveStartupScript($delay = 5, $extracommands = false)
+	public function saveStartupScript($minerSoftware, $delay = 5, $extracommands = false)
 	{
 		$command = array($this->config->item("screen_command"), $this->config->item("minerd_command"), $this->getCommandline());
 		
 		$rcLocal = file_get_contents(FCPATH."rc.local.minera");
 		
-		$rcLocal .= "\nsleep $delay\nsu - ".$this->config->item('system_user').' -c "'.implode(' ', $command)."\"\n$extracommands\nexit 0";
+		$rcLocal .= "\nredis-cli set minerd_running_software $minerSoftware\nsleep $delay\nsu - ".$this->config->item('system_user').' -c "'.implode(' ', $command)."\"\n$extracommands\nexit 0";
 		
 		file_put_contents('/etc/rc.local', $rcLocal);
 		
