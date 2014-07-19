@@ -688,7 +688,7 @@ class App extends Main_Controller {
 			break;
 			case "test":
 				//$this->load->model('bfgminer_model');
-				$o = $this->util_model->sendAnonymousStats(123, "hello world!"); //json_encode($this->bfgminer_model->callMinerd()); //$this->util_model->getParsedStats($this->util_model->getMinerStats());
+				$o = $this->util_model->checkCronIsRunning(); //$this->util_model->sendAnonymousStats(123, "hello world!"); //json_encode($this->bfgminer_model->callMinerd()); //$this->util_model->getParsedStats($this->util_model->getMinerStats());
 			break;
 		}
 		

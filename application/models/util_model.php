@@ -917,6 +917,7 @@ class Util_model extends CI_Model {
 		log_message('error', "Shutdown cmd called");
 		
 		$this->minerStop();
+		$this->redis->del("cron_lock");
 		sleep(2);
 		exec("sudo shutdown -h now");
 
@@ -929,8 +930,8 @@ class Util_model extends CI_Model {
 		log_message('error', "Reboot cmd called");
 
 		$this->minerStop();
-		sleep(2);
 		$this->redis->del("cron_lock");
+		sleep(2);
 		
 		exec("sudo reboot");
 
@@ -995,6 +996,7 @@ class Util_model extends CI_Model {
 	public function minerStart()
 	{
 		$this->resetCounters();
+		$this->checkCronIsRunning();
 		$software = $this->redis->get("minerd_software");
 
 		$this->redis->set("minerd_status", true);
@@ -1081,6 +1083,24 @@ class Util_model extends CI_Model {
 		
 		// Reset the counters
 		$this->redis->command("ZADD minerd_totals_stats ".time()." ".json_encode($reset));
+	}
+	
+	// Check if cron is running and force the deletion of lock if not.
+	public function checkCronIsRunning()
+	{
+		$o = shell_exec("ps aux |grep 'index.php app cron'");
+
+		if (preg_match("/\/bin\/sh -c php/", $o))
+		{
+			log_message("error", "Cron running...");
+			return true;
+		}			
+		else
+		{
+			log_message("error", "Cron NOT running. Deleting lock.");
+			$this->redis->del("cron_lock");
+			return false;	
+		}
 	}
 		
 	// Call update cmd
