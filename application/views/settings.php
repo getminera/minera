@@ -677,14 +677,14 @@
 											<!-- anonymus stats -->
 	                                        <div class="form-group">
 	                                            <label>Send anonymous stats</label>
-	                                            <p>Join the Minera community! Send your completely anonymous stats to help grow the total Minera hashrate. (available soon)</p>
+	                                            <p>Join the Minera community! Send your completely anonymous stats to help growing the total Minera hashrate. (available soon)</p>
 												<div class="checkbox">
 													<label>
 														<input type="checkbox" class="anonymous-checkbox" name="anonymous_stats" value="1" <?php if ($anonymousStats) : ?>checked=""<?php endif; ?> />
 														Enable Anonymous Stats
 													</label>                                                
 												</div>
-												<h6>(Stats included are: total hashrate, devices count and miner used. No IP, host or any private data will be sent. Stats are collected and sent every hour. With the stats you will be able to see an aggregated charts on the <a href="http://getminera.com">Minera website</a> as soon as it will be available.)</h6>
+												<h6>(Stats included are: total hashrate, devices count and miner used. No IP, host or any other data will be sent. Stats are collected and sent every hour. With the stats you will be able to see an aggregated chart on the <a href="http://getminera.com">Minera website</a> as soon as it will be available.)</h6>
 											</div>
 														
 	                                </div>

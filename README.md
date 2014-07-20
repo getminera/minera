@@ -3,7 +3,7 @@ Minera
 
 Minera is a complete system to manage and monitor your mining hardware.
 
-Since the 0.3.0 version Minera supports the following miner softwares:
+Since the 0.3.x version Minera supports the following miner softwares:
 
 * [CPUminer-GC3355 fork](https://github.com/siklon/cpuminer-gc3355)
 * [BFGminer latest original version](https://github.com/luke-jr/bfgminer)
@@ -78,6 +78,8 @@ Requirements
 
 Minera should be installed on the mining controller, usually a Raspberry, with a Debian-like Linux distribution and of course an internet connection.
 
+**Note**: You need a decent modern browser, Minera web interface it's NOT tested (and never will be) against IE, so please if you want have the best user experience **DO NOT use Internet Explorer** as browser.
+
 Installing
 -------------
 
@@ -151,7 +153,7 @@ In the same path you can find also *minerd-ubuntu-64bit* file, this one is pre-c
 	cd /var/www/minera/minera-bin
 	sudo cp minerd-ubuntu-64bit minerd
 
-**NOTE**: If you wanna use any other miner software on Ubuntu (or any other system architecture) you need to compile it and put the binary file in "minera-bin/" directory.
+**NOTE**: If you want use any other miner software on Ubuntu (or any other system architecture) you need to compile it and put the binary file in "minera-bin/" directory.
 
 Upgrading
 -------------
@@ -221,7 +223,7 @@ TODO
 * ~~Add cgminer/bfgminer support~~
 * Add email notification
 * Add start/stop daemon
-* Add Mobileminer actions
+* ~~Add Mobileminer actions~~
 * ~~Add JSON config support~~
 
 Screenshots
