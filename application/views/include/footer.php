@@ -80,6 +80,26 @@
 				});
             });
             
+            $(".reset-action").click(function(e) {
+	           	e.preventDefault();
+	           	var action =  $(this).data("reset-action");
+	        	
+			   	$("#modal-saving-label").html("Resetting: "+action+" , please wait...");
+	        	$('#modal-saving').modal('show');
+	        	
+	        	var apiUrl = "<?php echo site_url("app/api") ?>?command=reset_action&action="+action;
+
+				$.ajax({
+					type: "GET",
+					url: apiUrl,
+					cache: false,
+					success:  function(resp){
+						$('#modal-saving').modal('hide');
+						window.location.reload();
+					}
+				});
+            });
+            
 			$('.system-open-terminal').click(function(e){
 	           	e.preventDefault();
 

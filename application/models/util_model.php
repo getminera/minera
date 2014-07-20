@@ -1136,6 +1136,32 @@ class Util_model extends CI_Model {
 		return json_encode($lines);
 	}
 	
+	// Reset Minera data
+	public function reset($action)
+	{
+		switch($action)
+		{					
+		    case "charts":
+				$this->redis->del("minerd_totals_stats");
+				$this->redis->del("minerd_delta_stats");
+				$this->redis->del("minerd_stats");
+				$this->redis->del("minerd_avg_stats_86400");
+				$this->redis->del("minerd_avg_stats_3600");
+				$this->redis->del("minerd_avg_stats_300");
+				$o = json_encode(array("success" => true));
+		    break;
+			case "options":
+				$this->redis->set("guided_options", 1);
+				$this->redis->set("manual_options", 0);
+				$o = json_encode(array("success" => true));
+		    break;
+		    default:
+		    	$o = json_encode(array("err" => true));
+		}
+		
+		return $o;
+	}
+	
 	// Check Minera version
 	public function checkUpdate()
 	{

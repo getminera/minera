@@ -768,6 +768,37 @@
 								
 								</form>
                             </div>
+                            
+							<!-- Reset box -->
+							<div class="box box-primary">
+								<div class="box-header">
+									<!-- tools box -->
+                                    <div class="pull-right box-tools">
+                                        <button class="btn btn-default btn-xs" data-widget="collapse" data-toggle="tooltip" title="" data-original-title="Collapse"><i class="fa fa-minus"></i></button>
+                                    </div><!-- /. tools -->
+                                    <i class="fa fa-warning"></i>
+                                    
+                                    <h3 class="box-title">Resets</h3>
+                                </div>
+								
+                                <div class="box-body">
+									<p>If you are in trouble or you wanna start over, you can resets some of the stored data.</p>
+									<div class="form-group">
+                                    	<button type="submit" class="btn btn-danger reset-action" data-reset-action="charts"><i class="fa fa-eraser"></i> Reset</button>
+                                    	<label>Charts data</label>
+                                    	<h6>This resets all the stored stats needed by the charts, so charts will start from zero.</h6>
+									</div>
+									<div class="form-group">
+                                    	<button type="submit" class="btn btn-danger reset-action" data-reset-action="options"><i class="fa fa-eraser"></i> Reset</button>
+										<label>Guided/manual settings</label>
+										<h6>If you have problem choosing between guided/manual options above you can reset them here.</h6>
+									</div>
+                                </div>
+								<div class="box-footer">
+									<h6>Clicking the reset buttons resets data immediately, there isn't any confirmation to do. Reset actions aren't recoverable, data will be lost.</h6>
+								</div>
+								
+                            </div>
                         
                         </section><!-- /.left col -->
                         

@@ -669,6 +669,11 @@ class App extends Main_Controller {
 			case "history_stats":
 				$o = $this->util_model->getHistoryStats($this->input->get('type'));
 			break;
+			case "reset_action":
+				$o = $this->util_model->reset($this->input->get('action'));
+				$this->session->set_flashdata('message', '<b>Success!</b> Data has been reset.');
+				$this->session->set_flashdata('message_type', 'success');
+			break;
 			case "miner_action":
 				$action = ($this->input->get('action')) ? $this->input->get('action') : false;
 				switch($action)
