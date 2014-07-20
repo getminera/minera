@@ -1698,9 +1698,9 @@
 		function convertHashrate(hash)
 		{
 			if (hash > 900000)
-				return hash/1000000 + 'Gh/s';
+				return (hash/1000000).toFixed(3) + 'Gh/s';
 			else if (hash > 900)
-				return hash/1000 + 'Mh/s';
+				return (hash/1000).toFixed(3) + 'Mh/s';
 			else
 				return hash + 'Kh/s';
 		}
