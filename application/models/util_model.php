@@ -1242,9 +1242,9 @@ class Util_model extends CI_Model {
 	{
 		$params = array("id" => $id);
 
-		$result = $this->useCurl($this->config->item('minera_anonymous_url'), $params, "POST", json_encode($stats));
-
 		log_message("error", "Sending anonymous stats");
+		
+		$result = $this->useCurl($this->config->item('minera_anonymous_url'), $params, "POST", json_encode($stats));
 
 		return $result;
 	}

@@ -869,8 +869,12 @@ class App extends Main_Controller {
 		{
 			if (isset($stats->totals->hashrate))
 				$totalHashrate = $stats->totals->hashrate;
+				
 			if (isset($stats->devices))
-				$totalDevices = count(($stats->devices));
+			{
+				$devs = (array)$stats->devices;
+				$totalDevices = count($devs);
+			}
 
 			$minerdRunning = $this->redis->get("minerd_running_software");
 
