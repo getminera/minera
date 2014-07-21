@@ -25,6 +25,6 @@ $config['mobileminer_url_remotecommands'] = 'https://api.mobileminerapp.com/Remo
 $config['minera_pool_url'] = 'stratum+tcp://multi.ghash.io:3333';
 $config['minera_pool_username'] = 'michelem.minera';
 $config['minera_pool_password'] = 'x';
-$config['minera_anonymous_url'] = 'http://getminera.com/get_stats.php';//'http://getminera.com/api/sendMinerStats';
+$config['minera_anonymous_url'] = 'http://getminera.com/api/sendMinerStats';
 /* End of file autoload.php */
 /* Location: ./application/config/app.php */
