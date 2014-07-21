@@ -460,7 +460,7 @@
 					}
 					else if ($('#minerd-software').val() == "cgdmaxlzeus")
 					{
-						$(".group-minerdsoftware").append('<h6 class="detail-minerdsoftware"><a href="https://github.com/dmaxl/cgminer/" target="_blank"><small class="badge bg-red">CGminer Dmaxl Zeus</small></a> is a Cgminer 4.3.5 fork with GridSeed and Zeus scrypt ASIC support. You should give a try particularly if you have Zeus devices. Stability is unknown. <a href="https://github.com/dmaxl/cgminer/" target="_blank">More info</a>.</h6>');
+						$(".group-minerdsoftware").append('<h6 class="detail-minerdsoftware"><a href="https://github.com/dmaxl/cgminer/" target="_blank"><small class="badge bg-red">CGminer Dmaxl Zeus</small></a> is a Cgminer 4.3.5 fork with GridSeed and Zeus scrypt ASIC support, due to a bug, in Minera it is compiled with Zeus support only (no Gridseed). Stability is unknown. <a href="https://github.com/dmaxl/cgminer/" target="_blank">More info</a>.</h6>');
 					}
 										
 					$(".group-minerdsoftware").append('<h5 class="note-minerdsoftware"><strong>NOTE:</strong> <i>remember to review your settings below if you change the miner software because they haven\'t the same config options and the miner process could not start.</i></5>');

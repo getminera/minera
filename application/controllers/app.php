@@ -428,7 +428,9 @@ class App extends Main_Controller {
 				$scheduledEventAction = $this->input->post('scheduled_event_action');
 			}
 			if ($this->redis->get("scheduled_event_time") != $scheduledEventTime)
-				$this->redis->set("scheduled_event_start_time", $scheduledEventStartTime);
+			{
+				$this->redis->set("scheduled_event_start_time", $scheduledEventStartTime);	
+			}
 			$this->redis->set("scheduled_event_time", $scheduledEventTime);
 			$this->redis->set("scheduled_event_action", $scheduledEventAction);
 			
@@ -848,7 +850,7 @@ class App extends Main_Controller {
 			$timeToRunEvent = (($scheduledEventTime*3600) + $scheduledEventStartTime);
 			if (time() >= $timeToRunEvent)
 			{
-				log_message("error", "Running scheduled event -> ".strtoupper($scheduledEventAction));
+				log_message("error", "Running scheduled event ($timeToRunEvent) -> ".strtoupper($scheduledEventAction));
 				$this->redis->set("scheduled_event_start_time", time());
 				if ($scheduledEventAction == "restart")
 				{
@@ -864,6 +866,11 @@ class App extends Main_Controller {
 		// Send anonymous stats
 		$anonynousStatsEnabled = $this->redis->get("anonymous_stats");
 		$mineraSystemId = $this->redis->get("minera_system_id");
+		if (!$mineraSystemId)
+		{
+			$mineraSystemId = $this->util_model->generateMineraId();
+			$this->redis->set("minera_system_id", $mineraSystemId);
+		}
 
 		if ($this->util_model->isOnline() && $anonynousStatsEnabled && $mineraSystemId)
 		{
