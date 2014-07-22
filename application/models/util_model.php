@@ -1244,6 +1244,7 @@ class Util_model extends CI_Model {
 
 		log_message("error", "Sending anonymous stats");
 		
+		//$result = $this->useCurl($this->config->item('minera_anonymous_url')."/".$id, false, "POST", json_encode($stats));
 		$result = $this->useCurl($this->config->item('minera_anonymous_url'), $params, "POST", json_encode($stats));
 
 		return $result;
@@ -1461,7 +1462,10 @@ class Util_model extends CI_Model {
 	
 	public function useCurl($url, $params, $method, $post = false)
 	{
-		$ch = curl_init($url."?".http_build_query($params));
+		if ($params)
+			$ch = curl_init($url."?".http_build_query($params));
+		else
+			$ch = curl_init($url);
 
 		curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
 		curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
