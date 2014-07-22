@@ -28,6 +28,7 @@ chown -R minera.minera `pwd`
 mkdir -p $MINERA_LOGS
 chmod 777 $MINERA_LOGS
 chmod 777 $MINERA_CONF
+chmod 777 minera-bin/cgminerStartupScript
 chown -R minera.minera $MINERA_LOGS
 rm -rf $MINERA_OLD_LOGS
 ln -s $MINERA_LOGS $MINERA_OLD_LOGS

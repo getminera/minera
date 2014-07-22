@@ -1006,6 +1006,7 @@ class Util_model extends CI_Model {
 		
 		// If it's cgminer with logging we need to create a script and give that to screen
 		$specialLog = null;
+		log_message("error", $this->config->item("minerd_special_log"));
 		if ($this->config->item("minerd_special_log") && $this->redis->get("minerd_log"))
 		{
 			$script = "#!/bin/bash\n\n".$this->config->item("minerd_command")." ".$this->getCommandline()." 2>".$this->config->item("minerd_log_file");
