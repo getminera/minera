@@ -528,7 +528,10 @@ class Util_model extends CI_Model {
 		// Store average stats for period
 		log_message("error", "Stored AVG stats for period ".$period.": ".$stats);
 		
-		$this->redis->command("ZADD minerd_avg_stats_".$period. " ".$now." ".$stats);
+		$this->redis->command("ZREM minerd_avg_stats_".$period." false");
+		
+		if ($stats)
+			$this->redis->command("ZADD minerd_avg_stats_".$period. " ".$now." ".$stats);
 	}
 	
 	// Calculate and store the average statistics 5m / 1h / 1d for old delta stats
@@ -1006,7 +1009,6 @@ class Util_model extends CI_Model {
 		
 		// If it's cgminer with logging we need to create a script and give that to screen
 		$specialLog = null;
-		log_message("error", $this->config->item("minerd_special_log"));
 		if ($this->config->item("minerd_special_log") && $this->redis->get("minerd_log"))
 		{
 			$script = "#!/bin/bash\n\n".$this->config->item("minerd_command")." ".$this->getCommandline()." 2>".$this->config->item("minerd_log_file");
