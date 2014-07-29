@@ -1,6 +1,9 @@
 Minera
 ==============
 
+**[Official Website](http://getminera.com/)**
+_______
+
 Minera is a complete system to manage and monitor your mining hardware.
 
 Since the 0.3.x version Minera supports the following miner softwares:
@@ -16,9 +19,10 @@ If you like it, please consider a donation:
 
 Thanks.
 
-**[Download minera-latest.img.zip](http://j.mp/minera-latest-img-zip)**
+**[Download minera-latest.img.zip](http://getminera.com/download/latest)**
 
 Look below for how to install / use it.
+_______
 
 Support
 -------------
@@ -27,6 +31,7 @@ If you need support please try to look at the main [forum thread here](https://b
 
 * [General support/discussion forum](https://bitcointalk.org/index.php?topic=596620.0)
 * [Bugs, issues, requests](https://github.com/michelem09/minera/issues)
+_______
 
 Features
 -------------
@@ -72,6 +77,7 @@ This is a list of some of the Minera's features:
 * Scheduled event (reboot/restart)
 * Dashboard refresh time
 * Minera password management
+_______
 
 Requirements
 -------------
@@ -91,7 +97,7 @@ This is the Minera image file for Raspberry PI, you have only to download it and
 
 You need at least a 4GB SD Card:
 
-**[Download minera-latest.img.zip](http://j.mp/minera-latest-img-zip)** (md5 e4946606ab9883f493fca51b615ce9e8)
+**[Download minera-latest.img.zip](http://getminera.com/download/latest)** (md5 e4946606ab9883f493fca51b615ce9e8)
 
 
 Default passwords are "*minera*" you should change them as well as the miner settings.
@@ -154,6 +160,7 @@ In the same path you can find also *minerd-ubuntu-64bit* file, this one is pre-c
 	sudo cp minerd-ubuntu-64bit minerd
 
 **NOTE**: If you want use any other miner software on Ubuntu (or any other system architecture) you need to compile it and put the binary file in "minera-bin/" directory.
+_______
 
 Upgrading
 -------------
@@ -171,6 +178,7 @@ sudo ./upgrade_minera.sh
 ```
 
 Your Minera system should be upgraded with the latest commit available.
+_______
 
 Configuring
 -------------
@@ -184,6 +192,7 @@ Go to settings (*Miner -> Settings*) and choose your preferred options.
 A sample settings is pre-configured when you run the install_minera.sh script.
 
 Please remember to change your minera's settings or you will mine for my workers :)
+_______
 
 Troubleshooting
 -------------
@@ -210,6 +219,7 @@ If you have guided/manual options both selected in the settings page try run thi
 If you wanna check the raw JSON stats from your minerd, please point your browser to:
 
 	http://<your-minera-ip>/minera/index.php/app/stats
+_______
 
 TODO
 -------------
@@ -225,6 +235,7 @@ TODO
 * Add start/stop daemon
 * ~~Add Mobileminer actions~~
 * ~~Add JSON config support~~
+_______
 
 Screenshots
 -------------
@@ -250,6 +261,7 @@ Settings:
 Web Terminal:
 
 [![Settings](https://github.com/michelem09/minera/raw/master/assets/img/screen_minera_terminal.png)](https://github.com/michelem09/minera/raw/master/assets/img/screen_minera_terminal_hi.png)
+_______
 
 Donations
 -------------
@@ -263,6 +275,7 @@ Minera is a free and Open Source software, if you like it, please consider a don
     Dogecoin: DLAHwNxfUTUcePewbkvwvAouny19mcosA7
 
 Thanks and happy mining!
+_______
 
 Credits
 -------------
@@ -279,6 +292,7 @@ I wish to thank every plugin, libraries, framework, icons, etc authors for their
 * [Jquery DataTables](https://datatables.net/) for the amazing tables
 * [Twitter Bootstrap](http://getbootstrap.com/) for the HTML/CSS theme
 * [Font Awesome](http://fortawesome.github.io/Font-Awesome/), [Ion icons](http://ionicons.com/) and [Glyphicon](http://glyphicons.com/) for the stunning well...icons of course :)
+_______
 
 LICENSE
 -------------
