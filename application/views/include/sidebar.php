@@ -181,7 +181,7 @@
 					            <!-- Menu Footer-->
 					            <li class="user-footer">
 					                <div class="pull-left">
-					                    <a href="https://github.com/michelem09/minera" class="btn btn-default btn-flat">Github</a>
+					                    <a href="http://getminera.com" class="btn btn-default btn-flat">Get Minera</a>
 					                </div>
 					                <div class="pull-right">
 					                	<?php if ($mineraUpdate) : ?>
