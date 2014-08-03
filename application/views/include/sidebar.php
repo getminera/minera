@@ -168,13 +168,13 @@
 					            </li>
 					            <!-- Menu Body -->
 					            <li class="user-body">
-					                <div class="col-xs-3 text-center">
+					                <div class="col-xs-4 text-center">
 										<a href="https://github.com/michelem09/minera" target="_blank">Github</a>
 									</div>
-					                <div class="col-xs-3 text-center">
+					                <div class="col-xs-4 text-center">
 										<a href="https://bitcointalk.org/index.php?topic=596620.0" target="_blank">Forum</a>
 									</div>
-					                <div class="col-xs-3 text-center">
+					                <div class="col-xs-4 text-center">
 					                    <a href="http://twitter.com/michelem" target="_blank">Follow</a>					
 									</div>
 					            </li>
