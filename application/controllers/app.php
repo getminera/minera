@@ -61,6 +61,7 @@ class App extends Main_Controller {
 		$data['dashboard_refresh_time'] = $this->redis->get("dashboard_refresh_time");
 		$data['pageTitle'] = ($this->redis->get("mobileminer_system_name")) ? $this->redis->get("mobileminer_system_name")." > Minera - Dashboard" : "Minera - Dashboard";
 		$data['minerdRunning'] = $this->redis->get("minerd_running_software");
+		$data['minerdRunningUser'] = $this->redis->get("minerd_running_user");
 		$data['minerdSoftware'] = $this->redis->get("minerd_software");
 		
 		$this->load->view('include/header', $data);
@@ -86,6 +87,7 @@ class App extends Main_Controller {
 		$data['mineraUpdate'] = $this->util_model->checkUpdate();
 		$data['pageTitle'] = ($this->redis->get("mobileminer_system_name")) ? $this->redis->get("mobileminer_system_name")." > Minera - Charts" : "Minera - Charts";
 		$data['minerdRunning'] = $this->redis->get("minerd_running_software");
+		$data['minerdRunningUser'] = $this->redis->get("minerd_running_user");		
 		$data['minerdSoftware'] = $this->redis->get("minerd_software");
 		
 		$this->load->view('include/header', $data);
@@ -139,6 +141,7 @@ class App extends Main_Controller {
 		$data['minerdAutorestartDevices'] = $this->redis->get('minerd_autorestart_devices');
 		$data['minerdAutorestartTime'] = $this->redis->get('minerd_autorestart_time');
 		$data['minerdAutorecover'] = $this->redis->get('minerd_autorecover');
+		$data['minerdUseRoot'] = $this->redis->get('minerd_use_root');
 		$data['minerdScrypt'] = $this->redis->get('minerd_scrypt');
 		$data['minerdAutodetect'] = $this->redis->get('minerd_autodetect');
 		$data['minerdAutotune'] = $this->redis->get('minerd_autotune');
@@ -189,6 +192,7 @@ class App extends Main_Controller {
 		$data['settingsScript'] = true;
 		$data['pageTitle'] = "Minera - Settings";
 		$data['minerdRunning'] = $this->redis->get("minerd_running_software");
+		$data['minerdRunningUser'] = $this->redis->get("minerd_running_user");
 		$data['minerdSoftware'] = $this->redis->get("minerd_software");
 		$data['donationProfitability'] = ($prof = $this->util_model->returnRemoteJsonConfig()) ? $prof->donation_profitability : "0.00075";
 		
@@ -384,6 +388,7 @@ class App extends Main_Controller {
 			$this->util_model->setCommandline($settings);
 			$this->redis->set("minerd_json_settings", $jsonConfRedis);
 			$this->redis->set("minerd_autorecover", $this->input->post('minerd_autorecover'));
+			$this->redis->set("minerd_use_root", $this->input->post('minerd_use_root'));
 			$this->redis->set("minerd_autorestart", $this->input->post('minerd_autorestart'));
 			$this->redis->set("minerd_autorestart_devices", $this->input->post('minerd_autorestart_devices'));
 			($this->input->post('minerd_autorestart_time') > 0) ? $this->redis->set("minerd_autorestart_time", $this->input->post('minerd_autorestart_time')) : 600;
@@ -497,6 +502,8 @@ class App extends Main_Controller {
 			}
 
 		}
+		
+		//$this->redis->command("BGSAVE");
 		
 		if (is_array($extramessages))
 		{
@@ -695,7 +702,7 @@ class App extends Main_Controller {
 			break;
 			case "test":
 				//$this->load->model('bfgminer_model');
-				$o = $this->util_model->checkCronIsRunning(); //$this->util_model->sendAnonymousStats(123, "hello world!"); //json_encode($this->bfgminer_model->callMinerd()); //$this->util_model->getParsedStats($this->util_model->getMinerStats());
+				$o = $this->redis->command("BGSAVE"); //$this->util_model->checkCronIsRunning(); //$this->util_model->sendAnonymousStats(123, "hello world!"); //json_encode($this->bfgminer_model->callMinerd()); //$this->util_model->getParsedStats($this->util_model->getMinerStats());
 			break;
 		}
 		
@@ -847,17 +854,27 @@ class App extends Main_Controller {
 		$scheduledEventAction = $this->redis->get("scheduled_event_action");
 		if ($scheduledEventTime > 0)
 		{
+			log_message("error", "TIME: ".time()." - SCHEDULED START TIME: ".$scheduledEventStartTime);
+			
 			$timeToRunEvent = (($scheduledEventTime*3600) + $scheduledEventStartTime);
 			if (time() >= $timeToRunEvent)
-			{
+			{				
+				
 				log_message("error", "Running scheduled event ($timeToRunEvent) -> ".strtoupper($scheduledEventAction));
+				
 				$this->redis->set("scheduled_event_start_time", time());
+
+				$this->redis->command("BGSAVE");
+								
+				log_message("error", "TIME: ".time()." - AFTER SCHEDULED START TIME: ".$this->redis->get("scheduled_event_start_time"));
+				
 				if ($scheduledEventAction == "restart")
 				{
 					$this->util_model->minerRestart();
 				}
 				else
 				{
+					sleep(3);
 					$this->util_model->reboot();
 				}
 			}

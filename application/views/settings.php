@@ -551,6 +551,17 @@
 												</div>
 											</div>
 											
+											<!-- Use root -->
+											<div class="form-group">
+												<label>Miner use superuser (root)</label>
+												<div class="checkbox">
+													<label>
+														<input type="checkbox" name="minerd_use_root" value="1" <?php if ($minerdUseRoot) : ?>checked=""<?php endif; ?> />
+														Enable superuser mode <small>(<strong>If your devices cannot get recognised please try enabling this option.</strong> The miner process will start with superuser/root rights, useful for some kind of devices.</small>)
+													</label>                                                
+												</div>
+											</div>
+											
 											<hr />
 											
 	                                        <!-- Minerd final config -->

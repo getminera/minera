@@ -67,6 +67,8 @@
 			   	$("#modal-saving-label").html("Sending action: "+action+" , please wait...");
 	        	$('#modal-saving').modal('show');
 	        	
+	        	saveSettings();
+	        	
 	        	var apiUrl = "<?php echo site_url("app/api") ?>?command=miner_action&action="+action;
 
 				$.ajax({

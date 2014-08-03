@@ -20,6 +20,15 @@ class Util_model extends CI_Model {
 
 	public function switchMinerSoftware($software = false)
 	{
+		if ($this->redis->get("minerd_use_root"))
+		{
+			$this->config->set_item('system_user', 'root');		
+		}
+		else
+		{
+			$this->config->set_item('system_user', 'minera');
+		}
+		
 		if ($software)
 			$this->_minerdSoftware = $software;
 		else
@@ -921,7 +930,9 @@ class Util_model extends CI_Model {
 		
 		$this->minerStop();
 		$this->redis->del("cron_lock");
+		$this->redis->command("BGSAVE");
 		sleep(2);
+		
 		exec("sudo shutdown -h now");
 
 		return true;
@@ -934,6 +945,7 @@ class Util_model extends CI_Model {
 
 		$this->minerStop();
 		$this->redis->del("cron_lock");
+		$this->redis->command("BGSAVE");
 		sleep(2);
 		
 		exec("sudo reboot");
@@ -944,6 +956,8 @@ class Util_model extends CI_Model {
 	// Write rc.local startup file
 	public function saveStartupScript($minerSoftware, $delay = 5, $extracommands = false)
 	{
+		$this->switchMinerSoftware($minerSoftware);
+		
 		$command = array($this->config->item("screen_command"), $this->config->item("minerd_command"), $this->getCommandline());
 		
 		$rcLocal = file_get_contents(FCPATH."rc.local.minera");
@@ -982,15 +996,19 @@ class Util_model extends CI_Model {
 		{
 			$this->switchMinerSoftware();
 		}
+		
+		$minerdUser = ($this->redis->get("minerd_running_user")) ? $this->redis->get("minerd_running_user") : $this->config->item("system_user");
 
-		exec("sudo -u " . $this->config->item("system_user") . " " . $this->config->item("screen_command_stop"));
-		exec("sudo -u " . $this->config->item("system_user") . " /usr/bin/killall -s9 minerd");
+		exec("sudo -u " . $minerdUser . " " . $this->config->item("screen_command_stop"));
+		exec("sudo -u " . $minerdUser . " /usr/bin/killall -s9 minerd");
 		
 		$this->redis->del("latest_stats");
 		$this->redis->set("minerd_status", false);
 		$this->redis->set("minerd_running_software", false);
 		
 		log_message('error', $this->_minerdSoftware." stopped");
+		
+		$this->redis->command("BGSAVE");
 					
 		return true;
 	}
@@ -1006,6 +1024,8 @@ class Util_model extends CI_Model {
 		$this->redis->set("minerd_running_software", $software);
 
 		$this->switchMinerSoftware();
+		
+		$this->redis->set("minerd_running_user", $this->config->item("system_user"));
 		
 		// If it's cgminer with logging we need to create a script and give that to screen
 		$specialLog = null;
@@ -1052,6 +1072,8 @@ class Util_model extends CI_Model {
 				log_message("error", "Sent MobileMiner pools: ".json_encode($mmPools));
 			}			
 		}
+		
+		$this->redis->command("BGSAVE");
 		
 		return true;
 	}
