@@ -553,7 +553,7 @@
 											
 											<!-- Use root -->
 											<div class="form-group">
-												<label>Miner use superuser (root)</label>
+												<label>Miner superuser (root)</label>
 												<div class="checkbox">
 													<label>
 														<input type="checkbox" name="minerd_use_root" value="1" <?php if ($minerdUseRoot) : ?>checked=""<?php endif; ?> />
