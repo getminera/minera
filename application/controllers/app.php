@@ -503,7 +503,7 @@ class App extends Main_Controller {
 
 		}
 		
-		//$this->redis->command("BGSAVE");
+		$this->redis->command("BGSAVE");
 		
 		if (is_array($extramessages))
 		{
