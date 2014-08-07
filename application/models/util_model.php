@@ -1458,6 +1458,45 @@ class Util_model extends CI_Model {
 	{
 		return strtok( exec( "cat /proc/uptime" ), "." );
 	}
+	
+	public function importFile($post)
+	{
+		$config['upload_path'] = '/tmp/';
+		$config['allowed_types'] = 'json|txt';
+		$config['overwrite'] = true;
+
+		$this->load->library('upload', $config);
+		
+		if ( ! $this->upload->do_upload('import_system_config'))
+		{
+			$data = array('error' => $this->upload->display_errors());
+		}
+		else
+		{
+			$data = $this->upload->data();
+			if (file_exists($data['full_path']))
+			{
+				$json = file_get_contents($data['full_path']);
+				if ($this->isJson($json))
+				{
+					$data = json_decode($json);
+				}
+				else
+				{
+					$data = array('error' => "File is not JSON valid");
+				}
+			}
+		}
+
+		log_message("error", var_export($data, true));
+			
+		return $data;
+	}
+
+	public function isJson($string) {
+		json_decode($string);
+		return (json_last_error() == JSON_ERROR_NONE);
+	}
 
 	// Socket server to get a fake miner to do tests
 	public function fakeMiner()

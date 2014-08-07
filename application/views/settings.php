@@ -38,7 +38,7 @@
                         <!-- Top section -->
                         <section class="col-md-12">
 								
-							<form action="#" method="post" role="form" id="minersettings">
+							<form action="#" method="post" role="form" id="minersettings" enctype="multipart/form-data">
 								<input type="hidden" name="save_settings" value="1" />                                                    
 
 								<div class="row">
@@ -587,6 +587,40 @@
 									</div>
 	                            </div>
 
+								<!-- Import/Export box -->
+								<div class="box box-primary">
+								    <div class="box-header">
+								    	<!-- tools box -->
+			                            <div class="pull-right box-tools">
+			                                <button class="btn btn-default btn-xs" data-widget="collapse" data-toggle="tooltip" title="" data-original-title="Collapse"><i class="fa fa-minus"></i></button>
+			                            </div><!-- /. tools -->
+			                            <i class="fa fa-code-fork"></i>
+			                            
+			                            <h3 class="box-title">Import/Export/Share Settings</h3>
+			                        </div>
+								    
+			                        <div class="box-body">
+								    	<p>You can clone your system to save and restore everything including stats, charts, settings, pools, etc... Or you can choose to save your current config and share it with the community.</p>
+								    	
+										<div class="import-export-box">
+											<span class="btn btn-success fileinput-button margin-bottom" data-toggle="tooltip" data-title="File must be a JSON export file from a Minera system">
+												<i class="glyphicon glyphicon-plus"></i>
+												<span>Import file...</span>
+												<input class="import-file" type="file" name="import_system_config">
+											</span>
+											<!-- The global progress bar -->
+											<div id="progress" class="progress">
+												<div class="progress-bar progress-bar-success"></div>
+											</div>
+											<!-- The container for the uploaded files -->
+											<div id="files" class="files"></div>
+										</div>
+								    	
+								    	<p><button class="btn btn-warning" name="save" value="1">Export System</button> <button class="btn btn-default" name="save" value="1">Save Miner Config</button></p>
+								    	
+			                        </div>
+			                    </div>
+			                    
 								<!-- Topbar box -->
 								<div class="box box-primary">
 								    <div class="box-header">
@@ -594,7 +628,7 @@
 			                            <div class="pull-right box-tools">
 			                                <button class="btn btn-default btn-xs" data-widget="collapse" data-toggle="tooltip" title="" data-original-title="Collapse"><i class="fa fa-minus"></i></button>
 			                            </div><!-- /. tools -->
-			                            <i class="fa fa-dashboard"></i>
+			                            <i class="fa fa-money"></i>
 			                            
 			                            <h3 class="box-title">Top bar Settings</h3>
 			                        </div>

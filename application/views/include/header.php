@@ -14,6 +14,7 @@
 	
 	<link href="<?php echo base_url('favicon.ico') ?>" rel="icon">
 	<link href="<?php echo base_url('assets/css/bootstrap.min.css') ?>" rel="stylesheet" />
+	<link href="<?php echo base_url('assets/css/bootstrap-switch.min.css') ?>" rel="stylesheet">
 	<link href="<?php echo base_url('assets/css/font-awesome.css') ?>" rel="stylesheet" />
 	<link href="<?php echo base_url('assets/css/ionicons.min.css') ?>" rel="stylesheet" />
 	<link href="<?php echo base_url('assets/css/datatables/dataTables.bootstrap.css') ?>" rel="stylesheet" />
@@ -23,4 +24,6 @@
 	<link href="<?php echo base_url('assets/css/AdminLTE.css') ?>" rel="stylesheet" />
 	<link href="<?php echo base_url('assets/css/ion.rangeSlider.css') ?>" rel="stylesheet" />
 	<link href="<?php echo base_url('assets/css/ion.rangeSlider.skinFlat.css') ?>" rel="stylesheet" />	
+	<link href="<?php echo base_url('assets/css/jquery.fileupload.css') ?>" rel="stylesheet" />	
+	<link href="<?php echo base_url('assets/css/jquery.fileupload-ui.css') ?>" rel="stylesheet" />	
 </head>

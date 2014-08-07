@@ -135,10 +135,15 @@ $(function() {
      * iCheck plugin in.
      * You can find the documentation at http://fronteed.com/iCheck/
      */
-    $("input[type='checkbox'], input[type='radio']").iCheck({
-        checkboxClass: 'icheckbox_minimal',
+    $("input[type='checkbox']").bootstrapSwitch({
+		size: 'small',
+		onColor: 'success'
+    });
+    
+    $("input[type='radio']").iCheck({
         radioClass: 'iradio_minimal'
     });
+    
 
 });
 function fix_sidebar() {

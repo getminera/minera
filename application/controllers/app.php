@@ -17,7 +17,6 @@ class App extends Main_Controller {
 	*/
 	public function index()
 	{	
-		//$this->util_model->autoAddMineraPool();
 		$data['htmlTag'] = "lockscreen";
 		$data['pageTitle'] = "Welcome to Minera";
 		$data['isOnline'] = $this->util_model->isOnline();
@@ -46,8 +45,6 @@ class App extends Main_Controller {
 	{
 		if (!$this->session->userdata("loggedin"))
 			redirect('app/index');
-		
-		//$this->util_model->autoAddMineraPool();
 		
 		$data['minerdPools'] = json_decode($this->util_model->getPools());
 		$data['btc'] = $this->util_model->getBtcUsdRates();
@@ -682,6 +679,9 @@ class App extends Main_Controller {
 				$o = $this->util_model->reset($this->input->get('action'));
 				$this->session->set_flashdata('message', '<b>Success!</b> Data has been reset.');
 				$this->session->set_flashdata('message_type', 'success');
+			break;
+			case "import_file":
+				$o = json_encode($this->util_model->importFile($this->input->post()));
 			break;
 			case "miner_action":
 				$action = ($this->input->get('action')) ? $this->input->get('action') : false;

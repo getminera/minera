@@ -3,6 +3,7 @@
 	<script src="<?php echo base_url('assets/js/jquery.ui.touch-punch.min.js') ?>"></script>
 	<script src="<?php echo base_url('assets/js/lodash.min.js') ?>"></script>
 	<script src="<?php echo base_url('assets/js/bootstrap.min.js') ?>"></script>
+	<script src="<?php echo base_url('assets/js/bootstrap-switch.min.js') ?>"></script>
 	<script src="<?php echo base_url('assets/js/custom.js') ?>"></script>
 
     <!-- AdminLTE App -->
@@ -258,7 +259,9 @@
 	<?php if ($settingsScript) : ?>
 	<!-- jQuery Validation -->
     <script src="<?php echo base_url('assets/js/jquery.validate.min.js') ?>" type="text/javascript"></script>
-    
+    <script src="<?php echo base_url('assets/js/jquery.iframe-transport.js') ?>" type="text/javascript"></script>
+    <script src="<?php echo base_url('assets/js/jquery.fileupload.js') ?>" type="text/javascript"></script>
+        
     <!-- Settings script -->
     <script type="text/javascript">
     	
@@ -266,6 +269,33 @@
 		    "use strict";
 		    
 		    $(".box-tools").click( function(e) { e.preventDefault(); });
+		    
+		    $('#progress').hide();
+		    
+			$('.import-file').fileupload({
+				url: '<?php echo site_url("app/api?command=import_file"); ?>',
+				dataType: 'json',
+				done: function (e, data) {
+					console.log(data.result);
+					if (data.result.error)
+					{
+						$('#files').append('<div class="callout callout-danger">'+data.result.error+'</div>');
+						setInterval(function(){ $('#files').fadeOut(); }, 5000);
+					}
+					else
+					{
+						$('#files').append('<div class="callout callout-grey"><p class="margin-bottom">File seems good, click the button to start trying import.</p><p><button class="btn btn-primary" name="import-system" value="1">Import System</button></p></div>');
+					}
+				},
+				progressall: function (e, data) {
+					//$('#progress').show();
+					var progress = parseInt(data.loaded / data.total * 100, 10);
+					$('#progress .progress-bar').css(
+						'width',
+						progress + '%'
+					);
+				}
+			}).prop('disabled', !$.support.fileInput).parent().addClass($.support.fileInput ? undefined : 'disabled');
 		    
 		    //Make the dashboard widgets sortable Using jquery UI
 		    $(".poolSortable").sortable({
