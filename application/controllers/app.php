@@ -193,6 +193,9 @@ class App extends Main_Controller {
 		$data['minerdSoftware'] = $this->redis->get("minerd_software");
 		$data['donationProfitability'] = ($prof = $this->util_model->returnRemoteJsonConfig()) ? $prof->donation_profitability : "0.00075";
 		
+		// Saved Configs
+		$data['savedConfigs'] = $this->redis->command("HVALS saved_miner_configs");
+		
 		$this->load->view('include/header', $data);
 		$this->load->view('include/sidebar', $data);
 		$this->load->view('settings', $data);
@@ -205,12 +208,14 @@ class App extends Main_Controller {
 	public function save_settings()
 	{
 		$extramessages = false;
-			
+		$dataObj = new stdClass();
+		
 		if ($this->input->post('save_settings'))
 		{
 			$minerSoftware = $this->input->post('minerd_software');
 			$this->redis->set("minerd_software", $minerSoftware);
 			$this->util_model->switchMinerSoftware($minerSoftware);
+			$dataObj->minerd_software = $minerSoftware;
 			
 			$dashSettings = substr(trim($this->input->post('dashboard_refresh_time')), strpos(trim($this->input->post('dashboard_refresh_time')), ";") + 1);
 			
@@ -219,7 +224,7 @@ class App extends Main_Controller {
 			$coinRates = $this->input->post('dashboard_coin_rates');
 			$this->redis->set("altcoins_update", (time()-3600));
 			$dashboardTemp = $this->input->post('dashboard_temp');			
-
+			
 			$poolUrls = $this->input->post('pool_url');
 			$poolUsernames = $this->input->post('pool_username');
 			$poolPasswords = $this->input->post('pool_password');
@@ -256,13 +261,15 @@ class App extends Main_Controller {
 			// Save manual/guided selection
 			$this->redis->set('manual_options', $this->input->post('manual_options'));
 			$this->redis->set('guided_options', $this->input->post('guided_options'));
-
+			$dataObj->manual_options = $this->input->post('manual_options');
+			$dataObj->guided_options = $this->input->post('guided_options');
+			
 			if ($this->input->post('manual_options'))
 			{
 				// Manual options
 				$settings = trim($this->input->post('minerd_manual_settings'));
 				$this->redis->set('minerd_manual_settings', $settings);
-
+				$dataObj->minerd_manual_settings = $settings;
 			}
 			else
 			{
@@ -277,13 +284,15 @@ class App extends Main_Controller {
 						$confArray["gc3355-detect"] = true;			
 					}
 					$this->redis->set('minerd_autodetect', $this->input->post('minerd_autodetect'));
-	
+					$dataObj->minerd_autodetect = $this->input->post('minerd_autodetect');
+					
 					// Autotune
 					if ($this->input->post('minerd_autotune'))
 					{
 						$confArray["gc3355-autotune"] = true;
 					}
 					$this->redis->set('minerd_autotune', $this->input->post('minerd_autotune'));
+					$dataObj->minerd_autotune = $this->input->post('minerd_autotune');
 						
 					// Start frequency
 					if ($this->input->post('minerd_startfreq'))
@@ -291,6 +300,7 @@ class App extends Main_Controller {
 						$confArray["freq"] = $this->input->post('minerd_startfreq');
 					}
 					$this->redis->set('minerd_startfreq', $this->input->post('minerd_startfreq'));
+					$dataObj->minerd_startfreq = $this->input->post('minerd_startfreq');
 					
 					// Logging
 					$minerdLog = false;
@@ -300,6 +310,7 @@ class App extends Main_Controller {
 						$minerdLog = $this->input->post('minerd_log');
 					}
 					$this->redis->set('minerd_log', $minerdLog);
+					$dataObj->minerd_log = $minerdLog;
 
 				}
 				// CG/BFGminer specific
@@ -311,6 +322,7 @@ class App extends Main_Controller {
 						$confArray["api-allow"] .= ",".$this->input->post('minerd_api_allow_extra');			
 					}
 					$this->redis->set('minerd_api_allow_extra', $this->input->post('minerd_api_allow_extra'));
+					$dataObj->minerd_api_allow_extra = $this->input->post('minerd_api_allow_extra');
 					
 					// Scrypt
 					if ($this->input->post('minerd_scrypt'))
@@ -318,6 +330,7 @@ class App extends Main_Controller {
 						$confArray["scrypt"] = true;			
 					}
 					$this->redis->set('minerd_scrypt', $this->input->post('minerd_scrypt'));
+					$dataObj->minerd_scrypt = $this->input->post('minerd_scrypt');
 					
 					// Auto-detect
 					if ($this->input->post('minerd_autodetect'))
@@ -325,12 +338,14 @@ class App extends Main_Controller {
 						$confArray["scan"] = "all";			
 					}
 					$this->redis->set('minerd_autodetect', $this->input->post('minerd_autodetect'));
-	
+					$dataObj->minerd_autodetect = $this->input->post('minerd_autodetect');
+					
 					// Logging
 					if ($this->input->post('minerd_log'))
 					{
 						$confArray["log-file"] = $this->config->item("minerd_log_file");
 						$this->redis->set('minerd_log', $this->input->post('minerd_log'));
+						$dataObj->minerd_log = $this->input->post('minerd_log');
 					}
 					else
 					{
@@ -345,14 +360,15 @@ class App extends Main_Controller {
 					$confArray["debug"] = true;
 				}
 				$this->redis->set('minerd_debug', $this->input->post('minerd_debug'));
-
+				$this->minerd_debug = $this->input->post('minerd_debug');
+				
 				// Extra options
 				if ($this->input->post('minerd_extraoptions'))
 				{
 					$settings .= " ".$this->input->post('minerd_extraoptions')." ";
 				}
 				$this->redis->set('minerd_extraoptions', $this->input->post('minerd_extraoptions'));				
-				
+				$dataObj->minerd_extraoptions = $this->input->post('minerd_extraoptions');
 			}
 			
 			// Add the pools to the command
@@ -369,7 +385,9 @@ class App extends Main_Controller {
 			$jsonConfFile = json_encode($confArray, JSON_PRETTY_PRINT);
 			
 			// Add JSON conf to miner command
+			$exportConfigSettings = $settings;
 			$settings .= " -c ".$this->config->item("minerd_conf_file");
+			
 			// Save the JSON conf file
 			file_put_contents($this->config->item("minerd_conf_file"), $jsonConfFile);
 
@@ -380,19 +398,31 @@ class App extends Main_Controller {
 			if ($mineraDonationTime)
 			{
 				$this->util_model->autoAddMineraPool();
-			}			
+			}
+			
+			$dataObj->minerd_pools = $this->util_model->getPools();
 			
 			$this->util_model->setCommandline($settings);
 			$this->redis->set("minerd_json_settings", $jsonConfRedis);
+			$dataObj->minerd_json_settings = $jsonConfRedis;
 			$this->redis->set("minerd_autorecover", $this->input->post('minerd_autorecover'));
+			$dataObj->minerd_autorecover = $this->input->post('minerd_autorecover');
 			$this->redis->set("minerd_use_root", $this->input->post('minerd_use_root'));
+			$dataObj->minerd_use_root = $this->input->post('minerd_use_root');
 			$this->redis->set("minerd_autorestart", $this->input->post('minerd_autorestart'));
+			$dataObj->minerd_autorestart = $this->input->post('minerd_autorestart');
 			$this->redis->set("minerd_autorestart_devices", $this->input->post('minerd_autorestart_devices'));
+			$dataObj->minerd_autorestart_devices = $this->input->post('minerd_autorestart_devices');
 			($this->input->post('minerd_autorestart_time') > 0) ? $this->redis->set("minerd_autorestart_time", $this->input->post('minerd_autorestart_time')) : 600;
+			$dataObj->minerd_autorestart_time = $this->input->post('minerd_autorestart_time');
 			$this->redis->set("minera_donation_time", $mineraDonationTime);
+			$dataObj->minera_donation_time = $mineraDonationTime;
 			$this->redis->set("dashboard_refresh_time", $dashSettings);
+			$dataObj->dashboard_refresh_time = $dashSettings;
 			$this->redis->set("dashboard_coin_rates", json_encode($coinRates));
+			$dataObj->dashboard_coin_rates = json_encode($coinRates);
 			$this->redis->set("dashboard_temp", $dashboardTemp);
+			$dataObj->dashboard_temp = $dashboardTemp;
 			
 			// System settings
 			
@@ -404,6 +434,7 @@ class App extends Main_Controller {
 				date_default_timezone_set($timezone);
 				$this->util_model->setTimezone($timezone);
 			}
+			$dataObj->minera_timezone = $timezone;
 			
 			// Delay time
 			$delay = 5;
@@ -412,6 +443,7 @@ class App extends Main_Controller {
 				$delay = $this->input->post('minerd_delaytime');
 				$this->redis->set("minerd_delaytime", $delay);
 			}
+			$dataObj->minerd_delaytime = $this->input->post('minerd_delaytime');
 
 			// On boot extra commands
 			$extracommands = false;
@@ -420,6 +452,7 @@ class App extends Main_Controller {
 				$extracommands = $this->input->post('system_extracommands');
 			}
 			$this->redis->set("system_extracommands", $extracommands);
+			$dataObj->system_extracommands = $extracommands;
 			
 			// Scheduled event
 			$scheduledEventTime = false; $scheduledEventAction = false; $scheduledEventStartTime = false;
@@ -431,10 +464,12 @@ class App extends Main_Controller {
 			}
 			if ($this->redis->get("scheduled_event_time") != $scheduledEventTime)
 			{
-				$this->redis->set("scheduled_event_start_time", $scheduledEventStartTime);	
+				$this->redis->set("scheduled_event_start_time", $scheduledEventStartTime);
 			}
 			$this->redis->set("scheduled_event_time", $scheduledEventTime);
+			$dataObj->scheduled_event_time = $scheduledEventTime;
 			$this->redis->set("scheduled_event_action", $scheduledEventAction);
+			$dataObj->scheduled_event_action = $scheduledEventAction;
 			
 			// Anonymous stats
 			$anonymousStats = false;
@@ -448,6 +483,7 @@ class App extends Main_Controller {
 				}
 			}
 			$this->redis->set("anonymous_stats", $anonymousStats);
+			$dataObj->anonymous_stats = $anonymousStats;
 						
 			// Startup script rc.local
 			$this->util_model->saveStartupScript($minerSoftware, $delay, $extracommands);
@@ -460,6 +496,8 @@ class App extends Main_Controller {
 				$mobileminerEnabled = $this->input->post('mobileminer_enabled');
 			}
 			$this->redis->set("mobileminer_enabled", $mobileminerEnabled);
+			$dataObj->mobileminer_enabled = $mobileminerEnabled;
+			
 			// Sys name
 			$mobileminerSysName = false;
 			if ($this->input->post('mobileminer_system_name'))
@@ -467,6 +505,8 @@ class App extends Main_Controller {
 				$mobileminerSysName = $this->input->post('mobileminer_system_name');
 			}
 			$this->redis->set("mobileminer_system_name", $mobileminerSysName);
+			$dataObj->mobileminer_system_name = $mobileminerSysName;
+			
 			// email
 			$mobileminerEmail = false;
 			if ($this->input->post('mobileminer_email'))
@@ -474,6 +514,8 @@ class App extends Main_Controller {
 				$mobileminerEmail = $this->input->post('mobileminer_email');
 			}
 			$this->redis->set("mobileminer_email", $mobileminerEmail);
+			$dataObj->mobileminer_email = $mobileminerEmail;
+			
 			// Application key
 			$mobileminerAppkey = false;
 			if ($this->input->post('mobileminer_appkey'))
@@ -481,6 +523,7 @@ class App extends Main_Controller {
 				$mobileminerAppkey = $this->input->post('mobileminer_appkey');
 			}
 			$this->redis->set("mobileminer_appkey", $mobileminerAppkey);
+			$dataObj->mobileminer_appkey = $mobileminerAppkey;
 
 			$data['message'] = '<b>Success!</b> Settings saved!';
 			$data['message_type'] = "success";
@@ -500,13 +543,54 @@ class App extends Main_Controller {
 
 		}
 		
-		$this->redis->command("BGSAVE");
-		
 		if (is_array($extramessages))
 		{
 			$this->session->set_flashdata('message', '<b>Warning!</b> '.implode(" ", $extramessages));
 			$this->session->set_flashdata('message_type', 'warning');
 		}
+		
+		// Save export
+		$this->redis->set("export_settings", json_encode($dataObj));
+		
+		// Save current miner settings
+		if ($this->input->get("save_config"))
+		{
+			unset($confArray['pools']);
+			$lineConf = false;
+			foreach ($confArray as $keyConf => $valueConf)
+			{
+				if ($valueConf != "1")
+					$lineConf .= " --".$keyConf."=".$valueConf;
+				else
+					$lineConf .= " --".$keyConf;
+			}
+			$exportConfigSettings .= $lineConf;
+			$dataObj = array("timestamp" => time(), "software" => $minerSoftware, "settings" => $exportConfigSettings, "pools" => $pools, "description" => false);
+			$this->redis->command("HSET saved_miner_configs ".time()." ".base64_encode(json_encode($dataObj)));
+		}
+			
+		$this->redis->command("BGSAVE");
+		
+		$this->output
+			->set_content_type('application/json')
+			->set_output(json_encode($dataObj));
+	}
+	
+	/*
+	// Export the settings forcing download of JSON file
+	*/
+	public function export()
+	{
+		$o = $this->redis->get("export_settings");
+		if ($this->util_model->isJson($o))
+		{
+			$this->output
+				->set_content_type('application/json')
+				->set_header('Content-disposition: attachment; filename=minera-export.json')
+				->set_output($o);
+		}
+		else
+			return false;
 	}
 	
 	/*
@@ -683,6 +767,12 @@ class App extends Main_Controller {
 			case "import_file":
 				$o = json_encode($this->util_model->importFile($this->input->post()));
 			break;
+			case "delete_config":
+				$o = json_encode($this->util_model->deleteSavedConfig($this->input->get("id")));
+			break;
+			case "load_config":
+				$o = json_encode($this->util_model->loadSavedConfig($this->input->get("id")));
+			break;
 			case "miner_action":
 				$action = ($this->input->get('action')) ? $this->input->get('action') : false;
 				switch($action)
@@ -701,7 +791,7 @@ class App extends Main_Controller {
 				}
 			break;
 			case "test":
-				//$this->load->model('bfgminer_model');
+				//$a = file_get_contents("api.json");
 				$o = $this->redis->command("BGSAVE"); //$this->util_model->checkCronIsRunning(); //$this->util_model->sendAnonymousStats(123, "hello world!"); //json_encode($this->bfgminer_model->callMinerd()); //$this->util_model->getParsedStats($this->util_model->getMinerStats());
 			break;
 		}

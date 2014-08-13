@@ -226,7 +226,6 @@ class Util_model extends CI_Model {
 	public function getParsedStats($stats)
 	{		
 		$d = 0; $tdevice = array(); $tdtemperature = 0; $tdfrequency = 0; $tdaccepted = 0; $tdrejected = 0; $tdhwerrors = 0; $tdshares = 0; $tdhashrate = 0;
-		
 		$return = false;
 		
 		if (isset($stats->start_time))
@@ -691,7 +690,52 @@ class Util_model extends CI_Model {
 	{
 		return $this->redis->get("minerd_settings");
 	}
-		
+	
+	function deleteSavedConfig($id)
+	{
+		return $this->redis->command("HDEL saved_miner_configs ".$id);
+	}
+
+	function loadSavedConfig($id)
+	{
+		$encoded = $this->redis->command("HGET saved_miner_configs ".$id);
+
+		if ($encoded)
+		{
+			$obj = json_decode(base64_decode($encoded));
+
+			if (is_object($obj))
+			{
+				$settings = $obj->settings;
+				$this->redis->set("manual_options", 1);
+				$this->redis->set("guided_options", false);
+				$this->redis->set("minerd_software", $obj->software);
+				$this->redis->set("minerd_manual_settings", $settings);
+				$settings .= " -c ".$this->config->item("minerd_conf_file");
+				$this->setCommandline($settings);
+				$this->setPools($obj->pools);
+				
+				$poolsArray = array();
+				foreach ($obj->pools as $pool)
+				{
+					$poolsArray[] = array("url" => $pool->url, "user" => $pool->username, "pass" => $pool->password);
+				}
+				$confArray['pools'] = $poolsArray;
+			
+				// Prepare JSON conf
+				$jsonConfRedis = json_encode($confArray);
+				$jsonConfFile = json_encode($confArray, JSON_PRETTY_PRINT);
+			
+				// Save the JSON conf file
+				file_put_contents($this->config->item("minerd_conf_file"), $jsonConfFile);
+				$this->redis->set("minerd_json_settings", $jsonConfRedis);
+				
+				// Startup script rc.local
+				$this->saveStartupScript($obj->software);
+			}
+		}
+	}
+			
 	/*
 	//
 	// Crypto rates related stuff

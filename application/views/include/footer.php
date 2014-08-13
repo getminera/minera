@@ -116,7 +116,69 @@
 	           	e.preventDefault();
 				$('#modal-terminal').modal('hide');
 			});
+			
+            $(".export-action").click(function(e) {
+	           	e.preventDefault();
+	        	
+			   	$("#modal-saving-label").html("Generating export file, please wait...");
+	        	$('#modal-saving').modal('show');
+	        	
+	        	var saveUrl = "<?php echo site_url("app/save_settings") ?>";
+	        	var formData = $("#minersettings").serialize();
+	
+				$.ajax({
+					type: "POST",
+					url: saveUrl,
+					data: formData,
+					cache: false,
+					success:  function(resp){
+						$('#modal-saving').modal('hide');
+						window.location = "<?php echo site_url("app/export") ?>";
+					}
+				});      	
+            });
+            
+            $(".save-config-action").click(function(e) {
+	           	e.preventDefault();
+	        	
+			   	$("#modal-saving-label").html("Saving current config, please wait...");
+	        	$('#modal-saving').modal('show');
+	        	
+	        	var saveUrl = "<?php echo site_url("app/save_settings?save_config=1") ?>";
+	        	var formData = $("#minersettings").serialize();
+	
+				$.ajax({
+					type: "POST",
+					url: saveUrl,
+					data: formData,
+					cache: false,
+					success:  function(resp){
+						$('#saved-configs-table tbody').append('<tr><td>'+resp.timestamp+'</td><td>'+resp.software+'</td><td>'+resp.settings+'</td><td>'+JSON.stringify(resp.pools)+'</td><td class="text-center"><i class="fa fa-times"></i></td></tr>');
+						
+						$('#modal-saving').modal('hide');
+					}
+				});      	
+            });
 
+            $(".delete-config-action").click(function(e) {
+	           	e.preventDefault();
+	        	
+	        	var id = $(this).data('config-id');
+	        	var saveUrl = "<?php echo site_url("app/api/?command=delete_config&id=") ?>"+id;
+
+				$('.config-'+id).fadeOut();
+
+				$.ajax({
+					type: "GET",
+					url: saveUrl,
+					cache: false,
+					success:  function(resp){
+						console.log(resp);
+						$('.config-'+id).remove();
+					}
+				});      	
+            });
+            
 		});
 		
         function saveSettings()
@@ -279,12 +341,12 @@
 					console.log(data.result);
 					if (data.result.error)
 					{
-						$('#files').append('<div class="callout callout-danger">'+data.result.error+'</div>');
-						setInterval(function(){ $('#files').fadeOut(); }, 5000);
+						$('#files').fadeOut();
+						$('#files').html('<div class="callout callout-danger">'+data.result.error+'</div>').fadeIn();
 					}
 					else
 					{
-						$('#files').append('<div class="callout callout-grey"><p class="margin-bottom">File seems good, click the button to start trying import.</p><p><button class="btn btn-primary" name="import-system" value="1">Import System</button></p></div>');
+						$('#files').html('<div class="callout callout-grey"><p class="margin-bottom">File seems good, click the button to start trying import.</p><p><button class="btn btn-primary" name="import-system" value="1">Import System</button></p></div>');
 					}
 				},
 				progressall: function (e, data) {
@@ -1252,7 +1314,7 @@
 										if (type === 'display')
 										{
 											if (data)
-												return '<small class="label bg-blue">'+data +'°</small>'
+												return '<small class="label bg-blue">'+data +'&deg;</small>'
 											else
 												return '<small class="label label-muted">n.a.</small>'
 										}

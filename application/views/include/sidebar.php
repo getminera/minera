@@ -1,7 +1,7 @@
     <body class="skin-black"<?php if ($appScript) : ?> onload="getStats(false);"<?php endif; ?>>
 
 		<!-- Modal -->
-		<div class="modal fade" id="modal-saving" tabindex="-1" role="dialog" aria-labelledby="SavingData" aria-hidden="true" data-backdrop="static" data-keyboard="false" >
+		<div id="modal-saving" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="SavingData" aria-hidden="true" data-backdrop="static" data-keyboard="false" >
 			<div class="modal-dialog modal-dialog-center modal-sm">
 				<div class="modal-content">
 					<div class="modal-header bg-red">

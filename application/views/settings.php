@@ -586,40 +586,6 @@
 										<button type="submit" class="btn btn-primary save-minera-settings" name="save" value="1">Save</button> <button type="submit" class="btn btn-danger save-minera-settings-restart" name="save_restart" value="1">Save & Restart Miner</button>
 									</div>
 	                            </div>
-
-								<!-- Import/Export box -->
-								<div class="box box-primary">
-								    <div class="box-header">
-								    	<!-- tools box -->
-			                            <div class="pull-right box-tools">
-			                                <button class="btn btn-default btn-xs" data-widget="collapse" data-toggle="tooltip" title="" data-original-title="Collapse"><i class="fa fa-minus"></i></button>
-			                            </div><!-- /. tools -->
-			                            <i class="fa fa-code-fork"></i>
-			                            
-			                            <h3 class="box-title">Import/Export/Share Settings</h3>
-			                        </div>
-								    
-			                        <div class="box-body">
-								    	<p>You can clone your system to save and restore everything including stats, charts, settings, pools, etc... Or you can choose to save your current config and share it with the community.</p>
-								    	
-										<div class="import-export-box">
-											<span class="btn btn-success fileinput-button margin-bottom" data-toggle="tooltip" data-title="File must be a JSON export file from a Minera system">
-												<i class="glyphicon glyphicon-plus"></i>
-												<span>Import file...</span>
-												<input class="import-file" type="file" name="import_system_config">
-											</span>
-											<!-- The global progress bar -->
-											<div id="progress" class="progress">
-												<div class="progress-bar progress-bar-success"></div>
-											</div>
-											<!-- The container for the uploaded files -->
-											<div id="files" class="files"></div>
-										</div>
-								    	
-								    	<p><button class="btn btn-warning" name="save" value="1">Export System</button> <button class="btn btn-default" name="save" value="1">Save Miner Config</button></p>
-								    	
-			                        </div>
-			                    </div>
 			                    
 								<!-- Topbar box -->
 								<div class="box box-primary">
@@ -779,6 +745,94 @@
 										<button type="submit" class="btn btn-primary save-minera-settings" name="save" value="1">Save</button>
 									</div>
 	                            </div>
+
+								<!-- Import/Export box -->
+								<div class="box box-primary">
+								    <div class="box-header">
+								    	<!-- tools box -->
+			                            <div class="pull-right box-tools">
+			                                <button class="btn btn-default btn-xs" data-widget="collapse" data-toggle="tooltip" title="" data-original-title="Collapse"><i class="fa fa-minus"></i></button>
+			                            </div><!-- /. tools -->
+			                            <i class="fa fa-code-fork"></i>
+			                            
+			                            <h3 class="box-title">Import/Export/Share Settings</h3>
+			                        </div>
+								    
+			                        <div class="box-body">
+								    	<p>You can export a JSON file with all the settings from your current Minera system. This file can be imported to reproduce the same settings in a new Minera system with a click (this will export everything excluding: user password, charts and stats). You can also save a single miner config to be used in future<em>*</em> or shared with the Minera community<em>**</em>.</p>
+								    	
+										<div class="import-export-box margin-bottom">
+											<span class="btn btn-success fileinput-button" data-toggle="tooltip" data-title="File must be a JSON export file from a Minera system">
+												<i class="glyphicon glyphicon-plus"></i>
+												Import file...
+												<input class="import-file" type="file" name="import_system_config">
+											</span>
+											<span class="btn btn-warning export-action" data-toggle="tooltip" data-title="This generates a JSON file to be imported into Minera">
+												<i class="glyphicon glyphicon-download-alt"></i>
+												Export Settings
+											</span> 
+											<span class="btn btn-default save-config-action" data-toggle="tooltip" data-title="This saves only the miner config to be used or shared later">
+												<i class="glyphicon glyphicon-floppy-disk"></i>
+												Save Miner Config
+											</span>
+										</div>
+								    	
+										<!-- The global progress bar -->
+										<div id="progress" class="progress">
+											<div class="progress-bar progress-bar-success"></div>
+										</div>
+										<!-- The container for the uploaded files -->
+										<div id="files" class="files"></div>
+								    	
+										<?php if ($savedConfigs) : ?>
+											<div class="saved-configs">
+											    <label><a href="#" class="view-saved-configs">View your saved configs</a></label>
+											    <div class="table-responsive">
+											    	<table id="saved-configs-table" class="table table-striped datatable">
+											    		<thead>
+											    			<tr>
+											    				<th>Date</th>
+											    				<th>Software</th>
+											    				<th style="width:35%">Settings</th>
+											    				<th>Pools</th>
+											    				<th style="width:5%">Actions</th>
+											    			</tr>
+											    		</thead>
+											    		<tbody>
+											    		<?php foreach ($savedConfigs as $savedConfig) : $savedConfig = json_decode(base64_decode($savedConfig));?>
+											    			<tr class="config-<?php echo $savedConfig->timestamp ?>">
+											    			<td>
+											    				<small class="label label-info"><?php echo date("m/d/y h:i a", $savedConfig->timestamp) ?></small>
+											    			</td>
+											    			<td>
+											    				<small class="label bg-blue"><?php echo $savedConfig->software ?></small>
+											    			</td>
+											    			<td>
+											    				<small class="font-bold"><?php echo $savedConfig->settings ?></small>
+											    			</td>
+											    			<td>
+												    			<small><?php echo htmlspecialchars(json_encode($savedConfig->pools, JSON_PRETTY_PRINT)) ?></small>
+											    			</td>
+											    			<td class="text-center">
+											    				<a href="#" class="load-config-action" data-config-id="<?php echo $savedConfig->timestamp ?>" data-toggle="tooltip" data-title="Load saved config"><i class="fa fa-upload"></i></a>
+											    				<a href="#" class="delete-config-action" style="margin-left:10px;" data-config-id="<?php echo $savedConfig->timestamp ?>" data-toggle="tooltip" data-title="Delete saved config"><i class="fa fa-times"></i></a>
+											    			</td>
+											    			</tr>
+											    		<?php endforeach; ?>
+											    		</tbody>
+											    		<tfoot>
+											    		</tfoot>
+											    	</table>
+											    </div>
+											</div>
+										<?php endif; ?>
+										
+			                        </div>
+									<div class="box-footer">
+										<h6><em>*</em> Loading a saved miner config sets the manual settings mode with the saved command line, sets the miner software and completely overwrites the pools settings.</h6>
+										<h6><em>**</em> Sharing the miner config to the Minera community won't share your pools settings</h6>
+									</div>
+			                    </div>
 
 							</form>
 
