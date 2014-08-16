@@ -1075,6 +1075,11 @@ class Util_model extends CI_Model {
 		$specialLog = null;
 		if ($this->config->item("minerd_special_log") && $this->redis->get("minerd_log"))
 		{
+			if (file_exists(FCPATH."minera-bin/cgminerStartupScript"))
+			{
+				shell_exec("sudo -u " . $this->config->item("system_user") . " sudo chmod 777 " . FCPATH."minera-bin/cgminerStartupScript");
+			}
+		
 			$script = "#!/bin/bash\n\n".$this->config->item("minerd_command")." ".$this->getCommandline()." 2>".$this->config->item("minerd_log_file");
 			
 			file_put_contents(FCPATH."minera-bin/cgminerStartupScript", $script);
