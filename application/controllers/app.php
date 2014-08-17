@@ -767,6 +767,9 @@ class App extends Main_Controller {
 			case "import_file":
 				$o = json_encode($this->util_model->importFile($this->input->post()));
 			break;
+			case "clone_system":
+				$o = json_encode($this->util_model->cloneSystem());
+			break;
 			case "delete_config":
 				$o = json_encode($this->util_model->deleteSavedConfig($this->input->get("id")));
 			break;

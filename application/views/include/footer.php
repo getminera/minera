@@ -18,12 +18,19 @@
     <!-- Datatables -->
 	<script src="<?php echo base_url('assets/js/jquery.dataTables.min.js') ?>" type="text/javascript"></script>
 	<script src="<?php echo base_url('assets/js/dataTables.bootstrap.js') ?>" type="text/javascript"></script>
-
+	
+	<!-- Moment JS -->
+	<script src="<?php echo base_url('assets/js/moment.min.js') ?>" type="text/javascript"></script>
+	
     <!-- General script -->
     <script type="text/javascript">
     	
 		$(function() {
 		    "use strict";
+		    
+			if( !window.location.hash ) {
+				$('html, body').animate({scrollTop : 0}, 800);
+			}
 			
 			startTime();
 			
@@ -116,68 +123,6 @@
 	           	e.preventDefault();
 				$('#modal-terminal').modal('hide');
 			});
-			
-            $(".export-action").click(function(e) {
-	           	e.preventDefault();
-	        	
-			   	$("#modal-saving-label").html("Generating export file, please wait...");
-	        	$('#modal-saving').modal('show');
-	        	
-	        	var saveUrl = "<?php echo site_url("app/save_settings") ?>";
-	        	var formData = $("#minersettings").serialize();
-	
-				$.ajax({
-					type: "POST",
-					url: saveUrl,
-					data: formData,
-					cache: false,
-					success:  function(resp){
-						$('#modal-saving').modal('hide');
-						window.location = "<?php echo site_url("app/export") ?>";
-					}
-				});      	
-            });
-            
-            $(".save-config-action").click(function(e) {
-	           	e.preventDefault();
-	        	
-			   	$("#modal-saving-label").html("Saving current config, please wait...");
-	        	$('#modal-saving').modal('show');
-	        	
-	        	var saveUrl = "<?php echo site_url("app/save_settings?save_config=1") ?>";
-	        	var formData = $("#minersettings").serialize();
-	
-				$.ajax({
-					type: "POST",
-					url: saveUrl,
-					data: formData,
-					cache: false,
-					success:  function(resp){
-						$('#saved-configs-table tbody').append('<tr><td>'+resp.timestamp+'</td><td>'+resp.software+'</td><td>'+resp.settings+'</td><td>'+JSON.stringify(resp.pools)+'</td><td class="text-center"><i class="fa fa-times"></i></td></tr>');
-						
-						$('#modal-saving').modal('hide');
-					}
-				});      	
-            });
-
-            $(".delete-config-action").click(function(e) {
-	           	e.preventDefault();
-	        	
-	        	var id = $(this).data('config-id');
-	        	var saveUrl = "<?php echo site_url("app/api/?command=delete_config&id=") ?>"+id;
-
-				$('.config-'+id).fadeOut();
-
-				$.ajax({
-					type: "GET",
-					url: saveUrl,
-					cache: false,
-					success:  function(resp){
-						console.log(resp);
-						$('.config-'+id).remove();
-					}
-				});      	
-            });
             
 		});
 		
@@ -333,7 +278,7 @@
 		    $(".box-tools").click( function(e) { e.preventDefault(); });
 		    
 		    $('#progress').hide();
-		    
+			
 			$('.import-file').fileupload({
 				url: '<?php echo site_url("app/api?command=import_file"); ?>',
 				dataType: 'json',
@@ -346,7 +291,7 @@
 					}
 					else
 					{
-						$('#files').html('<div class="callout callout-grey"><p class="margin-bottom">File seems good, click the button to start trying import.</p><p><button class="btn btn-primary" name="import-system" value="1">Import System</button></p></div>');
+						$('#files').html('<div class="callout callout-grey"><p class="margin-bottom">File seems good, click the button to start trying import.</p><p><button class="btn btn-primary import-file-action" name="import-system" value="1">Import System</button></p></div>');
 					}
 				},
 				progressall: function (e, data) {
@@ -359,6 +304,112 @@
 				}
 			}).prop('disabled', !$.support.fileInput).parent().addClass($.support.fileInput ? undefined : 'disabled');
 		    
+		    $(document).on('click', '.import-file-action', function(e) {
+	           	e.preventDefault();
+	           	
+	           	$("#modal-saving-label").html("Cloning the system, please wait...");
+	        	$('#modal-saving').modal('show');
+	        	
+	        	var saveUrl = "<?php echo site_url("app/api?command=clone_system") ?>";
+	
+				$.ajax({
+					type: "GET",
+					url: saveUrl,
+					cache: false,
+					success:  function(resp){
+						$('#modal-saving').modal('hide');
+						window.location.reload();
+					}
+				});
+			});
+			
+			$(".export-action").click(function(e) {
+	           	e.preventDefault();
+	        	
+			   	$("#modal-saving-label").html("Generating export file, please wait...");
+	        	$('#modal-saving').modal('show');
+	        	
+	        	var saveUrl = "<?php echo site_url("app/save_settings") ?>";
+	        	var formData = $("#minersettings").serialize();
+	
+				$.ajax({
+					type: "POST",
+					url: saveUrl,
+					data: formData,
+					cache: false,
+					success:  function(resp){
+						$('#modal-saving').modal('hide');
+						window.location = "<?php echo site_url("app/export") ?>";
+					}
+				});      	
+            });
+            
+            $(".save-config-action").click(function(e) {
+	           	e.preventDefault();
+	        	
+			   	$("#modal-saving-label").html("Saving current config, please wait...");
+	        	$('#modal-saving').modal('show');
+	        	
+	        	var saveUrl = "<?php echo site_url("app/save_settings?save_config=1") ?>";
+	        	var formData = $("#minersettings").serialize();
+	
+				$.ajax({
+					type: "POST",
+					url: saveUrl,
+					data: formData,
+					cache: false,
+					success:  function(resp){
+						var date = moment(resp.timestamp*1000);
+
+						$('#saved-configs-table tbody').append('<tr class="config-'+resp.timestamp+'"><td><small class="label label-info">'+date.format("MM/DD/YY h:mm a")+'</small></td><td><small class="label bg-blue">'+resp.software+'</small></td><td><small class="font-bold">'+resp.settings+'</small></td><td><small>'+JSON.stringify(resp.pools)+'</small></td><td class="text-center"><a href="#" class="load-config-action" data-config-id="'+resp.timestamp+'" data-toggle="tooltip" data-title="Load saved config"><i class="fa fa-upload"></i></a> <a href="#" class="delete-config-action" style="margin-left:10px;" data-config-id="'+resp.timestamp+'" data-toggle="tooltip" data-title="Delete saved config"><i class="fa fa-times"></i></a></td></tr>');
+						
+						$('.saved-configs').show();
+						$('#modal-saving').modal('hide');
+					}
+				});      	
+            });
+
+            $(document).on('click', '.delete-config-action', function(e) {
+	           	e.preventDefault();
+	        	
+	        	var id = $(this).data('config-id');
+	        	var saveUrl = "<?php echo site_url("app/api/?command=delete_config&id=") ?>"+id;
+
+				$('.config-'+id).fadeOut();
+
+				$.ajax({
+					type: "GET",
+					url: saveUrl,
+					cache: false,
+					success:  function(resp){
+						//console.log(resp);
+						$('.config-'+id).remove();
+					}
+				});      	
+            });
+            
+            $(document).on('click', '.load-config-action', function(e) {
+	           	e.preventDefault();
+	        	
+	        	$("#modal-saving-label").html("Loading config, please wait...");
+				$('#modal-saving').modal('show');
+        	
+	        	var id = $(this).data('config-id');
+	        	var saveUrl = "<?php echo site_url("app/api/?command=load_config&id=") ?>"+id;
+
+				$('.config-'+id).fadeOut('fast').fadeIn('slow');
+
+				$.ajax({
+					type: "GET",
+					url: saveUrl,
+					cache: false,
+					success:  function(resp){
+						$('#modal-saving').modal('hide');
+						window.location.reload();
+					}
+				});      	
+            });
+			
 		    //Make the dashboard widgets sortable Using jquery UI
 		    $(".poolSortable").sortable({
 		        placeholder: "sort-highlight",

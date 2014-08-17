@@ -784,9 +784,7 @@
 										<!-- The container for the uploaded files -->
 										<div id="files" class="files"></div>
 								    	
-										<?php if ($savedConfigs) : ?>
-											<div class="saved-configs">
-											    <label><a href="#" class="view-saved-configs">View your saved configs</a></label>
+											<div class="saved-configs" <?php if (!$savedConfigs) : ?>style="display:none;"<?php endif; ?>>
 											    <div class="table-responsive">
 											    	<table id="saved-configs-table" class="table table-striped datatable">
 											    		<thead>
@@ -799,6 +797,7 @@
 											    			</tr>
 											    		</thead>
 											    		<tbody>
+														<?php if ($savedConfigs) : ?>
 											    		<?php foreach ($savedConfigs as $savedConfig) : $savedConfig = json_decode(base64_decode($savedConfig));?>
 											    			<tr class="config-<?php echo $savedConfig->timestamp ?>">
 											    			<td>
@@ -819,13 +818,13 @@
 											    			</td>
 											    			</tr>
 											    		<?php endforeach; ?>
+														<?php endif; ?>
 											    		</tbody>
 											    		<tfoot>
 											    		</tfoot>
 											    	</table>
 											    </div>
 											</div>
-										<?php endif; ?>
 										
 			                        </div>
 									<div class="box-footer">
