@@ -695,7 +695,7 @@
 														Enable Anonymous Stats
 													</label>                                                
 												</div>
-												<h6>(Stats included are: total hashrate, devices count and miner used. No IP, host or any other data will be sent. Stats are collected and sent every hour. With the stats you will be able to see an aggregated chart on the <a href="http://getminera.com">Minera website</a> as soon as it will be available.)</h6>
+												<h6>(Stats included are: total hashrate, devices count and miner used. No IP, host or any other data will be sent. Stats are collected and sent every hour. With the stats you will be able to see some cool numbers on the <a href="http://getminera.com">Minera website</a>)</h6>
 											</div>
 														
 	                                </div>
@@ -887,13 +887,11 @@
                                 <div class="box-body">
 									<p>If you are in trouble or you wanna start over, you can resets some of the stored data.</p>
 									<div class="form-group">
-                                    	<button type="submit" class="btn btn-danger reset-action" data-reset-action="charts"><i class="fa fa-eraser"></i> Reset</button>
-                                    	<label>Charts data</label>
+                                    	<button type="submit" class="btn btn-danger reset-action" data-reset-action="charts"><i class="fa fa-eraser"></i> Reset Charts data</button>
                                     	<h6>This resets all the stored stats needed by the charts, so charts will start from zero.</h6>
 									</div>
 									<div class="form-group">
-                                    	<button type="submit" class="btn btn-danger reset-action" data-reset-action="options"><i class="fa fa-eraser"></i> Reset</button>
-										<label>Guided/manual settings</label>
+                                    	<button type="submit" class="btn btn-danger reset-action" data-reset-action="options"><i class="fa fa-eraser"></i> Reset Guided/manual settings</button>
 										<h6>If you have problem choosing between guided/manual options above you can reset them here.</h6>
 									</div>
                                 </div>

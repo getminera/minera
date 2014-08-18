@@ -803,7 +803,6 @@ class Util_model extends CI_Model {
 	
 	function shareSavedConfig($post)
 	{
-		log_message("error", var_export($post, true));
 		$encoded = $this->redis->command("HGET saved_miner_configs ".$post['config_id']);
 
 		$data = array("error" => true);
@@ -816,8 +815,10 @@ class Util_model extends CI_Model {
 			{
 				$data = array('timestamp' => $obj->timestamp, 'description' => $post['config_description'], 'miner' => $obj->software, 'settings' => $obj->settings);
 				
-				//$result = $this->useCurl($this->config->item('minera_share_configs_url'), false, "POST", json_encode($data));
+				$result = $this->useCurl($this->config->item('minera_share_configs_url'), false, "POST", json_encode($data));
 				
+				log_message("error", "Config sent to Minera: ".json_encode($data));
+		
 				$this->session->set_flashdata('message', '<b>Success!</b> Thanks to share your config');
 				$this->session->set_flashdata('message_type', 'success');
 			}
@@ -1660,7 +1661,7 @@ class Util_model extends CI_Model {
 			$http_status = curl_getinfo($ch, CURLINFO_HTTP_CODE);
 			// Not used
 		}
-		
+
 		curl_close($ch);
 		
 		return $result;
