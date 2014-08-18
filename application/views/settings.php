@@ -793,7 +793,7 @@
 											    				<th>Software</th>
 											    				<th style="width:35%">Settings</th>
 											    				<th>Pools</th>
-											    				<th style="width:5%">Actions</th>
+											    				<th style="width:8%">Actions</th>
 											    			</tr>
 											    		</thead>
 											    		<tbody>
@@ -810,10 +810,15 @@
 											    				<small class="font-bold"><?php echo $savedConfig->settings ?></small>
 											    			</td>
 											    			<td>
-												    			<small><?php echo htmlspecialchars(json_encode($savedConfig->pools, JSON_PRETTY_PRINT)) ?></small>
+												    			<small>
+												    			<?php foreach ($savedConfig->pools as $savedPool) : ?>
+												    				<?php echo $savedPool->url ?> <i class="fa fa-angle-double-right"></i> <?php echo $savedPool->username ?><br />
+												    			<?php endforeach; ?>
+												    			</small>
 											    			</td>
 											    			<td class="text-center">
-											    				<a href="#" class="load-config-action" data-config-id="<?php echo $savedConfig->timestamp ?>" data-toggle="tooltip" data-title="Load saved config"><i class="fa fa-upload"></i></a>
+											    				<a href="#" class="share-config-open" data-config-id="<?php echo $savedConfig->timestamp ?>" data-toggle="tooltip" data-title="Share saved config"><i class="fa fa-share-square-o"></i></a>
+											    				<a href="#" class="load-config-action" style="margin-left:10px;" data-config-id="<?php echo $savedConfig->timestamp ?>" data-toggle="tooltip" data-title="Load saved config"><i class="fa fa-upload"></i></a>
 											    				<a href="#" class="delete-config-action" style="margin-left:10px;" data-config-id="<?php echo $savedConfig->timestamp ?>" data-toggle="tooltip" data-title="Delete saved config"><i class="fa fa-times"></i></a>
 											    			</td>
 											    			</tr>

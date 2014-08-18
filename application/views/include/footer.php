@@ -361,12 +361,65 @@
 					success:  function(resp){
 						var date = moment(resp.timestamp*1000);
 
-						$('#saved-configs-table tbody').append('<tr class="config-'+resp.timestamp+'"><td><small class="label label-info">'+date.format("MM/DD/YY h:mm a")+'</small></td><td><small class="label bg-blue">'+resp.software+'</small></td><td><small class="font-bold">'+resp.settings+'</small></td><td><small>'+JSON.stringify(resp.pools)+'</small></td><td class="text-center"><a href="#" class="load-config-action" data-config-id="'+resp.timestamp+'" data-toggle="tooltip" data-title="Load saved config"><i class="fa fa-upload"></i></a> <a href="#" class="delete-config-action" style="margin-left:10px;" data-config-id="'+resp.timestamp+'" data-toggle="tooltip" data-title="Delete saved config"><i class="fa fa-times"></i></a></td></tr>');
+						var pools = '';
+						for (var key in resp.pools) { 
+							pools += resp.pools[key].url + ' <i class="fa fa-angle-double-right"></i> ' + resp.pools[key].username + '<br />';
+						}
+						
+						var htmlRow =
+							'<tr class="config-'+resp.timestamp+'"> \
+								<td><small class="label label-info">'+date.format("MM/DD/YY h:mm a")+'</small></td> \
+								<td><small class="label bg-blue">'+resp.software+'</small></td> \
+								<td><small class="font-bold">'+resp.settings+'</small></td> \
+								<td><small>' + pools + '</small></td> \
+								<td class="text-center"> \
+									<a href="#" class="share-config-open" data-config-id="'+resp.timestamp+'" data-toggle="tooltip" data-title="Share saved config"><i class="fa fa-share-square-o"></i></a> \
+									<a href="#" class="load-config-action" data-config-id="'+resp.timestamp+'" data-toggle="tooltip" data-title="Load saved config"><i class="fa fa-upload"></i></a> \
+									<a href="#" class="delete-config-action" style="margin-left:10px;" data-config-id="'+resp.timestamp+'" data-toggle="tooltip" data-title="Delete saved config"><i class="fa fa-times"></i></a> \
+								</td> \
+							</tr>';
+								
+						$('#saved-configs-table tbody').append(htmlRow);
 						
 						$('.saved-configs').show();
 						$('#modal-saving').modal('hide');
 					}
 				});      	
+            });
+            
+            $(document).on('click', '.share-config-open', function(e) {
+	           	e.preventDefault();
+	        	$("input[name='config_id']").val($(this).data('config-id'));
+	        	$('#modal-sharing').modal('show');
+            });
+            
+            $(document).on('click', '.share-config-action', function(e) {
+	           	e.preventDefault();
+	        	
+	        	$('.share-error').fadeOut();
+	        	
+	        	var descr = $("textarea[name='config_description']").val();
+
+	        	if (!descr || 0 === descr.length)
+	        	{
+		        	$('#formsharingconfig').append('<h6 class="callout bg-red share-error">Description can\'t be empty');
+		        	return;
+	        	}
+	        	
+	        	var saveUrl = "<?php echo site_url("app/api/?command=share_config") ?>";
+	        	var formData = $("#formsharingconfig").serialize();
+	        	
+				$.ajax({
+					type: "POST",
+					url: saveUrl,
+					data: formData,
+					cache: false,
+					success:  function(resp){
+						console.log(resp);
+						$('#modal-saving').modal('hide');
+						window.location.reload();
+					}
+				});
             });
 
             $(document).on('click', '.delete-config-action', function(e) {

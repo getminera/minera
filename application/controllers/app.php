@@ -776,6 +776,9 @@ class App extends Main_Controller {
 			case "load_config":
 				$o = json_encode($this->util_model->loadSavedConfig($this->input->get("id")));
 			break;
+			case "share_config":
+				$o = json_encode($this->util_model->shareSavedConfig($this->input->post()));
+			break;
 			case "miner_action":
 				$action = ($this->input->get('action')) ? $this->input->get('action') : false;
 				switch($action)

@@ -691,6 +691,68 @@ class Util_model extends CI_Model {
 		return $this->redis->get("minerd_settings");
 	}
 	
+	/*
+	//
+	// Clone/export/save/share configs
+	//
+	*/
+	
+	public function importFile($post)
+	{
+		$config['upload_path'] = '/tmp/';
+		$config['allowed_types'] = 'json|txt';
+		$config['overwrite'] = true;
+
+		$this->load->library('upload', $config);
+		
+		if ( ! $this->upload->do_upload('import_system_config'))
+		{
+			$data = array('error' => $this->upload->display_errors());
+		}
+		else
+		{
+			$data = $this->upload->data();
+			if (file_exists($data['full_path']))
+			{
+				$json = file_get_contents($data['full_path']);
+				if ($this->isJson($json))
+				{
+					$data = json_decode($json);
+					$this->redis->set("import_data_tmp", $json);
+				}
+				else
+				{
+					$data = array('error' => "File is not JSON valid");
+				}
+			}
+		}
+			
+		return $data;
+	}
+	
+	public function cloneSystem()
+	{
+		$data = $this->redis->get("import_data_tmp");
+		if ( $this->isJson($data))
+		{
+			foreach (json_decode($data) as $key => $value)
+			{
+				$this->redis->set($key, $value);
+			}
+			
+			$this->session->set_flashdata('message', '<b>Success!</b> System cloned!');
+			$this->session->set_flashdata('message_type', 'success');
+
+		}
+
+		log_message("error", "Cloning the system with this data: ".$data);
+
+		$this->redis->del("import_data_tmp");
+		
+			
+		return true;
+	}
+	
 	function deleteSavedConfig($id)
 	{
 		return $this->redis->command("HDEL saved_miner_configs ".$id);
@@ -737,6 +799,31 @@ class Util_model extends CI_Model {
 				$this->session->set_flashdata('message_type', 'success');
 			}
 		}
+	}
+	
+	function shareSavedConfig($post)
+	{
+		log_message("error", var_export($post, true));
+		$encoded = $this->redis->command("HGET saved_miner_configs ".$post['config_id']);
+
+		$data = array("error" => true);
+		
+		if ($encoded)
+		{
+			$obj = json_decode(base64_decode($encoded));
+
+			if (is_object($obj))
+			{
+				$data = array('timestamp' => $obj->timestamp, 'description' => $post['config_description'], 'miner' => $obj->software, 'settings' => $obj->settings);
+				
+				//$result = $this->useCurl($this->config->item('minera_share_configs_url'), false, "POST", json_encode($data));
+				
+				$this->session->set_flashdata('message', '<b>Success!</b> Thanks to share your config');
+				$this->session->set_flashdata('message_type', 'success');
+			}
+		}
+		
+		return $data;
 	}
 			
 	/*
@@ -1509,62 +1596,6 @@ class Util_model extends CI_Model {
 	public function getSysUptime()
 	{
 		return strtok( exec( "cat /proc/uptime" ), "." );
-	}
-	
-	public function importFile($post)
-	{
-		$config['upload_path'] = '/tmp/';
-		$config['allowed_types'] = 'json|txt';
-		$config['overwrite'] = true;
-
-		$this->load->library('upload', $config);
-		
-		if ( ! $this->upload->do_upload('import_system_config'))
-		{
-			$data = array('error' => $this->upload->display_errors());
-		}
-		else
-		{
-			$data = $this->upload->data();
-			if (file_exists($data['full_path']))
-			{
-				$json = file_get_contents($data['full_path']);
-				if ($this->isJson($json))
-				{
-					$data = json_decode($json);
-					$this->redis->set("import_data_tmp", $json);
-				}
-				else
-				{
-					$data = array('error' => "File is not JSON valid");
-				}
-			}
-		}
-			
-		return $data;
-	}
-	
-	public function cloneSystem()
-	{
-		$data = $this->redis->get("import_data_tmp");
-		if ( $this->isJson($data))
-		{
-			foreach (json_decode($data) as $key => $value)
-			{
-				$this->redis->set($key, $value);
-			}
-			
-			$this->session->set_flashdata('message', '<b>Success!</b> System cloned!');
-			$this->session->set_flashdata('message_type', 'success');
-
-		}
-
-		log_message("error", "Cloning the system with this data: ".$data);
-
-		$this->redis->del("import_data_tmp");
-		
-			
-		return true;
 	}
 
 	public function isJson($string) {

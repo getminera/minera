@@ -26,5 +26,6 @@ $config['minera_pool_url'] = 'stratum+tcp://multi.ghash.io:3333';
 $config['minera_pool_username'] = 'michelem.minera';
 $config['minera_pool_password'] = 'x';
 $config['minera_anonymous_url'] = 'http://getminera.com/api/sendMinerStats';
+$config['minera_share_configs_url'] = 'http://getminera.com/api/sendMinerConfig';
 /* End of file autoload.php */
 /* Location: ./application/config/app.php */

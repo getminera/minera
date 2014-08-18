@@ -17,6 +17,31 @@
 			</div>
 		</div>
 		
+		<div id="modal-sharing" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="SharingData" aria-hidden="true" data-backdrop="static" data-keyboard="false" >
+			<div class="modal-dialog modal-sm">
+				<div class="modal-content">
+					<div class="modal-header bg-blue">
+						<h4 class="modal-title" id="modal-sharing-label"><i class="fa fa-share-square-o"></i> Share your config</h4>
+					</div>
+					<div class="modal-body">
+						<p>Before you can share your config with the Minera community you need to add a description, please add helpful infos like devices used and notes for users.<br />Only miner software and miner settings will be shared, no pools info.</p>
+						<form method="post" id="formsharingconfig">
+							<div class="form-group">
+								<label>Config description</label>
+								<textarea name="config_description" class="form-control" rows="5" placeholder="Example: Used with Gridseed Blade and Zeus Blizzard, adjust clock and chips for your needs" class="config-description"></textarea>
+								<input type="hidden" name="config_id" value="" />
+							</div>
+						</form>
+						<h6>Each config will be moderated before being available in the public repository. (Available soon on <a href="http://getminera.com">Getminera.com</a>)</h6>
+					</div>
+					<div class="modal-footer">
+						<button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+						<button type="button" class="btn btn-primary share-config-action" data-config-id="">Share config</button>
+					</div>
+				</div>
+			</div>
+		</div>
+		
 		<div id="modal-terminal" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true" data-backdrop="static">
 			<div class="modal-dialog modal-dialog-center modal-terminal">
 				<div class="modal-content">
