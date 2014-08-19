@@ -30,6 +30,8 @@ ENV{ID_MODEL}=="*btcminer for ZTEX*", GOTO="bfgminer_add"
 
 # Avalon1
 #ATTRS{idVendor}=="0403", ATTRS{idProduct}=="6001", GOTO="bfgminer_add"
+# AvalonMM
+#ATTRS{idVendor}=="067b", ATTRS{idProduct}=="2303", GOTO="bfgminer_add"
 # DualMiner
 #ATTRS{idVendor}=="0403", ATTRS{idProduct}=="6010", GOTO="bfgminer_add"
 # GridSeed

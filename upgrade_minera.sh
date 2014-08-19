@@ -48,11 +48,12 @@ echo -e "*/1 * * * * www-data php `pwd`/index.php app cron" > /etc/cron.d/minera
 echo -e "Adding minera to www-data group\n-----\n"
 usermod -a -G www-data minera
 
-echo -e "Adding default settings\n-----\n"
-echo -n "1" | redis-cli -x set guided_options
-echo -n "1" | redis-cli -x set anonymous_stats
-echo -n "cpuminer" | redis-cli -x set minerd_software
-echo -n '["132","155","3"]' | redis-cli -x set dashboard_coin_rates
+# This doesn't need here, check on PHP scripts for existence
+#echo -e "Adding default settings\n-----\n"
+#echo -n "1" | redis-cli -x set guided_options
+#echo -n "1" | redis-cli -x set anonymous_stats
+#echo -n "cpuminer" | redis-cli -x set minerd_software
+#echo -n '["132","155","3"]' | redis-cli -x set dashboard_coin_rates
 
 echo -e "Update redis values\n-----\n"
 redis-cli del minera_update

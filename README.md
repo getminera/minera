@@ -21,7 +21,7 @@ Thanks.
 
 **[Download minera-latest.img.zip](http://getminera.com/download/latest)**
 
-Look below for how to install / use it.
+Look below for download mirror / how to install / hot to use it.
 _______
 
 Support
@@ -31,6 +31,7 @@ If you need support please try to look at the main [forum thread here](https://b
 
 * [General support/discussion forum](https://bitcointalk.org/index.php?topic=596620.0)
 * [Bugs, issues, requests](https://github.com/michelem09/minera/issues)
+
 _______
 
 Features
@@ -77,6 +78,7 @@ This is a list of some of the Minera's features:
 * Scheduled event (reboot/restart)
 * Dashboard refresh time
 * Minera password management
+
 _______
 
 Requirements
@@ -85,6 +87,7 @@ Requirements
 Minera should be installed on the mining controller, usually a Raspberry, with a Debian-like Linux distribution and of course an internet connection.
 
 **Note**: You need a decent modern browser, Minera web interface it's NOT tested (and never will be) against IE, so please if you want have the best user experience **DO NOT use Internet Explorer** as browser.
+_______
 
 Installing
 -------------
@@ -97,17 +100,29 @@ This is the Minera image file for Raspberry PI, you have only to download it and
 
 You need at least a 4GB SD Card:
 
-**[Download minera-latest.img.zip](http://getminera.com/download/latest)** (md5 789397fc810b393fba521750a82e328c)
+Official United Kingdom server:
 
+> [official-uk] **[Download minera-latest.img.zip](http://getminera.com/download/latest)** (md5 789397fc810b393fba521750a82e328c)
+
+Australian mirror:
+
+> [mirror-au] **[ Download minera-latest.img.zip](http://mirror-au.getminera.com/minera-latest.img.zip)** (md5 789397fc810b393fba521750a82e328c)
+
+After boot up your controller, point your browser to:
+
+```
+http://<your-controller-ip>/minera/
+```
 
 Default passwords are "*minera*" you should change them as well as the miner settings.
+_______
 
 **Manual install (Some skills needed)**
 
 If you prefer you can simply install Minera on your current Linux controller. Check if it's a debian based one otherwise download and install a right distribution.
 If you have a Raspberry, I suggest you to install Raspbian you can get it here: 
 
-http://downloads.raspberrypi.org/raspbian_latest
+> http://downloads.raspberrypi.org/raspbian_latest
 
 Simply download and put it in your SD card (there are tons of guide to do this, google it).
 
@@ -134,7 +149,7 @@ sudo ./install_minera.sh
 
 The installer will configure the system requirements and will tell you the URL to connect to.
 
-    Default URL: http://<your-minera-ip>/minera/
+    Default URL: http://<your-controller-ip>/minera/
 
 	Default password: minera
 	
@@ -235,6 +250,7 @@ TODO
 * Add start/stop daemon
 * ~~Add Mobileminer actions~~
 * ~~Add JSON config support~~
+
 _______
 
 Screenshots
@@ -292,6 +308,8 @@ I wish to thank every plugin, libraries, framework, icons, etc authors for their
 * [Jquery DataTables](https://datatables.net/) for the amazing tables
 * [Twitter Bootstrap](http://getbootstrap.com/) for the HTML/CSS theme
 * [Font Awesome](http://fortawesome.github.io/Font-Awesome/), [Ion icons](http://ionicons.com/) and [Glyphicon](http://glyphicons.com/) for the stunning well...icons of course :)
+* The nice guy who gave for free the space to host the Australian mirror
+
 _______
 
 LICENSE
