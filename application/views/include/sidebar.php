@@ -24,7 +24,7 @@
 						<h4 class="modal-title" id="modal-sharing-label"><i class="fa fa-share-square-o"></i> Share your config</h4>
 					</div>
 					<div class="modal-body">
-						<p>Before you can share your config with the Minera community you need to add a description, please add helpful infos like devices used and notes for users.<br />Only miner software and miner settings will be shared, no pools info.</p>
+						<p>Before you can share your config with the Minera community you need to add a description, please add helpful infos like devices used and notes for users.<br />Only miner software and miner settings along with this description will be shared, no pools info.</p>
 						<form method="post" id="formsharingconfig">
 							<div class="form-group">
 								<label>Config description</label>
@@ -61,7 +61,7 @@
 		
         <header class="header">
 
-            <a href="<?php echo site_url() ?>" class="logo">Minera</a>
+            <a href="<?php echo site_url('app/dashboard') ?>" class="logo">Minera</a>
 
             <!-- Header Navbar: style can be found in header.less -->
             <nav class="navbar navbar-static-top" role="navigation">

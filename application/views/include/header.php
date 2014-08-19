@@ -18,7 +18,7 @@
 	<link href="<?php echo base_url('assets/css/font-awesome.css') ?>" rel="stylesheet" />
 	<link href="<?php echo base_url('assets/css/ionicons.min.css') ?>" rel="stylesheet" />
 	<link href="<?php echo base_url('assets/css/datatables/dataTables.bootstrap.css') ?>" rel="stylesheet" />
-	<link href="<?php echo base_url('assets/css/custom.css') ?>" rel="stylesheet" />
+	<link href="<?php echo base_url('assets/css/custom.css?ver=20140819') ?>" rel="stylesheet" />
 	<link href="<?php echo base_url('assets/css/morris.css') ?>" rel="stylesheet" />
 	<link href="<?php echo base_url('assets/css/jQueryUI/jquery-ui-1.10.3.custom.min.css') ?>" rel="stylesheet" />
 	<link href="<?php echo base_url('assets/css/AdminLTE.css') ?>" rel="stylesheet" />

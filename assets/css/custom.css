@@ -30,6 +30,8 @@ body > .header .navbar .nav > li > a > .label { padding: 3px !important; }
 .small-box h4 { font-size: 28px; font-weight: bold; margin: 0 0 10px 0; white-space: nowrap; padding: 0; }
 .log-box { font-size: 11px; min-height: 220px; overflow: hidden;}
 .sidebar { position: fixed; width: 220px; }
+body > .header { position: fixed !important; }
+.right-side { margin-top: 60px; }
 .donation-pool { background: #E2EDF0; color: #99A5A8; }
 .callout.callout-grey { background-color: #F3F3F3; border-color: #ed5565; }
 .section-raw-stats { display: none;}
