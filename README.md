@@ -102,11 +102,11 @@ You need at least a 4GB SD Card:
 
 Official United Kingdom server:
 
-> [official-uk] **[Download minera-latest.img.zip](http://getminera.com/download/latest)** (md5 789397fc810b393fba521750a82e328c)
+> [official-uk] **[Download minera-latest.img.zip](http://getminera.com/download/latest)** (md5 b7fa677f77d64429f0d368cf1343ce6a)
 
 Australian mirror:
 
-> [mirror-au] **[ Download minera-latest.img.zip](http://mirror-au.getminera.com/minera-latest.img.zip)** (md5 789397fc810b393fba521750a82e328c)
+> [mirror-au] **[ Download minera-latest.img.zip](http://mirror-au.getminera.com/minera-latest.img.zip)** (md5 b7fa677f77d64429f0d368cf1343ce6a)
 
 After boot up your controller, point your browser to:
 
