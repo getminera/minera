@@ -94,7 +94,7 @@ Installing
 
 You can choose for a img file to put in your SD Card or for a manual install.
 
-**Image file (img) v0.3.1 (Recommended)**
+**Image file (img) v0.3.5 (Recommended)**
 
 This is the Minera image file for Raspberry PI, you have only to download it and put in your SD Card.
 
@@ -120,7 +120,7 @@ _______
 **Manual install (Some skills needed)**
 
 If you prefer you can simply install Minera on your current Linux controller. Check if it's a debian based one otherwise download and install a right distribution.
-If you have a Raspberry, I suggest you to install Raspbian you can get it here: 
+If you have a Raspberry, I suggest you to install Raspbian you can get it here:
 
 > http://downloads.raspberrypi.org/raspbian_latest
 
@@ -132,7 +132,7 @@ Skip this step and continue below if you have a web server with PHP just install
 
 ```
 sudo apt-get install -y lighttpd php5-cgi
-sudo lighty-enable-mod fastcgi 
+sudo lighty-enable-mod fastcgi
 sudo lighty-enable-mod fastcgi-php
 sudo service lighttpd force-reload
 ```
@@ -152,19 +152,19 @@ The installer will configure the system requirements and will tell you the URL t
     Default URL: http://<your-controller-ip>/minera/
 
 	Default password: minera
-	
+
 **Important**: minera system user has password "minera", you should change it if your system is a public host with SSH access.
 
 	sudo passwd minera
-	
+
 This isn't the web password, to change the web password, login into the web interface and go to *Miner -> Settings*
 
 **Miner command**
 
 The *miner command* binary path is:
 
-	minera-bin/<miner> 
-	
+	minera-bin/<miner>
+
 They are pre-compiled for Raspberry (ARM) with the latest version available, please refer to each one if you wanna recompile it.
 
 **For Ubuntu user only**
@@ -220,17 +220,17 @@ If you wanna check your minera's screen session just SSH into it and attach the 
 If you receive the following error:
 
 	Cannot open your terminal '/dev/pts/0' - please check.
-	
+
 Please run this commands:
 
 	script /dev/null
 	screen -r
-	
+
 If you have guided/manual options both selected in the settings page try run this:
 
 	echo -n "1" | redis-cli -x set guided_options
 	redis-cli del manual_options
-	
+
 If you wanna check the raw JSON stats from your minerd, please point your browser to:
 
 	http://<your-minera-ip>/minera/index.php/app/stats
