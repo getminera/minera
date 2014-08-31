@@ -72,5 +72,8 @@ then
 	sudo make install
 	sudo ldconfig
 fi
-
+echo -e "Upgrading OS"
+sudo apt-get -y update
+sudo apt-get -y upgrade
+sudo apt-get -y dist-upgrade
 echo -e 'DONE! Minera is ready!\n\nOpen the URL: http://'$(hostname -I | tr -d ' ')'/minera/\n\nAnd happy mining!\n'
