@@ -78,6 +78,7 @@ then
 	sudo make install
 	sudo ldconfig
 fi
+
 echo -e "Generating unique SSH keys\n-----\n"
 sudo rm /etc/ssh/ssh_host_*
 sudo dpkg-reconfigure openssh-server
