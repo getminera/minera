@@ -79,4 +79,9 @@ then
 	sudo ldconfig
 fi
 
+echo -e "Generating unique SSH keys\n-----\n"
+sudo rm /etc/ssh/ssh_host_*
+sudo dpkg-reconfigure openssh-server
+sudo service ssh restart
+
 echo -e 'DONE! Minera is ready!\n\nOpen the URL: http://'$(hostname -I | tr -d ' ')'/minera/\n\nAnd happy mining!\n'
