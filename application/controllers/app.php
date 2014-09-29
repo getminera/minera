@@ -970,7 +970,7 @@ class App extends Main_Controller {
 				}
 				else
 				{
-					sleep(3);
+					sleep(10);
 					$this->util_model->reboot();
 				}
 			}
