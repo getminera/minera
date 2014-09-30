@@ -1,4 +1,11 @@
 #!/bin/bash
+##################################################################### 
+# Minera builder script to build and update miner software binaries
+#
+# For usage just run the build_miner.sh without any argument
+#
+# Thanks to @brettvitaz https://github.com/brettvitaz
+##################################################################### 
  
 set -u
 set -e
@@ -50,14 +57,16 @@ function buildMiner {
 		echo "Running ./configure $BUILD_CONFIG"
 		./configure ${BUILD_CONFIG}
 		make
+		sudo make install
+		sudo ldconfig
 	fi
 	if [[ -e "$BUILD_PATH/$BUILD_BINARY" ]]; then
 		echo "Removing old binary $BINARY_PATH/$MINERA_BINARY"
 		rm $BINARY_PATH/$MINERA_BINARY
-		echo "Linking new binary $BUILD_PATH/$BUILD_BINARY -> $BINARY_PATH/$MINERA_BINARY"
-		ln -s $BUILD_PATH/$BUILD_BINARY $BINARY_PATH/$MINERA_BINARY
+		echo "Copying new binary $BUILD_PATH/$BUILD_BINARY -> $BINARY_PATH/$MINERA_BINARY"
+		cp $BUILD_PATH/$BUILD_BINARY $BINARY_PATH/$MINERA_BINARY
 	else
-		echo "Failed to link miner binary. File $BUILD_PATH/$BUILD_BINARY does not exist."
+		echo "Failed to copy miner binary. File $BUILD_PATH/$BUILD_BINARY does not exist."
 	fi
 }
  
