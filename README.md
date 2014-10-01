@@ -94,7 +94,7 @@ Installing
 
 You can choose for a img file to put in your SD Card or for a manual install.
 
-**Image file (img) v0.3.5 (Recommended)**
+**Image file (img) v0.3.6 (Recommended)**
 
 This is the Minera image file for Raspberry PI, you have only to download it and put in your SD Card.
 
@@ -207,6 +207,23 @@ Go to settings (*Miner -> Settings*) and choose your preferred options.
 A sample settings is pre-configured when you run the install_minera.sh script.
 
 Please remember to change your minera's settings or you will mine for my workers :)
+_______
+
+Building miner software
+-------------
+
+Since version 0.3.6 Minera comes with a script to build updated version of every single miner software.
+
+If you are in trouble with your binary file of Bfgminer for example, you can simply connect in SSH and run this:
+
+```
+cd /var/www/minera
+./build_miner.sh <miner-name>
+```
+
+The script will do everything you need to have the binary file in the correct place and updated.
+
+I you need a list of miner available just run the command without any argument.
 _______
 
 Troubleshooting
