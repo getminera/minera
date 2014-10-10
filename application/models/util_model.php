@@ -1439,11 +1439,22 @@ class Util_model extends CI_Model {
 		if ($this->isEnableMobileminer())
 		{
 			$stats = json_decode($this->getParsedStats($this->getMinerStats()));
-							
+			
+			// Params		
 			$params = array("emailAddress" => $this->redis->get("mobileminer_email"), "applicationKey" => $this->redis->get("mobileminer_appkey"), "apiKey" => $this->config->item('mobileminer_apikey'), "detailed" => true);
 			
+			// Pool data
 			$poolUrl = (isset($stats->pool->url)) ? $stats->pool->url : "no pool configured";
 			$poolStatus = (isset($stats->pool->alive) && $stats->pool->alive) ? "Alive" : "Dead";
+			
+			// Algo data
+			$minerdCommand = $this->getCommandLine();
+			$scryptEnabled = $this->redis->get("minerd_scrypt");
+			$algo = "SHA-256";
+			if ($scryptEnabled || preg_match("/scrypt/i", $minerdCommand) || $this->redis->get("minerd_running_software") == "cpuminer")
+			{
+				$algo = "Scrypt";
+			}
 							
 			$i = 0; $data = array();
 			if (count($stats->devices) > 0)
@@ -1455,7 +1466,7 @@ class Util_model extends CI_Model {
 						"MinerName" => "Minera",
 						"CoinSymbol" => "",
 						"CoinName" => "",
-						"Algorithm" => "Scrypt",
+						"Algorithm" => $algo,
 						"Kind" => "Asic",
 						"Name" => $devName,
 						"FullName" => $devName,
