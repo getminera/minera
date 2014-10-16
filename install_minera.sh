@@ -84,4 +84,7 @@ sudo rm /etc/ssh/ssh_host_*
 sudo dpkg-reconfigure openssh-server
 sudo service ssh restart
 
+echo -e "Building miners, this will take loooooooot of time in a low resource system, I strongly suggest you to take a beer (better two) and relax a while. Your Minera will be ready after this.\n-----\n"
+./build_miner.sh all
+
 echo -e 'DONE! Minera is ready!\n\nOpen the URL: http://'$(hostname -I | tr -d ' ')'/minera/\n\nAnd happy mining!\n'

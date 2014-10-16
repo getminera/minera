@@ -37,6 +37,7 @@ class Util_model extends CI_Model {
 		if ($this->_minerdSoftware == "bfgminer")
 		{
 			// Config for Bfgminer
+			$this->config->set_item('minerd_binary', 'bfgminer');
 			$this->config->set_item('screen_command', '/usr/bin/screen -dmS bfgminer');
 			$this->config->set_item('screen_command_stop', '/usr/bin/screen -S bfgminer -X quit');
 			$this->config->set_item('minerd_command', FCPATH.'minera-bin/bfgminer');
@@ -48,6 +49,7 @@ class Util_model extends CI_Model {
 		elseif ($this->_minerdSoftware == "cgminer")
 		{
 			// Config for Cgminer
+			$this->config->set_item('minerd_binary', 'cgminer');
 			$this->config->set_item('screen_command', '/usr/bin/screen -dmS cgminer');
 			$this->config->set_item('screen_command_stop', '/usr/bin/screen -S cgminer -X quit');
 			$this->config->set_item('minerd_command', FCPATH.'minera-bin/cgminer');
@@ -59,6 +61,7 @@ class Util_model extends CI_Model {
 		elseif ($this->_minerdSoftware == "cgdmaxlzeus")
 		{
 			// Config for Cgminer Dmal Zeus
+			$this->config->set_item('minerd_binary', 'cgminer-dmaxl-zeus');
 			$this->config->set_item('screen_command', '/usr/bin/screen -dmS cgminerdmaxlzeus');
 			$this->config->set_item('screen_command_stop', '/usr/bin/screen -S cgminerdmaxlzeus -X quit');
 			$this->config->set_item('minerd_command', FCPATH.'minera-bin/cgminer-dmaxl-zeus');
@@ -70,6 +73,7 @@ class Util_model extends CI_Model {
 		elseif ($this->_minerdSoftware == "cpuminer")
 		{
 			// Config for Cpuminer-gc3355
+			$this->config->set_item('minerd_binary', 'minerd');
 			$this->config->set_item('screen_command', '/usr/bin/screen -dmS cpuminer');
 			$this->config->set_item('screen_command_stop', '/usr/bin/screen -S cpuminer -X quit');
 			$this->config->set_item('minerd_command', FCPATH.'minera-bin/minerd');
@@ -1135,7 +1139,7 @@ class Util_model extends CI_Model {
 		$minerdUser = ($this->redis->get("minerd_running_user")) ? $this->redis->get("minerd_running_user") : $this->config->item("system_user");
 
 		exec("sudo -u " . $minerdUser . " " . $this->config->item("screen_command_stop"));
-		exec("sudo -u " . $minerdUser . " /usr/bin/killall -s9 minerd");
+		exec("sudo -u " . $minerdUser . " /usr/bin/killall -s9 ".$this->config->item("minerd_binary"));
 		
 		$this->redis->del("latest_stats");
 		$this->redis->set("minerd_status", false);
