@@ -70,7 +70,7 @@ if [ $LIBCOUNT -lt 2 ];
 then
 	cd minera-bin/src/libblkmaker
 	sudo make install
-	sudo ldconfig
 fi
+sudo ldconfig
 
 echo -e 'DONE! Minera is ready!\n\nOpen the URL: http://'$(hostname -I | tr -d ' ')'/minera/\n\nAnd happy mining!\n'
