@@ -94,7 +94,7 @@ Installing
 
 You can choose for a img file to put in your SD Card or for a manual install.
 
-**Image file (img) v0.3.7 (Recommended)**
+**Image file (img) v0.3.8 (Recommended)**
 
 This is the Minera image file for Raspberry PI, you have only to download it and put in your SD Card.
 
