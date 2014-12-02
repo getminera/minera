@@ -1,3 +1,7 @@
+	<!--  Coinbase tip script -->
+	<script>!function(d,s,id) {var js,cjs=d.getElementsByTagName(s)[0],e=d.getElementById(id);if(e){return;}js=d.createElement(s);js.id=id;js.src="https://www.coinbase.com/assets/tips.js";cjs.parentNode.insertBefore(js,cjs);}(document, 'script', 'coinbase-tips');</script>
+	<script src="https://www.coinbase.com/assets/button.js" type="text/javascript"></script>
+	
 	<script src="<?php echo base_url('assets/js/jquery-2.1.1.min.js') ?>"></script>
 	<script src="<?php echo base_url('assets/js/jquery-ui-1.10.4.min.js') ?>"></script>
 	<script src="<?php echo base_url('assets/js/jquery.ui.touch-punch.min.js') ?>"></script>
@@ -604,6 +608,13 @@
 				$(".pool-donation-group").css("display", "block").removeClass("pool-donation-group");
 		    });
 		    
+		    // Custom miners
+		     // Initialize options sliders
+		    $(".open-readme-custom-miners").click(function(e) {
+				e.preventDefault();
+				$(".readme-custom-miners").fadeToggle();
+		    });
+		    
 		    $('#minerd-software').on('change', function() {
 				showHideMinerOptions(true);
 		    });
@@ -630,7 +641,7 @@
 			    	$(".legend-option-autodetect").html("(--gc3355-detect)");
 			    	$(".legend-option-log").html("(--log)");
 					$("#minerd-log").show();
-				    	$("input[name='minerd_log']").prop('disabled', false);
+				    $("input[name='minerd_log']").prop('disabled', false);
 			    	$("#minerd-autotune").show();
 			    	$("input[name='minerd_autotune']").prop('disabled', false);
 				    $("#minerd-startfreq").show();
@@ -642,6 +653,7 @@
 
 			    $(".detail-minerdsoftware").remove();
 			    $(".note-minerdsoftware").remove();
+			    
 			    if (change)
 			    {
 			    	if ($('#minerd-software').val() == "cpuminer")
@@ -659,6 +671,10 @@
 					else if ($('#minerd-software').val() == "cgdmaxlzeus")
 					{
 						$(".group-minerdsoftware").append('<h6 class="detail-minerdsoftware"><a href="https://github.com/dmaxl/cgminer/" target="_blank"><small class="badge bg-red">CGminer Dmaxl Zeus</small></a> is a Cgminer 4.3.5 fork with GridSeed and Zeus scrypt ASIC support, it has some issues with Minera. Stability is unknown. <a href="https://github.com/dmaxl/cgminer/" target="_blank">More info</a>.</h6>');
+					}
+					else
+					{
+						$(".group-minerdsoftware").append('<h6 class="detail-minerdsoftware"><small class="badge bg-red">Custom Miner</small> is a miner you uploaded, it\'s up to you, but it\'s recommended to use "manual" options below, cause Minera can\'t know the "guided" options for your custom miner.</h6>');
 					}
 										
 					$(".group-minerdsoftware").append('<h5 class="note-minerdsoftware"><strong>NOTE:</strong> <i>remember to review your settings below if you change the miner software because they haven\'t the same config options and the miner process could not start.</i></5>');

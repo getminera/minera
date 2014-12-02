@@ -37,7 +37,7 @@ CGMINER_DMAXL_MINERA_BINARY="cgminer-dmaxl-zeus"
  
 CGMINER_REPO="https://github.com/ckolivas/cgminer.git"
 CGMINER_PATH="$SOURCE_PATH/cgminer"
-CGMINER_CONFIG="--enable-avalon2 --enable-bab --enable-bflsc --enable-bitforce --enable-bitfury --enable-bitmine_A1 --enable-drillbit --enable-hashfast --enable-icarus --enable-klondike --enable-knc --enable-modminer"
+CGMINER_CONFIG="--enable-avalon2 --enable-bflsc --enable-bitforce --enable-bitfury --enable-drillbit --enable-hashfast --enable-icarus --enable-klondike --enable-modminer"
 CGMINER_BINARY="cgminer"
 CGMINER_MINERA_BINARY="cgminer"
  

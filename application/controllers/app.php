@@ -29,7 +29,7 @@ class App extends Main_Controller {
 	*/
 	public function login()
 	{		
-		if ($this->input->post('password', true) && $this->input->post('password', true) == $this->redis->get('minera_password'))
+		if ($this->input->post('password', true) && md5($this->input->post('password', true)) == $this->redis->get('minera_password'))
 		{
 			$this->session->set_userdata("loggedin", 1);
 			redirect('app/dashboard');
@@ -123,7 +123,7 @@ class App extends Main_Controller {
 			}
 			else
 			{
-				$this->redis->set("minera_password", $password);
+				$this->redis->set("minera_password", md5($password));
 				$data['message'] = '<b>Success!</b> Password saved!';
 				$data['message_type'] = "success";
 			}
@@ -443,7 +443,7 @@ class App extends Main_Controller {
 				$delay = $this->input->post('minerd_delaytime');
 				$this->redis->set("minerd_delaytime", $delay);
 			}
-			$dataObj->minerd_delaytime = $this->input->post('minerd_delaytime');
+			$dataObj->minerd_delaytime = $delay;
 
 			// On boot extra commands
 			$extracommands = false;
@@ -840,6 +840,12 @@ class App extends Main_Controller {
 		{
 			log_message('error', "CRON locked waiting previous process to terminate...");			
 			return true;
+		}
+		
+		if ( ($this->util_model->getSysUptime() + $this->redis->get('minerd_delaytime') ) <= 60 )
+		{
+			log_message('error', "System just started, warming up...");			
+			return true;			
 		}
 	
 		$time_start = microtime(true); 

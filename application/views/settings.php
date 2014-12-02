@@ -82,7 +82,7 @@
 										    		    <p><small>It's just an approximate. I simply divide the time in minutes you donate per fixed average profitability of <?php echo $donationProfitability ?> <i class="fa fa-btc"></i>/Day, the function is: <i><?php echo $donationProfitability ?> / 24 / 60 x donation_minutes</i>.</small></p>
 										    		    
 										    		    <h6><strong>Is there a prize for who donate?</strong></h6>
-										    		    <p><small>Well, my appreciation first of all, then yes you'll get a tiny prize, donation box on dashboard disappears if you have donations active.</small></p>
+										    		    <p><small>Well, my appreciation first of all, then yes you'll get a tiny prize, donation boxes on dashboard and sidebar disappears if you have donations active.</small></p>
 										    		    
 										    		    <h6><strong>What do you do with the money received?</strong></h6>
 										    		    <p><small>Thanks to your kind donations I could buy some of the new hardware coming out and add its support to Minera. So next time there is a new cool hardware, Minera will be ready for it. I also need beer to do all this cool stuff :)</small></p>
@@ -361,6 +361,69 @@
 									</div>
 	                            </div>
 	                            
+	                            <!-- Custom miners box -->
+								<div class="box box-primary">
+								    <div class="box-header">
+								    	<!-- tools box -->
+			                            <div class="pull-right box-tools">
+			                                <button class="btn btn-default btn-xs" data-widget="collapse" data-toggle="tooltip" title="" data-original-title="Collapse"><i class="fa fa-minus"></i></button>
+			                            </div><!-- /. tools -->
+			                            <i class="fa fa-desktop"></i>
+			                            
+			                            <h3 class="box-title">Custom miners</h3>
+			                        </div>
+								    
+			                        <div class="box-body">
+								    	<p>Here you can add your own custom miners to be used with Minera, before you start please read this <a href="#" class="open-readme-custom-miners">important requirements</a>.</p>
+								    	
+								    	<div class="callout callout-grey readme-custom-miners" style="display:none;">
+							    		    <h6><strong>Can I upload any miner binary?</strong></h6>
+
+							    		    <p><strong>NO!</strong> <small>Miners must be forks of CGminer or BFGminer, there are small probability you can add different miners than those, the main problem is how the miner send stats and it must be compatibile to Minera.</small></p>
+
+							    		    <h6><strong>My miner should be compatible but it isn't working</strong></h6>
+							    		    <p><small>Check your binary works on your Minera system, SSH into it and try to launch it manually, probably it lacks on missing external libraries or you have compiled it with a wrong architecture</small></p>
+							    		    
+							    		    <h6><strong>Can I use this feature if I'm completely newbie to mining and Linux?</strong></h6>
+							    		    <p><small>Well, short answer should be "No", the long one is: you could try, but it needs a lot of skills to do this and if you are a newbie it's recommended you start with a pre-compiled miner software, Minera has 4 built-in, start with them, then try to <a href="https://bitcointalk.org/index.php?topic=596620.0">ask to the forum</a> before playing with this feature.</small></p>
+							    		    
+							    		    <h6><strong>Can I completely brake my Minera using this feature?</strong></h6>
+							    		    <p><small>No, you can always rollback to a built-in miner, just select it from your preferred miners below (you can also save each config and re-load them when you need, check the Import/export section below).</small></p>
+							    		    
+							    		    <h6><strong>Is this feature stable enough to be used without any issue?</strong></h6>
+							    		    <p><strong>NO!</strong> <small>This is intended as "beta" feature, if you wanna live happy with your Minera, save/export always your settings before doing something like enabling this.</small></p>
+							    		</div>
+										    		
+										<div class="import-export-box margin-bottom">
+											<span class="btn btn-success fileinput-button" data-toggle="tooltip" data-title="File must be a JSON export file from a Minera system">
+												<i class="glyphicon glyphicon-plus"></i>
+												Import file...
+												<input class="import-file" type="file" name="import_system_config">
+											</span>
+											<span class="btn btn-warning export-action" data-toggle="tooltip" data-title="This generates a JSON file to be imported into Minera">
+												<i class="glyphicon glyphicon-download-alt"></i>
+												Export Settings
+											</span> 
+											<span class="btn btn-default save-config-action" data-toggle="tooltip" data-title="This saves only the miner config to be used or shared later">
+												<i class="glyphicon glyphicon-floppy-disk"></i>
+												Save Miner Config
+											</span>
+										</div>
+								    	
+										<!-- The global progress bar -->
+										<div id="progress" class="progress">
+											<div class="progress-bar progress-bar-success"></div>
+										</div>
+										<!-- The container for the uploaded files -->
+										<div id="files" class="files"></div>
+								    											
+			                        </div>
+									<div class="box-footer">
+										<h6><em>*</em> Loading a saved miner config sets the manual settings mode with the saved command line, sets the miner software and completely overwrites the pools settings.</h6>
+										<h6><em>**</em> Sharing the miner config to the Minera community won't share your pools settings</h6>
+									</div>
+			                    </div>
+			                    
 								<!-- Miner box -->
 	                            <div class="box box-primary">
 									<div class="box-header">
@@ -565,7 +628,7 @@
 											<hr />
 											
 	                                        <!-- Minerd final config -->
-	                                        <h3>Check your miner settings</h3>
+	                                        <h3><i class="fa fa-check"></i> Check your miner settings</h3>
 											<div class="callout callout-info">
 												<h4>Miner will start with this syntax:</h4>
 												<h5><i><?php echo $this->config->item("screen_command") ?> <?php echo $this->config->item("minerd_command")."</i> <strong>".$minerdSettings ?></strong></h5>

@@ -82,6 +82,18 @@ class Util_model extends CI_Model {
 			$this->config->set_item('minerd_log_url', 'application/logs/cpuminer.log');
 			$this->load->model('cpuminer_model', 'miner');
 		}
+		else
+		{
+			// Config for any custom miner
+			$this->config->set_item('minerd_binary', $this->_minerdSoftware);
+			$this->config->set_item('screen_command', '/usr/bin/screen -dmS '.$this->_minerdSoftware);
+			$this->config->set_item('screen_command_stop', '/usr/bin/screen -S '.$this->_minerdSoftware.' -X quit');
+			$this->config->set_item('minerd_command', FCPATH.'minera-bin/'.$this->_minerdSoftware);
+			$this->config->set_item('minerd_log_file', '/var/log/minera/'.$this->_minerdSoftware.'.log');
+			$this->config->set_item('minerd_special_log', false);
+			$this->config->set_item('minerd_log_url', 'application/logs/'.$this->_minerdSoftware.'.log');
+			$this->load->model('cgminer_model', 'miner');
+		}
 		
 		return true;
 	}
@@ -152,6 +164,8 @@ class Util_model extends CI_Model {
 	// Get the specific miner stats
 	public function getMinerStats()
 	{
+		$tmpPools = null;
+		
 		if ($this->isOnline())
 		{
 			$a = $this->miner->callMinerd();
@@ -162,12 +176,26 @@ class Util_model extends CI_Model {
 					$pools = (isset($a->pools)) ? $a->pools : false;
 				else
 				{
+					// Get the real active pools
+					if (isset($a->devs[0]->DEVS))
+					{
+						$devicePoolIndex = array();
+						
+						foreach ($a->devs[0]->DEVS as $device)
+						{			
+							// Check the real active pool
+							$devicePoolIndex[] = $device->{'Last Share Pool'};
+						}				
+						
+						$devicePoolActives = array_count_values($devicePoolIndex);					
+					}
+
 					// Parse cg/bfgminer pools to be the same as cpuminer
 					$tmpPools = (isset($a->pools[0]->POOLS)) ? $a->pools[0]->POOLS : false;
 					if ($tmpPools)
 					{
 						$pools = array();
-						foreach ($tmpPools as $tmpPool)
+						foreach ($tmpPools as $poolIndex => $tmpPool)
 						{
 							$stats = new stdClass();
 							$stats->start_time = false;
@@ -177,10 +205,12 @@ class Util_model extends CI_Model {
 							$stats->stop_time = false;
 							$stats->stats_id = 1;
 							
+							$poolActive = (array_key_exists($poolIndex, $devicePoolActives)) ? true : false;
+							
 							$newpool = new stdClass();
 							$newpool->priority = $tmpPool->Priority;
 							$newpool->url = $tmpPool->URL;
-							$newpool->active = $tmpPool->{'Stratum Active'};
+							$newpool->active = $poolActive; //$tmpPool->{'Stratum Active'};
 							$newpool->user = $tmpPool->User;
 							$newpool->pass = false;
 							$newpool->stats = array($stats);
@@ -207,6 +237,7 @@ class Util_model extends CI_Model {
 					}
 				}
 				
+				$a->original_pools = $tmpPools;
 				$a->pools = $pools;
 				return $a;
 			}
@@ -224,7 +255,7 @@ class Util_model extends CI_Model {
 	}
 	
 	/*
-	// Parse the CPUMiner stats to get them per device instead per chip
+	// Parse the miner stats to add devices
 	// with a summary total and active pool
 	*/
 	public function getParsedStats($stats)
@@ -303,7 +334,7 @@ class Util_model extends CI_Model {
 			}
 		}
 		else
-		// BFGminer devices stats
+		// CG/BFGminer devices stats
 		{
 			if (isset($stats->devs[0]->DEVS))
 			{
@@ -319,9 +350,13 @@ class Util_model extends CI_Model {
 					$return['devices'][$name]['rejected'] = $device->Rejected;
 					$return['devices'][$name]['hw_errors'] = $device->{'Hardware Errors'};
 					if ($this->_minerdSoftware == "cgdmaxlzeus")
-						$return['devices'][$name]['shares'] = ($device->{'Diff1 Work'}) ? round(($device->{'Diff1 Work'}*71582788/1000/1000),0) : 0;
+					{
+						$return['devices'][$name]['shares'] = ($device->{'Diff1 Work'}) ? round(($device->{'Diff1 Work'}*71582788/1000/1000),0) : 0;	
+					}
 					else
-						$return['devices'][$name]['shares'] = ($device->{'Diff1 Work'}) ? round(($device->{'Diff1 Work'}*71582788/1000),0) : 0;
+					{
+						$return['devices'][$name]['shares'] = ($device->{'Diff1 Work'}) ? round(($device->{'Diff1 Work'}*71582788/1000),0) : 0;	
+					}
 					$return['devices'][$name]['hashrate'] = ($device->{'MHS av'}*1000*1000);
 					$return['devices'][$name]['last_share'] = $device->{'Last Share Time'};
 					$return['devices'][$name]['serial'] = (isset($device->Serial)) ? $device->Serial : false;;
@@ -330,7 +365,13 @@ class Util_model extends CI_Model {
 					$tdfrequency += $return['devices'][$name]['frequency'];
 					$tdshares += $return['devices'][$name]['shares'];
 					$tdhashrate += $return['devices'][$name]['hashrate'];
+					
+					// Check the real active pool
+					$devicePoolIndex[] = $device->{'Last Share Pool'};
 				}				
+				
+				$devicePoolActives = array_count_values($devicePoolIndex);
+				
 			}
 			
 			if (isset($stats->summary[0]->SUMMARY[0]))
@@ -346,7 +387,7 @@ class Util_model extends CI_Model {
 				$return['totals']['hashrate'] = $tdhashrate;
 				$return['totals']['last_share'] = $totals->{'Last getwork'};
 				
-				if ($this->_minerdSoftware == "cgdmaxlzeus")
+				if ($this->_minerdSoftware == "cgdmaxlzeus" || $this->_minerdSoftware == "cgminer")
 					$cgbfgminerPoolHashrate = round($totals->{'Total MH'} / $totals->Elapsed * 1000000); //round(65536.0 * ($totals->{'Difficulty Accepted'} / $totals->Elapsed), 0); //round(($totals->{'Network Blocks'}*71582788/1000), 0);
 				else
 					$cgbfgminerPoolHashrate = round(($totals->{'Work Utility'}*71582788), 0);
@@ -355,11 +396,11 @@ class Util_model extends CI_Model {
 		
 		if (isset($stats->pools))
 		{
-			foreach ($stats->pools as $pool)
+			foreach ($stats->pools as $poolIndex => $pool)
 			{
-				if (isset($pool->active) && $pool->active == 1)
+				if ($this->_minerdSoftware == "cpuminer")
 				{
-					if ($this->_minerdSoftware == "cpuminer")
+					if (isset($pool->active) && $pool->active == 1)
 					{
 						foreach($pool->stats as $session)
 						{
@@ -370,15 +411,18 @@ class Util_model extends CI_Model {
 							}
 						}
 					}
-					else
-					{
-						$poolHashrate = $cgbfgminerPoolHashrate;
-					}
-					
-					$return['pool']['hashrate'] = $poolHashrate;
-					$return['pool']['url'] = $pool->url;
-					$return['pool']['alive'] = $pool->alive;
 				}
+				else
+				{
+					if (array_key_exists($poolIndex, $devicePoolActives))
+					{
+						$poolHashrate = $cgbfgminerPoolHashrate;	
+					}
+				}
+					
+				$return['pool']['hashrate'] = $poolHashrate;
+				$return['pool']['url'] = $pool->url;
+				$return['pool']['alive'] = $pool->alive;
 			}
 		}
 	
