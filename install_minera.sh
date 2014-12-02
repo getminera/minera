@@ -39,7 +39,7 @@ service rsyslog restart
 
 echo -e "Adding default startup settings to redis\n-----\n"
 echo -n $MINER_OPT | redis-cli -x set minerd_settings
-echo -n "minera" | redis-cli -x set minera_password
+echo -n "0e261763a9ea3483b4b8ffdbf0e9cd26" | redis-cli -x set minera_password
 echo -n "1" | redis-cli -x set guided_options
 echo -n "0" | redis-cli -x set manual_options
 echo -n "1" | redis-cli -x set minerd_autodetect

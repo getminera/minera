@@ -28,8 +28,18 @@ class App extends Main_Controller {
 	// Login controller
 	*/
 	public function login()
-	{		
-		if ($this->input->post('password', true) && md5($this->input->post('password', true)) == $this->redis->get('minera_password'))
+	{	
+		if (preg_match('/^[a-f0-9]{32}$/', $this->redis->get('minera_password')))
+		{
+			$storedp = $this->redis->get('minera_password');
+		}
+		else
+		{
+			$storedp = md5($this->redis->get('minera_password'));
+			$this->redis->set('minera_password', $storedp);
+		}
+		
+		if ($this->input->post('password', true) && md5($this->input->post('password', true)) == $storedp)
 		{
 			$this->session->set_userdata("loggedin", 1);
 			redirect('app/dashboard');
@@ -57,6 +67,7 @@ class App extends Main_Controller {
 		$data['mineraUpdate'] = $this->util_model->checkUpdate();
 		$data['dashboard_refresh_time'] = $this->redis->get("dashboard_refresh_time");
 		$data['pageTitle'] = ($this->redis->get("mobileminer_system_name")) ? $this->redis->get("mobileminer_system_name")." > Minera - Dashboard" : "Minera - Dashboard";
+		$data['dashboardSkin'] = ($this->redis->get("dashboard_skin")) ? $this->redis->get("dashboard_skin") : "black";
 		$data['minerdRunning'] = $this->redis->get("minerd_running_software");
 		$data['minerdRunningUser'] = $this->redis->get("minerd_running_user");
 		$data['minerdSoftware'] = $this->redis->get("minerd_software");
@@ -83,6 +94,7 @@ class App extends Main_Controller {
 		$data['settingsScript'] = false;
 		$data['mineraUpdate'] = $this->util_model->checkUpdate();
 		$data['pageTitle'] = ($this->redis->get("mobileminer_system_name")) ? $this->redis->get("mobileminer_system_name")." > Minera - Charts" : "Minera - Charts";
+		$data['dashboardSkin'] = ($this->redis->get("dashboard_skin")) ? $this->redis->get("dashboard_skin") : "black";
 		$data['minerdRunning'] = $this->redis->get("minerd_running_software");
 		$data['minerdRunningUser'] = $this->redis->get("minerd_running_user");		
 		$data['minerdSoftware'] = $this->redis->get("minerd_software");
@@ -164,6 +176,7 @@ class App extends Main_Controller {
 		$data['dashboard_coin_rates'] = (is_array(json_decode($dashboard_coin_rates))) ? json_decode($dashboard_coin_rates) : array();
 		$data['cryptsy_data'] = $this->redis->get("cryptsy_data");
 		$data['dashboardTemp'] = ($this->redis->get("dashboard_temp")) ? $this->redis->get("dashboard_temp") : "c";
+		$data['dashboardSkin'] = ($this->redis->get("dashboard_skin")) ? $this->redis->get("dashboard_skin") : "black";
 
 		// Load System settings
 		$data['mineraTimezone'] = $this->redis->get("minera_timezone");
@@ -223,7 +236,8 @@ class App extends Main_Controller {
 			
 			$coinRates = $this->input->post('dashboard_coin_rates');
 			$this->redis->set("altcoins_update", (time()-3600));
-			$dashboardTemp = $this->input->post('dashboard_temp');			
+			$dashboardTemp = $this->input->post('dashboard_temp');
+			$dashboardSkin = $this->input->post('dashboard_skin');
 			
 			$poolUrls = $this->input->post('pool_url');
 			$poolUsernames = $this->input->post('pool_username');
@@ -423,6 +437,8 @@ class App extends Main_Controller {
 			$dataObj->dashboard_coin_rates = json_encode($coinRates);
 			$this->redis->set("dashboard_temp", $dashboardTemp);
 			$dataObj->dashboard_temp = $dashboardTemp;
+			$this->redis->set("dashboard_skin", $dashboardSkin);
+			$dataObj->dashboard_skin = $dashboardSkin;
 			
 			// System settings
 			

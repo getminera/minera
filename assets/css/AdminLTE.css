@@ -2497,13 +2497,15 @@ Component: timeline
   color: rgba(255, 255, 255, 0.8);
 }
 .skin-blue .navbar .nav > li > a:hover,
-.skin-blue .navbar .nav > li > a:active,
-.skin-blue .navbar .nav > li > a:focus,
 .skin-blue .navbar .nav .open > a,
-.skin-blue .navbar .nav .open > a:hover,
-.skin-blue .navbar .nav .open > a:focus {
+.skin-blue .navbar .nav .open > a:hover {
   background: rgba(0, 0, 0, 0.1);
   color: #f6f6f6;
+}
+.skin-blue .navbar .nav > li > a:active,
+.skin-blue .navbar .nav > li > a:focus,
+.skin-blue .navbar .nav .open > a:focus {
+	color: #333;
 }
 .skin-blue .navbar .navbar-right > .nav {
   margin-right: 10px;
@@ -2516,14 +2518,15 @@ Component: timeline
 }
 /* skin-blue logo */
 .skin-blue .logo {
-  background-color: #367fa9;
+  background-color: #FF4D50;
   color: #f9f9f9;
 }
 .skin-blue .logo > a {
   color: #f9f9f9;
 }
 .skin-blue .logo:hover {
-  background: #357ca5;
+  background: #f9f9f9;
+  color: #333;
 }
 /* skin-blue content header */
 .skin-blue .right-side > .content-header {
@@ -2648,13 +2651,15 @@ Component: timeline
   color: #333333;
 }
 .skin-black .navbar .nav > li > a:hover,
+.skin-black .navbar .nav .open > a,
+.skin-black .navbar .nav .open > a:hover {
+  background-color: rgba(0, 0, 0, 0.8);
+  color: #f9f9f9;
+}
 .skin-black .navbar .nav > li > a:active,
 .skin-black .navbar .nav > li > a:focus,
-.skin-black .navbar .nav .open > a,
-.skin-black .navbar .nav .open > a:hover,
 .skin-black .navbar .nav .open > a:focus {
-  background: #ffffff;
-  color: #999999;
+	color: #333;
 }
 .skin-black .navbar .navbar-right > .nav {
   margin-right: 10px;
@@ -2667,14 +2672,15 @@ Component: timeline
 }
 /* skin-black logo */
 .skin-black .logo {
-  background-color: #333333;
+  background-color: #FF4D50;
   color: #f9f9f9;
 }
 .skin-black .logo > a {
   color: #f9f9f9;
 }
 .skin-black .logo:hover {
-  background: #303030;
+  background: #f9f9f9;
+  color: #333;
 }
 /* skin-black content header */
 .skin-black .right-side > .content-header {

@@ -159,8 +159,6 @@
 															<input type="radio" name="dashboard_temp" value="c" <?php if ($dashboardTemp == "c") : ?>checked=""<?php endif; ?> />
 															Celsius (C°)
 														</label>                                                
-													</div>
-													<div class="radio">
 														<label>
 															<input type="radio" name="dashboard_temp" value="f" <?php if ($dashboardTemp == "f") : ?>checked=""<?php endif; ?> />
 															Fahrenheit (F°)
@@ -175,7 +173,15 @@
 													<div class="margin-bottom">
 														<input type="text" name="dashboard_refresh_time" id="option-dashboard-refresh-time" class="refresh-time" value="" />
 													</div>
-													<small>time in seconds, min 5 secs</small>
+												</div>
+												
+												<!-- Skin colors -->
+												<div class="form-group">
+													<label>Skin</label>
+													<select name="dashboard_skin" id="dashboard-skin" class="form-control">
+														<option value="black" <?php if ($dashboardSkin == "black") : ?>selected<?php endif; ?>>Black</option>
+														<option value="blue" <?php if ($dashboardSkin == "blue") : ?>selected<?php endif; ?>>Blue</option>
+													</select>
 												</div>
 			                                </div>
 											<div class="box-footer">

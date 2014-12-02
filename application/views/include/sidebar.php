@@ -1,4 +1,4 @@
-    <body class="skin-black"<?php if ($appScript) : ?> onload="getStats(false);"<?php endif; ?>>
+    <body class="skin-<?php echo $dashboardSkin ?>"<?php if ($appScript) : ?> onload="getStats(false);"<?php endif; ?>>
 
 		<!-- Modal -->
 		<div id="modal-saving" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="SavingData" aria-hidden="true" data-backdrop="static" data-keyboard="false" >
