@@ -1,3 +1,5 @@
+	<div class="copyright"><a href="http://getminera.com" target="_blank"><i class="fa fa-asterisk"></i> Minera</a> your next mining dashboard - Need a wallet? Try <a href="https://www.coinbase.com/join/michelem" target="_blank">Coinbase</a></div>
+	
 	<!--  Coinbase tip script -->
 	<script>!function(d,s,id) {var js,cjs=d.getElementsByTagName(s)[0],e=d.getElementById(id);if(e){return;}js=d.createElement(s);js.id=id;js.src="https://www.coinbase.com/assets/tips.js";cjs.parentNode.insertBefore(js,cjs);}(document, 'script', 'coinbase-tips');</script>
 	<script src="https://www.coinbase.com/assets/button.js" type="text/javascript"></script>
@@ -37,6 +39,10 @@
 			}
 			
 			startTime();
+			
+			//$(document).ready(function(){
+         	//	bootstro.start();
+        	//});
 			
 			function startTime()
             {

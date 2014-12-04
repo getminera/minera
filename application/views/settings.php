@@ -178,6 +178,7 @@
 												<!-- Skin colors -->
 												<div class="form-group">
 													<label>Skin</label>
+													<p>Select your favorite skin for your controller.</p>
 													<select name="dashboard_skin" id="dashboard-skin" class="form-control">
 														<option value="black" <?php if ($dashboardSkin == "black") : ?>selected<?php endif; ?>>Black</option>
 														<option value="blue" <?php if ($dashboardSkin == "blue") : ?>selected<?php endif; ?>>Blue</option>
@@ -380,15 +381,39 @@
 			                        </div>
 								    
 			                        <div class="box-body">
-								    	<p>Here you can add your own custom miners to be used with Minera, before you start please read this <a href="#" class="open-readme-custom-miners">important requirements</a>.</p>
+								    	<p>Here you can add your own custom miners to be used with Minera, before you start please read this <a href="#" class="open-readme-custom-miners">FAQ</a>.</p>
 								    	
+								    	<div class="callout callout-info">
+									    	<?php if (count($customMiners) > 0) : ?>
+												<p>I found the following custom miners available, to add or remove just select on or off and save. You'll find them in the preferred miners select below.</p>
+									    		<?php foreach ($customMiners as $customMiner) : ?>
+										    		<div class="input-group margin-bottom">
+														<label>
+															<input type="checkbox" 
+																name="active_custom_miners[]" 
+																value="<?php echo $customMiner ?>" 
+																<?php if ($activeCustomMiners && in_array($customMiner, $activeCustomMiners)) : ?>checked<?php endif; ?> 
+																<?php if (strtolower($customMiner) == "bfgminer" || strtolower($customMiner) == "cpuminer" || strtolower($customMiner) == "cgminer" || strtolower($customMiner) == "cgminer-dmaxl-zeus") : ?>disabled<?php endif; ?> 
+															/>
+															<?php echo $customMiner ?>
+														</label>
+										    		</div>
+									    		<?php endforeach; ?>
+									    	<?php else : ?>
+									    		<p><h6>It seems you haven't any custom miner. If you wanna add it, you need to build your binary and put it in the custom miner folder:</h6> <code><?php echo FCPATH.'minera-bin/custom/'; ?></code></p>
+												<h6>Don't call your custom binary file as "bfgminer", "cgminer" or any other existent (built-in) miner. Minera won't permit you to use it. If this happens change the filename.</h6>
+									    	<?php endif; ?>
+								    	</div>
+
+										<h6>* After you turn on your custom miner and save, you need to select it from your preferred miner below and remember to setup it.</h6>
+										
 								    	<div class="callout callout-grey readme-custom-miners" style="display:none;">
-							    		    <h6><strong>Can I upload any miner binary?</strong></h6>
+							    		    <h6><strong>Can I use any miner binary?</strong></h6>
 
 							    		    <p><strong>NO!</strong> <small>Miners must be forks of CGminer or BFGminer, there are small probability you can add different miners than those, the main problem is how the miner send stats and it must be compatibile to Minera.</small></p>
 
 							    		    <h6><strong>My miner should be compatible but it isn't working</strong></h6>
-							    		    <p><small>Check your binary works on your Minera system, SSH into it and try to launch it manually, probably it lacks on missing external libraries or you have compiled it with a wrong architecture</small></p>
+							    		    <p><small>Check your binary works on your Minera system, SSH into it and try to launch it manually, probably it lacks on missing external libraries or you have compiled it with a wrong architecture, try to recompile it on Minera.</small></p>
 							    		    
 							    		    <h6><strong>Can I use this feature if I'm completely newbie to mining and Linux?</strong></h6>
 							    		    <p><small>Well, short answer should be "No", the long one is: you could try, but it needs a lot of skills to do this and if you are a newbie it's recommended you start with a pre-compiled miner software, Minera has 4 built-in, start with them, then try to <a href="https://bitcointalk.org/index.php?topic=596620.0">ask to the forum</a> before playing with this feature.</small></p>
@@ -399,34 +424,10 @@
 							    		    <h6><strong>Is this feature stable enough to be used without any issue?</strong></h6>
 							    		    <p><strong>NO!</strong> <small>This is intended as "beta" feature, if you wanna live happy with your Minera, save/export always your settings before doing something like enabling this.</small></p>
 							    		</div>
-										    		
-										<div class="import-export-box margin-bottom">
-											<span class="btn btn-success fileinput-button" data-toggle="tooltip" data-title="File must be a JSON export file from a Minera system">
-												<i class="glyphicon glyphicon-plus"></i>
-												Import file...
-												<input class="import-file" type="file" name="import_system_config">
-											</span>
-											<span class="btn btn-warning export-action" data-toggle="tooltip" data-title="This generates a JSON file to be imported into Minera">
-												<i class="glyphicon glyphicon-download-alt"></i>
-												Export Settings
-											</span> 
-											<span class="btn btn-default save-config-action" data-toggle="tooltip" data-title="This saves only the miner config to be used or shared later">
-												<i class="glyphicon glyphicon-floppy-disk"></i>
-												Save Miner Config
-											</span>
-										</div>
-								    	
-										<!-- The global progress bar -->
-										<div id="progress" class="progress">
-											<div class="progress-bar progress-bar-success"></div>
-										</div>
-										<!-- The container for the uploaded files -->
-										<div id="files" class="files"></div>
-								    											
+
 			                        </div>
 									<div class="box-footer">
-										<h6><em>*</em> Loading a saved miner config sets the manual settings mode with the saved command line, sets the miner software and completely overwrites the pools settings.</h6>
-										<h6><em>**</em> Sharing the miner config to the Minera community won't share your pools settings</h6>
+										<button type="submit" class="btn btn-primary save-minera-settings" name="save" value="1" data-toggle="tooltip" data-title="Remember to select it below after saved. This won't auto-select it, you need to do it manually.">Save</button>
 									</div>
 			                    </div>
 			                    
@@ -453,6 +454,11 @@
 														<option value="bfgminer" <?php if ($minerdSoftware == "bfgminer") : ?>selected<?php endif; ?>>BFGminer 4.x (Official)</option>
 														<option value="cgminer" <?php if ($minerdSoftware == "cgminer") : ?>selected<?php endif; ?>>CGminer 4.x (Official)</option>
 														<option value="cgdmaxlzeus" <?php if ($minerdSoftware == "cgdmaxlzeus") : ?>selected<?php endif; ?>>CGminer (Dmax Zeus fork)</option>
+														<?php if ($activeCustomMiners) : ?>
+															<?php foreach ($activeCustomMiners as $activeCustomMiner) : ?>
+																<option value="<?php echo $activeCustomMiner ?>" <?php if ($minerdSoftware == $activeCustomMiner) : ?>selected<?php endif; ?>>[Custom Miner] <?php echo $activeCustomMiner ?></option>
+															<?php endforeach; ?>
+														<?php endif; ?>
 													</select>
 													<h6>Pay attention: Minera is not responsible of any problem related to the miner software you are using. Minera acts only as frontend to manage the miner software. Please refer to miner software's related authors if you have question about them and how to use them.</h6>
 												</div>

@@ -18,6 +18,17 @@ class Util_model extends CI_Model {
 		parent::__construct();
 	}
 
+	public function isLoggedIn() 
+	{
+		if (!$this->session->userdata("loggedin"))
+		{
+			redirect('app/index');
+			return false;
+		}
+		
+		return true;
+	}
+	
 	public function switchMinerSoftware($software = false)
 	{
 		if ($this->redis->get("minerd_use_root"))
@@ -88,7 +99,7 @@ class Util_model extends CI_Model {
 			$this->config->set_item('minerd_binary', $this->_minerdSoftware);
 			$this->config->set_item('screen_command', '/usr/bin/screen -dmS '.$this->_minerdSoftware);
 			$this->config->set_item('screen_command_stop', '/usr/bin/screen -S '.$this->_minerdSoftware.' -X quit');
-			$this->config->set_item('minerd_command', FCPATH.'minera-bin/'.$this->_minerdSoftware);
+			$this->config->set_item('minerd_command', FCPATH.'minera-bin/custom/'.$this->_minerdSoftware);
 			$this->config->set_item('minerd_log_file', '/var/log/minera/'.$this->_minerdSoftware.'.log');
 			$this->config->set_item('minerd_special_log', false);
 			$this->config->set_item('minerd_log_url', 'application/logs/'.$this->_minerdSoftware.'.log');
@@ -1104,6 +1115,22 @@ class Util_model extends CI_Model {
 		}
 		
 		return;
+	}
+	
+	public function readCustomMinerDir()
+	{
+		$files = array();
+		
+		if ($handle = opendir(FCPATH.'minera-bin/custom/')) {
+		    while (false !== ($entry = readdir($handle))) {
+		        if ($entry != "." && $entry != ".." && $entry != "README.custom")
+			        $files[] = $entry;
+		    }
+		
+		    closedir($handle);
+		}
+		
+		return $files;
 	}
 	
 	// Call shutdown cmd

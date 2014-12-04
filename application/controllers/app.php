@@ -53,8 +53,7 @@ class App extends Main_Controller {
 	*/
 	public function dashboard()
 	{
-		if (!$this->session->userdata("loggedin"))
-			redirect('app/index');
+		$this->util_model->isLoggedIn();
 		
 		$data['minerdPools'] = json_decode($this->util_model->getPools());
 		$data['btc'] = $this->util_model->getBtcUsdRates();
@@ -83,8 +82,7 @@ class App extends Main_Controller {
 	*/
 	public function charts()
 	{
-		if (!$this->session->userdata("loggedin"))
-			redirect('app/index');
+		$this->util_model->isLoggedIn();
 		
 		$data['btc'] = $this->util_model->getBtcUsdRates();
 		$data['isOnline'] = $this->util_model->isOnline();
@@ -110,8 +108,7 @@ class App extends Main_Controller {
 	*/
 	public function settings()
 	{
-		if (!$this->session->userdata("loggedin"))
-			redirect('app/index');
+		$this->util_model->isLoggedIn();
 		
 		$this->config->load('timezones');
 		$data['timezones'] = $this->config->item("timezones");
@@ -144,6 +141,11 @@ class App extends Main_Controller {
 		// Load Coin Rates
 		$data['btc'] = $this->util_model->getBtcUsdRates();
 		
+		// Check custom miners
+		$data['customMiners'] = $this->util_model->readCustomMinerDir();
+
+		$data['activeCustomMiners'] = json_decode($this->redis->get('active_custom_miners'));
+				
 		// Load miner settings
 		$data['minerdCommand'] = $this->config->item("minerd_command");
 		$data['minerdAutorestart'] = $this->redis->get('minerd_autorestart');
@@ -220,6 +222,8 @@ class App extends Main_Controller {
 	*/
 	public function save_settings()
 	{
+		$this->util_model->isLoggedIn();
+		
 		$extramessages = false;
 		$dataObj = new stdClass();
 		
@@ -261,7 +265,11 @@ class App extends Main_Controller {
 					}
 				}
 			}
-
+			
+			// Save Custom miners
+			$dataObj->custom_miners = $this->input->post('active_custom_miners');
+			$this->redis->set('active_custom_miners', json_encode($this->input->post('active_custom_miners')));
+		
 			// Start creating command options string
 			$settings = null;
 			$confArray = array();
@@ -597,6 +605,8 @@ class App extends Main_Controller {
 	*/
 	public function export()
 	{
+		$this->util_model->isLoggedIn();
+		
 		$o = $this->redis->get("export_settings");
 		if ($this->util_model->isJson($o))
 		{
@@ -614,6 +624,8 @@ class App extends Main_Controller {
 	*/
 	public function shutdown()
 	{	
+		$this->util_model->isLoggedIn();
+		
 		if ($this->input->get('confirm'))
 		{
 			$data['message'] = "Please wait to unplug me.";
@@ -641,7 +653,9 @@ class App extends Main_Controller {
 	// Reboot controller (this should be in a different "system" controller file)
 	*/
 	public function reboot()
-	{	
+	{
+		$this->util_model->isLoggedIn();
+			
 		if ($this->input->get('confirm'))
 		{
 			$data['message'] = "Please wait while I'm rebooting...";
@@ -670,6 +684,8 @@ class App extends Main_Controller {
 	*/
 	public function start_miner()
 	{
+		$this->util_model->isLoggedIn();
+		
 		if (!$this->session->userdata("loggedin"))
 			redirect('app/index');
 		
@@ -689,6 +705,8 @@ class App extends Main_Controller {
 	*/
 	public function stop_miner()
 	{
+		$this->util_model->isLoggedIn();
+		
 		if (!$this->session->userdata("loggedin"))
 			redirect('app/index');
 		
@@ -702,6 +720,8 @@ class App extends Main_Controller {
 	*/
 	public function restart_miner()
 	{
+		$this->util_model->isLoggedIn();
+		
 		if (!$this->session->userdata("loggedin"))
 			redirect('app/index');
 		
@@ -715,6 +735,8 @@ class App extends Main_Controller {
 	*/
 	public function update()
 	{
+		$this->util_model->isLoggedIn();
+		
 		if ($this->util_model->checkUpdate())
 		{
 			if ($this->input->get('confirm'))
@@ -751,6 +773,8 @@ class App extends Main_Controller {
 	*/
 	public function api($command = false)
 	{
+		$this->util_model->isLoggedIn();
+		
 		$cmd = ($command) ? $command : $this->input->get('command');
 		
 		switch($cmd)
@@ -828,6 +852,8 @@ class App extends Main_Controller {
 	*/
 	public function stats()
 	{
+		$this->util_model->isLoggedIn();
+		
 		$stats = $this->util_model->getStats();
 		
 		$this->output
@@ -840,6 +866,8 @@ class App extends Main_Controller {
 	*/
 	public function stored_stats()
 	{
+		$this->util_model->isLoggedIn();
+		
 		$storedStats = $this->util_model->getStoredStats(3600);
 		
 		$this->output

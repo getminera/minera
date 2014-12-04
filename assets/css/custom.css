@@ -46,7 +46,15 @@ body > .header { position: fixed !important; }
 
 .tip-button { float: left; padding: 9px 5px; margin-top: 4px; margin-right: 0; margin-bottom: 8px; margin-left: 5px; }
 .coinbase-donate-button { margin-left: 28px; margin-top: 20px;}
+.copyright { float: right; margin-right: 20px; font-size: small;}
+.copyright a { color: #FF4D50; }
+
+.bootstro-highlight { background-color: rgba(255, 255, 255, 0.2) !important; }
 
 @media all and (max-width : 960px) { 
 	.messages-menu { display: none !important;}
+}
+
+@media all and (max-width : 1090px) { 
+	.tip-button { display: none;}
 }

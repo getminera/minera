@@ -1,7 +1,7 @@
 			<!-- Right side column. Contains the navbar and content of the page -->
-			<aside class="right-side ">				   
+			<aside class="right-side">				   
 				<!-- Content Header (Page header) -->
-				<section class="content-header">
+				<section class="content-header" data-toggle="dropdown">
 					<h1>
 						Mining
 						<small>Dashboard</small>

@@ -18,12 +18,13 @@
 	<link href="<?php echo base_url('assets/css/font-awesome.css') ?>" rel="stylesheet" />
 	<link href="<?php echo base_url('assets/css/ionicons.min.css') ?>" rel="stylesheet" />
 	<link href="<?php echo base_url('assets/css/datatables/dataTables.bootstrap.css') ?>" rel="stylesheet" />
-	<link href="<?php echo base_url('assets/css/custom.css?ver=20140819') ?>" rel="stylesheet" />
+	<link href="<?php echo base_url('assets/css/custom.css?ver=20141225') ?>" rel="stylesheet" />
 	<link href="<?php echo base_url('assets/css/morris.css') ?>" rel="stylesheet" />
 	<link href="<?php echo base_url('assets/css/jQueryUI/jquery-ui-1.10.3.custom.min.css') ?>" rel="stylesheet" />
 	<link href="<?php echo base_url('assets/css/AdminLTE.css') ?>" rel="stylesheet" />
 	<link href="<?php echo base_url('assets/css/ion.rangeSlider.css') ?>" rel="stylesheet" />
 	<link href="<?php echo base_url('assets/css/ion.rangeSlider.skinFlat.css') ?>" rel="stylesheet" />	
 	<link href="<?php echo base_url('assets/css/jquery.fileupload.css') ?>" rel="stylesheet" />	
-	<link href="<?php echo base_url('assets/css/jquery.fileupload-ui.css') ?>" rel="stylesheet" />	
+	<link href="<?php echo base_url('assets/css/jquery.fileupload-ui.css') ?>" rel="stylesheet" />
+	<link href="<?php echo base_url('assets/css/bootstro.min.css') ?>" rel="stylesheet" />
 </head>

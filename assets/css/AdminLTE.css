@@ -2507,6 +2507,9 @@ Component: timeline
 .skin-blue .navbar .nav .open > a:focus {
 	color: #333;
 }
+.skin-blue .navbar .nav .menu a {
+	color: #333;
+}
 .skin-blue .navbar .navbar-right > .nav {
   margin-right: 10px;
 }
