@@ -777,6 +777,8 @@ class App extends Main_Controller {
 		
 		$cmd = ($command) ? $command : $this->input->get('command');
 		
+		$o = '{ "Hello": "World" }';
+		
 		switch($cmd)
 		{
 			case "save_current_freq":
@@ -838,7 +840,7 @@ class App extends Main_Controller {
 			break;
 			case "test":
 				//$a = file_get_contents("api.json");
-				$o = $this->redis->command("BGSAVE"); //$this->util_model->checkCronIsRunning(); //$this->util_model->sendAnonymousStats(123, "hello world!"); //json_encode($this->bfgminer_model->callMinerd()); //$this->util_model->getParsedStats($this->util_model->getMinerStats());
+				//$o = $this->redis->command("BGSAVE"); //$this->util_model->checkCronIsRunning(); //$this->util_model->sendAnonymousStats(123, "hello world!"); //json_encode($this->bfgminer_model->callMinerd()); //$this->util_model->getParsedStats($this->util_model->getMinerStats());
 			break;
 		}
 		

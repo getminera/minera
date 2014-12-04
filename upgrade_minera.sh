@@ -64,6 +64,10 @@ sudo cp conf/01-cgminer.rules /etc/udev/rules.d/
 sudo cp conf/70-bfgminer.rules /etc/udev/rules.d/
 sudo service udev restart
 
+echo -e "Updating encryption key\n-----\n"
+KEY=$(cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 32 | head -n 1)
+sed -i "s/\$config\['encryption_key'\].*/\$config\['encryption_key'\] = '$KEY';/" application/config/config.php
+
 echo -e "Installing libblkmaker\n-----\n"
 LIBCOUNT=`strings -n5 /etc/ld.so.cache|grep -i libblkmaker|wc -l`
 if [ $LIBCOUNT -lt 2 ];
