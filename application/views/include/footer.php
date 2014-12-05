@@ -1219,6 +1219,12 @@
 					errorTriggered = true;
 					triggerError('It seems your minerd is not running, please try to start it or review your settings.');
 				}
+				else if (data['notloggedin'])
+				{
+					errorTriggered = true;
+					triggerError('It seems your session expired.');
+					window.location.reload();
+				}
 				else
 				{
 				    var items = [];

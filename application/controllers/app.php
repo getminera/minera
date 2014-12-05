@@ -847,9 +847,14 @@ class App extends Main_Controller {
 	*/
 	public function stats()
 	{
-		$this->util_model->isLoggedIn();
-		
-		$stats = $this->util_model->getStats();
+		if (!$this->session->userdata("loggedin"))
+		{
+			$stats = '{"notloggedin": true}';
+		}
+		else
+		{
+			$stats = $this->util_model->getStats();	
+		}
 		
 		$this->output
 			->set_content_type('application/json')
