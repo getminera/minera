@@ -284,12 +284,12 @@
                                 	</a>
                                 </li>
                                 <li data-toggle="tooltip" title="" data-original-title="<?php echo ($isOnline) ? "Stop your miner" : "Your miner is stopped"; ?>">
-                                	<a href="<?php echo site_url("app/stop_miner") ?>" class="miner-action" data-miner-action="stop" style="margin-left: 10px;">
+                                	<a href="#" class="miner-action" data-miner-action="stop" style="margin-left: 10px;">
                                 		<i class="fa fa-arrow-circle-o-down"></i> Stop miner
                                 	</a>
                                 </li>
                                 <li data-toggle="tooltip" title="" data-original-title="Restart your miner">
-                                	<a href="<?php echo site_url("app/restart_miner") ?>" class="miner-action" data-miner-action="restart" style="margin-left: 10px;">
+                                	<a href="#" class="miner-action" data-miner-action="restart" style="margin-left: 10px;">
                                 		<i class="fa fa-repeat"></i> Restart miner
                                 	</a>
                                 </li>

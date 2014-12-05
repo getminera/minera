@@ -85,7 +85,7 @@
 			   	$("#modal-saving-label").html("Sending action: "+action+" , please wait...");
 	        	$('#modal-saving').modal('show');
 	        	
-	        	saveSettings();
+	        	saveSettings(false);
 	        	
 	        	var apiUrl = "<?php echo site_url("app/api") ?>?command=miner_action&action="+action;
 
@@ -94,8 +94,10 @@
 					url: apiUrl,
 					cache: false,
 					success:  function(resp){
-						$('#modal-saving').modal('hide');
-						window.location.reload();
+						setTimeout(function() {
+							$('#modal-saving').modal('hide');
+							window.location.reload();
+						}, 5000);
 					}
 				});
             });
@@ -136,7 +138,7 @@
             
 		});
 		
-        function saveSettings()
+        function saveSettings(hide)
         {
         	$("#modal-saving-label").html("Saving data, please wait...");
         	$('#modal-saving').modal('show');
@@ -150,8 +152,10 @@
 				data: formData,
 				cache: false,
 				success:  function(resp){
-					$('#modal-saving').modal('hide');
-					window.location.reload();
+					if (hide) {
+						$('#modal-saving').modal('hide');
+						window.location.reload();
+					}
 				}
 			});
         }
@@ -625,13 +629,31 @@
 				showHideMinerOptions(true);
 		    });
 		    
+		    $(document).on('click', '.del-custom-miner', function(e) {
+				e.preventDefault();
+				var d = $(this).closest(".input-group");
+				
+				$.ajax("<?php echo site_url("app/api?command=delete_custom_miner&custom="); ?>"+$(this).data('custom-miner'), {
+			        success: function (data) {
+			        	if (data)
+			        	{
+							console.log(data);
+							d.fadeOut().remove();
+						}
+			        }
+			    });
+		    });
+		    
 		    showHideMinerOptions(false);
 		    
 		    // Show or Hide the options related to the selected miner software
 		    function showHideMinerOptions(change)
 		    {
-			    if ($('#minerd-software').val() != "cpuminer")
+			    var sel = $('#minerd-software option:selected').text().match(/\[Custom Miner\]/);
+			    
+			    if ($('#minerd-software').val() !== "cpuminer" && sel === null)
 			    {
+				    $(".options-selection").show();
 			    	$(".legend-option-autodetect").html("(--scan=all)");
 			    	$(".legend-option-log").html("(--log-file)");
 			    	$("#minerd-autotune").hide();
@@ -642,8 +664,19 @@
 				    $("#minerd-api-allow").show();
 			    	$("input[name='minerd_scrypt']").prop('disabled', false);
 			    }
+			    else if (sel !== null)
+			    {
+				    $(".options-selection").hide();
+				    $(".guided-options").fadeOut();
+					$(".manual-options").fadeIn();
+					$(".btn-manual-options").addClass("disabled");
+					$(".btn-guided-options").removeClass("disabled");
+					$("#manual_options").val(1);
+					$("#guided_options").val(0);
+			    }
 			    else
 			    {
+				    $(".options-selection").show();
 			    	$(".legend-option-autodetect").html("(--gc3355-detect)");
 			    	$(".legend-option-log").html("(--log)");
 					$("#minerd-log").show();
@@ -765,7 +798,7 @@
 			    },
 			    // specifying a submitHandler prevents the default submit, good for the demo
 			    submitHandler: function() {
-			    	saveSettings();
+			    	saveSettings(true);
 			    },
 			    unhighlight: function(element) {
 					$(element).closest(".input-group").removeClass("has-error").addClass("has-success");

@@ -1121,16 +1121,36 @@ class Util_model extends CI_Model {
 	{
 		$files = array();
 		
+		$activeCustomMiners = json_decode($this->redis->get('active_custom_miners'));
+		
 		if ($handle = opendir(FCPATH.'minera-bin/custom/')) {
 		    while (false !== ($entry = readdir($handle))) {
 		        if ($entry != "." && $entry != ".." && $entry != "README.custom")
+		        {
 			        $files[] = $entry;
+		        }
 		    }
 		
 		    closedir($handle);
+		    
+		    foreach ($activeCustomMiners as $activeCustomMiner) {
+		       	// Remove active ones from redis if someone has removed the file by hand
+			   	if (in_array($activeCustomMiner, $files))
+			   	{
+				   	$newActiveCustomMiners[] = $activeCustomMiner;
+			   	}
+		    }
+		    
+		    $this->redis->set('active_custom_miners', json_encode($newActiveCustomMiners));
 		}
 		
 		return $files;
+	}
+	
+	public function deleteCustomMinerFile($file)
+	{
+		$r = shell_exec("sudo rm ".FCPATH.'minera-bin/custom/'.str_replace(" ", "\ ", $file));
+		return array('success' => $r);
 	}
 	
 	// Call shutdown cmd

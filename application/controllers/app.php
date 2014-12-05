@@ -143,7 +143,6 @@ class App extends Main_Controller {
 		
 		// Check custom miners
 		$data['customMiners'] = $this->util_model->readCustomMinerDir();
-
 		$data['activeCustomMiners'] = json_decode($this->redis->get('active_custom_miners'));
 				
 		// Load miner settings
@@ -686,9 +685,6 @@ class App extends Main_Controller {
 	{
 		$this->util_model->isLoggedIn();
 		
-		if (!$this->session->userdata("loggedin"))
-			redirect('app/index');
-		
 		if (!$this->util_model->isOnline())
 			$this->util_model->minerStart();
 		else
@@ -707,9 +703,6 @@ class App extends Main_Controller {
 	{
 		$this->util_model->isLoggedIn();
 		
-		if (!$this->session->userdata("loggedin"))
-			redirect('app/index');
-		
 		$this->util_model->minerStop();
 		
 		redirect('app/dashboard');
@@ -721,9 +714,6 @@ class App extends Main_Controller {
 	public function restart_miner()
 	{
 		$this->util_model->isLoggedIn();
-		
-		if (!$this->session->userdata("loggedin"))
-			redirect('app/index');
 		
 		$this->util_model->minerRestart();
 		
@@ -820,6 +810,9 @@ class App extends Main_Controller {
 			break;
 			case "share_config":
 				$o = json_encode($this->util_model->shareSavedConfig($this->input->post()));
+			break;
+			case "delete_custom_miner":
+				$o = json_encode($this->util_model->deleteCustomMinerFile($this->input->get("custom")));
 			break;
 			case "miner_action":
 				$action = ($this->input->get('action')) ? $this->input->get('action') : false;

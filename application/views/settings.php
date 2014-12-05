@@ -385,35 +385,45 @@
 								    	
 								    	<div class="callout callout-info">
 									    	<?php if (count($customMiners) > 0) : ?>
-												<p>I found the following custom miners available, to add or remove just select on or off and save. You'll find them in the preferred miners select below.</p>
-									    		<?php foreach ($customMiners as $customMiner) : ?>
+												<p class="margin-bottom">I found the following custom miners available, to add or remove just select on or off and save. You'll find them in the preferred miners select below.</p>
+									    		<?php foreach ($customMiners as $customMiner) : $disabled = false; $customLabel = "primary"; ?>
+									    			<?php if (strtolower($customMiner) == "bfgminer" || strtolower($customMiner) == "cpuminer" || strtolower($customMiner) == "cgminer" || strtolower($customMiner) == "cgminer-dmaxl-zeus") : $disabled = true; $disabledMsg = "You can't use an existent name, change your filename"; $customLabel = "default"; endif; ?>
+													<?php if (preg_match("/.*[\.|-]$/", $customMiner) || preg_match("/\\s/", $customMiner) || preg_match("/\//", $customMiner)) : $disabled = true; $disabledMsg = "Filename is not good, avoid symbols at the end of the name, spaces or slashes everywhere"; $customLabel = "default"; endif; ?>
 										    		<div class="input-group margin-bottom">
+											    		<span class="btn btn-danger btn-xs del-custom-miner" data-custom-miner="<?php echo $customMiner ?>" data-toggle="tooltip" data-title="Completely remove the custom miner, this also DELETE the file!" data-trigger="hover"><i class="fa fa-times"></i></span>&nbsp;
 														<label>
 															<input type="checkbox" 
 																name="active_custom_miners[]" 
 																value="<?php echo $customMiner ?>" 
 																<?php if ($activeCustomMiners && in_array($customMiner, $activeCustomMiners)) : ?>checked<?php endif; ?> 
-																<?php if (strtolower($customMiner) == "bfgminer" || strtolower($customMiner) == "cpuminer" || strtolower($customMiner) == "cgminer" || strtolower($customMiner) == "cgminer-dmaxl-zeus") : ?>disabled<?php endif; ?> 
+																<?php if ($disabled) : ?>disabled<?php endif; ?> 
 															/>
-															<?php echo $customMiner ?>
+															&nbsp;<span class="label label-<?php echo $customLabel ?>"><?php echo $customMiner ?></span><?php if ($disabled) : ?> <small style="font-weight: normal">(<?php echo $disabledMsg ?>)</small><?php endif; ?> 
 														</label>
 										    		</div>
 									    		<?php endforeach; ?>
 									    	<?php else : ?>
 									    		<p><h6>It seems you haven't any custom miner. If you wanna add it, you need to build your binary and put it in the custom miner folder:</h6> <code><?php echo FCPATH.'minera-bin/custom/'; ?></code></p>
-												<h6>Don't call your custom binary file as "bfgminer", "cgminer" or any other existent (built-in) miner. Minera won't permit you to use it. If this happens change the filename.</h6>
 									    	<?php endif; ?>
 								    	</div>
 
-										<h6>* After you turn on your custom miner and save, you need to select it from your preferred miner below and remember to setup it.</h6>
+								    	<h6>* Don't call your custom binary file as "bfgminer", "cgminer" or any other existent (built-in) miner. Minera won't permit you to use it. If this happens change the filename.</h6>
+
+										<h6>** After you turn on your custom miner and save, you need to select it from your preferred miner below and remember to setup it.</h6>
 										
 								    	<div class="callout callout-grey readme-custom-miners" style="display:none;">
+							    		    <h6><strong>How can I upload my own custom miner?</strong></h6>
+							    		    <p><small>You can't upload the binary file by web interface, it's not logic building the miner on another system and upload it to Minera, it's better building it in Minera itself.</small></p>
+							    		    
+							    		    <h6><strong>So, what are the steps to do it?</strong></h6>
+							    		    <p><small><strong>SSH</strong> into Minera, <strong>build</strong> your custom miner in any directory you want, "<strong>sudo make install</strong>" it (so libraries get installed correctly), <strong>copy</strong> ONLY the binary file into <code><?php echo FCPATH ?>minera-bin/custom</code> directory, <strong>refresh</strong> this page you'll find your custom miner here.</small></p>
+							    		    
 							    		    <h6><strong>Can I use any miner binary?</strong></h6>
 
 							    		    <p><strong>NO!</strong> <small>Miners must be forks of CGminer or BFGminer, there are small probability you can add different miners than those, the main problem is how the miner send stats and it must be compatibile to Minera.</small></p>
 
 							    		    <h6><strong>My miner should be compatible but it isn't working</strong></h6>
-							    		    <p><small>Check your binary works on your Minera system, SSH into it and try to launch it manually, probably it lacks on missing external libraries or you have compiled it with a wrong architecture, try to recompile it on Minera.</small></p>
+							    		    <p><small>Check your binary works on your Minera system, SSH into it and try to launch it manually, probably it lacks on missing external libraries, try to recompile it on Minera and do "sudo make install" at the end.</small></p>
 							    		    
 							    		    <h6><strong>Can I use this feature if I'm completely newbie to mining and Linux?</strong></h6>
 							    		    <p><small>Well, short answer should be "No", the long one is: you could try, but it needs a lot of skills to do this and if you are a newbie it's recommended you start with a pre-compiled miner software, Minera has 4 built-in, start with them, then try to <a href="https://bitcointalk.org/index.php?topic=596620.0">ask to the forum</a> before playing with this feature.</small></p>
@@ -427,7 +437,7 @@
 
 			                        </div>
 									<div class="box-footer">
-										<button type="submit" class="btn btn-primary save-minera-settings" name="save" value="1" data-toggle="tooltip" data-title="Remember to select it below after saved. This won't auto-select it, you need to do it manually.">Save</button>
+										<button type="submit" class="btn btn-primary save-minera-settings" name="save" value="1" data-toggle="tooltip" data-title="Remember to select it below after saved. This won't auto-select it, you need to do it manually and restart.">Save</button>
 									</div>
 			                    </div>
 			                    
@@ -464,18 +474,19 @@
 												</div>
 											</div>
 
-											<p>Select the options to launch the miner command.</p>
-
-											<div class="row row-btn-options">
-												<div class="col-xs-2">
-													<a href="#"><button class="btn btn-default btn-sm <?php if ($minerdGuidedOptions) : ?>disabled<?php endif; ?> btn-guided-options">Guided</button></a>&nbsp;
-													<a href="#"><button class="btn btn-default btn-sm <?php if ($minerdManualOptions) : ?>disabled<?php endif; ?> btn-manual-options">Manual</button></a>
+											<div class="options-selection">
+												<p>Select the options to launch the miner command.</p>
+	
+												<div class="row row-btn-options">
+													<div class="col-xs-2">
+														<a href="#"><button class="btn btn-default btn-sm <?php if ($minerdGuidedOptions) : ?>disabled<?php endif; ?> btn-guided-options">Guided</button></a>&nbsp;
+														<a href="#"><button class="btn btn-default btn-sm <?php if ($minerdManualOptions) : ?>disabled<?php endif; ?> btn-manual-options">Manual</button></a>
+													</div>
+													<div class="col-xs-10"></div>
 												</div>
-												<div class="col-xs-10"></div>
+												<input type="hidden" id="guided_options" name="guided_options" value="<?php echo $minerdGuidedOptions ?>" />
+												<input type="hidden" id="manual_options" name="manual_options" value="<?php echo $minerdManualOptions ?>" />
 											</div>
-											<input type="hidden" id="guided_options" name="guided_options" value="<?php echo $minerdGuidedOptions ?>" />
-											<input type="hidden" id="manual_options" name="manual_options" value="<?php echo $minerdManualOptions ?>" />
-											
 											<hr />
 											
 											<div class="guided-options">
