@@ -9,4 +9,3 @@ if test -z "$srcdir"; then
 	fi
 fi
 autoreconf --force --install --verbose "$srcdir"
-test -n "$NOCONFIGURE" || "$srcdir/configure" "$@"

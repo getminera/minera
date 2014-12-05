@@ -10,12 +10,6 @@
 #include <stdlib.h>
 #include <string.h>
 
-#ifndef WIN32
-#include <arpa/inet.h>
-#else
-#include <winsock2.h>
-#endif
-
 #include <jansson.h>
 
 #include <blkmaker.h>
@@ -27,7 +21,7 @@
 #	error "Jansson 2.0 with long long support required!"
 #endif
 
-json_t *blktmpl_request_jansson(gbt_capabilities_t caps, const char *lpid) {
+json_t *blktmpl_request_jansson(const uint32_t caps, const char * const lpid) {
 	json_t *req, *jcaps, *jstr, *reqf, *reqa;
 	if (!(req = json_object()))
 		return NULL;
@@ -207,6 +201,10 @@ const char *blktmpl_add_jansson(blktemplate_t *tmpl, const json_t *json, time_t 
 	GETSTR(workid, workid);
 	
 	GETNUM_O(expires);
+	GETNUM_O(maxtime);
+	GETNUM_O(maxtimeoff);
+	GETNUM_O(mintime);
+	GETNUM_O(mintimeoff);
 	
 	GETSTR(longpollid, lp.id);
 	GETSTR(longpolluri, lp.uri);
@@ -226,7 +224,33 @@ const char *blktmpl_add_jansson(blktemplate_t *tmpl, const json_t *json, time_t 
 			return s;
 	}
 	
-	// TODO: coinbaseaux
+	if ((v = json_object_get(json, "coinbaseaux")) && json_is_object(v))
+	{
+		tmpl->aux_count = json_object_size(v);
+		tmpl->auxs = malloc(tmpl->aux_count * sizeof(*tmpl->auxs));
+		unsigned i = 0;
+		for (void *iter = json_object_iter(v); iter; (iter = json_object_iter_next(v, iter)), ++i)
+		{
+			v2 = json_object_iter_value(iter);
+			s = json_string_value(v2);
+			if (!s)
+				continue;
+			size_t sz = strlen(s) / 2;
+			tmpl->auxs[i] = (struct blkaux_t){
+				.auxname = strdup(json_object_iter_key(iter)),
+				.data = malloc(sz),
+				.datasz = sz,
+			};
+			my_hex2bin(tmpl->auxs[i].data, s, sz);
+		}
+	}
+	
+	if ((v = json_object_get(json, "target")) && json_is_string(v))
+	{
+		tmpl->target = malloc(sizeof(*tmpl->target));
+		if (!my_hex2bin(tmpl->target, json_string_value(v), sizeof(*tmpl->target)))
+			return "Error decoding 'target'";
+	}
 	
 	if ((v = json_object_get(json, "mutable")) && json_is_array(v))
 	{
@@ -253,66 +277,61 @@ const char *blktmpl_add_jansson(blktemplate_t *tmpl, const json_t *json, time_t 
 	return NULL;
 }
 
-static
-char varintEncode(unsigned char *out, uint64_t n) {
-	if (n < 0xfd)
+json_t *blktmpl_propose_jansson(blktemplate_t * const tmpl, const uint32_t caps, const bool foreign) {
+	json_t *jreq = blktmpl_request_jansson(caps, NULL), *ja = NULL, *jparams;
+	if (!(jreq && json_is_object(jreq)))
+		goto err;
+	
+	jparams = json_array_get(json_object_get(jreq, "params"), 0);
+	if (!(jparams && json_is_object(jparams)))
+		goto err;
+	
+	if (!(ja = json_string("proposal")))
+		goto err;
+	if (json_object_set_new(jparams, "mode", ja))
+		goto err;
+	
+	if (tmpl->workid && !foreign)
 	{
-		out[0] = n;
-		return 1;
+		if (!(ja = json_string(tmpl->workid)))
+			goto err;
+		if (json_object_set_new(jparams, "workid", ja))
+			goto err;
 	}
-	char L;
-	if (n <= 0xffff)
-	{
-		out[0] = '\xfd';
-		L = 3;
-	}
-	else
-	if (n <= 0xffffffff)
-	{
-		out[0] = '\xfe';
-		L = 5;
-	}
-	else
-	{
-		out[0] = '\xff';
-		L = 9;
-	}
-	for (unsigned char i = 1; i < L; ++i)
-		out[i] = (n >> ((i - 1) * 8)) % 256;
-	return L;
-}
+	ja = NULL;
+	
+	unsigned int dataid = (tmpl->mutations & (BMM_CBAPPEND | BMM_CBSET) ? 1 : 0);
+	
+	uint8_t sdata[0x4c];
+	if (!blkmk_sample_data_(tmpl, sdata, dataid))
+		goto err;
+	char *blkhex = blkmk_assemble_submission_(tmpl, sdata, dataid, 0, foreign);
+	if (!blkhex)
+		goto err;
+	if (!(ja = json_string(blkhex)))
+		goto err;
+	if (json_object_set_new(jparams, "data", ja))
+		goto err;
+	
+	return jreq;
 
-#define my_bin2hex _blkmk_bin2hex
+err:
+	if (jreq)  json_decref(jreq);
+	if (ja)    json_decref(ja);
+	return NULL;
+}
 
 static
 json_t *_blkmk_submit_jansson(blktemplate_t *tmpl, const unsigned char *data, unsigned int dataid, blknonce_t nonce, bool foreign) {
-	unsigned char blk[80 + 8 + 1000000];
-	memcpy(blk, data, 76);
-	nonce = htonl(nonce);
-	memcpy(&blk[76], &nonce, 4);
-	size_t offs = 80;
-	
-	if (foreign || (!(tmpl->mutations & BMAb_TRUNCATE && !dataid)))
-	{
-		offs += varintEncode(&blk[offs], 1 + tmpl->txncount);
-		
-		if (!_blkmk_extranonce(tmpl, &blk[offs], dataid, &offs))
-			return NULL;
-		
-		if (foreign || !(tmpl->mutations & BMAb_COINBASE))
-			for (unsigned long i = 0; i < tmpl->txncount; ++i)
-			{
-				memcpy(&blk[offs], tmpl->txns[i].data, tmpl->txns[i].datasz);
-				offs += tmpl->txns[i].datasz;
-			}
-	}
-	
-	char blkhex[(offs * 2) + 1];
-	my_bin2hex(blkhex, blk, offs);
+	char *blkhex = blkmk_assemble_submission_(tmpl, data, dataid, nonce, foreign);
+	if (!blkhex)
+		return NULL;
 	
 	json_t *rv = json_array(), *ja, *jb;
 	jb = NULL;
-	if (!(ja = json_string(blkhex)))
+	ja = json_string(blkhex);
+	free(blkhex);
+	if (!ja)
 		goto err;
 	if (json_array_append_new(rv, ja))
 		goto err;

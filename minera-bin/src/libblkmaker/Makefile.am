@@ -12,9 +12,15 @@ libblkmaker_@LIBBLKMAKER_API_VERSION@_la_SOURCES = \
 	base58.c \
 	blkmaker.c \
 	blktemplate.c \
-	hex.c
+	hex.c \
+	private.h
 
-libblkmaker_@LIBBLKMAKER_API_VERSION@_la_LDFLAGS = -version-info $(LIBBLKMAKER_SO_VERSION) -no-undefined
+libblkmaker_@LIBBLKMAKER_API_VERSION@_la_CFLAGS = \
+	$(libbase58_CFLAGS)
+libblkmaker_@LIBBLKMAKER_API_VERSION@_la_LDFLAGS = \
+	$(libbase58_LIBS) \
+	-no-undefined \
+	-version-info $(LIBBLKMAKER_SO_VERSION)
 
 libblkmaker_includedir = $(includedir)/libblkmaker-$(LIBBLKMAKER_API_VERSION)
 libblkmaker_include_HEADERS = \
@@ -40,3 +46,7 @@ pkgconfig_DATA = \
 	libblkmaker_jansson-$(LIBBLKMAKER_API_VERSION).pc
 
 dist_noinst_SCRIPTS = autogen.sh
+dist_noinst_DATA = \
+	AUTHORS COPYING README \
+	example.c \
+	testinput.c

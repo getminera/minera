@@ -60,8 +60,8 @@ POST_UNINSTALL = :
 build_triplet = @build@
 host_triplet = @host@
 subdir = .
-DIST_COMMON = README $(am__configure_deps) $(dist_noinst_SCRIPTS) \
-	$(libblkmaker_include_HEADERS) \
+DIST_COMMON = README $(am__configure_deps) $(dist_noinst_DATA) \
+	$(dist_noinst_SCRIPTS) $(libblkmaker_include_HEADERS) \
 	$(libblkmaker_jansson_include_HEADERS) $(srcdir)/Makefile.am \
 	$(srcdir)/Makefile.in $(srcdir)/libblkmaker_jansson.pc.in \
 	$(top_srcdir)/configure AUTHORS COPYING ar-lib config.guess \
@@ -108,8 +108,11 @@ am__installdirs = "$(DESTDIR)$(libdir)" "$(DESTDIR)$(pkgconfigdir)" \
 	"$(DESTDIR)$(libblkmaker_jansson_includedir)"
 LTLIBRARIES = $(lib_LTLIBRARIES)
 libblkmaker_@LIBBLKMAKER_API_VERSION@_la_LIBADD =
-am_libblkmaker_@LIBBLKMAKER_API_VERSION@_la_OBJECTS = base58.lo \
-	blkmaker.lo blktemplate.lo hex.lo
+am_libblkmaker_@LIBBLKMAKER_API_VERSION@_la_OBJECTS =  \
+	libblkmaker_@LIBBLKMAKER_API_VERSION@_la-base58.lo \
+	libblkmaker_@LIBBLKMAKER_API_VERSION@_la-blkmaker.lo \
+	libblkmaker_@LIBBLKMAKER_API_VERSION@_la-blktemplate.lo \
+	libblkmaker_@LIBBLKMAKER_API_VERSION@_la-hex.lo
 libblkmaker_@LIBBLKMAKER_API_VERSION@_la_OBJECTS =  \
 	$(am_libblkmaker_@LIBBLKMAKER_API_VERSION@_la_OBJECTS)
 AM_V_lt = $(am__v_lt_@AM_V@)
@@ -117,9 +120,9 @@ am__v_lt_ = $(am__v_lt_@AM_DEFAULT_V@)
 am__v_lt_0 = --silent
 libblkmaker_@LIBBLKMAKER_API_VERSION@_la_LINK = $(LIBTOOL) $(AM_V_lt) \
 	--tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=link \
-	$(CCLD) $(AM_CFLAGS) $(CFLAGS) \
-	$(libblkmaker_@LIBBLKMAKER_API_VERSION@_la_LDFLAGS) $(LDFLAGS) \
-	-o $@
+	$(CCLD) $(libblkmaker_@LIBBLKMAKER_API_VERSION@_la_CFLAGS) \
+	$(CFLAGS) $(libblkmaker_@LIBBLKMAKER_API_VERSION@_la_LDFLAGS) \
+	$(LDFLAGS) -o $@
 libblkmaker_jansson_@LIBBLKMAKER_API_VERSION@_la_LIBADD =
 am_libblkmaker_jansson_@LIBBLKMAKER_API_VERSION@_la_OBJECTS = libblkmaker_jansson_@LIBBLKMAKER_API_VERSION@_la-blkmaker_jansson.lo
 libblkmaker_jansson_@LIBBLKMAKER_API_VERSION@_la_OBJECTS = $(am_libblkmaker_jansson_@LIBBLKMAKER_API_VERSION@_la_OBJECTS)
@@ -166,7 +169,7 @@ am__can_run_installinfo = \
     n|no|NO) false;; \
     *) (install-info --version) >/dev/null 2>&1;; \
   esac
-DATA = $(pkgconfig_DATA)
+DATA = $(dist_noinst_DATA) $(pkgconfig_DATA)
 HEADERS = $(libblkmaker_include_HEADERS) \
 	$(libblkmaker_jansson_include_HEADERS)
 ETAGS = etags
@@ -180,7 +183,7 @@ am__remove_distdir = \
       && rm -rf "$(distdir)" \
       || { sleep 5 && rm -rf "$(distdir)"; }; \
   else :; fi
-DIST_ARCHIVES = $(distdir).tar.gz $(distdir).tar.bz2
+DIST_ARCHIVES = $(distdir).tar.gz $(distdir).tar.xz
 GZIP_ENV = --best
 distuninstallcheck_listfiles = find . -type f -print
 am__distuninstallcheck_listfiles = $(distuninstallcheck_listfiles) \
@@ -288,6 +291,8 @@ htmldir = @htmldir@
 includedir = @includedir@
 infodir = @infodir@
 install_sh = @install_sh@
+libbase58_CFLAGS = @libbase58_CFLAGS@
+libbase58_LIBS = @libbase58_LIBS@
 libdir = @libdir@
 libexecdir = @libexecdir@
 localedir = @localedir@
@@ -315,9 +320,17 @@ libblkmaker_@LIBBLKMAKER_API_VERSION@_la_SOURCES = \
 	base58.c \
 	blkmaker.c \
 	blktemplate.c \
-	hex.c
+	hex.c \
+	private.h
 
-libblkmaker_@LIBBLKMAKER_API_VERSION@_la_LDFLAGS = -version-info $(LIBBLKMAKER_SO_VERSION) -no-undefined
+libblkmaker_@LIBBLKMAKER_API_VERSION@_la_CFLAGS = \
+	$(libbase58_CFLAGS)
+
+libblkmaker_@LIBBLKMAKER_API_VERSION@_la_LDFLAGS = \
+	$(libbase58_LIBS) \
+	-no-undefined \
+	-version-info $(LIBBLKMAKER_SO_VERSION)
+
 libblkmaker_includedir = $(includedir)/libblkmaker-$(LIBBLKMAKER_API_VERSION)
 libblkmaker_include_HEADERS = \
 	blkmaker.h \
@@ -342,6 +355,11 @@ pkgconfig_DATA = \
 	libblkmaker_jansson-$(LIBBLKMAKER_API_VERSION).pc
 
 dist_noinst_SCRIPTS = autogen.sh
+dist_noinst_DATA = \
+	AUTHORS COPYING README \
+	example.c \
+	testinput.c
+
 all: all-am
 
 .SUFFIXES:
@@ -425,10 +443,10 @@ mostlyclean-compile:
 distclean-compile:
 	-rm -f *.tab.c
 
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/base58.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/blkmaker.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/blktemplate.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/hex.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libblkmaker_@LIBBLKMAKER_API_VERSION@_la-base58.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libblkmaker_@LIBBLKMAKER_API_VERSION@_la-blkmaker.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libblkmaker_@LIBBLKMAKER_API_VERSION@_la-blktemplate.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libblkmaker_@LIBBLKMAKER_API_VERSION@_la-hex.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libblkmaker_jansson_@LIBBLKMAKER_API_VERSION@_la-blkmaker_jansson.Plo@am__quote@
 
 .c.o:
@@ -451,6 +469,34 @@ distclean-compile:
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$<' object='$@' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LTCOMPILE) -c -o $@ $<
+
+libblkmaker_@LIBBLKMAKER_API_VERSION@_la-base58.lo: base58.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libblkmaker_@LIBBLKMAKER_API_VERSION@_la_CFLAGS) $(CFLAGS) -MT libblkmaker_@LIBBLKMAKER_API_VERSION@_la-base58.lo -MD -MP -MF $(DEPDIR)/libblkmaker_@LIBBLKMAKER_API_VERSION@_la-base58.Tpo -c -o libblkmaker_@LIBBLKMAKER_API_VERSION@_la-base58.lo `test -f 'base58.c' || echo '$(srcdir)/'`base58.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libblkmaker_@LIBBLKMAKER_API_VERSION@_la-base58.Tpo $(DEPDIR)/libblkmaker_@LIBBLKMAKER_API_VERSION@_la-base58.Plo
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='base58.c' object='libblkmaker_@LIBBLKMAKER_API_VERSION@_la-base58.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libblkmaker_@LIBBLKMAKER_API_VERSION@_la_CFLAGS) $(CFLAGS) -c -o libblkmaker_@LIBBLKMAKER_API_VERSION@_la-base58.lo `test -f 'base58.c' || echo '$(srcdir)/'`base58.c
+
+libblkmaker_@LIBBLKMAKER_API_VERSION@_la-blkmaker.lo: blkmaker.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libblkmaker_@LIBBLKMAKER_API_VERSION@_la_CFLAGS) $(CFLAGS) -MT libblkmaker_@LIBBLKMAKER_API_VERSION@_la-blkmaker.lo -MD -MP -MF $(DEPDIR)/libblkmaker_@LIBBLKMAKER_API_VERSION@_la-blkmaker.Tpo -c -o libblkmaker_@LIBBLKMAKER_API_VERSION@_la-blkmaker.lo `test -f 'blkmaker.c' || echo '$(srcdir)/'`blkmaker.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libblkmaker_@LIBBLKMAKER_API_VERSION@_la-blkmaker.Tpo $(DEPDIR)/libblkmaker_@LIBBLKMAKER_API_VERSION@_la-blkmaker.Plo
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='blkmaker.c' object='libblkmaker_@LIBBLKMAKER_API_VERSION@_la-blkmaker.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libblkmaker_@LIBBLKMAKER_API_VERSION@_la_CFLAGS) $(CFLAGS) -c -o libblkmaker_@LIBBLKMAKER_API_VERSION@_la-blkmaker.lo `test -f 'blkmaker.c' || echo '$(srcdir)/'`blkmaker.c
+
+libblkmaker_@LIBBLKMAKER_API_VERSION@_la-blktemplate.lo: blktemplate.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libblkmaker_@LIBBLKMAKER_API_VERSION@_la_CFLAGS) $(CFLAGS) -MT libblkmaker_@LIBBLKMAKER_API_VERSION@_la-blktemplate.lo -MD -MP -MF $(DEPDIR)/libblkmaker_@LIBBLKMAKER_API_VERSION@_la-blktemplate.Tpo -c -o libblkmaker_@LIBBLKMAKER_API_VERSION@_la-blktemplate.lo `test -f 'blktemplate.c' || echo '$(srcdir)/'`blktemplate.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libblkmaker_@LIBBLKMAKER_API_VERSION@_la-blktemplate.Tpo $(DEPDIR)/libblkmaker_@LIBBLKMAKER_API_VERSION@_la-blktemplate.Plo
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='blktemplate.c' object='libblkmaker_@LIBBLKMAKER_API_VERSION@_la-blktemplate.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libblkmaker_@LIBBLKMAKER_API_VERSION@_la_CFLAGS) $(CFLAGS) -c -o libblkmaker_@LIBBLKMAKER_API_VERSION@_la-blktemplate.lo `test -f 'blktemplate.c' || echo '$(srcdir)/'`blktemplate.c
+
+libblkmaker_@LIBBLKMAKER_API_VERSION@_la-hex.lo: hex.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libblkmaker_@LIBBLKMAKER_API_VERSION@_la_CFLAGS) $(CFLAGS) -MT libblkmaker_@LIBBLKMAKER_API_VERSION@_la-hex.lo -MD -MP -MF $(DEPDIR)/libblkmaker_@LIBBLKMAKER_API_VERSION@_la-hex.Tpo -c -o libblkmaker_@LIBBLKMAKER_API_VERSION@_la-hex.lo `test -f 'hex.c' || echo '$(srcdir)/'`hex.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libblkmaker_@LIBBLKMAKER_API_VERSION@_la-hex.Tpo $(DEPDIR)/libblkmaker_@LIBBLKMAKER_API_VERSION@_la-hex.Plo
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='hex.c' object='libblkmaker_@LIBBLKMAKER_API_VERSION@_la-hex.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libblkmaker_@LIBBLKMAKER_API_VERSION@_la_CFLAGS) $(CFLAGS) -c -o libblkmaker_@LIBBLKMAKER_API_VERSION@_la-hex.lo `test -f 'hex.c' || echo '$(srcdir)/'`hex.c
 
 libblkmaker_jansson_@LIBBLKMAKER_API_VERSION@_la-blkmaker_jansson.lo: blkmaker_jansson.c
 @am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libblkmaker_jansson_@LIBBLKMAKER_API_VERSION@_la_CFLAGS) $(CFLAGS) -MT libblkmaker_jansson_@LIBBLKMAKER_API_VERSION@_la-blkmaker_jansson.lo -MD -MP -MF $(DEPDIR)/libblkmaker_jansson_@LIBBLKMAKER_API_VERSION@_la-blkmaker_jansson.Tpo -c -o libblkmaker_jansson_@LIBBLKMAKER_API_VERSION@_la-blkmaker_jansson.lo `test -f 'blkmaker_jansson.c' || echo '$(srcdir)/'`blkmaker_jansson.c
@@ -625,6 +671,7 @@ distdir: $(DISTFILES)
 dist-gzip: distdir
 	tardir=$(distdir) && $(am__tar) | GZIP=$(GZIP_ENV) gzip -c >$(distdir).tar.gz
 	$(am__remove_distdir)
+
 dist-bzip2: distdir
 	tardir=$(distdir) && $(am__tar) | BZIP2=$${BZIP2--9} bzip2 -c >$(distdir).tar.bz2
 	$(am__remove_distdir)
@@ -636,7 +683,6 @@ dist-lzip: distdir
 dist-lzma: distdir
 	tardir=$(distdir) && $(am__tar) | lzma -9 -c >$(distdir).tar.lzma
 	$(am__remove_distdir)
-
 dist-xz: distdir
 	tardir=$(distdir) && $(am__tar) | XZ_OPT=$${XZ_OPT--e} xz -c >$(distdir).tar.xz
 	$(am__remove_distdir)
@@ -656,7 +702,7 @@ dist-zip: distdir
 
 dist dist-all: distdir
 	tardir=$(distdir) && $(am__tar) | GZIP=$(GZIP_ENV) gzip -c >$(distdir).tar.gz
-	tardir=$(distdir) && $(am__tar) | BZIP2=$${BZIP2--9} bzip2 -c >$(distdir).tar.bz2
+	tardir=$(distdir) && $(am__tar) | XZ_OPT=$${XZ_OPT--e} xz -c >$(distdir).tar.xz
 	$(am__remove_distdir)
 
 # This target untars the dist file and tries a VPATH configuration.  Then

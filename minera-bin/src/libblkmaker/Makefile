@@ -60,8 +60,8 @@ POST_UNINSTALL = :
 build_triplet = armv6l-unknown-linux-gnueabihf
 host_triplet = armv6l-unknown-linux-gnueabihf
 subdir = .
-DIST_COMMON = README $(am__configure_deps) $(dist_noinst_SCRIPTS) \
-	$(libblkmaker_include_HEADERS) \
+DIST_COMMON = README $(am__configure_deps) $(dist_noinst_DATA) \
+	$(dist_noinst_SCRIPTS) $(libblkmaker_include_HEADERS) \
 	$(libblkmaker_jansson_include_HEADERS) $(srcdir)/Makefile.am \
 	$(srcdir)/Makefile.in $(srcdir)/libblkmaker_jansson.pc.in \
 	$(top_srcdir)/configure AUTHORS COPYING ar-lib config.guess \
@@ -108,8 +108,11 @@ am__installdirs = "$(DESTDIR)$(libdir)" "$(DESTDIR)$(pkgconfigdir)" \
 	"$(DESTDIR)$(libblkmaker_jansson_includedir)"
 LTLIBRARIES = $(lib_LTLIBRARIES)
 libblkmaker_0.1_la_LIBADD =
-am_libblkmaker_0.1_la_OBJECTS = base58.lo \
-	blkmaker.lo blktemplate.lo hex.lo
+am_libblkmaker_0.1_la_OBJECTS =  \
+	libblkmaker_0.1_la-base58.lo \
+	libblkmaker_0.1_la-blkmaker.lo \
+	libblkmaker_0.1_la-blktemplate.lo \
+	libblkmaker_0.1_la-hex.lo
 libblkmaker_0.1_la_OBJECTS =  \
 	$(am_libblkmaker_0.1_la_OBJECTS)
 AM_V_lt = $(am__v_lt_$(V))
@@ -117,9 +120,9 @@ am__v_lt_ = $(am__v_lt_$(AM_DEFAULT_VERBOSITY))
 am__v_lt_0 = --silent
 libblkmaker_0.1_la_LINK = $(LIBTOOL) $(AM_V_lt) \
 	--tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=link \
-	$(CCLD) $(AM_CFLAGS) $(CFLAGS) \
-	$(libblkmaker_0.1_la_LDFLAGS) $(LDFLAGS) \
-	-o $@
+	$(CCLD) $(libblkmaker_0.1_la_CFLAGS) \
+	$(CFLAGS) $(libblkmaker_0.1_la_LDFLAGS) \
+	$(LDFLAGS) -o $@
 libblkmaker_jansson_0.1_la_LIBADD =
 am_libblkmaker_jansson_0.1_la_OBJECTS = libblkmaker_jansson_0.1_la-blkmaker_jansson.lo
 libblkmaker_jansson_0.1_la_OBJECTS = $(am_libblkmaker_jansson_0.1_la_OBJECTS)
@@ -166,7 +169,7 @@ am__can_run_installinfo = \
     n|no|NO) false;; \
     *) (install-info --version) >/dev/null 2>&1;; \
   esac
-DATA = $(pkgconfig_DATA)
+DATA = $(dist_noinst_DATA) $(pkgconfig_DATA)
 HEADERS = $(libblkmaker_include_HEADERS) \
 	$(libblkmaker_jansson_include_HEADERS)
 ETAGS = etags
@@ -180,19 +183,19 @@ am__remove_distdir = \
       && rm -rf "$(distdir)" \
       || { sleep 5 && rm -rf "$(distdir)"; }; \
   else :; fi
-DIST_ARCHIVES = $(distdir).tar.gz $(distdir).tar.bz2
+DIST_ARCHIVES = $(distdir).tar.gz $(distdir).tar.xz
 GZIP_ENV = --best
 distuninstallcheck_listfiles = find . -type f -print
 am__distuninstallcheck_listfiles = $(distuninstallcheck_listfiles) \
   | sed 's|^\./|$(prefix)/|' | grep -v '$(infodir)/dir$$'
 distcleancheck_listfiles = find . -type f -print
-ACLOCAL = ${SHELL} /var/www/minera/minera-bin/src/libblkmaker/missing --run aclocal-1.11
+ACLOCAL = ${SHELL} /var/www/minera/minera-bin/src/bfgminer/libblkmaker/missing --run aclocal-1.11
 AMTAR = $${TAR-tar}
 AM_DEFAULT_VERBOSITY = 0
 AR = ar
-AUTOCONF = ${SHELL} /var/www/minera/minera-bin/src/libblkmaker/missing --run autoconf
-AUTOHEADER = ${SHELL} /var/www/minera/minera-bin/src/libblkmaker/missing --run autoheader
-AUTOMAKE = ${SHELL} /var/www/minera/minera-bin/src/libblkmaker/missing --run automake-1.11
+AUTOCONF = ${SHELL} /var/www/minera/minera-bin/src/bfgminer/libblkmaker/missing --run autoconf
+AUTOHEADER = ${SHELL} /var/www/minera/minera-bin/src/bfgminer/libblkmaker/missing --run autoheader
+AUTOMAKE = ${SHELL} /var/www/minera/minera-bin/src/bfgminer/libblkmaker/missing --run automake-1.11
 AWK = mawk
 CC = gcc -std=gnu99
 CCDEPMODE = depmode=gcc3
@@ -217,19 +220,19 @@ INSTALL_DATA = ${INSTALL} -m 644
 INSTALL_PROGRAM = ${INSTALL}
 INSTALL_SCRIPT = ${INSTALL}
 INSTALL_STRIP_PROGRAM = $(install_sh) -c -s
-JANSSON_CFLAGS =  
-JANSSON_LIBS = -ljansson  
+JANSSON_CFLAGS = -I/usr/local/include  
+JANSSON_LIBS = -L/usr/local/lib -ljansson  
 LD = /usr/bin/ld
 LDFLAGS = 
 LIBBLKMAKER_API_VERSION = 0.1
-LIBBLKMAKER_SO_VERSION = 5:0:5
+LIBBLKMAKER_SO_VERSION = 6:0:0
 LIBOBJS = 
 LIBS = 
 LIBTOOL = $(SHELL) $(top_builddir)/libtool
 LIPO = 
 LN_S = ln -s
 LTLIBOBJS = 
-MAKEINFO = ${SHELL} /var/www/minera/minera-bin/src/libblkmaker/missing --run makeinfo
+MAKEINFO = ${SHELL} /var/www/minera/minera-bin/src/bfgminer/libblkmaker/missing --run makeinfo
 MANIFEST_TOOL = :
 MKDIR_P = /bin/mkdir -p
 NM = /usr/bin/nm -B
@@ -255,10 +258,10 @@ SET_MAKE =
 SHELL = /bin/bash
 STRIP = strip
 VERSION = 0.1
-abs_builddir = /var/www/minera/minera-bin/src/libblkmaker
-abs_srcdir = /var/www/minera/minera-bin/src/libblkmaker
-abs_top_builddir = /var/www/minera/minera-bin/src/libblkmaker
-abs_top_srcdir = /var/www/minera/minera-bin/src/libblkmaker
+abs_builddir = /var/www/minera/minera-bin/src/bfgminer/libblkmaker
+abs_srcdir = /var/www/minera/minera-bin/src/bfgminer/libblkmaker
+abs_top_builddir = /var/www/minera/minera-bin/src/bfgminer/libblkmaker
+abs_top_srcdir = /var/www/minera/minera-bin/src/bfgminer/libblkmaker
 ac_ct_AR = ar
 ac_ct_CC = gcc
 ac_ct_DUMPBIN = 
@@ -287,7 +290,9 @@ host_vendor = unknown
 htmldir = ${docdir}
 includedir = ${prefix}/include
 infodir = ${datarootdir}/info
-install_sh = ${SHELL} /var/www/minera/minera-bin/src/libblkmaker/install-sh
+install_sh = ${SHELL} /var/www/minera/minera-bin/src/bfgminer/libblkmaker/install-sh
+libbase58_CFLAGS = -I/usr/local/include  
+libbase58_LIBS = -L/usr/local/lib -lbase58  
 libdir = ${exec_prefix}/lib
 libexecdir = ${exec_prefix}/libexec
 localedir = ${datarootdir}/locale
@@ -315,9 +320,17 @@ libblkmaker_0.1_la_SOURCES = \
 	base58.c \
 	blkmaker.c \
 	blktemplate.c \
-	hex.c
+	hex.c \
+	private.h
 
-libblkmaker_0.1_la_LDFLAGS = -version-info $(LIBBLKMAKER_SO_VERSION) -no-undefined
+libblkmaker_0.1_la_CFLAGS = \
+	$(libbase58_CFLAGS)
+
+libblkmaker_0.1_la_LDFLAGS = \
+	$(libbase58_LIBS) \
+	-no-undefined \
+	-version-info $(LIBBLKMAKER_SO_VERSION)
+
 libblkmaker_includedir = $(includedir)/libblkmaker-$(LIBBLKMAKER_API_VERSION)
 libblkmaker_include_HEADERS = \
 	blkmaker.h \
@@ -342,6 +355,11 @@ pkgconfig_DATA = \
 	libblkmaker_jansson-$(LIBBLKMAKER_API_VERSION).pc
 
 dist_noinst_SCRIPTS = autogen.sh
+dist_noinst_DATA = \
+	AUTHORS COPYING README \
+	example.c \
+	testinput.c
+
 all: all-am
 
 .SUFFIXES:
@@ -425,10 +443,10 @@ mostlyclean-compile:
 distclean-compile:
 	-rm -f *.tab.c
 
-include ./$(DEPDIR)/base58.Plo
-include ./$(DEPDIR)/blkmaker.Plo
-include ./$(DEPDIR)/blktemplate.Plo
-include ./$(DEPDIR)/hex.Plo
+include ./$(DEPDIR)/libblkmaker_0.1_la-base58.Plo
+include ./$(DEPDIR)/libblkmaker_0.1_la-blkmaker.Plo
+include ./$(DEPDIR)/libblkmaker_0.1_la-blktemplate.Plo
+include ./$(DEPDIR)/libblkmaker_0.1_la-hex.Plo
 include ./$(DEPDIR)/libblkmaker_jansson_0.1_la-blkmaker_jansson.Plo
 
 .c.o:
@@ -451,6 +469,34 @@ include ./$(DEPDIR)/libblkmaker_jansson_0.1_la-blkmaker_jansson.Plo
 #	$(AM_V_CC)source='$<' object='$@' libtool=yes \
 #	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) \
 #	$(AM_V_CC_no)$(LTCOMPILE) -c -o $@ $<
+
+libblkmaker_0.1_la-base58.lo: base58.c
+	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libblkmaker_0.1_la_CFLAGS) $(CFLAGS) -MT libblkmaker_0.1_la-base58.lo -MD -MP -MF $(DEPDIR)/libblkmaker_0.1_la-base58.Tpo -c -o libblkmaker_0.1_la-base58.lo `test -f 'base58.c' || echo '$(srcdir)/'`base58.c
+	$(AM_V_at)$(am__mv) $(DEPDIR)/libblkmaker_0.1_la-base58.Tpo $(DEPDIR)/libblkmaker_0.1_la-base58.Plo
+#	$(AM_V_CC)source='base58.c' object='libblkmaker_0.1_la-base58.lo' libtool=yes \
+#	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) \
+#	$(AM_V_CC_no)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libblkmaker_0.1_la_CFLAGS) $(CFLAGS) -c -o libblkmaker_0.1_la-base58.lo `test -f 'base58.c' || echo '$(srcdir)/'`base58.c
+
+libblkmaker_0.1_la-blkmaker.lo: blkmaker.c
+	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libblkmaker_0.1_la_CFLAGS) $(CFLAGS) -MT libblkmaker_0.1_la-blkmaker.lo -MD -MP -MF $(DEPDIR)/libblkmaker_0.1_la-blkmaker.Tpo -c -o libblkmaker_0.1_la-blkmaker.lo `test -f 'blkmaker.c' || echo '$(srcdir)/'`blkmaker.c
+	$(AM_V_at)$(am__mv) $(DEPDIR)/libblkmaker_0.1_la-blkmaker.Tpo $(DEPDIR)/libblkmaker_0.1_la-blkmaker.Plo
+#	$(AM_V_CC)source='blkmaker.c' object='libblkmaker_0.1_la-blkmaker.lo' libtool=yes \
+#	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) \
+#	$(AM_V_CC_no)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libblkmaker_0.1_la_CFLAGS) $(CFLAGS) -c -o libblkmaker_0.1_la-blkmaker.lo `test -f 'blkmaker.c' || echo '$(srcdir)/'`blkmaker.c
+
+libblkmaker_0.1_la-blktemplate.lo: blktemplate.c
+	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libblkmaker_0.1_la_CFLAGS) $(CFLAGS) -MT libblkmaker_0.1_la-blktemplate.lo -MD -MP -MF $(DEPDIR)/libblkmaker_0.1_la-blktemplate.Tpo -c -o libblkmaker_0.1_la-blktemplate.lo `test -f 'blktemplate.c' || echo '$(srcdir)/'`blktemplate.c
+	$(AM_V_at)$(am__mv) $(DEPDIR)/libblkmaker_0.1_la-blktemplate.Tpo $(DEPDIR)/libblkmaker_0.1_la-blktemplate.Plo
+#	$(AM_V_CC)source='blktemplate.c' object='libblkmaker_0.1_la-blktemplate.lo' libtool=yes \
+#	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) \
+#	$(AM_V_CC_no)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libblkmaker_0.1_la_CFLAGS) $(CFLAGS) -c -o libblkmaker_0.1_la-blktemplate.lo `test -f 'blktemplate.c' || echo '$(srcdir)/'`blktemplate.c
+
+libblkmaker_0.1_la-hex.lo: hex.c
+	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libblkmaker_0.1_la_CFLAGS) $(CFLAGS) -MT libblkmaker_0.1_la-hex.lo -MD -MP -MF $(DEPDIR)/libblkmaker_0.1_la-hex.Tpo -c -o libblkmaker_0.1_la-hex.lo `test -f 'hex.c' || echo '$(srcdir)/'`hex.c
+	$(AM_V_at)$(am__mv) $(DEPDIR)/libblkmaker_0.1_la-hex.Tpo $(DEPDIR)/libblkmaker_0.1_la-hex.Plo
+#	$(AM_V_CC)source='hex.c' object='libblkmaker_0.1_la-hex.lo' libtool=yes \
+#	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) \
+#	$(AM_V_CC_no)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libblkmaker_0.1_la_CFLAGS) $(CFLAGS) -c -o libblkmaker_0.1_la-hex.lo `test -f 'hex.c' || echo '$(srcdir)/'`hex.c
 
 libblkmaker_jansson_0.1_la-blkmaker_jansson.lo: blkmaker_jansson.c
 	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libblkmaker_jansson_0.1_la_CFLAGS) $(CFLAGS) -MT libblkmaker_jansson_0.1_la-blkmaker_jansson.lo -MD -MP -MF $(DEPDIR)/libblkmaker_jansson_0.1_la-blkmaker_jansson.Tpo -c -o libblkmaker_jansson_0.1_la-blkmaker_jansson.lo `test -f 'blkmaker_jansson.c' || echo '$(srcdir)/'`blkmaker_jansson.c
@@ -625,6 +671,7 @@ distdir: $(DISTFILES)
 dist-gzip: distdir
 	tardir=$(distdir) && $(am__tar) | GZIP=$(GZIP_ENV) gzip -c >$(distdir).tar.gz
 	$(am__remove_distdir)
+
 dist-bzip2: distdir
 	tardir=$(distdir) && $(am__tar) | BZIP2=$${BZIP2--9} bzip2 -c >$(distdir).tar.bz2
 	$(am__remove_distdir)
@@ -636,7 +683,6 @@ dist-lzip: distdir
 dist-lzma: distdir
 	tardir=$(distdir) && $(am__tar) | lzma -9 -c >$(distdir).tar.lzma
 	$(am__remove_distdir)
-
 dist-xz: distdir
 	tardir=$(distdir) && $(am__tar) | XZ_OPT=$${XZ_OPT--e} xz -c >$(distdir).tar.xz
 	$(am__remove_distdir)
@@ -656,7 +702,7 @@ dist-zip: distdir
 
 dist dist-all: distdir
 	tardir=$(distdir) && $(am__tar) | GZIP=$(GZIP_ENV) gzip -c >$(distdir).tar.gz
-	tardir=$(distdir) && $(am__tar) | BZIP2=$${BZIP2--9} bzip2 -c >$(distdir).tar.bz2
+	tardir=$(distdir) && $(am__tar) | XZ_OPT=$${XZ_OPT--e} xz -c >$(distdir).tar.xz
 	$(am__remove_distdir)
 
 # This target untars the dist file and tries a VPATH configuration.  Then

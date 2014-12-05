@@ -12,6 +12,7 @@
 #include <arpa/inet.h>
 
 #include <gcrypt.h>
+#include <libbase58.h>
 
 #include <blkmaker.h>
 #include <blkmaker_jansson.h>
@@ -23,20 +24,23 @@ void testb58() {
 	int rv;
 	const char *iaddr = "11Baf75Ferj6A7AoN565gCQj9kGWbDMHfN9";
 	const char *addr = &iaddr[1];
+	const size_t addrlen = strlen(addr);
+	size_t actuallen;
 	char bufx[26] = {'\xff'};
 	char *buf = &bufx[1];
-	if (!_blkmk_b58tobin(buf, 25, addr, 0))
+	actuallen = 25;
+	if (!b58tobin(buf, &actuallen, addr, addrlen))
 		exit(1);
 	if (bufx[0] != '\xff')
 		exit(2);
 	char cbuf[51];
 	_blkmk_bin2hex(cbuf, buf, 25);
 	printf("Base58 raw data: %s\n", cbuf);
-	assert((rv = _blkmk_b58check(buf, 25, addr)) == 0);
+	assert((rv = b58check(buf, 25, addr, addrlen)) == 0);
 	printf("Base58 check: %d\n", rv);
-	assert((rv = _blkmk_b58check(buf, 25, &addr[1])) < 0);
+	assert((rv = b58check(buf, 25, &addr[1], addrlen)) < 0);
 	printf("Base58 check (invalid/    unpadded): %d\n", rv);
-	assert((rv = _blkmk_b58check(buf, 25, iaddr)) < 0);
+	assert((rv = b58check(buf, 25, iaddr, addrlen + 1)) < 0);
 	printf("Base58 check (invalid/extra padded): %d\n", rv);
 }
 
@@ -59,6 +63,7 @@ int main(int argc, char**argv) {
 	json_error_t jsone;
 	const char *err;
 	
+	b58_sha256_impl = my_sha256;
 	blkmk_sha256_impl = my_sha256;
 	
 	testb58();

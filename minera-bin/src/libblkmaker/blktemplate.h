@@ -12,6 +12,10 @@
 #include <stdint.h>
 #include <time.h>
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 typedef uint32_t blkheight_t;
 typedef uint32_t libblkmaker_hash_t[8];
 typedef libblkmaker_hash_t blkhash_t;
@@ -34,6 +38,12 @@ struct blktxn_t {
 	int16_t sigops;
 	
 	txnhash_t *hash_;
+};
+
+struct blkaux_t {
+	char *auxname;
+	unsigned char *data;
+	uint8_t datasz;
 };
 
 // BIP 23: Long Polling
@@ -80,6 +90,7 @@ extern gbt_capabilities_t blktmpl_getcapability(const char *);
 
 typedef gbt_capabilities_t blkmutations_t;
 
+// WARNING: Do not allocate this (ABI is not guaranteed to remain fixed-size)
 typedef struct {
 	uint32_t version;
 	unsigned char diffbits[4];
@@ -96,9 +107,6 @@ typedef struct {
 	
 	time_t _time_rcvd;
 	blktime_t curtime;
-	char auxcount;
-	char **auxnames;
-	unsigned char **auxdata;
 	
 	char *workid;
 	
@@ -108,10 +116,10 @@ typedef struct {
 	
 	// BIP 23: Basic Pool Extensions
 	int16_t expires;
-	blkhash_t target;
+	blkhash_t *target;
 	
 	// BIP 23: Mutations
-	blkmutations_t mutations;
+	uint32_t mutations;
 	blktime_t maxtime;
 	blktime_diff_t maxtimeoff;
 	blktime_t mintime;
@@ -122,14 +130,20 @@ typedef struct {
 	// TEMPORARY HACK
 	libblkmaker_hash_t *_mrklbranch;
 	int _mrklbranchcount;
-	libblkmaker_hash_t _mrklroot;
 	unsigned int next_dataid;
+	
+	unsigned aux_count;
+	struct blkaux_t *auxs;
 } blktemplate_t;
 
 extern blktemplate_t *blktmpl_create();
-extern gbt_capabilities_t blktmpl_addcaps(const blktemplate_t *);
+extern uint32_t blktmpl_addcaps(const blktemplate_t *);
 extern const struct blktmpl_longpoll_req *blktmpl_get_longpoll(blktemplate_t *);
 extern bool blktmpl_get_submitold(blktemplate_t *tmpl);
 extern void blktmpl_free(blktemplate_t *);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif

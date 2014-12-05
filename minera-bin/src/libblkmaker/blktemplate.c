@@ -75,7 +75,7 @@ blktemplate_t *blktmpl_create() {
 	return tmpl;
 }
 
-gbt_capabilities_t blktmpl_addcaps(const blktemplate_t *tmpl) {
+uint32_t blktmpl_addcaps(const blktemplate_t *tmpl) {
 	// TODO: make this a lot more flexible for merging
 	// For now, it's a simple "filled" vs "not filled"
 	if (tmpl->version)
@@ -101,6 +101,12 @@ void _blktxn_free(struct blktxn_t *bt) {
 }
 #define blktxn_free  _blktxn_free
 
+static
+void blkaux_clean(struct blkaux_t * const aux) {
+	free(aux->auxname);
+	free(aux->data);
+}
+
 void blktmpl_free(blktemplate_t *tmpl) {
 	for (unsigned long i = 0; i < tmpl->txncount; ++i)
 		blktxn_free(&tmpl->txns[i]);
@@ -111,10 +117,11 @@ void blktmpl_free(blktemplate_t *tmpl) {
 		free(tmpl->cbtxn);
 	}
 	free(tmpl->_mrklbranch);
-	// TODO: maybe free auxnames[0..n]? auxdata too
-	free(tmpl->auxnames);
-	free(tmpl->auxdata);
+	for (unsigned i = 0; i < tmpl->aux_count; ++i)
+		blkaux_clean(&tmpl->auxs[i]);
+	free(tmpl->auxs);
 	free(tmpl->workid);
+	free(tmpl->target);
 	free(tmpl->lp.id);
 	free(tmpl->lp.uri);
 	free(tmpl);

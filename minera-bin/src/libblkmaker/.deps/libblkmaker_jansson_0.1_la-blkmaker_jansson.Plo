@@ -20,26 +20,17 @@ libblkmaker_jansson_0.1_la-blkmaker_jansson.lo: blkmaker_jansson.c \
  /usr/include/arm-linux-gnueabihf/bits/pthreadtypes.h \
  /usr/include/alloca.h /usr/include/string.h /usr/include/xlocale.h \
  /usr/include/arm-linux-gnueabihf/bits/string.h \
- /usr/include/arm-linux-gnueabihf/bits/string2.h /usr/include/arpa/inet.h \
- /usr/include/netinet/in.h \
- /usr/lib/gcc/arm-linux-gnueabihf/4.6/include/stdint.h \
- /usr/include/stdint.h /usr/include/arm-linux-gnueabihf/bits/wchar.h \
- /usr/include/arm-linux-gnueabihf/sys/socket.h \
- /usr/include/arm-linux-gnueabihf/sys/uio.h \
- /usr/include/arm-linux-gnueabihf/bits/uio.h \
- /usr/include/arm-linux-gnueabihf/bits/socket.h \
- /usr/include/arm-linux-gnueabihf/bits/sockaddr.h \
- /usr/include/arm-linux-gnueabihf/asm/socket.h \
- /usr/include/arm-linux-gnueabihf/asm/sockios.h \
- /usr/include/arm-linux-gnueabihf/bits/in.h /usr/include/jansson.h \
- /usr/include/stdio.h /usr/include/libio.h /usr/include/_G_config.h \
- /usr/include/wchar.h \
+ /usr/include/arm-linux-gnueabihf/bits/string2.h \
+ /usr/local/include/jansson.h /usr/include/stdio.h /usr/include/libio.h \
+ /usr/include/_G_config.h /usr/include/wchar.h \
  /usr/lib/gcc/arm-linux-gnueabihf/4.6/include/stdarg.h \
  /usr/include/arm-linux-gnueabihf/bits/stdio_lim.h \
  /usr/include/arm-linux-gnueabihf/bits/sys_errlist.h \
  /usr/include/arm-linux-gnueabihf/bits/stdio.h \
- /usr/include/jansson_config.h blkmaker.h \
+ /usr/local/include/jansson_config.h blkmaker.h \
  /usr/lib/gcc/arm-linux-gnueabihf/4.6/include/stdbool.h \
+ /usr/lib/gcc/arm-linux-gnueabihf/4.6/include/stdint.h \
+ /usr/include/stdint.h /usr/include/arm-linux-gnueabihf/bits/wchar.h \
  /usr/include/unistd.h /usr/include/arm-linux-gnueabihf/bits/posix_opt.h \
  /usr/include/arm-linux-gnueabihf/bits/environments.h \
  /usr/include/arm-linux-gnueabihf/bits/confname.h /usr/include/getopt.h \
@@ -99,33 +90,7 @@ libblkmaker_jansson_0.1_la-blkmaker_jansson.lo: blkmaker_jansson.c \
 
 /usr/include/arm-linux-gnueabihf/bits/string2.h:
 
-/usr/include/arpa/inet.h:
-
-/usr/include/netinet/in.h:
-
-/usr/lib/gcc/arm-linux-gnueabihf/4.6/include/stdint.h:
-
-/usr/include/stdint.h:
-
-/usr/include/arm-linux-gnueabihf/bits/wchar.h:
-
-/usr/include/arm-linux-gnueabihf/sys/socket.h:
-
-/usr/include/arm-linux-gnueabihf/sys/uio.h:
-
-/usr/include/arm-linux-gnueabihf/bits/uio.h:
-
-/usr/include/arm-linux-gnueabihf/bits/socket.h:
-
-/usr/include/arm-linux-gnueabihf/bits/sockaddr.h:
-
-/usr/include/arm-linux-gnueabihf/asm/socket.h:
-
-/usr/include/arm-linux-gnueabihf/asm/sockios.h:
-
-/usr/include/arm-linux-gnueabihf/bits/in.h:
-
-/usr/include/jansson.h:
+/usr/local/include/jansson.h:
 
 /usr/include/stdio.h:
 
@@ -143,11 +108,17 @@ libblkmaker_jansson_0.1_la-blkmaker_jansson.lo: blkmaker_jansson.c \
 
 /usr/include/arm-linux-gnueabihf/bits/stdio.h:
 
-/usr/include/jansson_config.h:
+/usr/local/include/jansson_config.h:
 
 blkmaker.h:
 
 /usr/lib/gcc/arm-linux-gnueabihf/4.6/include/stdbool.h:
+
+/usr/lib/gcc/arm-linux-gnueabihf/4.6/include/stdint.h:
+
+/usr/include/stdint.h:
+
+/usr/include/arm-linux-gnueabihf/bits/wchar.h:
 
 /usr/include/unistd.h:
 

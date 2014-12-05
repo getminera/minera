@@ -4,8 +4,12 @@
 #include <stdbool.h>
 #include <string.h>
 
+#include <blktemplate.h>
+
 // blkmaker.c
 extern bool _blkmk_dblsha256(void *hash, const void *data, size_t datasz);
+extern bool blkmk_sample_data_(blktemplate_t *, uint8_t *, unsigned int dataid);
+extern char *blkmk_assemble_submission_(blktemplate_t *, const unsigned char *data, unsigned int dataid, blknonce_t nonce, bool foreign);
 
 // blktemplate.c
 extern void _blktxn_free(struct blktxn_t *);
@@ -13,10 +17,6 @@ extern void _blktxn_free(struct blktxn_t *);
 // hex.c
 extern void _blkmk_bin2hex(char *out, const void *data, size_t datasz);
 extern bool _blkmk_hex2bin(void *o, const char *x, size_t len);
-
-// base58.c
-extern bool _blkmk_b58tobin(void *bin, size_t binsz, const char *b58, size_t b58sz);
-extern int _blkmk_b58check(void *bin, size_t binsz, const char *b58);
 
 // inline
 

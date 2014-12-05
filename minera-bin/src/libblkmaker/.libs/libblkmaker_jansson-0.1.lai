@@ -5,10 +5,10 @@
 # It is necessary for linking the library.
 
 # The name that we can dlopen(3).
-dlname='libblkmaker_jansson-0.1.so.0'
+dlname='libblkmaker_jansson-0.1.so.6'
 
 # Names of this library.
-library_names='libblkmaker_jansson-0.1.so.0.5.0 libblkmaker_jansson-0.1.so.0 libblkmaker_jansson-0.1.so'
+library_names='libblkmaker_jansson-0.1.so.6.0.0 libblkmaker_jansson-0.1.so.6 libblkmaker_jansson-0.1.so'
 
 # The name of the static archive.
 old_library=''
@@ -17,14 +17,14 @@ old_library=''
 inherited_linker_flags=''
 
 # Libraries that this one depends upon.
-dependency_libs=' -L.libs /usr/local/lib/libblkmaker-0.1.la -ljansson'
+dependency_libs=' -L.libs /usr/local/lib/libblkmaker-0.1.la -L/usr/local/lib /usr/local/lib/libbase58.la /usr/local/lib/libjansson.la'
 
 # Names of additional weak libraries provided by this library
 weak_library_names=''
 
 # Version information for libblkmaker_jansson-0.1.
-current=5
-age=5
+current=6
+age=0
 revision=0
 
 # Is this an already installed library?
