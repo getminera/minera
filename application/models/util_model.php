@@ -1120,9 +1120,10 @@ class Util_model extends CI_Model {
 	public function readCustomMinerDir()
 	{
 		$files = array();
-		
-		$activeCustomMiners = json_decode($this->redis->get('active_custom_miners'));
-		
+		$newActiveCustomMiners = array();
+
+		$activeCustomMiners = (json_decode($this->redis->get('active_custom_miners'))) ? json_decode($this->redis->get('active_custom_miners')) : array();
+
 		if ($handle = opendir(FCPATH.'minera-bin/custom/')) {
 		    while (false !== ($entry = readdir($handle))) {
 		        if ($entry != "." && $entry != ".." && $entry != "README.custom")

@@ -4,7 +4,7 @@ Minera
 **[Official Website](http://getminera.com/)**
 _______
 
-Minera is a complete system to manage and monitor your mining hardware.
+Minera is a complete system to manage and monitor your bitcoin mining hardware.
 
 Since the 0.3.x version Minera supports the following miner softwares:
 
@@ -21,7 +21,7 @@ Thanks.
 
 **[Download minera-latest.img.zip](http://getminera.com/download/latest)**
 
-Look below for download mirror / how to install / hot to use it.
+Look below for download mirror / how to install / how to use it.
 _______
 
 Support
@@ -78,6 +78,7 @@ This is a list of some of the Minera's features:
 * Scheduled event (reboot/restart)
 * Dashboard refresh time
 * Minera password management
+* Ability ato add custom miner software (like forks)
 
 _______
 
@@ -94,7 +95,7 @@ Installing
 
 You can choose for a img file to put in your SD Card or for a manual install.
 
-**Image file (img) v0.3.7 (Recommended)**
+**Image file (img) v0.4.0 (Recommended)**
 
 This is the Minera image file for Raspberry PI, you have only to download it and put in your SD Card.
 
@@ -102,11 +103,11 @@ You need at least a 4GB SD Card:
 
 Official United Kingdom server:
 
-> [official-uk] **[Download minera-latest.img.zip](http://getminera.com/download/latest)** (md5 b7fa677f77d64429f0d368cf1343ce6a)
+> [official-uk] **[Download minera-latest.img.zip](http://getminera.com/download/latest)**
 
 Australian mirror:
 
-> [mirror-au] **[ Download minera-latest.img.zip](http://mirror-au.getminera.com/minera-latest.img.zip)** (md5 b7fa677f77d64429f0d368cf1343ce6a)
+> [mirror-au] **[ Download minera-latest.img.zip](http://mirror-au.getminera.com/minera-latest.img.zip)**
 
 After boot up your controller, point your browser to:
 
@@ -165,16 +166,11 @@ The *miner command* binary path is:
 
 	minera-bin/<miner>
 
-They are pre-compiled for Raspberry (ARM) with the latest version available, please refer to each one if you wanna recompile it.
+They are pre-compiled for Raspberry (ARM) with the latest version available, please refer to each one if you wanna recompile it or use the [build script](#building-miner-software).
 
 **For Ubuntu user only**
 
-In the same path you can find also *minerd-ubuntu-64bit* file, this one is pre-compiled for Ubuntu 64bit, you should copy it overwriting *minerd* if you run Minera on Ubuntu.
-
-	cd /var/www/minera/minera-bin
-	sudo cp minerd-ubuntu-64bit minerd
-
-**NOTE**: If you want use any other miner software on Ubuntu (or any other system architecture) you need to compile it and put the binary file in "minera-bin/" directory.
+If you want use any miner software on Ubuntu (or any other system architecture) you need to compile it and put the binary file in "minera-bin/" directory, pre-built miners are only for ARM architecture.
 _______
 
 Upgrading
