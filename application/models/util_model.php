@@ -1537,7 +1537,7 @@ class Util_model extends CI_Model {
 			$stats = json_decode($this->getParsedStats($this->getMinerStats()));
 			
 			// Params		
-			$params = array("emailAddress" => $this->redis->get("mobileminer_email"), "applicationKey" => $this->redis->get("mobileminer_appkey"), "apiKey" => $this->config->item('mobileminer_apikey'), "detailed" => true);
+			$params = array("emailAddress" => $this->redis->get("mobileminer_email"), "applicationKey" => $this->redis->get("mobileminer_appkey"), "apiKey" => $this->config->item('mobileminer_apikey'), "fetchCommands" => "true");
 			
 			// Pool data
 			$poolUrl = (isset($stats->pool->url)) ? $stats->pool->url : "no pool configured";
@@ -1599,19 +1599,14 @@ class Util_model extends CI_Model {
 			// Sending data to Mobile Miner
 			log_message('error', "Sending data to Mobileminer");
 
-			$result = $this->useCurl($this->config->item('mobileminer_url_stats'), $params, "POST", $data_string);
-			
-			if ($result)
-				log_message('error', var_export($result, true));
-			else
-				log_message('error', 'MobileMiner data sent.');
+			$resultGetActions = $this->useCurl($this->config->item('mobileminer_url_stats'), $params, "POST", $data_string);
 			
 			/*	
 			// Looking for actions to do
 			*/
 			$paramsGetActions = array("emailAddress" => $this->redis->get("mobileminer_email"), "applicationKey" => $this->redis->get("mobileminer_appkey"), "apiKey" => $this->config->item('mobileminer_apikey'), "machineName" => $this->redis->get("mobileminer_system_name"));
 			
-			$resultGetActions = $this->useCurl($this->config->item('mobileminer_url_remotecommands'), $paramsGetActions, "GET");
+			//$resultGetActions = $this->useCurl($this->config->item('mobileminer_url_remotecommands'), $paramsGetActions, "GET");
 			
 			if ($resultGetActions)
 			{
