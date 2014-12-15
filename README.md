@@ -79,6 +79,7 @@ This is a list of some of the Minera's features:
 * Dashboard refresh time
 * Minera password management
 * Ability ato add custom miner software (like forks)
+* Skin selection
 
 _______
 
@@ -289,7 +290,11 @@ Settings:
 
 Web Terminal:
 
-[![Settings](https://github.com/michelem09/minera/raw/master/assets/img/screen_minera_terminal.png)](https://github.com/michelem09/minera/raw/master/assets/img/screen_minera_terminal_hi.png)
+[![Web terminal](https://github.com/michelem09/minera/raw/master/assets/img/screen_minera_terminal.png)](https://github.com/michelem09/minera/raw/master/assets/img/screen_minera_terminal_hi.png)
+
+Blue skin:
+
+[![Blue skin](https://github.com/michelem09/minera/raw/master/assets/img/screen_minera_dashboard_blue.png)](https://github.com/michelem09/minera/raw/master/assets/img/screen_minera_dashboard_blue_hi.png)
 _______
 
 Donations
