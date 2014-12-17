@@ -14,7 +14,7 @@
 	
 	<link href="<?php echo base_url('favicon.ico') ?>" rel="icon">
 	<link href="<?php echo base_url('assets/css/bootstrap.min.css') ?>" rel="stylesheet" />
-	<link href="<?php echo base_url('assets/css/bootstrap-switch.min.css') ?>" rel="stylesheet">
+	<link href="<?php echo base_url('assets/css/bootstrap-switch.min.css?ver=20141225') ?>" rel="stylesheet">
 	<link href="<?php echo base_url('assets/css/font-awesome.css') ?>" rel="stylesheet" />
 	<link href="<?php echo base_url('assets/css/ionicons.min.css') ?>" rel="stylesheet" />
 	<link href="<?php echo base_url('assets/css/datatables/dataTables.bootstrap.css') ?>" rel="stylesheet" />
