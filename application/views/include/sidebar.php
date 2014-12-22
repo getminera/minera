@@ -73,7 +73,9 @@
                     <span class="icon-bar"></span>
                 </a>
                 
-                <div class="cb-tip-button tip-button" data-content-location="" data-href="//www.coinbase.com/tip_buttons/show_tip" data-to-user-id="516bb1500c8efad3b1000022"></div>
+				<?php if (!$this->redis->get("minera_donation_time")) : ?>
+	                <div class="cb-tip-button tip-button" data-content-location="http://getminera.com" data-href="//www.coinbase.com/tip_buttons/show_tip" data-to-user-id="516bb1500c8efad3b1000022"></div>
+				<?php endif; ?>
                 
 				<div class="navbar-right">
 					<ul class="nav navbar-nav">
@@ -189,9 +191,9 @@
 					                    <small>Please help Minera: spread it, share, donate</small>
 					                </p>
 					                <div style="margin:22px;">
-										<a href="https://www.facebook.com/sharer/sharer.php?u=https://github.com/michelem09/minera" target="_blank"><button class="btn bg-light-blue btn-circle"><i class="fa fa-facebook"></i></button></a>
-										<a href="https://twitter.com/home?status=Try%20Minera%20for%20your%20%23bitcoin%20mining%20monitor%20https://github.com/michelem09/minera" target="_blank"><button class="btn bg-aqua btn-circle"><i class="fa fa-twitter"></i></button></a>
-										<a href="https://plus.google.com/share?url=https://github.com/michelem09/minera" target="_blank"><button class="btn bg-red btn-circle"><i class="fa fa-google-plus"></i></button></a>
+										<a href="https://www.facebook.com/sharer/sharer.php?u=http://getminera.com" target="_blank"><button class="btn bg-light-blue btn-circle"><i class="fa fa-facebook"></i></button></a>
+										<a href="https://twitter.com/home?status=Try%20Minera%20for%20your%20%23bitcoin%20mining%20monitor%20http://getminera.com &#64;michelem" target="_blank"><button class="btn bg-aqua btn-circle"><i class="fa fa-twitter"></i></button></a>
+										<a href="https://plus.google.com/share?url=http://getminera.com" target="_blank"><button class="btn bg-red btn-circle"><i class="fa fa-google-plus"></i></button></a>
 									</div>
 					            </li>
 					            <!-- Menu Body -->
@@ -227,6 +229,11 @@
 				                	</div>
 				                </li>
 								<?php endif; ?>
+					            <li>
+					                <div class="col-xs-4 text-center" style="background: green; height: 3px;"></div>
+					                <div class="col-xs-4 text-center" style="background: white; height: 3px;"></div>
+					                <div class="col-xs-4 text-center" style="background: red; height: 3px;"></div>
+					            </li>
 					        </ul>
 					    </li>
 					</ul>
@@ -325,11 +332,6 @@
                                 	<i class="fa fa-refresh"></i> <span>Refresh</span><span class="badge bg-muted pull-right auto-refresh-time">auto in</span>
 								</a>
 							</li>
-						<?php endif; ?>
-						<?php if (!$this->redis->get("minera_donation_time")) : ?>
-                        	<div class="coinbase-donate-button">
-                            	<a class="coinbase-button" data-code="01ce206aaaf1a8659b07233d9705b9e8" data-button-style="custom_small" href="https://www.coinbase.com/checkouts/01ce206aaaf1a8659b07233d9705b9e8">Donate Bitcoins</a>
-							</div>
 						<?php endif; ?>
                     </ul>
                 </section>

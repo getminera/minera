@@ -11,7 +11,7 @@
 						<li><a href="<?php echo site_url("app/settings") ?>"><i class="fa fa-gear"></i> Settings</a></li>
 					</ol>
 				</section>
-
+					
 				<!-- Main content -->
 				<section class="content">
 
@@ -416,7 +416,7 @@
 								</div>
 							</div><!-- /.miner box -->							   
 							
-							<?php if (!$this->redis->get("minera_donation_time")) : ?>
+							<?php if (!$this->redis->get("minera_donation_time")) : ?>					
 							<!-- Donations box -->
 							<div class="box bg-light box-danger">
 								<div class="box-header">
@@ -428,7 +428,10 @@
 
 									<h3 class="box-title">Donations</h3>
 								</div>
-								<div class="box-body">
+								<div class="box-body text-center">
+		                        	<div class="coinbase-donate-button">
+		                            	<a class="coinbase-button" data-code="01ce206aaaf1a8659b07233d9705b9e8" data-button-style="custom_small" href="https://www.coinbase.com/checkouts/01ce206aaaf1a8659b07233d9705b9e8">Donate Bitcoins</a>
+									</div>
 									<p class="more-line-height">If you like Minera, please consider a donation to support it. <strong>Bitcoin</strong>: <code><a href="bitcoin:1AmREReHNLec9EaW7gLRdW31LNSDA9SGR1" target="_blank">1AmREReHNLec9EaW7gLRdW31LNSDA9SGR1</a></code> <strong>Litecoin</strong>: <code><a href="litecoin:LLPmAT9gDwmiSdqwWEZu6mpUDmrNAnYBdC" target="_blank">LLPmAT9gDwmiSdqwWEZu6mpUDmrNAnYBdC</a></code> <strong>Dogecoin</strong>: <code><a href="dogecoin:DLAHwNxfUTUcePewbkvwvAouny19mcosA7" target="_blank">DLAHwNxfUTUcePewbkvwvAouny19mcosA7</a></code></p>
 								</div><!-- /.box-body -->
 							</div>
