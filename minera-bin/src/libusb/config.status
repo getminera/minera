@@ -438,7 +438,7 @@ Copyright (C) 2012 Free Software Foundation, Inc.
 This config.status script is free software; the Free Software Foundation
 gives unlimited permission to copy, distribute and modify it."
 
-ac_pwd='/var/www/minera/minera-bin/src/libusbx-1.0.18'
+ac_pwd='/var/www/minera/minera-bin/src/libusb'
 srcdir='.'
 INSTALL='/usr/bin/install -c'
 MKDIR_P='/bin/mkdir -p'
@@ -963,12 +963,12 @@ S["mkdir_p"]="/bin/mkdir -p"
 S["MKDIR_P"]="/bin/mkdir -p"
 S["INSTALL_STRIP_PROGRAM"]="$(install_sh) -c -s"
 S["STRIP"]="strip"
-S["install_sh"]="${SHELL} /var/www/minera/minera-bin/src/libusbx-1.0.18/install-sh"
-S["MAKEINFO"]="${SHELL} /var/www/minera/minera-bin/src/libusbx-1.0.18/missing --run makeinfo"
-S["AUTOHEADER"]="${SHELL} /var/www/minera/minera-bin/src/libusbx-1.0.18/missing --run autoheader"
-S["AUTOMAKE"]="${SHELL} /var/www/minera/minera-bin/src/libusbx-1.0.18/missing --run automake-1.11"
-S["AUTOCONF"]="${SHELL} /var/www/minera/minera-bin/src/libusbx-1.0.18/missing --run autoconf"
-S["ACLOCAL"]="${SHELL} /var/www/minera/minera-bin/src/libusbx-1.0.18/missing --run aclocal-1.11"
+S["install_sh"]="${SHELL} /var/www/minera/minera-bin/src/libusb/install-sh"
+S["MAKEINFO"]="${SHELL} /var/www/minera/minera-bin/src/libusb/missing --run makeinfo"
+S["AUTOHEADER"]="${SHELL} /var/www/minera/minera-bin/src/libusb/missing --run autoheader"
+S["AUTOMAKE"]="${SHELL} /var/www/minera/minera-bin/src/libusb/missing --run automake-1.11"
+S["AUTOCONF"]="${SHELL} /var/www/minera/minera-bin/src/libusb/missing --run autoconf"
+S["ACLOCAL"]="${SHELL} /var/www/minera/minera-bin/src/libusb/missing --run aclocal-1.11"
 S["VERSION"]="1.0.18"
 S["PACKAGE"]="libusbx"
 S["CYGPATH_W"]="echo"

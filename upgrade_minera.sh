@@ -75,6 +75,15 @@ then
 	cd minera-bin/src/libblkmaker
 	sudo make install
 fi
+
+echo -e "Installing libusb\n-----\n"
+LIBUSBCOUNT=`strings -n5 /etc/ld.so.cache|grep -i libusb-1.0.so.2|wc -l`
+if [ $LIBUSBCOUNT -lt 2 ];
+then
+        cd minera-bin/src/libusb
+        sudo make install
+fi
+
 sudo ldconfig
 
 echo -e 'DONE! Minera is ready!\n\nOpen the URL: http://'$(hostname -I | tr -d ' ')'/minera/\n\nAnd happy mining!\n'
