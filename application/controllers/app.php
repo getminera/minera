@@ -168,6 +168,7 @@ class App extends Main_Controller {
 		$data['minerdManualOptions'] = $this->redis->get("manual_options");
 		$data['minerdDelaytime'] = $this->redis->get("minerd_delaytime");
 		$data['minerApiAllowExtra'] = $this->redis->get("minerd_api_allow_extra");
+		$data['globalPoolProxy'] = $this->redis->get("pool_global_proxy");
 		
 		//Load Dashboard settings
 		$data['mineraStoredDonations'] = $this->util_model->getStoredDonations();
@@ -245,6 +246,7 @@ class App extends Main_Controller {
 			$poolUrls = $this->input->post('pool_url');
 			$poolUsernames = $this->input->post('pool_username');
 			$poolPasswords = $this->input->post('pool_password');
+			$poolProxy = $this->input->post('pool_proxy');
 
 			$pools = array();
 			foreach ($poolUrls as $key => $poolUrl)
@@ -253,7 +255,7 @@ class App extends Main_Controller {
 				{
 					if (isset($poolUsernames[$key]) && isset($poolPasswords[$key]))
 					{
-						$pools[] = array("url" => $poolUrl, "username" => $poolUsernames[$key], "password" => $poolPasswords[$key]);
+						$pools[] = array("url" => $poolUrl, "username" => $poolUsernames[$key], "password" => $poolPasswords[$key], "proxy" => $poolProxy[$key]);
 						/*if ($this->util_model->checkPool($poolUrl))
 						{
 						}
@@ -394,10 +396,45 @@ class App extends Main_Controller {
 			
 			// Add the pools to the command
 			$poolsArray = array();
+			
+			// Global pool proxy
+			if ($this->input->post('pool_global_proxy'))
+			{
+				$confArray["socks-proxy"] = $this->input->post('pool_global_proxy');			
+			}
+			$this->redis->set('pool_global_proxy', $this->input->post('pool_global_proxy'));
+			$dataObj->pool_global_proxy = $this->input->post('pool_global_proxy');
+					
 			foreach ($pools as $pool)
 			{
-				$addPools[] = " -o ".$pool['url']." -u ".$pool['username']." -p ".$pool['password'];
-				$poolsArray[] = array("url" => $pool['url'], "user" => $pool['username'], "pass" => $pool['password']);
+				if ($minerSoftware == "cgminer")
+				{
+					// CGminer has different method to add proxy pool
+					if (!empty($pool['proxy']))
+					{
+						$addPools[] = " -o ".$pool['proxy']."|".$pool['url']." -u ".$pool['username']." -p ".$pool['password'];
+						$poolsArray[] = array("url" => $pool['proxy']."|".$pool['url'], "user" => $pool['username'], "pass" => $pool['password']);	
+					}
+					else
+					{
+						$addPools[] = " -o ".$pool['url']." -u ".$pool['username']." -p ".$pool['password'];
+						$poolsArray[] = array("url" => $pool['url'], "user" => $pool['username'], "pass" => $pool['password']);
+					}
+				}
+				else
+				{
+					if (!empty($pool['proxy']))
+					{
+						log_message("error", "hell");
+						$addPools[] = " -o ".$pool['url']." -x ".$pool['proxy']." -u ".$pool['username']." -p ".$pool['password'];
+						$poolsArray[] = array("url" => $pool['url'], "user" => $pool['username'], "pass" => $pool['password'], "pool-proxy" => $pool['proxy']);	
+					}
+					else
+					{
+						$addPools[] = " -o ".$pool['url']." -u ".$pool['username']." -p ".$pool['password'];
+						$poolsArray[] = array("url" => $pool['url'], "user" => $pool['username'], "pass" => $pool['password']);
+					}		
+				}
 			}
 			$confArray['pools'] = $poolsArray;
 			
@@ -833,7 +870,8 @@ class App extends Main_Controller {
 			break;
 			case "test":
 				//$a = file_get_contents("api.json");
-				//$o = $this->redis->command("BGSAVE"); //$this->util_model->checkCronIsRunning(); //$this->util_model->sendAnonymousStats(123, "hello world!"); //json_encode($this->bfgminer_model->callMinerd()); //$this->util_model->getParsedStats($this->util_model->getMinerStats());
+				//$o = $this->redis->command("BGSAVE"); //$this->util_model->checkCronIsRunning(); //$this->util_model->sendAnonymousStats(123, "hello world!");
+				$o = json_encode($this->util_model->callMinerd()); //$this->util_model->getParsedStats($this->util_model->getMinerStats());
 			break;
 		}
 		

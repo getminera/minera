@@ -208,16 +208,33 @@
 	
 									<div class="box-body">
 										<p>Pools are taken in the order you put them, the first one is the main pool, all the others ones are failovers.</p>
+										<!-- Global pool proxy -->
+										<div class="form-group">
+											<div class="row">
+												<div class="col-xs-6">
+													<label>Global pool proxy</label>
+													<p>Set socks proxy (host:port) for all pools without a proxy specified.</p>
+													<div class="input-group">
+										    			<span class="input-group-addon"><i class="fa fa-certificate"></i></span>
+										    			<input type="text" class="form-control" name="pool_global_proxy" placeholder="socks5|http://proxy:port" value="<?php echo (isset($globalPoolProxy)) ? $globalPoolProxy : ''; ?>" />
+										    		</div>
+												</div>
+											</div>
+										</div>
+
 										<div class="form-group">
 	                                        <div class="row">
-												<div class="col-xs-6">
+												<div class="col-xs-4">
 													<strong>Pool URL</strong>
 												</div>
-												<div class="col-xs-3">
+												<div class="col-xs-2">
 													<strong>Pool Username</strong>
 												</div>
-												<div class="col-xs-3">
+												<div class="col-xs-2">
 													<strong>Pool Password</strong>
+												</div>
+												<div class="col-xs-3">
+													<strong>Pool Proxy</strong>
 												</div>
 	                                        </div>
 										</div>
@@ -238,22 +255,28 @@
 												<!-- row pool for Minera -->
 												<div class="form-group">
 												    <div class="row sort-attach">
-												    	<div class="col-xs-5">
+												    	<div class="col-xs-4">
 												    		<div class="input-group">
 												    			<span class="input-group-addon"><i class="fa fa-gift"></i></span>
 												    			<input type="text" class="form-control" name="pool_url[]" data-ismain="0" value="stratum+tcp://multi.ghash.io:3333" readonly />
 												    		</div>
 												    	</div>
-												    	<div class="col-xs-3">
+												    	<div class="col-xs-2">
 												    		<div class="input-group">
 												    			<span class="input-group-addon"><i class="fa fa-user"></i></span>
 												    			<input type="text" class="form-control" name="pool_username[]" data-ismain="0" value="michelem.minera" readonly />
 												    		</div>
 												    	</div>
-												    	<div class="col-xs-3">
+												    	<div class="col-xs-2">
 												    		<div class="input-group">
 												    			<span class="input-group-addon"><i class="fa fa-lock"></i></span>
 												    			<input type="text" class="form-control" name="pool_password[]" data-ismain="0" value="x" readonly />
+												    		</div>
+												    	</div>
+												    	<div class="col-xs-3">
+												    		<div class="input-group">
+												    			<span class="input-group-addon"><i class="fa fa-certificate"></i></span>
+												    			<input type="text" class="form-control" name="pool_proxy[]" data-ismain="0" value="" readonly />
 												    		</div>
 												    	</div>
 												    	<div class="col-xs-1">
@@ -272,22 +295,28 @@
 												<?php else : ?>
 												<div class="form-group pool-group">
 												    <div class="row sort-attach pool-row">
-												    	<div class="col-xs-5">
+												    	<div class="col-xs-4">
 												    		<div class="input-group">
 												    			<span class="input-group-addon"><i class="fa fa-cloud-<?php echo ($i == 0) ? "upload" : "download"; ?>"></i></span>
 												    			<input type="text" class="form-control pool_url" placeholder="<?php echo ($i == 0) ? "Main" : "Failover"; ?> url" name="pool_url[]" data-ismain="<?php echo ($i == 0) ? "1" : "0"; ?>" value="<?php echo (isset($savedPools[$i]->url)) ? $savedPools[$i]->url : ''; ?>" />
 												    		</div>
 												    	</div>
-												    	<div class="col-xs-3">
+												    	<div class="col-xs-2">
 												    		<div class="input-group">
 												    			<span class="input-group-addon"><i class="fa fa-user"></i></span>
 												    			<input type="text" class="form-control pool_username" placeholder="username" name="pool_username[]" data-ismain="<?php echo ($i == 0) ? "1" : "0"; ?>" value="<?php echo (isset($savedPools[$i]->username)) ? $savedPools[$i]->username : ''; ?>"  />
 												    		</div>
 												    	</div>
-												    	<div class="col-xs-3">
+												    	<div class="col-xs-2">
 												    		<div class="input-group">
 												    			<span class="input-group-addon"><i class="fa fa-lock"></i></span>
 												    			<input type="text" class="form-control pool_password" placeholder="password" name="pool_password[]" data-ismain="<?php echo ($i == 0) ? "1" : "0"; ?>" value="<?php echo (isset($savedPools[$i]->password)) ? $savedPools[$i]->password : ''; ?>"  />
+												    		</div>
+												    	</div>
+												    	<div class="col-xs-3">
+												    		<div class="input-group">
+												    			<span class="input-group-addon"><i class="fa fa-certificate"></i></span>
+																<input type="text" class="form-control pool_proxy" placeholder="socks5|http://proxy:port" name="pool_proxy[]" data-ismain="<?php echo ($i == 0) ? "1" : "0"; ?>" value="<?php echo (isset($savedPools[$i]->proxy)) ? $savedPools[$i]->proxy : ''; ?>"  />
 												    		</div>
 												    	</div>
 												    	<div class="col-xs-1">
@@ -300,22 +329,28 @@
 											<!-- fake donation row pool for Minera -->
 											<div class="form-group pool-donation-group" style="display:none;">
 											    <div class="row sort-attach">
-											    	<div class="col-xs-5">
+											    	<div class="col-xs-4">
 											    		<div class="input-group">
 											    			<span class="input-group-addon"><i class="fa fa-gift"></i></span>
 											    			<input type="text" class="form-control form-donation" name="pool_url[]" data-ismain="0" value="stratum+tcp://multi.ghash.io:3333" readonly />
 											    		</div>
 											    	</div>
-											    	<div class="col-xs-3">
+											    	<div class="col-xs-2">
 											    		<div class="input-group">
 											    			<span class="input-group-addon"><i class="fa fa-user"></i></span>
 											    			<input type="text" class="form-control form-donation" name="pool_username[]" data-ismain="0" value="michelem.minera" readonly />
 											    		</div>
 											    	</div>
-											    	<div class="col-xs-3">
+											    	<div class="col-xs-2">
 											    		<div class="input-group">
 											    			<span class="input-group-addon"><i class="fa fa-lock"></i></span>
 											    			<input type="text" class="form-control form-donation" name="pool_password[]" data-ismain="0" value="x" readonly />
+											    		</div>
+											    	</div>
+											    	<div class="col-xs-3">
+											    		<div class="input-group">
+											    			<span class="input-group-addon"><i class="fa fa-certificate"></i></span>
+															<input type="text" class="form-control pool_proxy" placeholder="socks5|http://proxy:port" name="pool_proxy[]" readonly />
 											    		</div>
 											    	</div>
 											    	<div class="col-xs-1">
@@ -334,22 +369,28 @@
 											<!-- fake row to be cloned -->
 											<div class="form-group pool-group pool-group-master" style="display:none;">
 											    <div class="row sort-attach pool-row">
-											    	<div class="col-xs-5">
+											    	<div class="col-xs-4">
 											    		<div class="input-group">
 											    			<span class="input-group-addon"><i class="fa fa-cloud-download"></i></span>
 											    			<input type="text" class="form-control pool_url" placeholder="Failover url" name="pool_url[]" data-ismain="0" value="" />
 											    		</div>
 											    	</div>
-											    	<div class="col-xs-3">
+											    	<div class="col-xs-2">
 											    		<div class="input-group">
 											    			<span class="input-group-addon"><i class="fa fa-user"></i></span>
 											    			<input type="text" class="form-control pool_username" placeholder="username" name="pool_username[]" data-ismain="0" value=""  />
 											    		</div>
 											    	</div>
-											    	<div class="col-xs-3">
+											    	<div class="col-xs-2">
 											    		<div class="input-group">
 											    			<span class="input-group-addon"><i class="fa fa-lock"></i></span>
 											    			<input type="text" class="form-control pool_password" placeholder="password" name="pool_password[]" data-ismain="0" value=""  />
+											    		</div>
+											    	</div>
+											    	<div class="col-xs-3">
+											    		<div class="input-group">
+											    			<span class="input-group-addon"><i class="fa fa-certificate"></i></span>
+															<input type="text" class="form-control pool_proxy" placeholder="socks5|http://proxy:port" name="pool_proxy[]" data-ismain="0" value=""  />
 											    		</div>
 											    	</div>
 											    	<div class="col-xs-1">
@@ -463,7 +504,7 @@
 														<option value="cpuminer" <?php if ($minerdSoftware == "cpuminer") : ?>selected<?php endif; ?>>CPUminer (GC3355 fork)</option>
 														<option value="bfgminer" <?php if ($minerdSoftware == "bfgminer") : ?>selected<?php endif; ?>>BFGminer 4.x (Official)</option>
 														<option value="cgminer" <?php if ($minerdSoftware == "cgminer") : ?>selected<?php endif; ?>>CGminer 4.x (Official)</option>
-														<option value="cgdmaxlzeus" <?php if ($minerdSoftware == "cgdmaxlzeus") : ?>selected<?php endif; ?>>CGminer (Dmax Zeus fork)</option>
+														<option value="cgdmaxlzeus" <?php if ($minerdSoftware == "cgdmaxlzeus") : ?>selected<?php endif; ?>>CGminer (Dmaxl Zeus fork)</option>
 														<?php if ($activeCustomMiners) : ?>
 															<?php foreach ($activeCustomMiners as $activeCustomMiner) : ?>
 																<option value="<?php echo $activeCustomMiner ?>" <?php if ($minerdSoftware == $activeCustomMiner) : ?>selected<?php endif; ?>>[Custom Miner] <?php echo $activeCustomMiner ?></option>
