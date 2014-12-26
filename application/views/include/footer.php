@@ -1,4 +1,10 @@
-	<div class="copyright"><a href="http://getminera.com" target="_blank"><i class="fa fa-asterisk"></i> Minera</a> your next mining dashboard - Need a wallet? Try <a href="https://www.coinbase.com/join/michelem" target="_blank">Coinbase</a></div>
+	<div class="copyright">
+		<div class="github-btn">
+			<iframe src="http://ghbtns.com/github-btn.html?user=michelem09&repo=minera&type=watch&count=true"
+  allowtransparency="true" frameborder="0" scrolling="0" width="110" height="20"></iframe>
+		</div>
+  		<a href="http://getminera.com" target="_blank"><i class="fa fa-asterisk"></i> Minera</a> your next mining dashboard - Need a wallet? Try <a href="https://www.coinbase.com/join/michelem" target="_blank">Coinbase</a>
+  	</div>
 	
 	<!--  Coinbase tip script -->
 	<script>!function(d,s,id) {var js,cjs=d.getElementsByTagName(s)[0],e=d.getElementById(id);if(e){return;}js=d.createElement(s);js.id=id;js.src="https://www.coinbase.com/assets/tips.js";cjs.parentNode.insertBefore(js,cjs);}(document, 'script', 'coinbase-tips');</script>
@@ -1293,7 +1299,7 @@
 							// Initialize the pools datatable	
 							$('#pools-table-details').dataTable({
 								"lengthMenu": [ 5, 10, 25, 50 ],
-								"pageLength": 50,
+								"pageLength": 5,
 								"stateSave": true,
 								"bAutoWidth": false,
 								//"sDom": 't',
