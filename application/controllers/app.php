@@ -407,7 +407,7 @@ class App extends Main_Controller {
 					
 			foreach ($pools as $pool)
 			{
-				if ($minerSoftware == "cgminer")
+				if ($minerSoftware == "cgminer" OR $minerSoftware == "cgdmaxlzeus")
 				{
 					// CGminer has different method to add proxy pool
 					if (!empty($pool['proxy']))
