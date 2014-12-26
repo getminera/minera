@@ -1292,9 +1292,11 @@
 						{
 							// Initialize the pools datatable	
 							$('#pools-table-details').dataTable({
+								"lengthMenu": [ 5, 10, 25, 50 ],
+								"pageLength": 50,
 								"stateSave": true,
 								"bAutoWidth": false,
-								"sDom": 't',
+								//"sDom": 't',
 								"order": [[ 2, "asc" ]],
 								"fnRowCallback": function( nRow, aData, iDisplayIndex ) {
 									//if(iDisplayIndex === 0)
