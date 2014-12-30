@@ -187,6 +187,8 @@ class Util_model extends CI_Model {
 					$pools = (isset($a->pools)) ? $a->pools : false;
 				else
 				{
+					$devicePoolActives = false;
+					
 					// Get the real active pools
 					if (isset($a->devs[0]->DEVS))
 					{
@@ -216,7 +218,7 @@ class Util_model extends CI_Model {
 							$stats->stop_time = false;
 							$stats->stats_id = 1;
 							
-							$poolActive = (array_key_exists($poolIndex, $devicePoolActives)) ? true : false;
+							$poolActive = ($devicePoolActives && array_key_exists($poolIndex, $devicePoolActives)) ? true : false;
 							
 							$newpool = new stdClass();
 							$newpool->priority = $tmpPool->Priority;
@@ -271,7 +273,7 @@ class Util_model extends CI_Model {
 	*/
 	public function getParsedStats($stats)
 	{		
-		$d = 0; $tdevice = array(); $tdtemperature = 0; $tdfrequency = 0; $tdaccepted = 0; $tdrejected = 0; $tdhwerrors = 0; $tdshares = 0; $tdhashrate = 0;
+		$d = 0; $tdevice = array(); $tdtemperature = 0; $tdfrequency = 0; $tdaccepted = 0; $tdrejected = 0; $tdhwerrors = 0; $tdshares = 0; $tdhashrate = 0; $devicePoolActives = false;
 		$return = false;
 		
 		if (isset($stats->start_time))
@@ -425,7 +427,7 @@ class Util_model extends CI_Model {
 				}
 				else
 				{
-					if (array_key_exists($poolIndex, $devicePoolActives))
+					if ($devicePoolActives && array_key_exists($poolIndex, $devicePoolActives))
 					{
 						$poolHashrate = $cgbfgminerPoolHashrate;	
 					}
@@ -1553,7 +1555,7 @@ class Util_model extends CI_Model {
 			}
 							
 			$i = 0; $data = array();
-			if (count($stats->devices) > 0)
+			if (isset($stats->devices) && count($stats->devices) > 0)
 			{
 				foreach ($stats->devices as $devName => $device)
 				{
