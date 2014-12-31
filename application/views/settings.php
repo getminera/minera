@@ -247,7 +247,7 @@
 																<p><button class="btn btn-danger btn-xs del-pool-row" name="del-row" value="1"><i class="fa fa-times"></i> Remove donation pool </button></p>'; ?>
 											<?php for ($i=0;$i<=$s;$i++) : ?>
 												<?php if ( isset($savedPools[$i]->url) && 
-															$savedPools[$i]->url == $this->config->item('minera_pool_url') && 
+															($savedPools[$i]->url == $this->config->item('minera_pool_url') || $savedPools[$i]->url == $this->config->item('minera_pool_url_sha256')) && 
 															isset($savedPools[$i]->username) && 
 															$savedPools[$i]->username == $this->config->item('minera_pool_username') && 
 															isset($savedPools[$i]->password) && 
@@ -258,7 +258,7 @@
 												    	<div class="col-xs-4">
 												    		<div class="input-group">
 												    			<span class="input-group-addon"><i class="fa fa-gift"></i></span>
-												    			<input type="text" class="form-control" name="pool_url[]" data-ismain="0" value="stratum+tcp://multi.ghash.io:3333" readonly />
+												    			<input type="text" class="form-control" name="pool_url[]" data-ismain="0" value="<?php echo $savedPools[$i]->url ?>" readonly />
 												    		</div>
 												    	</div>
 												    	<div class="col-xs-2">
@@ -329,12 +329,21 @@
 											<!-- fake donation row pool for Minera -->
 											<div class="form-group pool-donation-group" style="display:none;">
 											    <div class="row sort-attach">
-											    	<div class="col-xs-4">
-											    		<div class="input-group">
-											    			<span class="input-group-addon"><i class="fa fa-gift"></i></span>
-											    			<input type="text" class="form-control form-donation" name="pool_url[]" data-ismain="0" value="stratum+tcp://multi.ghash.io:3333" readonly />
-											    		</div>
-											    	</div>
+												    <?php if ($algo === "Scrypt") : ?>
+												    	<div class="col-xs-4">
+												    		<div class="input-group">
+												    			<span class="input-group-addon"><i class="fa fa-gift"></i></span>
+												    			<input type="text" class="form-control form-donation" name="pool_url[]" data-ismain="0" value="stratum+tcp://multi.ghash.io:3333" readonly />
+												    		</div>
+												    	</div>
+												    <?php else: ?>
+												    	<div class="col-xs-4">
+												    		<div class="input-group">
+												    			<span class="input-group-addon"><i class="fa fa-gift"></i></span>
+												    			<input type="text" class="form-control form-donation" name="pool_url[]" data-ismain="0" value="stratum+tcp://us1.ghash.io:3333" readonly />
+												    		</div>
+												    	</div>
+												    <?php endif; ?>
 											    	<div class="col-xs-2">
 											    		<div class="input-group">
 											    			<span class="input-group-addon"><i class="fa fa-user"></i></span>

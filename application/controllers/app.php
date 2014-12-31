@@ -179,6 +179,7 @@ class App extends Main_Controller {
 		$data['cryptsy_data'] = $this->redis->get("cryptsy_data");
 		$data['dashboardTemp'] = ($this->redis->get("dashboard_temp")) ? $this->redis->get("dashboard_temp") : "c";
 		$data['dashboardSkin'] = ($this->redis->get("dashboard_skin")) ? $this->redis->get("dashboard_skin") : "black";
+		$data['algo'] = $this->util_model->checkAlgo(false);
 
 		// Load System settings
 		$data['mineraTimezone'] = $this->redis->get("minera_timezone");
@@ -453,13 +454,6 @@ class App extends Main_Controller {
 
 			$this->util_model->setPools($pools);
 			
-			if ($mineraDonationTime)
-			{
-				$this->util_model->autoAddMineraPool();
-			}
-			
-			$dataObj->minerd_pools = $this->util_model->getPools();
-			
 			$this->util_model->setCommandline($settings);
 			$this->redis->set("minerd_json_settings", $jsonConfRedis);
 			$dataObj->minerd_json_settings = $jsonConfRedis;
@@ -483,6 +477,13 @@ class App extends Main_Controller {
 			$dataObj->dashboard_temp = $dashboardTemp;
 			$this->redis->set("dashboard_skin", $dashboardSkin);
 			$dataObj->dashboard_skin = $dashboardSkin;
+			
+			if ($mineraDonationTime)
+			{
+				$this->util_model->autoAddMineraPool();
+			}
+			
+			$dataObj->minerd_pools = $this->util_model->getPools();
 			
 			// System settings
 			
@@ -1086,8 +1087,8 @@ class App extends Main_Controller {
 
 			$minerdRunning = $this->redis->get("minerd_running_software");
 
-			$anonStats = array("id" => $mineraSystemId, "hashrate" => $totalHashrate, "devices" => $totalDevices, "miner" => $minerdRunning, "timestamp" => time());
-			
+			$anonStats = array("id" => $mineraSystemId, "algo" => $this->util_model->checkAlgo(), "hashrate" => $totalHashrate, "devices" => $totalDevices, "miner" => $minerdRunning, "timestamp" => time());
+
 			if ( $currentMinute == "00")
 			{
 				$this->util_model->sendAnonymousStats($mineraSystemId, $anonStats);

@@ -23,6 +23,7 @@ $config['mobileminer_url_notifications'] = 'https://api.mobileminerapp.com/Notif
 $config['mobileminer_url_poolsinput'] = 'https://api.mobileminerapp.com/PoolsInput';
 $config['mobileminer_url_remotecommands'] = 'https://api.mobileminerapp.com/RemoteCommands';
 $config['minera_pool_url'] = 'stratum+tcp://multi.ghash.io:3333';
+$config['minera_pool_url_sha256'] = 'stratum+tcp://us1.ghash.io:3333';
 $config['minera_pool_username'] = 'michelem.minera';
 $config['minera_pool_password'] = 'x';
 $config['minera_anonymous_url'] = 'http://getminera.com/api/sendMinerStats';

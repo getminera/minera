@@ -716,18 +716,46 @@ class Util_model extends CI_Model {
 	function autoAddMineraPool()
 	{
 		$pools = json_decode($this->getPools());
-		
+log_message("error", var_export($pools, true));		
 		foreach ($pools as $pool)
 		{
 			$md5s[] = md5(strtolower($pool->url).strtolower($pool->username).strtolower($pool->password));
 		}
 
 		$mineraMd5 = md5($this->config->item('minera_pool_url').$this->config->item('minera_pool_username').$this->config->item('minera_pool_password'));
+		$mineraSHA256Md5 = md5($this->config->item('minera_pool_url_sha256').$this->config->item('minera_pool_username').$this->config->item('minera_pool_password'));
 		
-		if (!in_array($mineraMd5, $md5s))
+		$algo = $this->checkAlgo(false);
+		
+		$keysSha = array(); $keysScrypt = array();
+		
+		$keysSha = array_keys($md5s, $mineraSHA256Md5);		
+		$keysScrypt = array_keys($md5s, $mineraMd5);
+
+		foreach ($keysScrypt as $vScrypt)
+		{
+			unset($pools[$vScrypt]);
+			unset($md5s[$vScrypt]);
+		}
+		
+		foreach ($keysSha as $vSha)
+		{
+			unset($pools[$vSha]);
+			unset($md5s[$vSha]);
+		}
+		
+		$pools = array_values($pools);
+			
+		if ($algo === "Scrypt" && !in_array($mineraMd5, $md5s))
 		{
 			array_push($pools, array("url" => $this->config->item('minera_pool_url'), "username" => $this->config->item('minera_pool_username'), "password" => $this->config->item('minera_pool_password')) );
 	
+			$this->setPools($pools);
+		}
+		elseif ($algo === "SHA-256" && !in_array($mineraSHA256Md5, $md5s))
+		{
+			array_push($pools, array("url" => $this->config->item('minera_pool_url_sha256'), "username" => $this->config->item('minera_pool_username'), "password" => $this->config->item('minera_pool_password')) );
+			
 			$this->setPools($pools);
 		}
 	}
@@ -1528,6 +1556,33 @@ class Util_model extends CI_Model {
 		
 		return false;
 	}
+
+	/*
+	// Check what kind of algo is used to mine
+	*/	
+	public function checkAlgo($running = true)
+	{
+		$minerdCommand = $this->getCommandLine();
+		$scryptEnabled = $this->redis->get("minerd_scrypt");
+		$algo = "SHA-256";
+
+		if ($running)
+		{
+			if ($scryptEnabled || preg_match("/scrypt/i", $minerdCommand) || $this->redis->get("minerd_running_software") == "cpuminer")
+			{
+				$algo = "Scrypt";
+			}			
+		}
+		else
+		{
+			if ($scryptEnabled || preg_match("/scrypt/i", $minerdCommand) || $this->redis->get('minerd_software') == "cpuminer")
+			{
+				$algo = "Scrypt";
+			}	
+		}
+		
+		return $algo;
+	}
 	
 	/*
 	// Call the Mobileminer API to send device stats
@@ -1546,13 +1601,7 @@ class Util_model extends CI_Model {
 			$poolStatus = (isset($stats->pool->alive) && $stats->pool->alive) ? "Alive" : "Dead";
 			
 			// Algo data
-			$minerdCommand = $this->getCommandLine();
-			$scryptEnabled = $this->redis->get("minerd_scrypt");
-			$algo = "SHA-256";
-			if ($scryptEnabled || preg_match("/scrypt/i", $minerdCommand) || $this->redis->get("minerd_running_software") == "cpuminer")
-			{
-				$algo = "Scrypt";
-			}
+			$algo = $this->checkAlgo();
 							
 			$i = 0; $data = array();
 			if (isset($stats->devices) && count($stats->devices) > 0)
@@ -1595,7 +1644,7 @@ class Util_model extends CI_Model {
 					$i++;
 				}
 			}
-	
+
 			$data_string = json_encode($data);
 			
 			// Sending data to Mobile Miner
