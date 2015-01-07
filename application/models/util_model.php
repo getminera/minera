@@ -1645,13 +1645,20 @@ log_message("error", var_export($pools, true));
 				}
 			}
 
-			$data_string = json_encode($data);
+			$resultGetActions = false; 
 			
-			// Sending data to Mobile Miner
-			log_message('error', "Sending data to Mobileminer");
-
-			$resultGetActions = $this->useCurl($this->config->item('mobileminer_url_stats'), $params, "POST", $data_string);
-			
+			if (count($data) > 0)
+			{
+				$data_string = json_encode($data);
+				
+				if (strlen($data_string) > 0)
+				{
+					// Sending data to Mobile Miner
+					log_message('error', "Sending data to Mobileminer");
+		
+					$resultGetActions = $this->useCurl($this->config->item('mobileminer_url_stats'), $params, "POST", $data_string);								}
+			}
+						
 			/*	
 			// Looking for actions to do
 			*/
