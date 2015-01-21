@@ -21,7 +21,7 @@ Thanks.
 
 **[Download minera-latest.img.zip](http://getminera.com/download/latest)**
 
-Look below for download mirror / how to install / how to use it.
+Look below for how to install / how to use it.
 _______
 
 Support
@@ -105,10 +105,6 @@ You need at least a 4GB SD Card:
 Official United Kingdom server:
 
 > [official-uk] **[Download minera-latest.img.zip](http://getminera.com/download/latest)**
-
-Australian mirror:
-
-> [mirror-au] **[ Download minera-latest.img.zip](http://mirror-au.getminera.com/minera-latest.img.zip)**
 
 After boot up your controller, point your browser to:
 
@@ -326,7 +322,6 @@ I wish to thank every plugin, libraries, framework, icons, etc authors for their
 * [Jquery DataTables](https://datatables.net/) for the amazing tables
 * [Twitter Bootstrap](http://getbootstrap.com/) for the HTML/CSS theme
 * [Font Awesome](http://fortawesome.github.io/Font-Awesome/), [Ion icons](http://ionicons.com/) and [Glyphicon](http://glyphicons.com/) for the stunning well...icons of course :)
-* The nice guy who gave for free the space to host the Australian mirror
 
 _______
 
