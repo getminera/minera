@@ -1724,6 +1724,39 @@ log_message("error", var_export($pools, true));
 		return false;
 	}
 	
+	public function discoveryNetworkDevices() {
+		$localIp = $_SERVER['SERVER_ADDR'];
+
+		list($w, $x, $y, $z) = explode('.', $localIp);
+				
+		$range = implode(".", array($w, $x, $y, '0'))."/24";
+		$addresses = array();
+		$opens = array();
+		
+		@list($ip, $len) = explode('/', $range);
+		
+		if (($min = ip2long($ip)) !== false) {
+		  $max = ($min | (1<<(32-$len))-1);
+		  for ($i = $min; $i < $max; $i++)
+		    $addresses[] = long2ip($i);
+		}
+		log_message('error', $localIp);
+		foreach ($addresses as $address)
+		{
+		    $connection = @fsockopen($address, 4028, $errno, $errstr, 0.01);
+		
+		    if (is_resource($connection))
+		    {
+		        $opens[] = $address;
+		
+		        fclose($connection);
+		    }
+		}
+		
+		return $opens;
+		
+	}
+	
 	public function setTimezone($timezone)
 	{
 		exec("echo '".$timezone."' | sudo tee /etc/timezone && sudo dpkg-reconfigure -f noninteractive tzdata");

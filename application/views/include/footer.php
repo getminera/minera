@@ -482,6 +482,26 @@
 					}
 				});      	
             });
+            
+            // Network miners
+            $(document).on('click', '.scan-network', function(e) {
+	           	e.preventDefault();
+	           	
+	           	$("#modal-saving-label").html("Scanning the network, please wait...");
+	        	$('#modal-saving').modal('show');
+	        	
+	        	var scanUrl = "<?php echo site_url("app/api?command=scan_network") ?>";
+	
+				$.ajax({
+					type: "GET",
+					url: scanUrl,
+					cache: false,
+					success:  function(resp){
+						$('#modal-saving').modal('hide');
+						console.log(resp);
+					}
+				});
+			});
 			
 		    //Make the dashboard widgets sortable Using jquery UI
 		    $(".poolSortable").sortable({
@@ -814,9 +834,11 @@
 			    }
 			});
 			
-			$(".dashboard-coin-rates").rules('add', {
-				check_multiple_select: true
-			});
+			if ($(".dashboard-coin-rates").length) {
+				$(".dashboard-coin-rates").rules('add', {
+					check_multiple_select: true
+				});
+			}
 			
 			$(".pool_url").each(function () {
 				if ($(this).data('ismain'))

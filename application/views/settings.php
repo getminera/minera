@@ -500,7 +500,7 @@
 	                                    </div><!-- /. tools -->
 	                                    <i class="fa fa-gear"></i>
 	                                    
-	                                    <h3 class="box-title">Miner Settings</h3>
+	                                    <h3 class="box-title">Local Miner Settings</h3>
 	                                </div>
 	
 		                                <div class="box-body">
@@ -722,6 +722,27 @@
 										<button type="submit" class="btn btn-primary save-minera-settings" name="save" value="1">Save</button> <button type="submit" class="btn btn-danger save-minera-settings-restart" name="save_restart" value="1">Save & Restart Miner</button>
 									</div>
 	                            </div>
+			                    
+			                    <!-- Network Miners box -->
+								<div class="box box-primary">
+								    <div class="box-header">
+								    	<!-- tools box -->
+			                            <div class="pull-right box-tools">
+			                                <button class="btn btn-default btn-xs" data-widget="collapse" data-toggle="tooltip" title="" data-original-title="Collapse"><i class="fa fa-minus"></i></button>
+			                            </div><!-- /. tools -->
+			                            <i class="fa fa-server"></i>
+			                            
+			                            <h3 class="box-title">Network Miners Settings</h3>
+			                        </div>
+								    
+			                        <div class="box-body">
+										<p>You can scan your network or add your device manually (you need the device ip)</p>
+								    	<p><button class="btn btn-info scan-network">Scan network</button></p>
+			                        </div>
+								    <div class="box-footer">
+								    	<button type="submit" class="btn btn-primary save-minera-settings" name="save" value="1">Save</button>
+								    </div>
+			                    </div>
 			                    
 								<!-- Topbar box -->
 								<div class="box box-primary">

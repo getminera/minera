@@ -852,6 +852,9 @@ class App extends Main_Controller {
 			case "delete_custom_miner":
 				$o = json_encode($this->util_model->deleteCustomMinerFile($this->input->get("custom")));
 			break;
+			case "scan_network":
+				$o = json_encode($this->util_model->discoveryNetworkDevices());
+			break;
 			case "miner_action":
 				$action = ($this->input->get('action')) ? $this->input->get('action') : false;
 				switch($action)
@@ -872,10 +875,10 @@ class App extends Main_Controller {
 			case "test":
 				//$a = file_get_contents("api.json");
 				//$o = $this->redis->command("BGSAVE"); //$this->util_model->checkCronIsRunning(); //$this->util_model->sendAnonymousStats(123, "hello world!");
-				$o = json_encode($this->util_model->callMinerd()); //$this->util_model->getParsedStats($this->util_model->getMinerStats());
+				$o = json_encode($this->util_model->discoveryNetworkDevices()); //json_encode($this->util_model->callMinerd()); //$this->util_model->getParsedStats($this->util_model->getMinerStats());
 			break;
 		}
-		
+
 		$this->output
 			->set_content_type('application/json')
 			->set_output($o);
