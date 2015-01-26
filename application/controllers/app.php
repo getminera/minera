@@ -171,6 +171,7 @@ class App extends Main_Controller {
 		$data['globalPoolProxy'] = $this->redis->get("pool_global_proxy");
 		
 		//Load Dashboard settings
+		$data['networkMiners'] = json_decode($this->redis->get('network_miners'));
 		$data['mineraStoredDonations'] = $this->util_model->getStoredDonations();
 		$data['mineraDonationTime'] = $this->redis->get("minera_donation_time");
 		$data['dashboard_refresh_time'] = $this->redis->get("dashboard_refresh_time");
@@ -244,6 +245,7 @@ class App extends Main_Controller {
 			$dashboardTemp = $this->input->post('dashboard_temp');
 			$dashboardSkin = $this->input->post('dashboard_skin');
 			
+			// Pools
 			$poolUrls = $this->input->post('pool_url');
 			$poolUsernames = $this->input->post('pool_username');
 			$poolPasswords = $this->input->post('pool_password');
@@ -267,6 +269,33 @@ class App extends Main_Controller {
 					}
 				}
 			}
+			
+			// Network miners
+			$netMinersNames = $this->input->post('net_miner_name');
+			$netMinersIps = $this->input->post('net_miner_ip');
+			$netMinersPorts = $this->input->post('net_miner_port');
+
+			$netMiners = array();
+			foreach ($netMinersNames as $keyM => $netMinerName)
+			{
+				if (!empty($netMinerName))
+				{
+					if (isset($netMinersIps[$keyM]) && isset($netMinersPorts[$keyM]))
+					{
+						$netMiners[] = array("name" => $netMinerName, "ip" => $netMinersIps[$keyM], "port" => $netMinersPorts[$keyM]);
+						/*if ($this->util_model->checkPool($poolUrl))
+						{
+						}
+						else
+						{
+							$extramessages[] = "I cannot add this pool <strong>$poolUrl</strong> because it doesn't seem to be alive";
+						}*/
+					}
+				}
+			}
+
+			$this->redis->set('network_miners', json_encode($netMiners));
+			$dataObj->network_miners = json_encode($netMiners);
 			
 			// Save Custom miners
 			$dataObj->custom_miners = $this->input->post('active_custom_miners');

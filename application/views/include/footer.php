@@ -44,6 +44,20 @@
 				$('html, body').animate({scrollTop : 0}, 800);
 			}
 			
+			// Smmoth scroll
+			$('a[href*=#]:not([href=#])').click(function() {
+			    if (location.pathname.replace(/^\//,'') == this.pathname.replace(/^\//,'') && location.hostname == this.hostname) {
+					var target = $(this.hash);
+					target = target.length ? target : $('[name=' + this.hash.slice(1) +']');
+					if (target.length) {
+						$('html,body').animate({
+							scrollTop: target.offset().top - 60
+						}, 1000);
+						return false;
+					}
+				}
+			});
+			
 			startTime();
 			
 			//$(document).ready(function(){
@@ -297,6 +311,12 @@
 		    
 		    $(".box-tools").click( function(e) { e.preventDefault(); });
 		    
+		    if (window.location.href.match(/settings/g))
+		    {
+			    $(".treeview-menu-settings-icon").removeClass("fa-angle-left").addClass("fa-angle-down");
+				$(".treeview-menu-settings").fadeIn();
+		    }
+		    
 		    $('#progress').hide();
 			
 			$('.import-file').fileupload({
@@ -499,10 +519,40 @@
 					success:  function(resp){
 						$('#modal-saving').modal('hide');
 						console.log(resp);
+
+						$(".net-group-master").first().clone().prependTo(".netSortable");
+						$(".net-group-master").first().css("display", "block").removeClass("net-group-master");
+
+						$.each(resp, function (index, value)
+						{
+							$(".net-group:first .net-row .net_miner_name").val("Network miner #"+(index+1));
+							$(".net-group:first .net-row .net_miner_ip").val(value);
+							$(".net-group:first .net-row .net_miner_port").val("4028");
+						});
 					}
 				});
 			});
 			
+			$(document).on('click', '.del-net-row', function(e) {
+				e.preventDefault();
+				$(this).closest(".form-group").remove();
+		    });
+		    		    
+		    $(document).on('click', '.add-net-row', function(e) {
+				e.preventDefault();
+				$(".net-group-master").first().clone().appendTo(".netSortable");
+				$(".net-group-master").last().css("display", "block").removeClass("net-group-master");
+		    });
+			
+			$(".netSortable").sortable({
+		        placeholder: "sort-highlight",
+		        connectWith: ".sort-attach",
+		        handle: ".sort-attach",
+		        forcePlaceholderSize: true,
+		        zIndex: 999999
+		    });
+		    $(".sort-attach").css("cursor","move");
+		    
 		    //Make the dashboard widgets sortable Using jquery UI
 		    $(".poolSortable").sortable({
 		        placeholder: "sort-highlight",
@@ -775,6 +825,19 @@
 				return false;
 				
 			}, "Select at least 1 rate (max 5)");
+			
+			jQuery.validator.addMethod('validIP', function(value) {
+			    var split = value.split('.');
+			    if (split.length != 4) 
+			        return false;
+			            
+			    for (var i=0; i<split.length; i++) {
+			        var s = split[i];
+			        if (s.length==0 || isNaN(s) || s<0 || s>255)
+			            return false;
+			    }
+			    return true;
+			}, ' Invalid IP Address');
 
 			var validator = $("#minersettings").validate({
 				rules: {
@@ -889,6 +952,36 @@
 						}
 					});
 				}
+			});
+			
+			$(".net_miner_name").each(function () {
+				$(this).rules('add', {
+					required: {
+						depends: function(element) {
+							return ($(element).parent().parent().parent().find('.net_miner_ip').val() != '' || $(element).parent().parent().parent().find('.net_miner_port').val() != '');
+						}
+					}
+				});
+			});
+			$(".net_miner_ip").each(function () {
+				$(this).rules('add', {
+					required: {
+						depends: function(element) {
+							return ($(element).parent().parent().parent().find('.net_miner_name').val() != '' || $(element).parent().parent().parent().find('.net_miner_port').val() != '');
+						}
+					},
+					validIP: true
+				});
+			});
+			$(".net_miner_port").each(function () {
+				$(this).rules('add', {
+					required: {
+						depends: function(element) {
+							return ($(element).parent().parent().parent().find('.net_miner_ip').val() != '' || $(element).parent().parent().parent().find('.net_miner_name').val() != '');
+						}
+					},
+					number: true
+				});
 			});
 
 		});

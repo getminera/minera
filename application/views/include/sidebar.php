@@ -272,10 +272,74 @@
                                 <i class="fa fa-bar-chart-o"></i> <span>Charts</span>
                             </a>
                         </li>
-                        <li data-toggle="tooltip" title="" data-original-title="Go to the settings page">
-                        	<a href="<?php echo site_url("app/settings") ?>">
-                        		<i class="fa fa-gear"></i> <span>Settings</span>
+                        <li class="treeview">
+                        	<a href="#">
+                        		<i class="fa fa-gear"></i> 
+                        		<span>Settings</span>
+                                <i class="treeview-menu-settings-icon fa pull-right fa-angle-left"></i>
                         	</a>
+                        	<ul class="treeview-menu treeview-menu-settings" style="display: none;">
+                                <li>
+                                	<a href="<?php echo site_url("app/settings#donation-box") ?>" style="margin-left: 10px;">
+                                		<i class="fa fa-gift"></i> Donation
+                                	</a>
+                                </li>
+                                <li>
+                                	<a href="<?php echo site_url("app/settings#dashboard-box") ?>" style="margin-left: 10px;">
+                                		<i class="fa fa-dashboard"></i> Dashboard
+                                	</a>
+                                </li>
+                                <li>
+                                	<a href="<?php echo site_url("app/settings#pools-box") ?>" style="margin-left: 10px;">
+                                		<i class="fa fa-cloud"></i> Pools
+                                	</a>
+                                </li>
+                                <li>
+                                	<a href="<?php echo site_url("app/settings#customer-miners-box") ?>" style="margin-left: 10px;">
+                                		<i class="fa fa-desktop"></i> Custom Miners
+                                	</a>
+                                </li>
+                                <li>
+                                	<a href="<?php echo site_url("app/settings#local-miner-box") ?>" style="margin-left: 10px;">
+                                		<i class="fa fa-gear"></i> Local Miner
+                                	</a>
+                                </li>
+                                <li>
+                                	<a href="<?php echo site_url("app/settings#network-miners-box") ?>" style="margin-left: 10px;">
+                                		<i class="fa fa-server"></i> Network Miners
+                                	</a>
+                                </li>
+                                <li>
+                                	<a href="<?php echo site_url("app/settings#top-bar-box") ?>" style="margin-left: 10px;">
+                                		<i class="fa fa-money"></i> Top Bar
+                                	</a>
+                                </li>
+                                <li>
+                                	<a href="<?php echo site_url("app/settings#system-box") ?>" style="margin-left: 10px;">
+                                		<i class="fa fa-rocket"></i> System
+                                	</a>
+                                </li>
+                                <li>
+                                	<a href="<?php echo site_url("app/settings#mobileminer-box") ?>" style="margin-left: 10px;">
+                                		<i class="fa fa-mobile-phone"></i> Mobileminer
+                                	</a>
+                                </li>
+                                <li>
+                                	<a href="<?php echo site_url("app/settings#importexport-box") ?>" style="margin-left: 10px;">
+                                		<i class="fa fa-code-fork"></i> Import/Export/Share
+                                	</a>
+                                </li>
+                                <li>
+                                	<a href="<?php echo site_url("app/settings#user-box") ?>" style="margin-left: 10px;">
+                                		<i class="fa fa-user"></i> User
+                                	</a>
+                                </li>
+                                <li>
+                                	<a href="<?php echo site_url("app/settings#resets-box") ?>" style="margin-left: 10px;">
+                                		<i class="fa fa-warning"></i> Resets
+                                	</a>
+                                </li>
+                            </ul>
                         </li>
                         <li class="treeview">
                             <a href="#">
