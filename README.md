@@ -216,7 +216,7 @@ cd /var/www/minera
 
 The script will do everything you need to have the binary file in the correct place and updated.
 
-I you need a list of miner available just run the command without any argument.
+If you need a list of miner available just run the command without any argument.
 _______
 
 Troubleshooting
