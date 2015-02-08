@@ -118,6 +118,7 @@ class Util_model extends CI_Model {
 	// Get the live stats from miner
 	public function getStats()
 	{
+		$a = new stdClass();
 		$altcoinData = $this->getAltcoinsRates();
 		$altc["altcoins_rates"] = $altcoinData;
 		
@@ -126,64 +127,82 @@ class Util_model extends CI_Model {
 			$miner = $this->getMinerStats();
 
 			$a = json_decode($this->getParsedStats($miner));
-
+			
 			if (is_object($a) && is_object($miner))
-			{				
-				// Add sysload stats
-				$a->sysload = sys_getloadavg();
-				
-				// Add sysuptime
-				$a->sysuptime = $this->getSysUptime();
-				
-				// Add controller temp
-				$a->temp = $this->checkTemp();				
-				
-				// Add AltCoin rates
-				$a->altcoins_rates = $altcoinData;
-				
-				$a->pools = $miner->pools;
-				
-				// Add average stats
-				$a->avg = $this->getStoredAvgStats();
+			{			
+				$a->pools = $miner->pools;	
 				
 				// Encode and save the latest
-				$o = json_encode($a);
-				$this->redis->set("latest_stats", $o);
-				
-				return $o;
+				$l = json_encode($a);
+				$this->redis->set("latest_stats", $l);
 			}
 			else
 			{
 				if ($latestSaved = $this->redis->get("latest_stats"))
 				{
-					return $latestSaved;
+					$a = json_decode($latestSaved);
 				}
 				else
 				{
-					return json_encode(array_merge(array("error" => true), $altc));
+					$a->error = true;
 				}
-			}			
+			}
 		}
 		else
 		{
-			return json_encode(array_merge(array("notrunning" => true), $altc));
+			$a->notrunning = true;
 		}
 		
-		return false;
+		$a->network_miners = array();
+		
+		$netMiners = $this->getNetworkMiners();
+		
+		if (count($netMiners) > 0)
+		{
+			$this->load->model('cgminer_model', 'network_miner');
+			
+			foreach ($netMiners as $netMiner) {
+				if ($this->checkNetworkDevice($netMiner->ip, $netMiner->port)) 
+				{
+					$n = $this->getMinerStats($netMiner->ip.":".$netMiner->port);
+					$a->network_miners[$netMiner->name] = json_decode($this->getParsedStats($n, true));
+					$a->network_miners[$netMiner->name]->pools = $n->pools;
+				}
+			}
+		}
+		
+		//log_message("error", var_export($netStats, true));
+		
+		// Add sysload stats
+		$a->sysload = sys_getloadavg();
+		
+		// Add sysuptime
+		$a->sysuptime = $this->getSysUptime();
+		
+		// Add controller temp
+		$a->temp = $this->checkTemp();				
+		
+		// Add AltCoin rates
+		$a->altcoins_rates = $altcoinData;
+		
+		// Add average stats
+		$a->avg = $this->getStoredAvgStats();
+
+		return json_encode($a);		
 	}
 	
 	// Get the specific miner stats
-	public function getMinerStats()
+	public function getMinerStats($network = false)
 	{
 		$tmpPools = null;
 		
-		if ($this->isOnline())
+		if ($this->isOnline($network))
 		{
-			$a = $this->miner->callMinerd();
+			$a = ($network) ? $this->network_miner->callMinerd(false, $network) : $this->miner->callMinerd();
 
 			if (is_object($a))
 			{
-				if ($this->_minerdSoftware == "cpuminer")
+				if ($this->_minerdSoftware == "cpuminer" && !$network)
 					$pools = (isset($a->pools)) ? $a->pools : false;
 				else
 				{
@@ -271,7 +290,7 @@ class Util_model extends CI_Model {
 	// Parse the miner stats to add devices
 	// with a summary total and active pool
 	*/
-	public function getParsedStats($stats)
+	public function getParsedStats($stats, $network = false)
 	{		
 		$d = 0; $tdevice = array(); $tdtemperature = 0; $tdfrequency = 0; $tdaccepted = 0; $tdrejected = 0; $tdhwerrors = 0; $tdshares = 0; $tdhashrate = 0; $devicePoolActives = false;
 		$return = false;
@@ -293,7 +312,7 @@ class Util_model extends CI_Model {
 		$poolHashrate = 0;
 
 		// CPUminer devices stats
-		if ($this->_minerdSoftware == "cpuminer")
+		if ($this->_minerdSoftware == "cpuminer" && !$network)
 		{
 			if (isset($stats->devices))
 			{
@@ -1093,12 +1112,21 @@ log_message("error", var_export($pools, true));
 		}		
 		
 		return false;
-	}	
+	}
 	
-	// Check if the minerd if running
-	public function isOnline($count = 0)
+	public function getNetworkMiners()
 	{
-		if(!($fp = @fsockopen("127.0.0.1", 4028, $errno, $errstr, 1)))
+		return json_decode($this->redis->get('network_miners'));
+	}
+
+	// Check if the minerd if running
+	public function isOnline($network = false)
+	{
+		$ip = "127.0.0.1"; $port = 4028;
+		
+		if ($network) list($ip, $port) = explode(":", $network);	
+
+		if(!($fp = @fsockopen($ip, $port, $errno, $errstr, 1)))
 		{
 				return false;
 		}		
@@ -1724,6 +1752,20 @@ log_message("error", var_export($pools, true));
 		return false;
 	}
 	
+	public function checkNetworkDevice($ip, $port=4028) 
+	{
+		$connection = @fsockopen($ip, 4028, $errno, $errstr, 0.1);
+		
+	    if (is_resource($connection))
+	    {	
+	        fclose($connection);
+	        
+	        return true;
+	    }
+	    
+	    return false;
+	}
+	
 	public function discoveryNetworkDevices() {
 		$localIp = $_SERVER['SERVER_ADDR'];
 
@@ -1740,12 +1782,19 @@ log_message("error", var_export($pools, true));
 		  for ($i = $min; $i < $max; $i++)
 		    $addresses[] = long2ip($i);
 		}
-		log_message('error', $localIp);
+
+		$stored = $this->getNetworkMiners();
+		$current = array($localIp);
+		
+		foreach ($stored as $net) {
+			$current[] = $net->ip;
+		}
+		
 		foreach ($addresses as $address)
 		{
 		    $connection = @fsockopen($address, 4028, $errno, $errstr, 0.01);
 		
-		    if (is_resource($connection))
+		    if (is_resource($connection) && !in_array($address, $current))
 		    {
 		        $opens[] = $address;
 		

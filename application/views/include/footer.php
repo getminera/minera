@@ -105,7 +105,7 @@
 			   	$("#modal-saving-label").html("Sending action: "+action+" , please wait...");
 	        	$('#modal-saving').modal('show');
 	        	
-	        	saveSettings(false);
+	        	saveSettings(false, false);
 	        	
 	        	var apiUrl = "<?php echo site_url("app/api") ?>?command=miner_action&action="+action;
 
@@ -158,10 +158,13 @@
             
 		});
 		
-        function saveSettings(hide)
+        function saveSettings(hide, saveonly)
         {
-        	$("#modal-saving-label").html("Saving data, please wait...");
-        	$('#modal-saving').modal('show');
+	        if (saveonly === false)
+	        {
+    	    	$("#modal-saving-label").html("Saving data, please wait...");
+	        	$('#modal-saving').modal('show');		        
+	        }
         	
         	var saveUrl = "<?php echo site_url("app/save_settings") ?>";
         	var formData = $("#minersettings").serialize();
@@ -172,7 +175,7 @@
 				data: formData,
 				cache: false,
 				success:  function(resp){
-					if (hide) {
+					if (hide && !saveonly) {
 						$('#modal-saving').modal('hide');
 						window.location.reload();
 					}
@@ -266,8 +269,8 @@
 					}
 					else
 					{
-						$('#hashrate-chart-'+period).css({'height': '100%', 'overflow': 'visible', 'margin-top': '20px'}).html('<div class="alert alert-warning"><i class="fa fa-warning"></i><b>Alert!</b> <small>No data collected, wait at least '+text_period+' to see the chart.</small></div>');	
-						$('#rehw-chart-'+period).css({'height': '100%', 'overflow': 'visible', 'margin-top': '20px'}).html('<div class="alert alert-warning"><i class="fa fa-warning"></i><b>Alert!</b> <small>No data collected, wait at least '+text_period+' to see the chart.</small></div>');	
+						$('#hashrate-chart-'+period).css({'height': '100%', 'overflow': 'visible', 'margin-top': '20px'}).html('<div class="alert alert-warning"><i class="fa fa-warning"></i><b>Ops!</b> <small>No data collected, wait at least '+text_period+' to see the chart.</small></div>');	
+						$('#rehw-chart-'+period).css({'height': '100%', 'overflow': 'visible', 'margin-top': '20px'}).html('<div class="alert alert-warning"><i class="fa fa-warning"></i><b>Ops!</b> <small>No data collected, wait at least '+text_period+' to see the chart.</small></div>');	
 
 					}
 				
@@ -518,24 +521,34 @@
 					cache: false,
 					success:  function(resp){
 						$('#modal-saving').modal('hide');
-						console.log(resp);
-
-						$(".net-group-master").first().clone().prependTo(".netSortable");
-						$(".net-group-master").first().css("display", "block").removeClass("net-group-master");
-
-						$.each(resp, function (index, value)
+						
+						if (resp.length > 0)
 						{
-							$(".net-group:first .net-row .net_miner_name").val("Network miner #"+(index+1));
-							$(".net-group:first .net-row .net_miner_ip").val(value);
-							$(".net-group:first .net-row .net_miner_port").val("4028");
-						});
+							$(".net-group-master").first().clone().prependTo(".netSortable");
+							$(".net-group-master").first().css("display", "block").removeClass("net-group-master");
+
+							$.each(resp, function (index, value)
+							{
+								$(".net-group:first .net-row .net_miner_status").html('<i class="fa fa-circle text-success"></i> Online');
+								$(".net-group:first .net-row .net_miner_name").val("Network miner #"+(index+1));
+								$(".net-group:first .net-row .net_miner_ip").val(value);
+								$(".net-group:first .net-row .net_miner_port").val("4028");
+							});
+							
+							setTimeout(function () { saveSettings(true, true) }, 2000);
+						}
 					}
 				});
 			});
+
+			$(document).on('click', '.net_miner_status', function(e) {
+				e.preventDefault();
+		    });
 			
 			$(document).on('click', '.del-net-row', function(e) {
 				e.preventDefault();
 				$(this).closest(".form-group").remove();
+				saveSettings(false, true);
 		    });
 		    		    
 		    $(document).on('click', '.add-net-row', function(e) {
@@ -887,7 +900,7 @@
 			    },
 			    // specifying a submitHandler prevents the default submit, good for the demo
 			    submitHandler: function() {
-			    	saveSettings(true);
+			    	saveSettings(true, false);
 			    },
 			    unhighlight: function(element) {
 					$(element).closest(".input-group").removeClass("has-error").addClass("has-success");
@@ -1000,6 +1013,7 @@
     <!-- Dashboard script -->
     <script type="text/javascript">
     	
+    	// Default dashboard scripts
 		$(function() {
 		    "use strict";
 
@@ -1276,6 +1290,7 @@
 		    
 		});
 		
+		// Errors
 		function triggerError(msg)
 		{
 			$('.widgets-section').hide();
@@ -1289,13 +1304,14 @@
 			return false;
 		}
     	
+    	// Stats scripts
     	function getStats(refresh)
     	{
     		var now = new Date().getTime();
 			var d = 0; var totalhash = 0; var totalac = 0; var totalre = 0; var totalhw = 0; var totalsh = 0; var totalfr = 0; var totalpoolhash = 0; var poolHash = 0;
 			var errorTriggered = false;
 			var pool_shares_seconds;
-			
+
 			// Raw stats
 			var boxStats = $(".section-raw-stats");
 			boxStats.hide();
@@ -1329,13 +1345,13 @@
     					}
     				});						
     			}
-					
+
 		        if (data['error'])
 				{
 					errorTriggered = true;
 					triggerError('I can\'t get the stats from your minerd. Please try to <strong>refresh the page</strong> or check your settings (minerd API must listen on <code>127.0.0.1:4028</code>).');
 				}
-				else if (data['notrunning'])
+				else if (data['TESTnotrunning'])
 				{
 					errorTriggered = true;
 					triggerError('It seems your minerd is not running, please try to start it or review your settings.');
@@ -1355,6 +1371,15 @@
 					var startdate = new Date(data.start_time*1000);
 	
 					$("body").data("stats-loop", 0);
+					
+					if (data['notrunning'])
+					{
+						$(".disable-if-not-running").fadeOut();
+						$(".enable-if-not-running").fadeIn();
+						$(".warning-message").html("Warning your local is offline");
+						$(".widget-warning").html("Not running");
+						$(".local-widget").removeClass('col-lg-4 col-sm-4').addClass('col-lg-6 col-sm-6');
+					}
 					
 					if (refresh)
 					{
@@ -1584,6 +1609,10 @@
 						    });
 						});
 					}
+					else
+					{
+						$('#pools-table-details').html('<div class="alert alert-warning"><i class="fa fa-warning"></i><strong>No pools</strong> data available.</div>');
+					}
 					
 					if (data.devices)
 					{
@@ -1757,7 +1786,7 @@
 					}
 					else
 					{
-						var nodevsMsg = '<div class="alert alert-warning"><i class="fa fa-warning"></i><b>Warning!</b> No devices found, check your settings.</div>';
+						var nodevsMsg = '<div class="alert alert-warning"><i class="fa fa-warning"></i>No local devices found</div>';
 						$('#miner-table-details').html(nodevsMsg);
 						$('#devs').html(nodevsMsg).removeClass("row");
 					}
@@ -1947,7 +1976,7 @@
 				}
 				else
 				{
-					$('.chart').css({'height': '100%', 'overflow': 'visible', 'margin-top': '10px'}).html('<div class="alert alert-warning"><i class="fa fa-warning"></i><b>Alert!</b> <small>No data collected, wait at least 5 minutes to see the chart.</small></div>');	
+					$('.chart').css({'height': '100%', 'overflow': 'visible', 'margin-top': '10px'}).html('<div class="alert alert-warning"><i class="fa fa-warning"></i><b>Ops!</b> <small>No data collected, You need at least 5 minutes of data to see the chart.</small></div>');	
 				}
 			
 				function redrawGraphs()

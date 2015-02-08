@@ -69,7 +69,7 @@
 						
 						<!-- widgets section -->
 						<section class="col-md-12 widgets-section">
-							 <div class="row">
+							 <div class="row disable-if-not-running">
 							 
 							 	<!-- total hashrate widget -->
 								<div class="col-lg-4 col-sm-4 col-xs-12">
@@ -112,9 +112,22 @@
 							</div>							
 							
 							<div class="row">
-							
+
+								<!-- Warning  widget -->
+								<div class="col-lg-4 col-sm-4 col-xs-12 enable-if-not-running local-widget" style="display: none;">
+									<!-- small box -->
+									<div class="small-box bg-red">
+										<div class="inner">
+											<h3 class="widget-warning"><i class="ion ion-loading-c"></i></h3>
+											<p>Local miner</p>
+										</div>
+										<div class="icon"><i class="ion ion-alert"></i></div>
+										<a href="#top" class="small-box-footer warning-message" data-toggle="tooltip" title="" data-original-title="It seems your local (USB) miner software is not running, please try to start it or check your settings.">...<i class="fa fa-arrow-circle-right"></i></a>
+									</div>
+								</div>
+															
 								<!-- sys temp widget -->
-								<div class="col-lg-4 col-sm-4 col-xs-12">
+								<div class="col-lg-4 col-sm-4 col-xs-12 local-widget">
 									<!-- small box -->
 									<div class="small-box sys-temp-box bg-blue">
 										<div class="inner">
@@ -127,7 +140,7 @@
 								</div>
 								
 								<!-- main pool -->
-								<div class="col-lg-4 col-sm-4 col-xs-12">
+								<div class="col-lg-4 col-sm-4 col-xs-12 disable-if-not-running">
 									<!-- small box -->
 									<div class="small-box bg-dark">
 										<div class="inner">
@@ -140,7 +153,7 @@
 								</div>
 								
 								<!-- uptime widget -->
-								<div class="col-lg-4 col-sm-4 col-xs-12">
+								<div class="col-lg-4 col-sm-4 col-xs-12 disable-if-not-running">
 									<!-- small box -->
 									<div class="small-box bg-aqua">
 										<div class="inner">

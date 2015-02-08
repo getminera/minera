@@ -741,7 +741,10 @@
 
 								<div class="form-group">
                                     <div class="row">
-										<div class="col-xs-5">
+										<div class="col-xs-1">
+											<strong>Status</strong>
+										</div>
+										<div class="col-xs-4">
 											<strong>Miner Name</strong>
 										</div>
 										<div class="col-xs-4">
@@ -755,10 +758,13 @@
 								<!-- Main Pool -->
 								<div class="netSortable ui-sortable">
 									<?php if (count($networkMiners) > 0) : ?>
-										<?php foreach($networkMiners as $networkMiner) : ?>
+										<?php foreach($networkMiners as $networkMiner) : $isOnlineNet = $this->util_model->checkNetworkDevice($networkMiner->ip, $networkMiner->port); ?>
 										<div class="form-group net-group">
 										    <div class="row sort-attach net-row">
-										    	<div class="col-xs-5">
+										    	<div class="col-xs-1 text-center">
+										    		<button style="margin-top:5px;" class="btn btn-default btn-xs net_miner_status"><i class="fa fa-circle <?php if ($isOnlineNet) : ?>text-success<?php else : ?>text-muted<?php endif; ?>"></i> <?php if ($isOnlineNet) : ?>Online<?php else: ?>Offline<?php endif; ?></button>
+										    	</div>
+										    	<div class="col-xs-4">
 										    		<div class="input-group">
 										    			<span class="input-group-addon"><i class="fa fa-server"></i></span>
 										    			<input type="text" class="form-control net_miner_name" placeholder="Miner Name" name="net_miner_name[]" value="<?php echo (isset($networkMiner->name)) ? $networkMiner->name : ''; ?>" />
@@ -786,7 +792,10 @@
 									<!-- fake row to be cloned -->
 									<div class="form-group net-group net-group-master" style="display:none;">
 									    <div class="row sort-attach net-row">
-									    	<div class="col-xs-5">
+									    	<div class="col-xs-1">
+									    		<button style="margin-top:5px;" class="btn btn-default btn-xs net_miner_status"><i class="fa fa-circle text-muted"></i> Offline</button>
+									    	</div>
+									    	<div class="col-xs-4">
 									    		<div class="input-group">
 									    			<span class="input-group-addon"><i class="fa fa-server"></i></span>
 									    			<input type="text" class="form-control net_miner_name" placeholder="Miner Name" name="net_miner_name[]" value="" />
