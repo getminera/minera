@@ -194,7 +194,7 @@ class Util_model extends CI_Model {
 	// Get the specific miner stats
 	public function getMinerStats($network = false)
 	{
-		$tmpPools = null;
+		$tmpPools = null; $pools = array();
 		
 		if ($this->isOnline($network))
 		{
@@ -226,7 +226,6 @@ class Util_model extends CI_Model {
 					$tmpPools = (isset($a->pools[0]->POOLS)) ? $a->pools[0]->POOLS : false;
 					if ($tmpPools)
 					{
-						$pools = array();
 						foreach ($tmpPools as $poolIndex => $tmpPool)
 						{
 							$stats = new stdClass();
