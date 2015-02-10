@@ -1346,17 +1346,7 @@
     				});						
     			}
 
-		        if (data['error'])
-				{
-					errorTriggered = true;
-					triggerError('I can\'t get the stats from your minerd. Please try to <strong>refresh the page</strong> or check your settings (minerd API must listen on <code>127.0.0.1:4028</code>).');
-				}
-				else if (data['TESTnotrunning'])
-				{
-					errorTriggered = true;
-					triggerError('It seems your minerd is not running, please try to start it or review your settings.');
-				}
-				else if (data['notloggedin'])
+				if (data['notloggedin'])
 				{
 					errorTriggered = true;
 					triggerError('It seems your session expired.');
@@ -1372,12 +1362,22 @@
 	
 					$("body").data("stats-loop", 0);
 					
-					if (data['notrunning'])
+					if (data.notrunning)
 					{
+						errorTriggered = true;
 						$(".disable-if-not-running").fadeOut();
 						$(".enable-if-not-running").fadeIn();
-						$(".warning-message").html("Warning your local is offline");
+						$(".warning-message").html("Warning your local miner is offline");
 						$(".widget-warning").html("Not running");
+						$(".local-widget").removeClass('col-lg-4 col-sm-4').addClass('col-lg-6 col-sm-6');
+					}
+					else if (data.error)
+					{
+						errorTriggered = true;
+						$(".disable-if-not-running").fadeOut();
+						$(".enable-if-not-running").fadeIn();
+						$(".warning-message").html(data.msg);
+						$(".widget-warning").html("Error");
 						$(".local-widget").removeClass('col-lg-4 col-sm-4').addClass('col-lg-6 col-sm-6');
 					}
 					
@@ -1778,8 +1778,10 @@
 								}
 							}
 							
+							<?php if ($dashboardDevicetree) : ?>
 							// Crete Knob graph for devices and total
 							createMon(index, items[index].hash, totalhash, maxHashrate, items[index].ac, items[index].re, items[index].hw, items[index].sh, items[index].fr, devData.label);
+							<?php endif; ?>
 							
 						}
 						$("[data-toggle='tooltip']").tooltip();
@@ -1791,8 +1793,15 @@
 						$('#devs').html(nodevsMsg).removeClass("row");
 					}
 					
+					// Network miners
+					if (data.network_miners)
+					{
+						$(".local-miners-title").show();
+						$(".network-miners-widget-section").show();
+					}
+					
 					// Add controller temperature
-					if (data['temp'])
+					if (data.temp)
 					{
 						var temp_bar = "bg-blue";
 						var temp_text = "It's cool here, wanna join me?"
@@ -1915,7 +1924,7 @@
 			/* Morris.js Charts */
 			// get Json data from stored_stats url (redis) and create the graphs
 			$.getJSON( "<?php echo site_url($this->config->item('stored_stats_url')); ?>", function( data ) 
-    		{
+    		{	    		
     			var data = Object.keys(data).map(function(key) { 
 							data[key]['timestamp'] = data[key]['timestamp']*1000; 
 							data[key]['hashrate'] = (data[key]['hashrate']/1000/1000).toFixed(2);
@@ -1929,6 +1938,7 @@
 					
 					if (refresh === false)
 					{
+						
 						// Hashrate history graph
 						areaHash = new Morris.Area({
 							element: 'hashrate-chart',

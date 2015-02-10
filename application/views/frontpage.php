@@ -16,9 +16,13 @@
 				<section class="content">
 
 					<div class="row">
+						
+						<section class="col-md-12 local-miners-title" style="display:none;">
+							<h4>Local <small>Miners</small></h4>
+						</section>
 
-						 <section class="col-md-12 section-raw-stats">
-						 	<div class="alert alert-info alert-dismissable">
+						<section class="col-md-12 section-raw-stats">
+							<div class="alert alert-info alert-dismissable">
 								<i class="fa fa-list"></i>
 								<button type="button" class="close close-stats" aria-hidden="true">×</button>
 								<p style="margin:20px 0;">The raw JSON parsed to display the dashboard is also available <a href="<?php echo site_url("app/stats") ?>" target="_blank">here</a>.</p>
@@ -69,8 +73,7 @@
 						
 						<!-- widgets section -->
 						<section class="col-md-12 widgets-section">
-							 <div class="row disable-if-not-running">
-							 
+							<div class="row disable-if-not-running">
 							 	<!-- total hashrate widget -->
 								<div class="col-lg-4 col-sm-4 col-xs-12">
 									<!-- small box -->
@@ -122,7 +125,7 @@
 											<p>Local miner</p>
 										</div>
 										<div class="icon"><i class="ion ion-alert"></i></div>
-										<a href="#top" class="small-box-footer warning-message" data-toggle="tooltip" title="" data-original-title="It seems your local (USB) miner software is not running, please try to start it or check your settings.">...<i class="fa fa-arrow-circle-right"></i></a>
+										<a href="#top" class="small-box-footer warning-message" data-toggle="tooltip" title="" data-original-title="It seems there is a problem with your local miner, try to restart it or check your settings.">...<i class="fa fa-arrow-circle-right"></i></a>
 									</div>
 								</div>
 															
@@ -169,6 +172,12 @@
 							
 						</section>
 						
+						<div class="network-miners-widget-section">
+							<section class="col-md-12 local-miners-title">
+								<h4>Network <small>Miners</small></h4>
+							</section>
+						</div>
+						
 						<!-- Top section -->
 						<section class="hidden-xs col-md-12 connectedSortable ui-sortable top-section">
 						
@@ -184,7 +193,7 @@
 									</div><!-- /. tools -->
 									<i class="fa fa-desktop"></i>
 
-									<h3 class="box-title" id="miner-details">Miner details</h3>
+									<h3 class="box-title" id="miner-details">Local Miner details</h3>
 								</div>
 								<div class="box-body">
 									<div class="row">
@@ -244,7 +253,7 @@
 									</div><!-- /. tools -->
 									<i class="fa fa-cloud"></i>
 
-									<h3 class="box-title" id="pools-details">Pools details</h3>
+									<h3 class="box-title" id="pools-details">Local Pools details</h3>
 								</div>
 								<div class="box-body">
 									<div class="row">
@@ -287,7 +296,69 @@
 						
 						<!-- Right col -->
 						<section class="col-md-6 col-xs-12 connectedSortable ui-sortable right-section">
+							
+							<!-- A/R/H chart -->
+							<div class="box box-primary">
+							   	<div class="overlay"></div>
+							   	<div class="loading-img"></div>
+								<div class="box-header">
+									<!-- tools box -->
+									<div class="pull-right box-tools">
+										<button class="btn btn-default btn-xs" data-widget="collapse" data-toggle="tooltip" title="" data-original-title="Collapse"><i class="fa fa-minus"></i></button>
+									</div><!-- /. tools -->
+									<i class="fa fa-bullseye"></i>
+									
+									<h3 class="box-title" id="error-history">Accepted/Rejected/Errors</h3>
+								</div>
+								<div class="box-body chart-responsive">
+									<div class="chart" id="rehw-chart" style="height:160px;"></div>
+								</div>
+							</div><!-- /.A/R/H chart -->
+							
+							<!-- System box -->
+							<div class="box box-light">
+							   	<div class="overlay"></div>
+							   	<div class="loading-img"></div>
+								<div class="box-header" style="cursor: move;">
+									<!-- tools box -->
+									<div class="pull-right box-tools">
+										<button class="btn btn-default btn-xs" data-widget="collapse" data-toggle="tooltip" title="" data-original-title="Collapse"><i class="fa fa-minus"></i></button>
+									</div><!-- /. tools -->
+									<i class="fa fa-tasks"></i>
+
+									<h3 class="box-title" id="sysload">System Load</h3>
+								</div><!-- /.box-header -->
+								<div class="box-body" style="display: block;">
+									<div class="row padding-vert sysload" ></div>
+								</div><!-- /.box-body -->
+								<div class="box-footer">
+									<h6 class="sysuptime"></h6>
+							   </div>
+							</div><!-- /.system box -->
+												 
+						</section><!-- Right col -->
 						
+						<!-- Left col -->
+						<section class="col-md-6 col-xs-12 connectedSortable ui-sortable left-section">
+							
+							<!-- Hashrate box chart -->
+							<div class="box box-primary">
+							   	<div class="overlay"></div>
+							   	<div class="loading-img"></div>
+								<div class="box-header">
+									<!-- tools box -->
+									<div class="pull-right box-tools">
+										<button class="btn btn-default btn-xs" data-widget="collapse" data-toggle="tooltip" title="" data-original-title="Collapse"><i class="fa fa-minus"></i></button>
+									</div><!-- /. tools -->
+									<i class="fa fa-bar-chart-o"></i>
+									
+									<h3 class="box-title" id="hashrate-history">Hashrate History</h3>
+								</div>
+								<div class="box-body chart-responsive">
+									<div class="chart" id="hashrate-chart" style="height:160px;"></div>
+								</div>
+							</div><!-- /.hashrate box -->
+							
 							<!-- Profitability box -->
 							<div class="box box-dark">
 								<div class="box-header" style="cursor: move;">
@@ -314,7 +385,17 @@
 									<div class="profitability-results"><small>Drag and slide the bar above to set your pool profitability and calculate your current possible earnings.</small></div>
 								</div>
 							</div><!-- /.tree box -->
+						
+						</section><!-- /.left col -->
+					   
+					</div><!-- /.row -->
+					
+					<div class="row">
+					
+						<!-- Bottom section -->
+						<section class="col-md-12 connectedSortable ui-sortable bottom-section">
 							
+							<?php if ($dashboardDevicetree) : ?>
 							<!-- Tree box -->
 							<div class="box box-dark">
 							   	<div class="overlay"></div>
@@ -333,76 +414,7 @@
 									<div class="row padding-vert" id="devs"></div>
 								</div><!-- /.box-body -->
 							</div><!-- /.tree box -->
-												 
-						</section><!-- Right col -->
-						
-						<!-- Left col -->
-						<section class="col-md-6 col-xs-12 connectedSortable ui-sortable left-section">
-							
-							<!-- Hashrate box chart -->
-							<div class="box box-primary">
-							   	<div class="overlay"></div>
-							   	<div class="loading-img"></div>
-								<div class="box-header">
-									<!-- tools box -->
-									<div class="pull-right box-tools">
-										<button class="btn btn-default btn-xs" data-widget="collapse" data-toggle="tooltip" title="" data-original-title="Collapse"><i class="fa fa-minus"></i></button>
-									</div><!-- /. tools -->
-									<i class="fa fa-bar-chart-o"></i>
-									
-									<h3 class="box-title" id="hashrate-history">Hashrate History</h3>
-								</div>
-								<div class="box-body chart-responsive">
-									<div class="chart" id="hashrate-chart" style="height:160px;"></div>
-								</div>
-							</div><!-- /.hashrate box -->
-							
-							<div class="box box-primary">
-							   	<div class="overlay"></div>
-							   	<div class="loading-img"></div>
-								<div class="box-header">
-									<!-- tools box -->
-									<div class="pull-right box-tools">
-										<button class="btn btn-default btn-xs" data-widget="collapse" data-toggle="tooltip" title="" data-original-title="Collapse"><i class="fa fa-minus"></i></button>
-									</div><!-- /. tools -->
-									<i class="fa fa-bullseye"></i>
-									
-									<h3 class="box-title" id="error-history">Accepted/Rejected/Errors</h3>
-								</div>
-								<div class="box-body chart-responsive">
-									<div class="chart" id="rehw-chart" style="height:160px;"></div>
-								</div>
-							</div>
-							
-							<!-- System box -->
-							<div class="box box-light">
-							   	<div class="overlay"></div>
-							   	<div class="loading-img"></div>
-								<div class="box-header" style="cursor: move;">
-									<!-- tools box -->
-									<div class="pull-right box-tools">
-										<button class="btn btn-default btn-xs" data-widget="collapse" data-toggle="tooltip" title="" data-original-title="Collapse"><i class="fa fa-minus"></i></button>
-									</div><!-- /. tools -->
-									<i class="fa fa-tasks"></i>
-
-									<h3 class="box-title" id="sysload">System Load</h3>
-								</div><!-- /.box-header -->
-								<div class="box-body" style="display: block;">
-									<div class="row padding-vert sysload" ></div>
-								</div><!-- /.box-body -->
-								<div class="box-footer">
-									<h6 class="sysuptime"></h6>
-							   </div>
-							</div><!-- /.system box -->
-						
-						</section><!-- /.left col -->
-					   
-					</div><!-- /.row -->
-					
-					<div class="row">
-					
-						<!-- Bottom section -->
-						<section class="col-md-12 connectedSortable ui-sortable bottom-section">
+							<?php endif; ?>
 						
 							<!-- Real time log box -->
 							<div class="box box-light">

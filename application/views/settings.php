@@ -184,6 +184,15 @@
 												<option value="blue" <?php if ($dashboardSkin == "blue") : ?>selected<?php endif; ?>>Blue</option>
 											</select>
 										</div>
+										
+										<!-- Local device tree -->
+										<div class="form-group">
+											<div class="checkbox">
+												<label>
+													<input type="checkbox" name="dashboard_devicetree" value="1" <?php if ($dashboardDevicetree) : ?>checked=""<?php endif; ?> /> Enable device tree panel
+												</label>                                                
+											</div>
+										</div>
 	                                </div>
 									<div class="box-footer">
 										<button type="submit" class="btn btn-primary save-minera-settings" name="save" value="1">Save</button>

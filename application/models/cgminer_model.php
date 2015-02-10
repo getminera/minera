@@ -121,6 +121,10 @@ class Cgminer_model extends CI_Model {
 				}
 			}
 			
+			if (isset($data->STATUS->STATUS) && $data->STATUS->STATUS == 'E') {
+				return array("error" => true, "msg" => $data->STATUS->Msg);				
+			}
+			
 			return $data;
 		}
 		

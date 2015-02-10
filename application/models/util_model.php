@@ -145,6 +145,7 @@ class Util_model extends CI_Model {
 				else
 				{
 					$a->error = true;
+					$a->msg = "There are no stats to be displayed.";
 				}
 			}
 		}
@@ -153,23 +154,7 @@ class Util_model extends CI_Model {
 			$a->notrunning = true;
 		}
 		
-		$a->network_miners = array();
-		
-		$netMiners = $this->getNetworkMiners();
-		
-		if (count($netMiners) > 0)
-		{
-			$this->load->model('cgminer_model', 'network_miner');
-			
-			foreach ($netMiners as $netMiner) {
-				if ($this->checkNetworkDevice($netMiner->ip, $netMiner->port)) 
-				{
-					$n = $this->getMinerStats($netMiner->ip.":".$netMiner->port);
-					$a->network_miners[$netMiner->name] = json_decode($this->getParsedStats($n, true));
-					$a->network_miners[$netMiner->name]->pools = $n->pools;
-				}
-			}
-		}
+		$a->network_miners = $this->getNetworkMinerStats(true);
 		
 		//log_message("error", var_export($netStats, true));
 		
@@ -189,6 +174,35 @@ class Util_model extends CI_Model {
 		$a->avg = $this->getStoredAvgStats();
 
 		return json_encode($a);		
+	}
+	
+	public function getNetworkMinerStats($parsed)
+	{
+		$a = array();
+		
+		$netMiners = $this->getNetworkMiners();
+		
+		if (count($netMiners) > 0)
+		{
+			$this->load->model('cgminer_model', 'network_miner');
+			
+			foreach ($netMiners as $netMiner) {
+				$a[$netMiner->name] = false;
+
+				if ($this->checkNetworkDevice($netMiner->ip, $netMiner->port)) 
+				{
+					$n = $this->getMinerStats($netMiner->ip.":".$netMiner->port);
+					if ($parsed === false)
+						$a[$netMiner->name] = $n;
+					else {
+						$a[$netMiner->name] = json_decode($this->getParsedStats($n, true));
+						$a[$netMiner->name]->pools = $n->pools;
+					}
+				}
+			}
+		}
+		
+		return $a;
 	}
 	
 	// Get the specific miner stats
@@ -409,7 +423,7 @@ class Util_model extends CI_Model {
 			{
 				$totals = $stats->summary[0]->SUMMARY[0];
 
-				$return['totals']['temperature'] = ($tdtemperature) ? round(($tdtemperature/$d), 0) : false;				
+				$return['totals']['temperature'] = ($tdtemperature) ? round(($tdtemperature/$d), 2) : false;				
 				$return['totals']['frequency'] = ($tdfrequency) ? round(($tdfrequency/$d), 0) : false;
 				$return['totals']['accepted'] = $totals->Accepted;
 				$return['totals']['rejected'] = $totals->Rejected;
@@ -649,6 +663,8 @@ class Util_model extends CI_Model {
 		
 		if ($stats)
 		{
+			$poolDonationId = false;
+			
 			// Add pool donation ID to the stats
 			if ($stats->pools && count($stats->pools) > 0)
 			{

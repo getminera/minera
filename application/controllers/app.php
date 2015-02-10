@@ -17,6 +17,11 @@ class App extends Main_Controller {
 	*/
 	public function index()
 	{	
+		if ($this->session->userdata("loggedin")) {
+			redirect('app/dashboard');
+			return false;	
+		}
+		
 		$data['htmlTag'] = "lockscreen";
 		$data['pageTitle'] = "Welcome to Minera";
 		$data['isOnline'] = $this->util_model->isOnline();
@@ -65,6 +70,7 @@ class App extends Main_Controller {
 		$data['settingsScript'] = false;
 		$data['mineraUpdate'] = $this->util_model->checkUpdate();
 		$data['dashboard_refresh_time'] = $this->redis->get("dashboard_refresh_time");
+		$data['dashboardDevicetree'] = ($this->redis->get("dashboard_devicetree")) ? $this->redis->get("dashboard_devicetree") : false;
 		$data['pageTitle'] = ($this->redis->get("mobileminer_system_name")) ? $this->redis->get("mobileminer_system_name")." > Minera - Dashboard" : "Minera - Dashboard";
 		$data['dashboardSkin'] = ($this->redis->get("dashboard_skin")) ? $this->redis->get("dashboard_skin") : "black";
 		$data['minerdRunning'] = $this->redis->get("minerd_running_software");
@@ -74,7 +80,7 @@ class App extends Main_Controller {
 		$this->load->view('include/header', $data);
 		$this->load->view('include/sidebar', $data);
 		$this->load->view('frontpage', $data);
-		$this->load->view('include/footer');
+		$this->load->view('include/footer', $data);
 	}
 	
 	/*
@@ -171,7 +177,6 @@ class App extends Main_Controller {
 		$data['globalPoolProxy'] = $this->redis->get("pool_global_proxy");
 		
 		//Load Dashboard settings
-		$data['networkMiners'] = json_decode($this->redis->get('network_miners'));
 		$data['mineraStoredDonations'] = $this->util_model->getStoredDonations();
 		$data['mineraDonationTime'] = $this->redis->get("minera_donation_time");
 		$data['dashboard_refresh_time'] = $this->redis->get("dashboard_refresh_time");
@@ -180,6 +185,7 @@ class App extends Main_Controller {
 		$data['cryptsy_data'] = $this->redis->get("cryptsy_data");
 		$data['dashboardTemp'] = ($this->redis->get("dashboard_temp")) ? $this->redis->get("dashboard_temp") : "c";
 		$data['dashboardSkin'] = ($this->redis->get("dashboard_skin")) ? $this->redis->get("dashboard_skin") : "black";
+		$data['dashboardDevicetree'] = ($this->redis->get("dashboard_devicetree")) ? $this->redis->get("dashboard_devicetree") : false;
 		$data['algo'] = $this->util_model->checkAlgo(false);
 
 		// Load System settings
@@ -244,8 +250,8 @@ class App extends Main_Controller {
 			$this->redis->set("altcoins_update", (time()-3600));
 			$dashboardTemp = $this->input->post('dashboard_temp');
 			$dashboardSkin = $this->input->post('dashboard_skin');
+			$dashboardDevicetree = $this->input->post('dashboard_devicetree');
 			
-			// Pools
 			$poolUrls = $this->input->post('pool_url');
 			$poolUsernames = $this->input->post('pool_username');
 			$poolPasswords = $this->input->post('pool_password');
@@ -269,33 +275,6 @@ class App extends Main_Controller {
 					}
 				}
 			}
-			
-			// Network miners
-			$netMinersNames = $this->input->post('net_miner_name');
-			$netMinersIps = $this->input->post('net_miner_ip');
-			$netMinersPorts = $this->input->post('net_miner_port');
-
-			$netMiners = array();
-			foreach ($netMinersNames as $keyM => $netMinerName)
-			{
-				if (!empty($netMinerName))
-				{
-					if (isset($netMinersIps[$keyM]) && isset($netMinersPorts[$keyM]))
-					{
-						$netMiners[] = array("name" => $netMinerName, "ip" => $netMinersIps[$keyM], "port" => $netMinersPorts[$keyM]);
-						/*if ($this->util_model->checkPool($poolUrl))
-						{
-						}
-						else
-						{
-							$extramessages[] = "I cannot add this pool <strong>$poolUrl</strong> because it doesn't seem to be alive";
-						}*/
-					}
-				}
-			}
-
-			$this->redis->set('network_miners', json_encode($netMiners));
-			$dataObj->network_miners = json_encode($netMiners);
 			
 			// Save Custom miners
 			$dataObj->custom_miners = $this->input->post('active_custom_miners');
@@ -506,6 +485,8 @@ class App extends Main_Controller {
 			$dataObj->dashboard_temp = $dashboardTemp;
 			$this->redis->set("dashboard_skin", $dashboardSkin);
 			$dataObj->dashboard_skin = $dashboardSkin;
+			$this->redis->set("dashboard_devicetree", $dashboardDevicetree);
+			$dataObj->dashboard_devicetree = $dashboardDevicetree;
 			
 			if ($mineraDonationTime)
 			{
@@ -849,8 +830,14 @@ class App extends Main_Controller {
 			case "update_minera":
 				$o = $this->util_model->update();
 			break;
+			case "stats":
+				$o = $this->util_model->getStats();
+			break;
 			case "miner_stats":
 				$o = json_encode($this->util_model->getMinerStats());
+			break;
+			case "network_miners_stats":
+				$o = json_encode($this->util_model->getNetworkMinerStats(false));
 			break;
 			case "notify_mobileminer":
 				$o = $this->util_model->callMobileminer();
@@ -881,9 +868,6 @@ class App extends Main_Controller {
 			case "delete_custom_miner":
 				$o = json_encode($this->util_model->deleteCustomMinerFile($this->input->get("custom")));
 			break;
-			case "scan_network":
-				$o = json_encode($this->util_model->discoveryNetworkDevices());
-			break;
 			case "miner_action":
 				$action = ($this->input->get('action')) ? $this->input->get('action') : false;
 				switch($action)
@@ -904,10 +888,10 @@ class App extends Main_Controller {
 			case "test":
 				//$a = file_get_contents("api.json");
 				//$o = $this->redis->command("BGSAVE"); //$this->util_model->checkCronIsRunning(); //$this->util_model->sendAnonymousStats(123, "hello world!");
-				$o = json_encode($this->util_model->discoveryNetworkDevices()); //json_encode($this->util_model->callMinerd()); //$this->util_model->getParsedStats($this->util_model->getMinerStats());
+				$o = json_encode($this->util_model->callMinerd()); //$this->util_model->getParsedStats($this->util_model->getMinerStats());
 			break;
 		}
-
+		
 		$this->output
 			->set_content_type('application/json')
 			->set_output($o);
