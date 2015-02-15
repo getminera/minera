@@ -181,7 +181,7 @@
 						<!-- Top section -->
 						<section class="hidden-xs col-md-12 connectedSortable ui-sortable top-section">
 						
-							<!-- Miner box -->
+							<!-- Local Miner box -->
 							<div class="box box-light">
 							   	<div class="overlay"></div>
 							   	<div class="loading-img"></div>
@@ -226,21 +226,73 @@
 										</div>
 									</div><!-- /.row - inside box -->
 								</div><!-- /.box-body -->
-									 <div class="box-footer">
-									 	<div class="legend pull-right">
-									 		<h6>Colors based on last share time: <i class="fa fa-circle text-success"></i> Good&nbsp;&nbsp;&nbsp;<i class="fa fa-circle text-warning"></i> Warning&nbsp;&nbsp;&nbsp;<i class="fa fa-circle text-danger"></i> Critical&nbsp;&nbsp;&nbsp;<i class="fa fa-circle text-muted"></i> Possibly dead</h6>
-									 	</div>
-									 	<?php if ($savedFrequencies && $minerdRunning == "cpuminer") : ?>
-									 	<button class="btn btn-primary btn-sm btn-saved-freq" data-toggle="tooltip" title="" data-original-title="Look at saved frequencies"><i class="fa fa-eye"></i> Saved frequencies</button>
-									 	<?php else: ?>
-									 	&nbsp;
-									 	<?php endif; ?>
-									 	<div class="freq-box" style="display:none; margin-top:10px;">
-										  	<h6>You can find this on the <a href="<?php echo site_url("app/settings") ?>">settings page</a> too.</h6>
-											<pre id="miner-freq" style="font-size:10px; margin-top:10px;">--gc3355-freq=<?php echo $savedFrequencies ?></pre>
-									 	</div>
-									</div>
+								<div class="box-footer">
+									<div class="legend pull-right">
+								 		<h6>Colors based on last share time: <i class="fa fa-circle text-success"></i> Good&nbsp;&nbsp;&nbsp;<i class="fa fa-circle text-warning"></i> Warning&nbsp;&nbsp;&nbsp;<i class="fa fa-circle text-danger"></i> Critical&nbsp;&nbsp;&nbsp;<i class="fa fa-circle text-muted"></i> Possibly dead</h6>
+								 	</div>
+								 	<?php if ($savedFrequencies && $minerdRunning == "cpuminer") : ?>
+								 	<button class="btn btn-primary btn-sm btn-saved-freq" data-toggle="tooltip" title="" data-original-title="Look at saved frequencies"><i class="fa fa-eye"></i> Saved frequencies</button>
+								 	<?php else: ?>
+								 	&nbsp;
+								 	<?php endif; ?>
+								 	<div class="freq-box" style="display:none; margin-top:10px;">
+									  	<h6>You can find this on the <a href="<?php echo site_url("app/settings") ?>">settings page</a> too.</h6>
+										<pre id="miner-freq" style="font-size:10px; margin-top:10px;">--gc3355-freq=<?php echo $savedFrequencies ?></pre>
+								 	</div>
+								</div>
 							</div><!-- /.miner box -->
+							
+							<!-- Network Miners box -->
+							<div class="box box-light network-miner-details" style="display:none;">
+							   	<div class="overlay"></div>
+							   	<div class="loading-img"></div>
+								<div class="box-header" style="cursor: move;">
+									<!-- tools box -->
+									<div class="pull-right box-tools">
+										<button class="btn btn-default btn-xs" data-widget="collapse" data-toggle="tooltip" title="" data-original-title="Collapse"><i class="fa fa-minus"></i></button>
+									</div><!-- /. tools -->
+									<i class="fa fa-server"></i>
+
+									<h3 class="box-title" id="miner-details">Network Miners details</h3>
+								</div>
+								<div class="box-body">
+									<div class="row">
+										<div class="col-sm-12">
+											<div class="table-responsive">
+												  <table id="network-miner-table-details" class="table table-striped datatable">
+													  <thead>
+													  <tr>
+														  <th>DEV</th>
+														  <th>Temp</th>
+														  <th>Frequency</th>
+														  <th>Dev HR</th>
+														  <th>Shares</th>
+														  <th>AC</th>
+														  <th>% AC</th>
+														  <th>RE</th>
+														  <th>% RE</th>
+														  <th>HW</th>
+														  <th>% HW</th>
+														  <th>Last share</th>
+														  <th>Last share time</th>
+													  </tr>
+													  </thead>
+													  <tbody class="network_devs_table">
+													</tbody>
+													  <tfoot class="network_devs_table_foot">
+													</tfoot>
+												</table><!-- /.table -->
+											  </div>
+										</div>
+									</div><!-- /.row - inside box -->
+								</div><!-- /.box-body -->
+								<div class="box-footer">
+									<div class="legend pull-right">
+								 		<h6>Colors based on last share time: <i class="fa fa-circle text-success"></i> Good&nbsp;&nbsp;&nbsp;<i class="fa fa-circle text-warning"></i> Warning&nbsp;&nbsp;&nbsp;<i class="fa fa-circle text-danger"></i> Critical&nbsp;&nbsp;&nbsp;<i class="fa fa-circle text-muted"></i> Possibly dead</h6>
+									</div>
+									<div>&nbsp;</div>
+								</div>
+							</div><!-- /.network miner box -->
 							
 							<!-- Pools box -->
 							<div class="box box-light">

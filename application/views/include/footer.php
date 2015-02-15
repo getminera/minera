@@ -1389,6 +1389,11 @@
 							$('#miner-table-details').dataTable().fnClearTable();
 							$('#miner-table-details').dataTable().fnDestroy();							
 						}
+						if ( $.fn.dataTable.isDataTable('#network-miner-table-details') )
+						{
+							$('#network-miner-table-details').dataTable().fnClearTable();
+							$('#network-miner-table-details').dataTable().fnDestroy();							
+						}
 						if ( $.fn.dataTable.isDataTable('#pools-table-details') )
 						{
 							$('#pools-table-details').dataTable().fnClearTable();
@@ -1798,7 +1803,215 @@
 					{
 						$(".local-miners-title").show();
 						$(".network-miners-widget-section").show();
-					}
+						$(".network-miner-details").show();
+																				
+						var netHashrates = [],
+							networkMiners = [];
+							
+						console.log(data.network_miners);
+						
+						if (Object.keys(data.network_miners).length > 0)
+						{
+							if ( !$.fn.dataTable.isDataTable('#network-miner-table-details') )
+							{
+								// Initialize the miner datatable	
+								$('#network-miner-table-details').dataTable({
+									"lengthMenu": [ 5, 10, 25, 50 ],
+									"pageLength": 5,
+									"stateSave": true,
+									"bAutoWidth": false,
+									"aoColumnDefs": [
+									{
+										"aTargets": [ 1 ],	
+										"mRender": function ( data, type, full ) {
+											if (type === 'display')
+											{
+												if (data)
+													return '<small class="label bg-blue">'+data +'&deg;</small>'
+												else
+													return '<small class="label label-muted">n.a.</small>'
+											}
+											return data;
+										},
+									},
+									{
+										"aTargets": [ 2 ],	
+										"mRender": function ( data, type, full ) {
+											if (type === 'display')
+											{
+												if (data)
+													return '<small class="label label-light">'+data +' MHz</small>'
+												else
+													return '<small class="label label-light">not available</small>'
+											}
+											return data;
+										},
+									},
+									{
+										"aTargets": [ 3 ],	
+										"mRender": function ( data, type, full ) {
+											if (type === 'display')
+											{
+												return '<small class="badge bg-'+data.label+'">'+ convertHashrate(data.hash) +'</small>'
+											}
+											return data.hash;
+										}
+									},
+									{
+										"aTargets": [ 11 ],	
+										"mRender": function ( data, type, full ) {
+											if (type === 'display')
+											{
+												return data +' secs ago'
+											}
+											return data;
+										}
+									},
+									{
+										"aTargets": [ 6, 8, 10 ],	
+										"mRender": function ( data, type, full ) {
+											if (type === 'display')
+											{
+												return '<small class="text-muted">' + data + '%</small>'
+											}
+											return data;
+										}
+									},
+									],
+								});
+							}
+
+							$.each(data.network_miners, function (netKey, networkMinerData) {
+								
+								if (networkMinerData !== false) 
+								{	
+									// Add per network device stats
+									$.each( networkMinerData.devices, function( key, val ) {
+															
+								    	// these are the single devices stats
+								    	var hashrate = Math.round(val.hashrate/1000);
+										
+								    	networkMiners[key] = { "temp": val.temperature, "serial": val.serial, "hash": hashrate, "ac": val.accepted, "re": val.rejected, "hw": val.hw_errors, "fr": val.frequency, "sh": val.shares, "ls": val.last_share };
+				
+										netHashrates.push(hashrate);
+				
+								    });
+								    
+							    	var maxHashrate = Math.max.apply(Math, netHashrates);
+				
+									var avgFr = (networkMinerData.totals.frequency) ? networkMinerData.totals.frequency : "n.a.";
+									var totTemp = (networkMinerData.totals.temperature) ? networkMinerData.totals.temperature : "n.a."
+									
+									totalhash = Math.round(networkMinerData.totals.hashrate/1000);
+			
+									// this is the global stats
+									networkMiners["total"] = { "temp": totTemp, "serial": "", "hash": totalhash, "ac": networkMinerData.totals.accepted, "re": networkMinerData.totals.rejected, "hw": networkMinerData.totals.hw_errors, "fr": avgFr, "sh": networkMinerData.totals.shares, "ls":  networkMinerData.totals.last_share};
+									
+									for (var index in networkMiners) 
+									{
+														
+										// Add per device rows in system table
+										var devData = {}; devData.hash = networkMiners[index].hash;
+										var share_date = new Date(networkMiners[index].ls*1000);
+										var rightnow = new Date().getTime();
+				
+										var last_share_secs = (networkMiners[index].ls > 0) ? (rightnow - share_date.getTime())/1000 : 0;
+										if (last_share_secs < 0) last_share_secs = 0;
+				
+										var totalWorkedShares = (networkMiners[index].ac+networkMiners[index].re+networkMiners[index].hw);
+										var percentageAc = (100*networkMiners[index].ac/totalWorkedShares);
+										var percentageRe = (100*networkMiners[index].re/totalWorkedShares);
+										var percentageHw = (100*networkMiners[index].hw/totalWorkedShares);
+				
+										// Add colored hashrates
+										if (last_share_secs >= 120 && last_share_secs < 240)
+											devData.label = "yellow"
+										else if (last_share_secs >= 240 && last_share_secs < 480)
+											devData.label = "red"
+										else if (last_share_secs >= 480)
+											devData.label = "muted"
+										else
+											devData.label = "green"
+																	
+										var dev_serial = "serial not available";
+										if (index != "total" && networkMiners[index].serial)
+										{
+											dev_serial = "serial: "+networkMiners[index].serial;
+										}
+										else
+										{
+											/*
+											// Widgets
+											$(".widget-last-share").html(parseInt(last_share_secs) + ' secs');
+											$(".widget-hwre-rates").html(parseFloat(percentageHw).toFixed(2) + '<sup style="font-size: 20px">%</sup> / ' + parseFloat(percentageRe).toFixed(2) + '<sup style="font-size: 20px">%</sup>');
+											dev_serial = "";
+											//Sidebar hashrate
+											//$('.sidebar-hashrate').html("@ "+convertHashrate(items[index].hash));
+											*/
+										}
+										
+										var devRow = '<tr class="dev-'+index+'"><td class="devs_table_name"><i class="glyphicon glyphicon-hdd"></i>&nbsp;&nbsp;'+index+'</td><td class="devs_table_temp">'+ networkMiners[index].temp + '</td><td class="devs_table_freq">'+ networkMiners[index].fr + 'MHz</td><td class="devs_table_hash"><strong>'+ convertHashrate(networkMiners[index].hash) +'</strong></td><td class="devs_table_sh">'+ networkMiners[index].sh +'</td><td class="devs_table_ac">'+ networkMiners[index].ac +'</td><td><small class="text-muted">'+parseFloat(percentageAc).toFixed(2)+'%</small></td><td class="devs_table_re">'+ networkMiners[index].re +'</td><td><small class="text-muted">'+parseFloat(percentageRe).toFixed(2)+'%</small></td><td class="devs_table_hw">'+ networkMiners[index].hw +'</td><td><small class="text-muted">'+parseFloat(percentageHw).toFixed(2)+'%</small></td><td class="devs_table_ls">'+ parseInt(last_share_secs) +' secs ago</td><td><small class="text-muted">'+share_date.toUTCString()+'</small></td></tr>'
+									
+										if (index == "total")
+										{
+											// TODO add row total via datatable
+										    $('.network_devs_table_foot').html(devRow);		
+										}
+										else
+										{
+											if ( $.fn.dataTable.isDataTable('#network-miner-table-details') )
+											{
+												// New add rows via datatable
+												$('#network-miner-table-details').dataTable().fnAddData( [
+													'<span><i class="gi gi-server"></i>&nbsp;&nbsp;'+index+'<br /><span class="label label-success">'+netKey+'</span></span>',
+													networkMiners[index].temp,
+													networkMiners[index].fr,
+													devData,
+													networkMiners[index].sh,
+													networkMiners[index].ac,
+													parseFloat(percentageAc).toFixed(2),
+													networkMiners[index].re,
+													parseFloat(percentageRe).toFixed(2),
+													networkMiners[index].hw,
+													parseFloat(percentageHw).toFixed(2),
+													parseInt(last_share_secs),
+													'<small class="text-muted">'+share_date.toUTCString()+'</small>'
+												] );
+											}
+										}									
+									}
+								}
+								else
+								{
+									if ( $.fn.dataTable.isDataTable('#network-miner-table-details') )
+									{
+										// New add rows via datatable
+										$('#network-miner-table-details').dataTable().fnAddData( [
+											'<span><i class="gi gi-server_ban"></i>&nbsp;&nbsp;No devices<br /><span class="label label-danger">'+netKey+'</span></span>',
+											0,
+											0,
+											{hash: 0, label: 'muted'},
+											0,
+											0,
+											0,
+											0,
+											0,
+											0,
+											0,
+											0,
+											0
+										] );
+									}
+								}
+							});
+							$("[data-toggle='tooltip']").tooltip();
+						}
+						else
+						{
+							var nodevsMsg = '<div class="alert alert-warning"><i class="fa fa-warning"></i>No network devices found</div>';
+							$('#network-miner-table-details').html(nodevsMsg);
+						}
+					} // End network miner details
 					
 					// Add controller temperature
 					if (data.temp)
@@ -2138,10 +2351,12 @@
 		
 		function convertHashrate(hash)
 		{
-			if (hash > 900000)
-				return (hash/1000000).toFixed(3) + 'Gh/s';
+			if (hash > 900000000)
+				return (hash/1000000).toFixed(2) + 'Th/s';
+			else if (hash > 900000)
+				return (hash/1000000).toFixed(2) + 'Gh/s';
 			else if (hash > 900)
-				return (hash/1000).toFixed(3) + 'Mh/s';
+				return (hash/1000).toFixed(2) + 'Mh/s';
 			else
 				return hash + 'Kh/s';
 		}

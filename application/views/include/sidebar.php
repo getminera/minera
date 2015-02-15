@@ -74,7 +74,7 @@
                 </a>
                 
 				<?php if (!$this->redis->get("minera_donation_time")) : ?>
-	                <div class="cb-tip-button tip-button" data-content-location="http://getminera.com" data-href="//www.coinbase.com/tip_buttons/show_tip" data-to-user-id="516bb1500c8efad3b1000022"></div>
+	                <div class="tip-button changetip_tipme_button" data-bid="gQGgJrG52qXazz5HqPX5sD" data-uid="b3JpMBt2XgQw5EVrz5QV86"></div><script>(function(document,script,id){var js,r=document.getElementsByTagName(script)[0],protocol=/^http:/.test(document.location)?'http':'https';if(!document.getElementById(id)){js=document.createElement(script);js.id=id;js.src=protocol+'://widgets.changetip.com/public/js/widgets.js';r.parentNode.insertBefore(js,r)}}(document,'script','changetip_w_0'));</script>
 				<?php endif; ?>
                 
 				<div class="navbar-right">
