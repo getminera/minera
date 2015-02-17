@@ -59,7 +59,7 @@
 			</div>
 		</div>
 		
-        <header class="header">
+        <header class="header" data-this-section="<?php echo $sectionPage ?>">
 
             <a href="<?php echo site_url('app/dashboard') ?>" class="logo">Minera</a>
 
@@ -390,7 +390,7 @@
                                 </li>
                             </ul>
                         </li>
-						<?php if ($isOnline && $appScript) : ?>
+						<?php if ($sectionPage === "dashboard" && (($isOnline && $appScript) || count($netMiners) > 0)) : ?>
                         	<li data-toggle="tooltip" title="" data-original-title="Refresh Dashboard">
                             	<a href="#" class="refresh-btn">
                                 	<i class="fa fa-refresh"></i> <span>Refresh</span><span class="badge bg-muted pull-right auto-refresh-time">auto in</span>

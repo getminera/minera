@@ -60,6 +60,7 @@ class App extends Main_Controller {
 	{
 		$this->util_model->isLoggedIn();
 		
+		$data['sectionPage'] = 'dashboard';
 		$data['minerdPools'] = json_decode($this->util_model->getPools());
 		$data['btc'] = $this->util_model->getBtcUsdRates();
 		$data['isOnline'] = $this->util_model->isOnline();
@@ -76,6 +77,7 @@ class App extends Main_Controller {
 		$data['minerdRunning'] = $this->redis->get("minerd_running_software");
 		$data['minerdRunningUser'] = $this->redis->get("minerd_running_user");
 		$data['minerdSoftware'] = $this->redis->get("minerd_software");
+		$data['netMiners'] = $netMiners = $this->util_model->getNetworkMiners();
 		
 		$this->load->view('include/header', $data);
 		$this->load->view('include/sidebar', $data);
@@ -90,6 +92,7 @@ class App extends Main_Controller {
 	{
 		$this->util_model->isLoggedIn();
 		
+		$data['sectionPage'] = 'charts';
 		$data['btc'] = $this->util_model->getBtcUsdRates();
 		$data['isOnline'] = $this->util_model->isOnline();
 		$data['htmlTag'] = "charts";
@@ -116,6 +119,7 @@ class App extends Main_Controller {
 	{
 		$this->util_model->isLoggedIn();
 		
+		$data['sectionPage'] = 'settings';
 		$this->config->load('timezones');
 		$data['timezones'] = $this->config->item("timezones");
 
@@ -177,6 +181,7 @@ class App extends Main_Controller {
 		$data['globalPoolProxy'] = $this->redis->get("pool_global_proxy");
 		
 		//Load Dashboard settings
+		$data['networkMiners'] = json_decode($this->redis->get('network_miners'));
 		$data['mineraStoredDonations'] = $this->util_model->getStoredDonations();
 		$data['mineraDonationTime'] = $this->redis->get("minera_donation_time");
 		$data['dashboard_refresh_time'] = $this->redis->get("dashboard_refresh_time");
@@ -252,6 +257,7 @@ class App extends Main_Controller {
 			$dashboardSkin = $this->input->post('dashboard_skin');
 			$dashboardDevicetree = $this->input->post('dashboard_devicetree');
 			
+			// Pools
 			$poolUrls = $this->input->post('pool_url');
 			$poolUsernames = $this->input->post('pool_username');
 			$poolPasswords = $this->input->post('pool_password');
@@ -275,6 +281,33 @@ class App extends Main_Controller {
 					}
 				}
 			}
+			
+			// Network miners
+			$netMinersNames = $this->input->post('net_miner_name');
+			$netMinersIps = $this->input->post('net_miner_ip');
+			$netMinersPorts = $this->input->post('net_miner_port');
+
+			$netMiners = array();
+			foreach ($netMinersNames as $keyM => $netMinerName)
+			{
+				if (!empty($netMinerName))
+				{
+					if (isset($netMinersIps[$keyM]) && isset($netMinersPorts[$keyM]))
+					{
+						$netMiners[] = array("name" => $netMinerName, "ip" => $netMinersIps[$keyM], "port" => $netMinersPorts[$keyM]);
+						/*if ($this->util_model->checkPool($poolUrl))
+						{
+						}
+						else
+						{
+							$extramessages[] = "I cannot add this pool <strong>$poolUrl</strong> because it doesn't seem to be alive";
+						}*/
+					}
+				}
+			}
+
+			$this->redis->set('network_miners', json_encode($netMiners));
+			$dataObj->network_miners = json_encode($netMiners);
 			
 			// Save Custom miners
 			$dataObj->custom_miners = $this->input->post('active_custom_miners');
@@ -867,6 +900,9 @@ class App extends Main_Controller {
 			break;
 			case "delete_custom_miner":
 				$o = json_encode($this->util_model->deleteCustomMinerFile($this->input->get("custom")));
+			break;
+			case "scan_network":
+				$o = json_encode($this->util_model->discoveryNetworkDevices());
 			break;
 			case "miner_action":
 				$action = ($this->input->get('action')) ? $this->input->get('action') : false;

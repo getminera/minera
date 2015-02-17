@@ -64,7 +64,7 @@
 								    		<p>Minera needs your help! Give some minutes of your hash power to the project and help making Minera even cooler!<br /><a href="#" class="open-readme-donation">Please read how you can give your support and how it works.</a></p>
 								    		
 								    		<div class="margin-bottom">
-								    		    <input data-donation-profitability="<?php echo $donationProfitability ?>" type="text" name="minera_donation_time" id="option-minera-donation-time" value="" />
+								    		    <input data-donation-profitability="<?php echo $donationProfitability ?>" type="text" name="minera_donation_time" id="option-minera-donation-time" value="" data-saved-donation-time="<?php echo $mineraDonationTime; ?>" />
 								    		</div>
 								    		
 								    		<p class="donation-worth"></p>
@@ -171,7 +171,7 @@
 											<label>Refresh time</label>
 											<p>Select automatic refresh time interval.</p>
 											<div class="margin-bottom">
-												<input type="text" name="dashboard_refresh_time" id="option-dashboard-refresh-time" class="refresh-time" value="" />
+												<input type="text" name="dashboard_refresh_time" id="option-dashboard-refresh-time" class="refresh-time" value="" data-saved-refresh-time="<?php echo (isset($dashboard_refresh_time)) ? $dashboard_refresh_time : 60; ?>" />
 											</div>
 										</div>
 										
@@ -604,7 +604,7 @@
 										<div class="form-group" id="minerd-startfreq">
 											<label>Select starting frequency</label>
 											<div class="margin-bottom" style="width:50%">
-												<input type="text" name="minerd_startfreq" id="ion-startfreq" value="" />
+												<input type="text" name="minerd_startfreq" id="ion-startfreq" value="" data-saved-startfreq="<?php echo (isset($minerdStartfreq)) ? $minerdStartfreq : 800; ?>"/>
 											</div>
 											<h6>You can select a default frequency value to start with.</h6>
 										</div>
@@ -746,7 +746,7 @@
 						    
 	                        <div class="box-body">
 								<p>You can scan your network or add your network device manually. If you have miners like Antminer S1/S2 or RockMiner R3-Box or any miner with a networked connection, now you can control them in Minera.</p>
-						    	<p><button class="btn btn-success scan-network">Scan network</button></p>
+						    	<p><button class="btn bg-olive scan-network">Scan network</button></p>
 
 								<div class="form-group">
                                     <div class="row">
@@ -771,7 +771,7 @@
 										<div class="form-group net-group">
 										    <div class="row sort-attach net-row">
 										    	<div class="col-xs-1 text-center">
-										    		<button style="margin-top:5px;" class="btn btn-default btn-xs net_miner_status"><i class="fa fa-circle <?php if ($isOnlineNet) : ?>text-success<?php else : ?>text-muted<?php endif; ?>"></i> <?php if ($isOnlineNet) : ?>Online<?php else: ?>Offline<?php endif; ?></button>
+										    		<span class="label <?php if ($isOnlineNet) : ?>label-success<?php else : ?>label-danger<?php endif; ?> net_miner_status"><?php if ($isOnlineNet) : ?>Online<?php else: ?>Offline<?php endif; ?></span>
 										    	</div>
 										    	<div class="col-xs-4">
 										    		<div class="input-group">
@@ -801,8 +801,8 @@
 									<!-- fake row to be cloned -->
 									<div class="form-group net-group net-group-master" style="display:none;">
 									    <div class="row sort-attach net-row">
-									    	<div class="col-xs-1">
-									    		<button style="margin-top:5px;" class="btn btn-default btn-xs net_miner_status"><i class="fa fa-circle text-muted"></i> Offline</button>
+									    	<div class="col-xs-1 text-center">
+									    		<span style="width: 40px;" class="label label-primary net_miner_status">New</span>
 									    	</div>
 									    	<div class="col-xs-4">
 									    		<div class="input-group">
