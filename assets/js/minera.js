@@ -478,16 +478,28 @@ $(function() {
 	    		    
 	    $(document).on('click', '.add-pool-row', function(e) {
 			e.preventDefault();
-			$(".pool-group-master").first().clone().appendTo(".poolSortable");
-			$(".pool-group-master").last().css("display", "block").removeClass("pool-group-master");
+			if ($(this).data("network")) {
+				$(".pool-"+$(this).data("networkminer")).first().clone().appendTo(".net-"+$(this).data("networkminer"));
+				$(".pool-"+$(this).data("networkminer")).last().css("display", "block").removeClass(".pool-"+$(this).data("networkminer"));
+			} else {
+				$(".pool-group-master").first().clone().appendTo(".poolSortable");
+				$(".pool-group-master").last().css("display", "block").removeClass("pool-group-master");
+			}
 	    });
 	
 		$(".form-donation").prop('disabled', true);
 		
 	    $(document).on('click', '.add-donation-pool-row', function(e) {
 			e.preventDefault();
-			$(".form-donation").prop('readonly', true).prop('disabled', false);
-			$(".pool-donation-group").css("display", "block").removeClass("pool-donation-group");
+			if ($(this).data("network")) {
+				$(".form-donation").prop('readonly', true).prop('disabled', false);
+				$(".pool-net-donation-"+$(this).data("networkminer")).css("display", "block").removeClass(".pool-net-donation-"+$(this).data("networkminer"));
+			} else {
+				$(".form-donation").prop('readonly', true).prop('disabled', false);
+				$(".pool-donation-group").css("display", "block").removeClass("pool-donation-group");
+			}
+			
+			$(this).fadeOut();
 	    });
 	    
 	    // Custom miners

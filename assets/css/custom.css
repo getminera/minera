@@ -40,6 +40,16 @@ body > .header { position: fixed !important; }
 .modal-footer-center { margin: 0; padding: 6px 20px !important; text-align: center;}
 .font-bold { font-weight: bold;}
 
+.mt10 { margin-top: 10px; }
+.mt20 { margin-top: 20px; }
+.mt30 { margin-top: 30px; }
+.mt50 { margin-top: 50px; }
+
+.mb10 { margin-bottom: 10px; }
+.mb20 { margin-bottom: 20px; }
+.mb30 { margin-bottom: 30px; }
+.mb50 { margin-bottom: 50px; }
+
 .lockscreen {background: url(../img/bg-dark.jpg) repeat center center fixed !important;}
 .lockscreen-link, .lockscreen-name { color: #fff;}
 .lockscreen .headline { color: #ccc !important;}

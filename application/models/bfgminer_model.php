@@ -129,5 +129,17 @@ class Bfgminer_model extends CI_Model {
 		log_message("error", "Trying to switch pool ".(int)$poolId." to the main one.");
 		return $this->callMinerd('{"command":"switchpool", "parameter":'.(int)$poolId.'}');
 	}
+	
+	public function addPool($url, $user, $pass)
+	{
+		log_message("error", "Trying to add pool parameter:".$url.",".$user.",".$pass);
+		return $this->callMinerd('{"command":"addpool", "parameter":'.$url.','.$user.','.$pass.'}');
+	}
+	
+	public function removePool($poolId)
+	{
+		log_message("error", "Trying to remove pool ".(int)$poolId);
+		return $this->callMinerd('{"command":"removepool", "parameter":'.(int)$poolId.'}');
+	}
 		
 }

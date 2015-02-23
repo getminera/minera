@@ -180,8 +180,30 @@ class App extends Main_Controller {
 		$data['minerApiAllowExtra'] = $this->redis->get("minerd_api_allow_extra");
 		$data['globalPoolProxy'] = $this->redis->get("pool_global_proxy");
 		
-		//Load Dashboard settings
+		// Load online Network miners
+		$savedNetMiners =json_decode( $this->redis->get('network_miners'));
+		$newNetMiners = array();
+		if (count($savedNetMiners) > 0)
+		{
+			$this->load->model('cgminer_model', 'network_miner');
+			
+			foreach ($savedNetMiners as $key => $saveNetMiner) {
+				$newNetMiners[$key] = $saveNetMiner;
+				if ($this->util_model->checkNetworkDevice($saveNetMiner->ip, $saveNetMiner->port)) 
+				{
+					$n = $this->util_model->getMinerStats($saveNetMiner->ip.":".$saveNetMiner->port);
+					$newP = array();
+					foreach ($n->pools as $p) {
+						$newP[] = array("url" => $p->url, "username" => $p->user, "password" => $p->pass);
+					}
+					$newNetMiners[$key]->pools = $newP;
+				}
+			}
+			$this->redis->set('network_miners', json_encode($newNetMiners));
+		}
 		$data['networkMiners'] = json_decode($this->redis->get('network_miners'));
+		
+		// Load Dashboard settings
 		$data['mineraStoredDonations'] = $this->util_model->getStoredDonations();
 		$data['mineraDonationTime'] = $this->redis->get("minera_donation_time");
 		$data['dashboard_refresh_time'] = $this->redis->get("dashboard_refresh_time");
@@ -271,13 +293,6 @@ class App extends Main_Controller {
 					if (isset($poolUsernames[$key]) && isset($poolPasswords[$key]))
 					{
 						$pools[] = array("url" => $poolUrl, "username" => $poolUsernames[$key], "password" => $poolPasswords[$key], "proxy" => $poolProxy[$key]);
-						/*if ($this->util_model->checkPool($poolUrl))
-						{
-						}
-						else
-						{
-							$extramessages[] = "I cannot add this pool <strong>$poolUrl</strong> because it doesn't seem to be alive";
-						}*/
 					}
 				}
 			}
@@ -286,6 +301,7 @@ class App extends Main_Controller {
 			$netMinersNames = $this->input->post('net_miner_name');
 			$netMinersIps = $this->input->post('net_miner_ip');
 			$netMinersPorts = $this->input->post('net_miner_port');
+			$netMinersAlgos = $this->input->post('net_miner_algo');
 
 			$netMiners = array();
 			foreach ($netMinersNames as $keyM => $netMinerName)
@@ -294,14 +310,7 @@ class App extends Main_Controller {
 				{
 					if (isset($netMinersIps[$keyM]) && isset($netMinersPorts[$keyM]))
 					{
-						$netMiners[] = array("name" => $netMinerName, "ip" => $netMinersIps[$keyM], "port" => $netMinersPorts[$keyM]);
-						/*if ($this->util_model->checkPool($poolUrl))
-						{
-						}
-						else
-						{
-							$extramessages[] = "I cannot add this pool <strong>$poolUrl</strong> because it doesn't seem to be alive";
-						}*/
+						$netMiners[] = array("name" => $netMinerName, "ip" => $netMinersIps[$keyM], "port" => $netMinersPorts[$keyM], "algo" => $netMinersAlgos[$keyM], "pools" => array());
 					}
 				}
 			}
@@ -857,6 +866,16 @@ class App extends Main_Controller {
 			break;
 			case "select_pool":
 				$o = json_encode($this->util_model->selectPool($this->input->get('poolId')));
+				// Give the miner the time to refresh
+				sleep(3);
+			break;
+			case "add_pool":
+				$o = json_encode($this->util_model->addPool($this->input->get('url'), $this->input->get('user'), $this->input->get('pass')));
+				// Give the miner the time to refresh
+				sleep(3);
+			break;
+			case "remove_pool":
+				$o = json_encode($this->util_model->removePool($this->input->get('poolId')));
 				// Give the miner the time to refresh
 				sleep(3);
 			break;

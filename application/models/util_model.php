@@ -1280,9 +1280,19 @@ log_message("error", var_export($pools, true));
 		return $this->miner->saveCurrentFreq();
 	}
 
-	public function selectPool($poolId)
+	public function selectPool($poolId, $network = false)
 	{
-		return $this->miner->selectPool($poolId);
+		return $this->miner->selectPool($poolId, $network = false);
+	}
+	
+	public function addPool($url, $user, $pass, $network = false)
+	{
+		return $this->miner->addPool($url, $user, $pass, $network = false);
+	}
+	
+	public function removePool($poolId, $network = false)
+	{
+		return $this->miner->removePool($poolId, $network = false);
 	}
 			
 	// Stop miner
