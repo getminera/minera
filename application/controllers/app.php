@@ -180,15 +180,16 @@ class App extends Main_Controller {
 		$data['minerApiAllowExtra'] = $this->redis->get("minerd_api_allow_extra");
 		$data['globalPoolProxy'] = $this->redis->get("pool_global_proxy");
 		
-		// Load online Network miners
+		// Load online Network miners and their pools
 		$savedNetMiners =json_decode( $this->redis->get('network_miners'));
 		$newNetMiners = array();
 		if (count($savedNetMiners) > 0)
 		{
-			$this->load->model('cgminer_model', 'network_miner');
-			
+			$this->util_model->switchMinerSoftware(false, true);
+				
 			foreach ($savedNetMiners as $key => $saveNetMiner) {
 				$newNetMiners[$key] = $saveNetMiner;
+				$newNetMiners[$key]->id = md5($saveNetMiner->name);
 				if ($this->util_model->checkNetworkDevice($saveNetMiner->ip, $saveNetMiner->port)) 
 				{
 					$n = $this->util_model->getMinerStats($saveNetMiner->ip.":".$saveNetMiner->port);
@@ -303,6 +304,11 @@ class App extends Main_Controller {
 			$netMinersPorts = $this->input->post('net_miner_port');
 			$netMinersAlgos = $this->input->post('net_miner_algo');
 
+			// Network miners pools
+			$netGroupPoolUrls = $this->input->post('net_pool_url');
+			$netGroupPoolUsernames = $this->input->post('net_pool_username');
+			$netGroupPoolPasswords = $this->input->post('net_pool_password');
+
 			$netMiners = array();
 			foreach ($netMinersNames as $keyM => $netMinerName)
 			{
@@ -310,11 +316,44 @@ class App extends Main_Controller {
 				{
 					if (isset($netMinersIps[$keyM]) && isset($netMinersPorts[$keyM]))
 					{
+						// Delete every pools remotely then we will add the new one below
+						$savedMiners = json_decode($this->redis->get('network_miners'));
+						foreach ($savedMiners as $savedMiner) {
+							if ($savedMiner->id === md5($netMinerName) && $this->util_model->checkNetworkDevice($savedMiner->ip, $savedMiner->port)) {
+								foreach ($savedMiner->pools as $savedNetPoolKey => $savedNetPool) {
+									$this->util_model->removePool($savedNetPoolKey, $netMinersIps[$keyM].":".$netMinersPorts[$keyM]);
+									sleep(0.2);
+								}
+							}
+						}
+						
+						// Network Miners
 						$netMiners[] = array("name" => $netMinerName, "ip" => $netMinersIps[$keyM], "port" => $netMinersPorts[$keyM], "algo" => $netMinersAlgos[$keyM], "pools" => array());
+						
+						if (is_array($netGroupPoolUrls) && isset($netGroupPoolUrls[md5($netMinerName)])) {
+							$netPools = array();
+							foreach ($netGroupPoolUrls[md5($netMinerName)] as $key => $netPoolUrl)
+							{
+								if ($netPoolUrl)
+								{
+									if (isset($netGroupPoolUsernames[md5($netMinerName)]) && isset($netGroupPoolPasswords[md5($netMinerName)][$key]))
+									{
+										// Network pools miners
+										$netPools[] = array("url" => $netPoolUrl, "username" => $netGroupPoolUsernames[md5($netMinerName)][$key], "password" => $netGroupPoolPasswords[md5($netMinerName)][$key]);
+										
+										// Push the pool to the network miner
+										//$addNetPool = $this->util_model->addPool($netPoolUrl, $netGroupPoolUsernames[md5($netMinerName)][$key], $netGroupPoolPasswords[md5($netMinerName)][$key], $netMinersIps[$keyM].":".$netMinersPorts[$keyM]);
+										
+										//log_message("error", var_export($addNetPool, true));
+										sleep(0.1);
+									}
+								}
+							}
+							//log_message("error", var_export($netPools, true));
+						}
 					}
 				}
 			}
-
 			$this->redis->set('network_miners', json_encode($netMiners));
 			$dataObj->network_miners = json_encode($netMiners);
 			
@@ -865,17 +904,17 @@ class App extends Main_Controller {
 				$o = $this->util_model->saveCurrentFreq();
 			break;
 			case "select_pool":
-				$o = json_encode($this->util_model->selectPool($this->input->get('poolId')));
+				$o = json_encode($this->util_model->selectPool($this->input->get('poolId'), $this->input->get('network')));
 				// Give the miner the time to refresh
 				sleep(3);
 			break;
 			case "add_pool":
-				$o = json_encode($this->util_model->addPool($this->input->get('url'), $this->input->get('user'), $this->input->get('pass')));
+				$o = json_encode($this->util_model->addPool($this->input->get('url'), $this->input->get('user'), $this->input->get('pass'), $this->input->get('network')));
 				// Give the miner the time to refresh
 				sleep(3);
 			break;
 			case "remove_pool":
-				$o = json_encode($this->util_model->removePool($this->input->get('poolId')));
+				$o = json_encode($this->util_model->removePool($this->input->get('poolId'), $this->input->get('network')));
 				// Give the miner the time to refresh
 				sleep(3);
 			break;

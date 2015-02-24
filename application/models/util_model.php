@@ -14,7 +14,6 @@ class Util_model extends CI_Model {
 		// load Miner Model
 		// Switch model for CGMiner/BFGMiner/CPUMiner
 		$this->switchMinerSoftware();
-
 		parent::__construct();
 	}
 
@@ -29,7 +28,7 @@ class Util_model extends CI_Model {
 		return true;
 	}
 	
-	public function switchMinerSoftware($software = false)
+	public function switchMinerSoftware($software = false, $network = false)
 	{
 		if ($this->redis->get("minerd_use_root"))
 		{
@@ -105,6 +104,8 @@ class Util_model extends CI_Model {
 			$this->config->set_item('minerd_log_url', 'application/logs/'.$this->_minerdSoftware.'.log');
 			$this->load->model('cgminer_model', 'miner');
 		}
+		
+		if ($network) $this->load->model('cgminer_model', 'network_miner');
 		
 		return true;
 	}
@@ -1282,17 +1283,32 @@ log_message("error", var_export($pools, true));
 
 	public function selectPool($poolId, $network = false)
 	{
-		return $this->miner->selectPool($poolId, $network = false);
+		if ($network) {
+			$this->switchMinerSoftware(false, true);
+			return $this->network_miner->selectPool($poolId, $network);
+		}
+			
+		return $this->miner->selectPool($poolId, $network);
 	}
 	
 	public function addPool($url, $user, $pass, $network = false)
 	{
-		return $this->miner->addPool($url, $user, $pass, $network = false);
+		if ($network) {
+			$this->switchMinerSoftware(false, true);
+			return $this->network_miner->addPool($url, $user, $pass, $network);
+		}
+		
+		return $this->miner->addPool($url, $user, $pass, $network);
 	}
 	
 	public function removePool($poolId, $network = false)
 	{
-		return $this->miner->removePool($poolId, $network = false);
+		if ($network) {
+			$this->switchMinerSoftware(false, true);
+			return $this->network_miner->removePool($poolId, $network);
+		}
+					
+		return $this->miner->removePool($poolId, $network);
 	}
 			
 	// Stop miner

@@ -864,33 +864,16 @@
 										<?php if (!$isOnlineNet) : ?>
 											<p>Network miner is offline, please turn on to configure its pools</p>
 										<?php else : ?>
-											<!-- Global pool proxy -->
-											<div class="form-group">
-												<div class="row">
-													<div class="col-xs-6">
-														<label>Global pool proxy</label>
-														<p>Set socks proxy (host:port) for all pools without a proxy specified.</p>
-														<div class="input-group">
-											    			<span class="input-group-addon"><i class="fa fa-certificate"></i></span>
-											    			<input type="text" class="form-control" name="pool_global_proxy[<?php echo md5($networkMiner->name) ?>]" placeholder="socks5|http://proxy:port" value="<?php echo (isset($globalPoolProxy)) ? $globalPoolProxy : ''; ?>" />
-											    		</div>
-													</div>
-												</div>
-											</div>
-			
 											<div class="form-group">
 			                                    <div class="row">
-													<div class="col-xs-4">
+													<div class="col-xs-5">
 														<strong>Pool URL</strong>
 													</div>
-													<div class="col-xs-2">
+													<div class="col-xs-3">
 														<strong>Pool Username</strong>
 													</div>
-													<div class="col-xs-2">
-														<strong>Pool Password</strong>
-													</div>
 													<div class="col-xs-3">
-														<strong>Pool Proxy</strong>
+														<strong>Pool Password</strong>
 													</div>
 			                                    </div>
 											</div>
@@ -898,7 +881,6 @@
 											<div class="networkPools net-<?php echo md5($networkMiner->name) ?>">
 												<?php $netPools = $networkMiner->pools; $donationPool = false; ?>
 												<?php $s = (count($netPools) == 0) ? 1 : count($netPools); ?>
-												<?php log_message("error", var_export($netPools, true)); ?>
 												<?php for ($i=0;$i<=$s;$i++) : ?>
 													<?php if ( isset($netPools[$i]->url) && 
 																($netPools[$i]->url == $this->config->item('minera_pool_url') || $netPools[$i]->url == $this->config->item('minera_pool_url_sha256')) && 
@@ -909,28 +891,22 @@
 													<!-- row pool for Minera -->
 													<div class="form-group">
 													    <div class="row sort-attach">
-													    	<div class="col-xs-4">
+													    	<div class="col-xs-5">
 													    		<div class="input-group">
 													    			<span class="input-group-addon"><i class="fa fa-gift"></i></span>
-													    			<input type="text" class="form-control" name="pool_url[]" data-ismain="0" value="<?php echo $savedPools[$i]->url ?>" readonly />
-													    		</div>
-													    	</div>
-													    	<div class="col-xs-2">
-													    		<div class="input-group">
-													    			<span class="input-group-addon"><i class="fa fa-user"></i></span>
-													    			<input type="text" class="form-control" name="pool_username[]" data-ismain="0" value="michelem.minera" readonly />
-													    		</div>
-													    	</div>
-													    	<div class="col-xs-2">
-													    		<div class="input-group">
-													    			<span class="input-group-addon"><i class="fa fa-lock"></i></span>
-													    			<input type="text" class="form-control" name="pool_password[]" data-ismain="0" value="x" readonly />
+													    			<input type="text" class="form-control" name="net_pool_url[<?php echo md5($networkMiner->name) ?>][]" data-ismain="0" value="<?php echo $savedPools[$i]->url ?>" readonly />
 													    		</div>
 													    	</div>
 													    	<div class="col-xs-3">
 													    		<div class="input-group">
-													    			<span class="input-group-addon"><i class="fa fa-certificate"></i></span>
-													    			<input type="text" class="form-control" name="pool_proxy[]" data-ismain="0" value="" readonly />
+													    			<span class="input-group-addon"><i class="fa fa-user"></i></span>
+													    			<input type="text" class="form-control" name="net_pool_username[<?php echo md5($networkMiner->name) ?>][]" data-ismain="0" value="michelem.minera" readonly />
+													    		</div>
+													    	</div>
+													    	<div class="col-xs-3">
+													    		<div class="input-group">
+													    			<span class="input-group-addon"><i class="fa fa-lock"></i></span>
+													    			<input type="text" class="form-control" name="net_pool_password[<?php echo md5($networkMiner->name) ?>][]" data-ismain="0" value="x" readonly />
 													    		</div>
 													    	</div>
 													    	<div class="col-xs-1">
@@ -941,28 +917,22 @@
 													<?php else : ?>
 													<div class="form-group pool-group">
 													    <div class="row sort-attach pool-row">
-													    	<div class="col-xs-4">
+													    	<div class="col-xs-5">
 													    		<div class="input-group">
 													    			<span class="input-group-addon"><i class="fa fa-cloud-<?php echo ($i == 0) ? "upload" : "download"; ?>"></i></span>
-													    			<input type="text" class="form-control pool_url" placeholder="<?php echo ($i == 0) ? "Main" : "Failover"; ?> url" name="pool_url[]" data-ismain="<?php echo ($i == 0) ? "1" : "0"; ?>" value="<?php echo (isset($netPools[$i]->url)) ? $netPools[$i]->url : ''; ?>" />
-													    		</div>
-													    	</div>
-													    	<div class="col-xs-2">
-													    		<div class="input-group">
-													    			<span class="input-group-addon"><i class="fa fa-user"></i></span>
-													    			<input type="text" class="form-control pool_username" placeholder="username" name="pool_username[]" data-ismain="<?php echo ($i == 0) ? "1" : "0"; ?>" value="<?php echo (isset($netPools[$i]->username)) ? $netPools[$i]->username : ''; ?>"  />
-													    		</div>
-													    	</div>
-													    	<div class="col-xs-2">
-													    		<div class="input-group">
-													    			<span class="input-group-addon"><i class="fa fa-lock"></i></span>
-													    			<input type="text" class="form-control pool_password" placeholder="password" name="pool_password[]" data-ismain="<?php echo ($i == 0) ? "1" : "0"; ?>" value="<?php echo (isset($netPools[$i]->password)) ? $netPools[$i]->password : ''; ?>"  />
+													    			<input type="text" class="form-control pool_url" placeholder="<?php echo ($i == 0) ? "Main" : "Failover"; ?> url" name="net_pool_url[<?php echo md5($networkMiner->name) ?>][]" data-ismain="<?php echo ($i == 0) ? "1" : "0"; ?>" value="<?php echo (isset($netPools[$i]->url)) ? $netPools[$i]->url : ''; ?>" />
 													    		</div>
 													    	</div>
 													    	<div class="col-xs-3">
 													    		<div class="input-group">
-													    			<span class="input-group-addon"><i class="fa fa-certificate"></i></span>
-																	<input type="text" class="form-control pool_proxy" placeholder="socks5|http://proxy:port" name="pool_proxy[]" data-ismain="<?php echo ($i == 0) ? "1" : "0"; ?>" value="<?php echo (isset($netPools[$i]->proxy)) ? $netPools[$i]->proxy : ''; ?>"  />
+													    			<span class="input-group-addon"><i class="fa fa-user"></i></span>
+													    			<input type="text" class="form-control pool_username" placeholder="username" name="net_pool_username[<?php echo md5($networkMiner->name) ?>][]" data-ismain="<?php echo ($i == 0) ? "1" : "0"; ?>" value="<?php echo (isset($netPools[$i]->username)) ? $netPools[$i]->username : ''; ?>"  />
+													    		</div>
+													    	</div>
+													    	<div class="col-xs-3">
+													    		<div class="input-group">
+													    			<span class="input-group-addon"><i class="fa fa-lock"></i></span>
+													    			<input type="text" class="form-control pool_password" placeholder="password" name="net_pool_password[<?php echo md5($networkMiner->name) ?>][]" data-ismain="<?php echo ($i == 0) ? "1" : "0"; ?>" value="<?php echo (isset($netPools[$i]->password)) ? $netPools[$i]->password : ''; ?>"  />
 													    		</div>
 													    	</div>
 													    	<div class="col-xs-1">
@@ -979,33 +949,27 @@
 													    	<div class="col-xs-4">
 													    		<div class="input-group">
 													    			<span class="input-group-addon"><i class="fa fa-gift"></i></span>
-													    			<input type="text" class="form-control form-donation" name="pool_url[]" data-ismain="0" value="stratum+tcp://multi.ghash.io:3333" readonly />
+													    			<input type="text" class="form-control form-donation" name="net_pool_url[<?php echo md5($networkMiner->name) ?>][]" data-ismain="0" value="stratum+tcp://multi.ghash.io:3333" readonly />
 													    		</div>
 													    	</div>
 													    <?php else: ?>
-													    	<div class="col-xs-4">
+													    	<div class="col-xs-5">
 													    		<div class="input-group">
 													    			<span class="input-group-addon"><i class="fa fa-gift"></i></span>
-													    			<input type="text" class="form-control form-donation" name="pool_url[]" data-ismain="0" value="stratum+tcp://us1.ghash.io:3333" readonly />
+													    			<input type="text" class="form-control form-donation" name="net_pool_url[<?php echo md5($networkMiner->name) ?>][]" data-ismain="0" value="stratum+tcp://us1.ghash.io:3333" readonly />
 													    		</div>
 													    	</div>
 													    <?php endif; ?>
-												    	<div class="col-xs-2">
+												    	<div class="col-xs-3">
 												    		<div class="input-group">
 												    			<span class="input-group-addon"><i class="fa fa-user"></i></span>
-												    			<input type="text" class="form-control form-donation" name="pool_username[]" data-ismain="0" value="michelem.minera" readonly />
-												    		</div>
-												    	</div>
-												    	<div class="col-xs-2">
-												    		<div class="input-group">
-												    			<span class="input-group-addon"><i class="fa fa-lock"></i></span>
-												    			<input type="text" class="form-control form-donation" name="pool_password[]" data-ismain="0" value="x" readonly />
+												    			<input type="text" class="form-control form-donation" name="net_pool_username[<?php echo md5($networkMiner->name) ?>][]" data-ismain="0" value="michelem.minera" readonly />
 												    		</div>
 												    	</div>
 												    	<div class="col-xs-3">
 												    		<div class="input-group">
-												    			<span class="input-group-addon"><i class="fa fa-certificate"></i></span>
-																<input type="text" class="form-control pool_proxy" placeholder="socks5|http://proxy:port" name="pool_proxy[]" readonly />
+												    			<span class="input-group-addon"><i class="fa fa-lock"></i></span>
+												    			<input type="text" class="form-control form-donation" name="net_pool_password[<?php echo md5($networkMiner->name) ?>][]" data-ismain="0" value="x" readonly />
 												    		</div>
 												    	</div>
 												    	<div class="col-xs-1">
@@ -1016,28 +980,22 @@
 												<!-- fake row to be cloned -->
 												<div class="form-group pool-group pool-group-net-master pool-<?php echo md5($networkMiner->name) ?>" style="display:none;">
 												    <div class="row sort-attach pool-row">
-												    	<div class="col-xs-4">
+												    	<div class="col-xs-5">
 												    		<div class="input-group">
 												    			<span class="input-group-addon"><i class="fa fa-cloud-download"></i></span>
-												    			<input type="text" class="form-control pool_url" placeholder="Failover url" name="pool_url[]" data-ismain="0" value="" />
-												    		</div>
-												    	</div>
-												    	<div class="col-xs-2">
-												    		<div class="input-group">
-												    			<span class="input-group-addon"><i class="fa fa-user"></i></span>
-												    			<input type="text" class="form-control pool_username" placeholder="username" name="pool_username[]" data-ismain="0" value=""  />
-												    		</div>
-												    	</div>
-												    	<div class="col-xs-2">
-												    		<div class="input-group">
-												    			<span class="input-group-addon"><i class="fa fa-lock"></i></span>
-												    			<input type="text" class="form-control pool_password" placeholder="password" name="pool_password[]" data-ismain="0" value=""  />
+												    			<input type="text" class="form-control pool_url" placeholder="Failover url" name="net_pool_url[<?php echo md5($networkMiner->name) ?>][]" data-ismain="0" value="" />
 												    		</div>
 												    	</div>
 												    	<div class="col-xs-3">
 												    		<div class="input-group">
-												    			<span class="input-group-addon"><i class="fa fa-certificate"></i></span>
-																<input type="text" class="form-control pool_proxy" placeholder="socks5|http://proxy:port" name="pool_proxy[]" data-ismain="0" value=""  />
+												    			<span class="input-group-addon"><i class="fa fa-user"></i></span>
+												    			<input type="text" class="form-control pool_username" placeholder="username" name="net_pool_username[<?php echo md5($networkMiner->name) ?>][]" data-ismain="0" value=""  />
+												    		</div>
+												    	</div>
+												    	<div class="col-xs-3">
+												    		<div class="input-group">
+												    			<span class="input-group-addon"><i class="fa fa-lock"></i></span>
+												    			<input type="text" class="form-control pool_password" placeholder="password" name="net_pool_password[<?php echo md5($networkMiner->name) ?>][]" data-ismain="0" value=""  />
 												    		</div>
 												    	</div>
 												    	<div class="col-xs-1">

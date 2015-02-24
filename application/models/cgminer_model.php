@@ -133,20 +133,26 @@ class Cgminer_model extends CI_Model {
 	
 	public function selectPool($poolId, $network)
 	{
-		log_message("error", "Trying to switch pool ".(int)$poolId." to the main one.");
-		return $this->callMinerd('{"command":"switchpool", "parameter":'.(int)$poolId.'}', $network);
+		log_message("error", "Trying to switch pool ".(int)$poolId." to the main one. (".$network.")");
+		$o = $this->callMinerd('{"command":"switchpool", "parameter":'.(int)$poolId.'}', $network);
+		log_message("error", var_export($o, true));
+		return $o;
 	}
 	
 	public function addPool($url, $user, $pass, $network)
 	{
-		log_message("error", "Trying to add pool parameter:".$url.",".$user.",".$pass);
-		return $this->callMinerd('{"command":"addpool", "parameter":'.$url.','.$user.','.$pass.'}', $network);
+		log_message("error", "Trying to add pool parameter:".$url.",".$user.",".$pass." (".$network.")");
+		$o = $this->callMinerd('{"command":"addpool", "parameter":"'.$url.','.$user.','.$pass.'"}', $network);
+		log_message("error", var_export($o, true));
+		return $o;
 	}
 	
 	public function removePool($poolId, $network)
 	{
-		log_message("error", "Trying to remove pool ".(int)$poolId);
-		return $this->callMinerd('{"command":"removepool", "parameter":'.(int)$poolId.'}', $network);
+		log_message("error", "Trying to remove pool ".(int)$poolId." (".$network.")");
+		$o = $this->callMinerd('{"command":"removepool", "parameter":'.(int)$poolId.'}', $network);
+		log_message("error", var_export($o, true));
+		return $o;
 	}
 	
 }
