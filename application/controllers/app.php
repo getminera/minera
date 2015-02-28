@@ -342,6 +342,7 @@ class App extends Main_Controller {
 										$netPools[] = array("url" => $netPoolUrl, "username" => $netGroupPoolUsernames[md5($netMinerName)][$key], "password" => $netGroupPoolPasswords[md5($netMinerName)][$key]);
 										
 										// Push the pool to the network miner
+										// TODO DISABLE ACTIVE ONE
 										//$addNetPool = $this->util_model->addPool($netPoolUrl, $netGroupPoolUsernames[md5($netMinerName)][$key], $netGroupPoolPasswords[md5($netMinerName)][$key], $netMinersIps[$keyM].":".$netMinersPorts[$keyM]);
 										
 										//log_message("error", var_export($addNetPool, true));
