@@ -244,6 +244,14 @@ If you have guided/manual options both selected in the settings page try run thi
 If you wanna check the raw JSON stats from your minerd, please point your browser to:
 
 	http://<your-minera-ip>/minera/index.php/app/stats
+	
+If you wanna use a new Raspberry PI 2 and you are running a Minera version <= 0.4.0, you need to first upgrade packages from an old Raspberry, then you can use the same SD Card on the new one.
+Get a Raspberry PI (not 2), push the Minera SD Card on it, turn on and SSH into it, then run these commands:
+
+	sudo apt-get update
+	sudo apt-get upgrade
+
+This could take a while (I mean also an hour, it's slow), but after that you can run your Minera SD Card in any Raspberry PI model, new ones included.
 _______
 
 TODO
