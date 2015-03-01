@@ -247,7 +247,58 @@
 								</div>
 							</div><!-- /.miner box -->
 							
+							<!-- Local Pools box -->
+							<div class="box box-light">
+							   	<div class="overlay"></div>
+							   	<div class="loading-img"></div>
+								<div class="box-header" style="cursor: move;">
+									<!-- tools box -->
+									<div class="pull-right box-tools">
+										<button class="btn btn-default btn-xs" data-widget="collapse" data-toggle="tooltip" title="" data-original-title="Collapse"><i class="fa fa-minus"></i></button>
+									</div><!-- /. tools -->
+									<i class="fa fa-cloud"></i>
+
+									<h3 class="box-title" id="pools-details">Local Pools details</h3>
+								</div>
+								<div class="box-body">
+									<div class="row">
+										<div class="col-sm-12">
+											<div class="table-responsive">
+												  <!-- .table - Uses sparkline charts-->
+												  <table id="pools-table-details" class="table table-striped datatable">
+													  <thead>
+													  <tr>
+														  <th>Pool</th>
+														  <th>Url</th>
+														  <th>Priority</th>
+														  <th>Type</th>
+														  <th>Status</th>
+														  <th>Pool HR</th>
+														  <th>CS</th>
+														  <th>PS</th>
+														  <th>CA</th>
+														  <th>PA</th>
+														  <th>CR</th>
+														  <th>PR</th>
+														  <th>Username</th>
+													  </tr>
+													  </thead>
+													  <tbody class="pools_table">
+													</tbody>
+												</table><!-- /.table -->
+												<p class="pool-alert"></p>
+											  </div>
+										</div>
+									</div><!-- /.row - inside box -->
+								</div><!-- /.box-body -->
+								<div class="box-footer">
+									<h6>Legend: <strong>CS</strong> = Current Shares, <strong>PS</strong> = Previous shares, <strong>CA</strong> = Current Accepted, <strong>PA</strong> = Previous Accepted, <strong>CR</strong> = Current Rejected, <strong>PR</strong> = Previous Rejected</h6>
+									<h6><strong>Current</strong> is the current or last session, <strong>Previous</strong> is the total of all previous sessions. Pool HashRate is based on shares over the time per session.</h6>
+								</div>
+							</div><!-- /.local pools box -->
+							
 							<!-- Network Miners box -->
+							<?php if (count($netMiners) > 0) : ?>
 							<div class="box box-light network-miner-details" style="display:none;">
 							   	<div class="overlay"></div>
 							   	<div class="loading-img"></div>
@@ -299,7 +350,7 @@
 								</div>
 							</div><!-- /.network miner box -->
 							
-							<!-- Pools box -->
+							<!-- Network pools box -->
 							<div class="box box-light">
 							   	<div class="overlay"></div>
 							   	<div class="loading-img"></div>
@@ -310,36 +361,38 @@
 									</div><!-- /. tools -->
 									<i class="fa fa-cloud"></i>
 
-									<h3 class="box-title" id="pools-details">Local Pools details</h3>
+									<h3 class="box-title" id="pools-details">Network Pools details</h3>
 								</div>
 								<div class="box-body">
 									<div class="row">
 										<div class="col-sm-12">
-											<div class="table-responsive">
-												  <!-- .table - Uses sparkline charts-->
-												  <table id="pools-table-details" class="table table-striped datatable">
-													  <thead>
-													  <tr>
-														  <th>Pool</th>
-														  <th>Url</th>
-														  <th>Priority</th>
-														  <th>Type</th>
-														  <th>Status</th>
-														  <th>Pool HR</th>
-														  <th>CS</th>
-														  <th>PS</th>
-														  <th>CA</th>
-														  <th>PA</th>
-														  <th>CR</th>
-														  <th>PR</th>
-														  <th>Username</th>
-													  </tr>
-													  </thead>
-													  <tbody class="pools_table">
-													</tbody>
-												</table><!-- /.table -->
-												<p class="pool-alert"></p>
-											  </div>
+											<?php foreach ($netMiners as $netMiner) : ?>
+												<div class="table-responsive">
+													  <!-- .table - Uses sparkline charts-->
+													  <table id="net-pools-table-details" class="table table-striped datatable">
+														  <thead>
+														  <tr>
+															  <th>Pool</th>
+															  <th>Url</th>
+															  <th>Priority</th>
+															  <th>Type</th>
+															  <th>Status</th>
+															  <th>Pool HR</th>
+															  <th>CS</th>
+															  <th>PS</th>
+															  <th>CA</th>
+															  <th>PA</th>
+															  <th>CR</th>
+															  <th>PR</th>
+															  <th>Username</th>
+														  </tr>
+														  </thead>
+														  <tbody class="net_pools_table">
+														</tbody>
+													</table><!-- /.table -->
+													<p class="net-pool-alert"></p>
+												</div>
+											<?php endforeach; ?>
 										</div>
 									</div><!-- /.row - inside box -->
 								</div><!-- /.box-body -->
@@ -347,7 +400,8 @@
 									<h6>Legend: <strong>CS</strong> = Current Shares, <strong>PS</strong> = Previous shares, <strong>CA</strong> = Current Accepted, <strong>PA</strong> = Previous Accepted, <strong>CR</strong> = Current Rejected, <strong>PR</strong> = Previous Rejected</h6>
 									<h6><strong>Current</strong> is the current or last session, <strong>Previous</strong> is the total of all previous sessions. Pool HashRate is based on shares over the time per session.</h6>
 								</div>
-							</div><!-- /.miner box -->	
+							</div><!-- /.network pools box -->
+							<?php endif; ?>
 							
 						</section>
 						

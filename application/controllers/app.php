@@ -77,7 +77,7 @@ class App extends Main_Controller {
 		$data['minerdRunning'] = $this->redis->get("minerd_running_software");
 		$data['minerdRunningUser'] = $this->redis->get("minerd_running_user");
 		$data['minerdSoftware'] = $this->redis->get("minerd_software");
-		$data['netMiners'] = $netMiners = $this->util_model->getNetworkMiners();
+		$data['netMiners'] = $this->util_model->getNetworkMiners();
 		
 		$this->load->view('include/header', $data);
 		$this->load->view('include/sidebar', $data);
@@ -195,7 +195,7 @@ class App extends Main_Controller {
 					$n = $this->util_model->getMinerStats($saveNetMiner->ip.":".$saveNetMiner->port);
 					$newP = array();
 					foreach ($n->pools as $p) {
-						$newP[] = array("url" => $p->url, "username" => $p->user, "password" => $p->pass);
+						$newP[] = array("url" => $p->url, "username" => $p->user, "password" => $p->pass, "active" => $p->active);
 					}
 					$newNetMiners[$key]->pools = $newP;
 				}
@@ -305,6 +305,7 @@ class App extends Main_Controller {
 			$netMinersAlgos = $this->input->post('net_miner_algo');
 
 			// Network miners pools
+			$netGroupPoolActives = $this->input->post('net_pool_active');
 			$netGroupPoolUrls = $this->input->post('net_pool_url');
 			$netGroupPoolUsernames = $this->input->post('net_pool_username');
 			$netGroupPoolPasswords = $this->input->post('net_pool_password');
@@ -316,45 +317,12 @@ class App extends Main_Controller {
 				{
 					if (isset($netMinersIps[$keyM]) && isset($netMinersPorts[$keyM]))
 					{
-						// Delete every pools remotely then we will add the new one below
-						$savedMiners = json_decode($this->redis->get('network_miners'));
-						foreach ($savedMiners as $savedMiner) {
-							if ($savedMiner->id === md5($netMinerName) && $this->util_model->checkNetworkDevice($savedMiner->ip, $savedMiner->port)) {
-								foreach ($savedMiner->pools as $savedNetPoolKey => $savedNetPool) {
-									$this->util_model->removePool($savedNetPoolKey, $netMinersIps[$keyM].":".$netMinersPorts[$keyM]);
-									sleep(0.2);
-								}
-							}
-						}
-						
 						// Network Miners
 						$netMiners[] = array("name" => $netMinerName, "ip" => $netMinersIps[$keyM], "port" => $netMinersPorts[$keyM], "algo" => $netMinersAlgos[$keyM], "pools" => array());
-						
-						if (is_array($netGroupPoolUrls) && isset($netGroupPoolUrls[md5($netMinerName)])) {
-							$netPools = array();
-							foreach ($netGroupPoolUrls[md5($netMinerName)] as $key => $netPoolUrl)
-							{
-								if ($netPoolUrl)
-								{
-									if (isset($netGroupPoolUsernames[md5($netMinerName)]) && isset($netGroupPoolPasswords[md5($netMinerName)][$key]))
-									{
-										// Network pools miners
-										$netPools[] = array("url" => $netPoolUrl, "username" => $netGroupPoolUsernames[md5($netMinerName)][$key], "password" => $netGroupPoolPasswords[md5($netMinerName)][$key]);
-										
-										// Push the pool to the network miner
-										// TODO DISABLE ACTIVE ONE
-										//$addNetPool = $this->util_model->addPool($netPoolUrl, $netGroupPoolUsernames[md5($netMinerName)][$key], $netGroupPoolPasswords[md5($netMinerName)][$key], $netMinersIps[$keyM].":".$netMinersPorts[$keyM]);
-										
-										//log_message("error", var_export($addNetPool, true));
-										sleep(0.1);
-									}
-								}
-							}
-							//log_message("error", var_export($netPools, true));
-						}
 					}
 				}
 			}
+
 			$this->redis->set('network_miners', json_encode($netMiners));
 			$dataObj->network_miners = json_encode($netMiners);
 			
