@@ -34,17 +34,17 @@ class App extends Main_Controller {
 	*/
 	public function login()
 	{	
-		if (preg_match('/^[a-f0-9]{32}$/', $this->redis->get('minera_password')))
+		if (preg_match('/^[0-9a-f]{40}$/i', $this->redis->get('minera_password')))
 		{
 			$storedp = $this->redis->get('minera_password');
 		}
 		else
 		{
-			$storedp = md5($this->redis->get('minera_password'));
+			$storedp = sha1($this->redis->get('minera_password'));
 			$this->redis->set('minera_password', $storedp);
 		}
 		
-		if ($this->input->post('password', true) && md5($this->input->post('password', true)) == $storedp)
+		if ($this->input->post('password', true) && sha1($this->input->post('password')) == $storedp)
 		{
 			$this->session->set_userdata("loggedin", 1);
 			redirect('app/dashboard');
@@ -142,7 +142,7 @@ class App extends Main_Controller {
 			}
 			else
 			{
-				$this->redis->set("minera_password", md5($password));
+				$this->redis->set("minera_password", sha1($password));
 				$data['message'] = '<b>Success!</b> Password saved!';
 				$data['message_type'] = "success";
 			}
@@ -162,7 +162,7 @@ class App extends Main_Controller {
 		$data['minerdAutorestartTime'] = $this->redis->get('minerd_autorestart_time');
 		$data['minerdAutorecover'] = $this->redis->get('minerd_autorecover');
 		$data['minerdUseRoot'] = $this->redis->get('minerd_use_root');
-		$data['minerdScrypt'] = $this->redis->get('minerd_scrypt');
+		$data['minerdSsha1'] = $this->redis->get('minerd_ssha1');
 		$data['minerdAutodetect'] = $this->redis->get('minerd_autodetect');
 		$data['minerdAutotune'] = $this->redis->get('minerd_autotune');
 		$data['minerdStartfreq'] = $this->redis->get('minerd_startfreq');
@@ -210,7 +210,7 @@ class App extends Main_Controller {
 		$data['dashboard_refresh_time'] = $this->redis->get("dashboard_refresh_time");
 		$dashboard_coin_rates = $this->redis->get("dashboard_coin_rates");
 		$data['dashboard_coin_rates'] = (is_array(json_decode($dashboard_coin_rates))) ? json_decode($dashboard_coin_rates) : array();
-		$data['cryptsy_data'] = $this->redis->get("cryptsy_data");
+		$data['sha1sy_data'] = $this->redis->get("sha1sy_data");
 		$data['dashboardTemp'] = ($this->redis->get("dashboard_temp")) ? $this->redis->get("dashboard_temp") : "c";
 		$data['dashboardSkin'] = ($this->redis->get("dashboard_skin")) ? $this->redis->get("dashboard_skin") : "black";
 		$data['dashboardDevicetree'] = ($this->redis->get("dashboard_devicetree")) ? $this->redis->get("dashboard_devicetree") : false;
@@ -406,13 +406,13 @@ class App extends Main_Controller {
 					$this->redis->set('minerd_api_allow_extra', $this->input->post('minerd_api_allow_extra'));
 					$dataObj->minerd_api_allow_extra = $this->input->post('minerd_api_allow_extra');
 					
-					// Scrypt
-					if ($this->input->post('minerd_scrypt'))
+					// Ssha1
+					if ($this->input->post('minerd_ssha1'))
 					{
-						$confArray["scrypt"] = true;			
+						$confArray["ssha1"] = true;			
 					}
-					$this->redis->set('minerd_scrypt', $this->input->post('minerd_scrypt'));
-					$dataObj->minerd_scrypt = $this->input->post('minerd_scrypt');
+					$this->redis->set('minerd_ssha1', $this->input->post('minerd_ssha1'));
+					$dataObj->minerd_ssha1 = $this->input->post('minerd_ssha1');
 					
 					// Auto-detect
 					if ($this->input->post('minerd_autodetect'))
@@ -1026,8 +1026,8 @@ class App extends Main_Controller {
 		$currentHour = date("H", $now);
 		$currentMinute = date("i", $now);
 		
-		// Refresh Cryptsydata if needed
-		$this->util_model->refreshCryptsyData();
+		// Refresh sha1sydata if needed
+		$this->util_model->refreshsha1syData();
 		$this->util_model->updateAltcoinsRates();
 						
 		// Store the live stats
