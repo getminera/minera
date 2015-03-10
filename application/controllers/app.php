@@ -162,7 +162,7 @@ class App extends Main_Controller {
 		$data['minerdAutorestartTime'] = $this->redis->get('minerd_autorestart_time');
 		$data['minerdAutorecover'] = $this->redis->get('minerd_autorecover');
 		$data['minerdUseRoot'] = $this->redis->get('minerd_use_root');
-		$data['minerdSsha1'] = $this->redis->get('minerd_ssha1');
+		$data['minerdScrypt'] = $this->redis->get('minerd_scrypt');
 		$data['minerdAutodetect'] = $this->redis->get('minerd_autodetect');
 		$data['minerdAutotune'] = $this->redis->get('minerd_autotune');
 		$data['minerdStartfreq'] = $this->redis->get('minerd_startfreq');
@@ -210,7 +210,7 @@ class App extends Main_Controller {
 		$data['dashboard_refresh_time'] = $this->redis->get("dashboard_refresh_time");
 		$dashboard_coin_rates = $this->redis->get("dashboard_coin_rates");
 		$data['dashboard_coin_rates'] = (is_array(json_decode($dashboard_coin_rates))) ? json_decode($dashboard_coin_rates) : array();
-		$data['sha1sy_data'] = $this->redis->get("sha1sy_data");
+		$data['cryptsy_data'] = $this->redis->get("cryptsy_data");
 		$data['dashboardTemp'] = ($this->redis->get("dashboard_temp")) ? $this->redis->get("dashboard_temp") : "c";
 		$data['dashboardSkin'] = ($this->redis->get("dashboard_skin")) ? $this->redis->get("dashboard_skin") : "black";
 		$data['dashboardDevicetree'] = ($this->redis->get("dashboard_devicetree")) ? $this->redis->get("dashboard_devicetree") : false;
@@ -406,13 +406,21 @@ class App extends Main_Controller {
 					$this->redis->set('minerd_api_allow_extra', $this->input->post('minerd_api_allow_extra'));
 					$dataObj->minerd_api_allow_extra = $this->input->post('minerd_api_allow_extra');
 					
-					// Ssha1
-					if ($this->input->post('minerd_ssha1'))
+					// Scrypt
+					if ($this->input->post('minerd_scrypt'))
 					{
-						$confArray["ssha1"] = true;			
+						$confArray["scrypt"] = true;			
 					}
-					$this->redis->set('minerd_ssha1', $this->input->post('minerd_ssha1'));
-					$dataObj->minerd_ssha1 = $this->input->post('minerd_ssha1');
+					$this->redis->set('minerd_scrypt', $this->input->post('minerd_scrypt'));
+					$dataObj->minerd_scrypt = $this->input->post('minerd_scrypt');
+					
+					// Scrypt
+					if ($this->input->post('minerd_scrypt'))
+					{
+						$confArray["scrypt"] = true;			
+					}
+					$this->redis->set('minerd_scrypt', $this->input->post('minerd_scrypt'));
+					$dataObj->minerd_scrypt = $this->input->post('minerd_scrypt');
 					
 					// Auto-detect
 					if ($this->input->post('minerd_autodetect'))
@@ -1026,8 +1034,8 @@ class App extends Main_Controller {
 		$currentHour = date("H", $now);
 		$currentMinute = date("i", $now);
 		
-		// Refresh sha1sydata if needed
-		$this->util_model->refreshsha1syData();
+		// Refresh Cryptsydata if needed
+		$this->util_model->refreshcryptsyData();
 		$this->util_model->updateAltcoinsRates();
 						
 		// Store the live stats

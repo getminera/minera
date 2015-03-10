@@ -416,8 +416,7 @@ class Util_model extends CI_Model {
 					$devicePoolIndex[] = $device->{'Last Share Pool'};
 				}				
 				
-				$devicePoolActives = array_count_values($devicePoolIndex);
-				
+				$devicePoolActives = array_count_values($devicePoolIndex);				
 			}
 			
 			if (isset($stats->summary[0]->SUMMARY[0]))
@@ -442,33 +441,39 @@ class Util_model extends CI_Model {
 		
 		if (isset($stats->pools))
 		{
+			$return['pool']['hashrate'] = 0;
+			$return['pool']['url'] = null;
+			$return['pool']['alive'] = 0;
+
 			foreach ($stats->pools as $poolIndex => $pool)
 			{
 				if ($this->_minerdSoftware == "cpuminer")
 				{
 					if (isset($pool->active) && $pool->active == 1)
 					{
+						$return['pool']['url'] = $pool->url;
+						$return['pool']['alive'] = $pool->alive;
+
 						foreach($pool->stats as $session)
 						{
 							if ($session->stats_id == $pool->stats_id)
 							{
 								// Calculate pool hashrate
 								$poolHashrate = round(65536.0 * ($session->shares / (time() - $session->start_time)), 0);
+								$return['pool']['hashrate'] = $poolHashrate;
 							}
 						}
 					}
 				}
 				else
 				{
-					if ($devicePoolActives && array_key_exists($poolIndex, $devicePoolActives))
+					if (isset($pool->active) && $pool->active == 1)
 					{
-						$poolHashrate = $cgbfgminerPoolHashrate;	
+						$return['pool']['url'] = $pool->url;
+						$return['pool']['alive'] = $pool->alive;
 					}
+					$return['pool']['hashrate'] = $cgbfgminerPoolHashrate;	
 				}
-					
-				$return['pool']['hashrate'] = $poolHashrate;
-				$return['pool']['url'] = $pool->url;
-				$return['pool']['alive'] = $pool->alive;
 			}
 		}
 	
