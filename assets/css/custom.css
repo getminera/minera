@@ -40,6 +40,10 @@ body > .header { position: fixed !important; }
 .modal-footer-center { margin: 0; padding: 6px 20px !important; text-align: center;}
 .font-bold { font-weight: bold;}
 
+.bg-dark-blue { background: #656F80 !important; color: white; }
+.bg-light2 { background: #E4EBEF !important; color: #434343; }
+.bg-light-brown { background: #B29B88 !important; color: white; }
+
 .mt10 { margin-top: 10px; }
 .mt20 { margin-top: 20px; }
 .mt30 { margin-top: 30px; }

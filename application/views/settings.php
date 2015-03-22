@@ -746,7 +746,10 @@
 						    
 	                        <div class="box-body">
 								<p>You can scan your network or add your network device manually. If you have miners like Antminer S1/S2 or RockMiner R3-Box or any miner with a networked connection, now you can control them in Minera.</p>
+								<h6>Network names are picked up randomly from a small constellation database, you can change it.</h6>
 						    	<p><button class="btn bg-olive scan-network">Scan network</button></p>
+
+								<div class="alert alert-warning alert-no-net-devices" style="display:none">There aren't new network devices, try to add them manually.</div>
 
 								<div class="form-group">
                                     <div class="row">

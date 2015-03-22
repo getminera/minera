@@ -2,11 +2,25 @@
 
 $(function() {
 	
+	$("body").tooltip({ selector: '[data-toggle="tooltip"]', trigger: 'hover' });
+	$("body").popover({ selector: '[data-toggle="popover"]', trigger: 'hover' });
+
 	var thisSection = $(".header").data("this-section");
 	
 	if( !window.location.hash ) {
 		$('html, body').animate({scrollTop : 0}, 800);
 	}
+	
+	String.prototype.hashCode = function() {
+		var hash = 0, i, chr, len;
+		if (this.length == 0) return hash;
+		for (i = 0, len = this.length; i < len; i++) {
+			chr   = this.charCodeAt(i);
+			hash  = ((hash << 5) - hash) + chr;
+			hash |= 0; // Convert to 32bit integer
+		}
+		return hash;
+	};
 	
 	// Smmoth scroll
 	$('a[href*=#]:not([href=#])').click(function() {
@@ -343,7 +357,7 @@ $(function() {
 				cache: false,
 				success:  function(resp){
 					$('#modal-saving').modal('hide');
-					
+
 					if (resp.length > 0)
 					{
 						$(".net-group-master").first().clone().prependTo(".netSortable");
@@ -352,12 +366,16 @@ $(function() {
 						$.each(resp, function (index, value)
 						{
 							$(".net-group:first .net-row .net_miner_status").html('<i class="fa fa-circle text-success"></i> Online');
-							$(".net-group:first .net-row .net_miner_name").val("Network miner #"+(index+1));
-							$(".net-group:first .net-row .net_miner_ip").val(value);
+							$(".net-group:first .net-row .net_miner_name").val(value.name);
+							$(".net-group:first .net-row .net_miner_ip").val(value.ip);
 							$(".net-group:first .net-row .net_miner_port").val("4028");
+							$(".net-group:first .net-row .net_miner_status").removeClass('label-primary').addClass('label-success');
 						});
 						
 						setTimeout(function () { saveSettings(true, true) }, 2000);
+					} else {
+						$(".alert-no-net-devices").fadeIn();
+						setTimeout(function () { $(".alert-no-net-devices").fadeOut(); }, 5000);
 					}
 				}
 			});
@@ -1508,6 +1526,13 @@ function getStats(refresh)
 					$('#pools-table-details').dataTable().fnClearTable();
 					$('#pools-table-details').dataTable().fnDestroy();	
 				}
+				$('.net-pools-table').each(function(key, obj) {
+					if ( $.fn.dataTable.isDataTable($(this)) )
+					{
+						$(this).dataTable().fnClearTable();
+						$(this).dataTable().fnDestroy();	
+					}
+				});
 			}
 			
 			if (data.avg)
@@ -1670,9 +1695,8 @@ function getStats(refresh)
 								$('.widget-main-pool').html(palivelabel);
 								$('.widget-main-pool').next('p').html(pval.url);
 								// Changing title page according to hashrate
-								$(document).attr('title', convertHashrate(phashData.hash)+' | Minera - Dashboard');
+								$(document).attr('title', 'Local: '+convertHashrate(phashData.hash));
 							}
-
 						}
 						else
 						{
@@ -1913,14 +1937,19 @@ function getStats(refresh)
 				$('#devs').html(nodevsMsg).removeClass("row");
 			}
 			
-			// Network miners
+			//******************//
+			//					//
+			//  Network miners  //
+			//					//
+			//******************//
 			if (data.network_miners)
-			{
+			{				
 				$(".local-miners-title").show();
 				$(".network-miners-widget-section").show();
 				$(".network-miner-details").show();
 																		
 				var netHashrates = 0,
+					netPoolHashrates = 0,
 					networkMiners = [],
 					tLastShares = [],
 					tAc = 0, tRe = 0, tHw = 0, tSh = 0;
@@ -2000,7 +2029,7 @@ function getStats(refresh)
 
 					$.each(data.network_miners, function (netKey, networkMinerData) {
 						
-						if (networkMinerData !== false) 
+						if (networkMinerData.devices) 
 						{	
 							networkMiners[netKey] = networkMinerData.devices;
 							
@@ -2073,7 +2102,7 @@ function getStats(refresh)
 										{
 											// New add rows via datatable
 											$('#network-miner-table-details').dataTable().fnAddData( [
-												'<span><i class="gi gi-server"></i>&nbsp;&nbsp;'+index+'<br /><span class="label label-success">'+netKey+'</span></span>',
+												'<span><i class="gi gi-server"></i>&nbsp;&nbsp;'+index+'<br /><span class="label label-success" data-toggle="popover" data-title="'+netKey+'" data-content="'+[networkMinerData.config.ip, networkMinerData.config.port].join(':')+'">'+netKey+'</span></span>',
 												networkMiners[netKey][index].temp,
 												networkMiners[netKey][index].fr,
 												devData,
@@ -2091,6 +2120,191 @@ function getStats(refresh)
 									}
 								}
 							}
+							
+							// Add network pools table
+							$('.net-pools-label-'+md5(netKey)).html('<span class="label label-success" data-toggle="popover" data-title="'+netKey+'" data-content="'+[networkMinerData.config.ip, networkMinerData.config.port].join(':')+'">'+netKey+'</span></span>');
+
+							// Get main/active network pool data
+							if (networkMinerData.pool)
+							{
+								var netpoolhashrate = (networkMinerData.pool.hashrate) ? networkMinerData.pool.hashrate : 0;
+							}
+							
+							if (networkMinerData.pools)
+							{
+								if ( !$.fn.dataTable.isDataTable('#net-pools-table-details-'+md5(netKey)) )
+								{
+									// Initialize the pools datatable	
+									$('#net-pools-table-details-'+md5(netKey)).dataTable({
+										"lengthMenu": [ 5, 10, 25, 50 ],
+										"pageLength": 5,
+										"stateSave": true,
+										"bAutoWidth": false,
+										//"sDom": 't',
+										"order": [[ 2, "asc" ]],
+										"fnRowCallback": function( nRow, aData, iDisplayIndex ) {
+											//if(iDisplayIndex === 0)
+											//	nRow.className = "bg-dark";
+											return nRow;
+										},
+										"aoColumnDefs": [ 
+										{
+											"aTargets": [ 5 ],	
+											"mRender": function ( data, type, full ) {
+												if (type === 'display')
+												{
+													return '<small class="badge bg-'+data.label+'">'+ convertHashrate(data.hash) +'</small>';
+												}
+												return data.hash;
+											},
+										},
+										{
+											"aTargets": [ 7, 9, 11 ],	
+											"mRender": function ( data, type, full ) {
+												if (type === 'display')
+												{
+													return '<small class="text-muted">'+ data +'</small>';
+												}
+												return data;
+											},
+										},
+										]
+									});
+								}
+								
+								// Add pools data
+								$.each(networkMinerData.pools, function( pkey, pval ) 
+								{
+									var picon = "download",
+										ptype = "failover",
+										pclass = "bg-light",
+										plabel = "light",
+										pactivelabclass = "",
+										paliveclass = "",
+										palivelabel = "",
+										puserlabel = "",
+										pactivelab = "Select This",
+										purlicon = "",
+										purl = pval.url,
+										pool_shares = 0;
+									
+									if (pval.alive)
+									{
+										paliveclass = "success";
+										palivelabel = "Alive";
+									}
+									else
+									{
+										paliveclass = "danger";
+										palivelabel = "Dead";
+									}
+									
+									puserlabel = 'blue';
+									purlicon = '<i class="fa fa-flash"></i>&nbsp;';
+									if (pval.user == 'michelem.minera')
+									{
+										puserlabel = 'light';
+										purlicon = '<i class="fa fa-gift"></i>&nbsp;';
+									}
+				
+									// Main pool
+									if (pval.active === true || pval.active === 1)
+									{	
+										pool_shares_seconds = parseFloat((now/1000)-pval.start_time);
+										pool_shares = pval.shares;
+										picon = "upload";
+										ptype = "active";
+										pclass = "bg-dark";
+										plabel = "primary";
+										pactivelabclass = "disabled";
+										pactivelab = "Selected";
+										purl = '<strong>'+pval.url+'</strong>';
+									}
+									
+									var pstatsId = pval.stats_id;
+									var pshares = 0; var paccepted = 0; var prejected = 0; var psharesPrev = 0; var pacceptedPrev = 0; var prejectedPrev = 0; var phashData = {}; phashData.hash = 0; phashData.label = 'muted'; phashData.pstart_time = "Never started";
+									// Get the pool stats
+									for (var p = 0; p < pval.stats.length; p++) 
+									{
+										var pstats = pval.stats[p];
+				
+										if (pstatsId == pstats.stats_id)
+										{
+											phashData.pstart_time = new Date(pstats.start_time*1000);
+											phashData.pstart_time = phashData.pstart_time.toUTCString();
+											pshares = pstats.shares;
+											paccepted = pstats.accepted;
+											prejected = pstats.rejected;
+											
+											// Calculate the real pool hashrate
+											if (pval.active === true || pval.active === 1) 
+											{
+												phashData.hash = parseInt(netpoolhashrate/1000); //parseInt((65536.0 * (pshares/(now/1000-pstats.start_time)))/1000);
+												phashData.label = 'red';
+												netPoolHashrates += phashData.hash;
+											}
+				
+										}
+										else
+										{
+											psharesPrev = psharesPrev + pstats.shares;
+											pacceptedPrev = pacceptedPrev + pstats.accepted;
+											prejectedPrev = prejectedPrev + pstats.rejected;
+										}
+									}
+				
+									if ( $.fn.dataTable.isDataTable('#net-pools-table-details-'+md5(netKey)) )
+									{
+										// Add Pool rows via datatable
+										$('#net-pools-table-details-'+md5(netKey)).dataTable().fnAddData( [
+											'<button style="width:90px;" class="btn btn-sm btn-default '+pactivelabclass+' select-net-pool" data-pool-id="'+pkey+'" data-pool-config="'+[networkMinerData.config.ip, networkMinerData.config.port].join(':')+'"><i class="fa fa-cloud-'+picon+'"></i> '+pactivelab+'</button>',
+											purlicon+'<small>'+purl+'</small>',
+											pval.priority,
+											'<span class="label label-'+plabel+'">'+ptype+'</span>',
+											'<span class="label label-'+paliveclass+'">'+palivelabel+'</span>',
+											phashData,
+											pshares,
+											psharesPrev,
+											paccepted,
+											pacceptedPrev,
+											prejected,
+											prejectedPrev,
+											'<span class="badge bg-'+puserlabel+'">'+pval.user+'</span>'
+										] );
+									}
+									
+								});
+								
+								// Select Pool on the fly
+							    $(document).on('click', '.select-net-pool', function(e) {
+									e.preventDefault();
+									$('.overlay').show();
+								    var poolId = $(this).data('pool-id'),
+								    	netConfig = $(this).data('pool-config');
+								    $.ajax(_baseUrl+"/app/api?command=select_pool&poolId="+poolId+'&network='+netConfig, {
+								        dataType: "text",
+								        success: function (dataP) {
+								        	if (dataP)
+								        	{
+								        		var dataJ = $.parseJSON(dataP);
+								        		console.log(dataJ.STATUS[0].Msg);
+								    			getStats(true);
+								    			if (dataJ)
+								    			{
+								    				$('.net-pool-alert-'+md5(netKey)).html('CG/BFGminer could take some minutes to complete the switching process. <pre style="font-size:10px;margin-top:10px;">'+dataP+'</pre>');
+								    				setTimeout(function() {
+														$('.net-pool-alert-'+md5(netKey)).html('');
+									    			}, 30000);
+								    			}
+								    		}
+								        }
+								    });
+								});
+							}
+							else
+							{
+								$('#net-pools-table-details-'+md5(netKey)).html('<div class="alert alert-warning"><i class="fa fa-warning"></i><strong>No pools</strong> data available.</div>');
+							}
 						}
 						else
 						{
@@ -2098,7 +2312,7 @@ function getStats(refresh)
 							{
 								// New add rows via datatable
 								$('#network-miner-table-details').dataTable().fnAddData( [
-									'<span><i class="gi gi-server_ban"></i>&nbsp;&nbsp;Offline<br /><span class="label label-danger">'+netKey+'</span></span>',
+									'<span><i class="gi gi-server_ban"></i>&nbsp;&nbsp;Offline<br /><span class="label label-danger" data-toggle="popover" data-title="'+netKey+'" data-content="'+[networkMinerData.config.ip, networkMinerData.config.port].join(':')+'">'+netKey+'</span></span>',
 									0,
 									0,
 									{hash: 0, label: 'muted'},
@@ -2113,6 +2327,10 @@ function getStats(refresh)
 									0
 								] );
 							}
+							
+							// Add empty network pools table
+							$('.net-pools-label-'+md5(netKey)).html('<span class="label label-danger" data-toggle="popover" data-title="'+netKey+'" data-content="'+[networkMinerData.config.ip, networkMinerData.config.port].join(':')+'">'+netKey+'</span></span>')
+							$('#net-pools-table-details-'+md5(netKey)).html('<div class="alert alert-warning"><i class="fa fa-warning"></i><strong>No pools</strong> data available.</div>');
 						}
 					});
 					
@@ -2128,16 +2346,29 @@ function getStats(refresh)
 						
 						var devRow = '<tr class="dev-total"><td class="devs_table_name"><i class="gi gi-server"></i>&nbsp;&nbsp;Total</td><td class="devs_table_temp">-</td><td class="devs_table_freq">-</td><td class="devs_table_hash"><strong>'+ convertHashrate(netHashrates) +'</strong></td><td class="devs_table_sh">'+ networkMiners['total'].sh +'</td><td class="devs_table_ac">'+ networkMiners['total'].ac +'</td><td><small class="text-muted">'+parseFloat(tPercentageAc).toFixed(2)+'%</small></td><td class="devs_table_re">'+ networkMiners['total'].re +'</td><td><small class="text-muted">'+parseFloat(tPercentageRe).toFixed(2)+'%</small></td><td class="devs_table_hw">'+ networkMiners['total'].hw +'</td><td><small class="text-muted">'+parseFloat(tPercentageHw).toFixed(2)+'%</small></td><td class="devs_table_ls">'+ parseInt(tot_last_share_secs) +' secs ago</td><td><small class="text-muted">'+new Date(tot_last_share_date).toUTCString()+'</small></td></tr>'
 						
+						// Network Widgets
+						$(".network-widget-last-share").html(parseInt(tot_last_share_secs) + ' secs');
+						$(".network-widget-hwre-rates").html(parseFloat(tPercentageHw).toFixed(2) + '<sup style="font-size: 20px">%</sup> / ' + parseFloat(tPercentageRe).toFixed(2) + '<sup style="font-size: 20px">%</sup>');
+						
 					} else {
 						var devRow = '<tr class="dev-total"><td class="devs_table_name"><i class="gi gi-server"></i>&nbsp;&nbsp;Total</td><td class="devs_table_temp">-</td><td class="devs_table_freq">-</td><td class="devs_table_hash"><strong>-</strong></td><td class="devs_table_sh">-</td><td class="devs_table_ac">-</td><td><small class="text-muted">-</small></td><td class="devs_table_re">-</td><td><small class="text-muted">-</small></td><td class="devs_table_hw">-</td><td><small class="text-muted">-</small></td><td class="devs_table_ls">-</td><td><small class="text-muted">-</small></td></tr>'
 					}
 
 				    $('.network_devs_table_foot').html(devRow);
+				    
+				    //Add Network Main pool widget
+					$(".network-widget-total-hashrate").html(convertHashrate(netPoolHashrates));
+					$(".network-widget-total-hashrate").data('pool-hashrate', netPoolHashrates);
+
+					// Changing title page according to hashrate
+					$(document).attr('title', $(document).attr('title')+' | Network: '+convertHashrate(netPoolHashrates));
+
 				}
 				else
 				{
 					var nodevsMsg = '<div class="alert alert-warning"><i class="fa fa-warning"></i>No network devices found</div>';
 					$('#network-miner-table-details').html(nodevsMsg);
+					$('.network-miners-widget-section').hide();
 				}
 			} // End network miner details
 			

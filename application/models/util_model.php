@@ -188,7 +188,7 @@ class Util_model extends CI_Model {
 			$this->load->model('cgminer_model', 'network_miner');
 			
 			foreach ($netMiners as $netMiner) {
-				$a[$netMiner->name] = false;
+				$a[$netMiner->name] = new stdClass();
 
 				if ($this->checkNetworkDevice($netMiner->ip, $netMiner->port)) 
 				{
@@ -200,9 +200,11 @@ class Util_model extends CI_Model {
 						$a[$netMiner->name]->pools = $n->pools;
 					}
 				}
+				// Add config data
+				$a[$netMiner->name]->config = array('ip' => $netMiner->ip, 'port' => $netMiner->port);
 			}
 		}
-		
+
 		return $a;
 	}
 	
@@ -447,7 +449,7 @@ class Util_model extends CI_Model {
 
 			foreach ($stats->pools as $poolIndex => $pool)
 			{
-				if ($this->_minerdSoftware == "cpuminer")
+				if ($this->_minerdSoftware == "cpuminer" && !$network)
 				{
 					if (isset($pool->active) && $pool->active == 1)
 					{
@@ -472,11 +474,12 @@ class Util_model extends CI_Model {
 						$return['pool']['url'] = $pool->url;
 						$return['pool']['alive'] = $pool->alive;
 					}
-					$return['pool']['hashrate'] = $cgbfgminerPoolHashrate;	
+					$return['pool']['hashrate'] = $cgbfgminerPoolHashrate;
+
 				}
 			}
 		}
-	
+		
 		return json_encode($return);
 	}
 
@@ -1842,7 +1845,7 @@ log_message("error", var_export($pools, true));
 		
 		    if (is_resource($connection) && !in_array($address, $current))
 		    {
-		        $opens[] = $address;
+		        $opens[] = array('ip' => $address, 'name' => $this->getRandomStarName());
 		
 		        fclose($connection);
 		    }
@@ -1850,6 +1853,12 @@ log_message("error", var_export($pools, true));
 		
 		return $opens;
 		
+	}
+	
+	public function getRandomStarName() {
+		$array = array("Andromeda", "Antlia", "Apus", "Aquarius", "Aquila", "Ara", "Aries", "Auriga", "Boötes", "Caelum", "Camelopardalis", "Cancer", "Canes Venatici", "Canis Major", "Canis Minor", "Capricornus", "Carina", "Cassiopeia", "Centaurus", "Cepheus", "Cetus", "Chamaeleon", "Circinus", "Columba", "Coma Berenices", "Corona Austrina", "Corona Borealis", "Corvus", "Crater", "Crux", "Cygnus", "Delphinus", "Dorado", "Draco", "Equuleus", "Eridanus", "Fornax", "Gemini", "Grus", "Hercules", "Horologium", "Hydra", "Hydrus", "Indus", "Lacerta", "Leo", "Leo Minor", "Lepus", "Libra", "Lupus", "Lynx", "Lyra", "Mensa", "Microscopium", "Monoceros", "Musca", "Norma", "Octans", "Ophiuchus", "Orion", "Pavo", "Pegasus", "Perseus", "Phoenix", "Pictor", "Pisces", "Piscis Austrinus", "Puppis", "Pyxis", "Reticulum", "Sagitta", "Sagittarius", "Scorpius", "Sculptor", "Scutum", "Serpens", "Sextans", "Taurus", "Telescopium", "Triangulum", "Triangulum Australe", "Tucana", "Ursa Major", "Ursa Minor", "Vela", "Virgo", "Volans", "Vulpecula");
+		
+		return $array[array_rand($array)];
 	}
 	
 	public function setTimezone($timezone)

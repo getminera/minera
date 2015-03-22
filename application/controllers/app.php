@@ -180,28 +180,6 @@ class App extends Main_Controller {
 		$data['minerApiAllowExtra'] = $this->redis->get("minerd_api_allow_extra");
 		$data['globalPoolProxy'] = $this->redis->get("pool_global_proxy");
 		
-		// Load online Network miners and their pools
-		$savedNetMiners =json_decode( $this->redis->get('network_miners'));
-		$newNetMiners = array();
-		if (count($savedNetMiners) > 0)
-		{
-			$this->util_model->switchMinerSoftware(false, true);
-				
-			foreach ($savedNetMiners as $key => $saveNetMiner) {
-				$newNetMiners[$key] = $saveNetMiner;
-				$newNetMiners[$key]->id = md5($saveNetMiner->name);
-				if ($this->util_model->checkNetworkDevice($saveNetMiner->ip, $saveNetMiner->port)) 
-				{
-					$n = $this->util_model->getMinerStats($saveNetMiner->ip.":".$saveNetMiner->port);
-					$newP = array();
-					foreach ($n->pools as $p) {
-						$newP[] = array("url" => $p->url, "username" => $p->user, "password" => $p->pass, "active" => $p->active);
-					}
-					$newNetMiners[$key]->pools = $newP;
-				}
-			}
-			$this->redis->set('network_miners', json_encode($newNetMiners));
-		}
 		$data['networkMiners'] = json_decode($this->redis->get('network_miners'));
 		
 		// Load Dashboard settings

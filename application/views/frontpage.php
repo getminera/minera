@@ -22,9 +22,11 @@
 
 					<div class="row">
 						
+						<?php if (count($netMiners) > 0) : ?>
 						<section class="col-md-12 local-miners-title" style="display:none;">
 							<h4>Local <small>Miners</small></h4>
 						</section>
+						<?php endif; ?>
 
 						<section class="col-md-12 section-raw-stats">
 							<div class="alert alert-info alert-dismissable">
@@ -177,11 +179,57 @@
 							
 						</section>
 						
+						<!-- network widgets section -->
+						<?php if (count($netMiners) > 0) : ?>
 						<div class="network-miners-widget-section">
 							<section class="col-md-12 local-miners-title">
 								<h4>Network <small>Miners</small></h4>
 							</section>
 						</div>
+						
+						<section class="network-miners-widget-section col-md-12 widgets-section">
+							<div class="row">
+							 	<!-- total network hashrate widget -->
+								<div class="col-lg-4 col-sm-4 col-xs-12">
+									<!-- small box -->
+									<div class="small-box bg-dark-blue">
+										<div class="inner">
+											<h3 class="network-widget-total-hashrate"><i class="ion ion-loading-c"></i></h3>
+											<p>Network Pool Hashrate</p>
+										</div>
+										<div class="icon"><i class="ion ion-ios7-speedometer-outline"></i></div>
+										<a href="#network-pools-details" class="small-box-footer">Totals net devices <i class="fa fa-arrow-circle-right"></i></a>
+									</div>
+								</div>
+								
+								<!-- network hw/re widget -->
+								<div class="col-lg-4 col-sm-4 col-xs-12">
+									<!-- small box -->
+									<div class="small-box bg-light2">
+										<div class="inner">
+											<h3 class="network-widget-hwre-rates"><i class="ion ion-loading-c"></i></h3>
+											<p>Network Error/Rejected Rates</p>
+										</div>
+										<div class="icon"><i class="ion ion-alert-circled"></i></div>
+										<a href="#network-details" class="small-box-footer">Details <i class="fa fa-arrow-circle-right"></i></a>
+									</div>
+								</div>
+								
+								<!-- last network share widget -->
+								<div class="col-lg-4 col-sm-4 col-xs-12">
+									<!-- small box -->
+									<div class="small-box bg-light-brown">
+										<div class="inner">
+											<h3 class="network-widget-last-share"><i class="ion ion-loading-c"></i></h3>
+											<p>Last Network Share</p>
+										</div>
+										<div class="icon"><i class="ion ion-ios7-stopwatch-outline"></i></div>
+										<a href="#network-details" class="small-box-footer">Network details <i class="fa fa-arrow-circle-right"></i></a>
+									</div>
+								</div>
+							</div>							
+						</section>
+						<?php endif; ?>
 						
 						<!-- Top section -->
 						<section class="hidden-xs col-md-12 connectedSortable ui-sortable top-section">
@@ -299,7 +347,7 @@
 							
 							<!-- Network Miners box -->
 							<?php if (count($netMiners) > 0) : ?>
-							<div class="box box-light network-miner-details" style="display:none;">
+							<div id="network-details" class="box box-light network-miner-details" style="display:none;">
 							   	<div class="overlay"></div>
 							   	<div class="loading-img"></div>
 								<div class="box-header" style="cursor: move;">
@@ -351,7 +399,7 @@
 							</div><!-- /.network miner box -->
 							
 							<!-- Network pools box -->
-							<div class="box box-light">
+							<div id="network-pools-details" class="box box-light">
 							   	<div class="overlay"></div>
 							   	<div class="loading-img"></div>
 								<div class="box-header" style="cursor: move;">
@@ -361,15 +409,16 @@
 									</div><!-- /. tools -->
 									<i class="fa fa-cloud"></i>
 
-									<h3 class="box-title" id="pools-details">Network Pools details</h3>
+									<h3 class="box-title" id="pools-details" >Network Pools details</h3>
 								</div>
 								<div class="box-body">
 									<div class="row">
 										<div class="col-sm-12">
-											<?php foreach ($netMiners as $netMiner) : ?>
+											<?php $npi = 1; $netCounts = count($netMiners); foreach ($netMiners as $netMiner) : ?>
+												<div class="mb20 net-pools-label-<?php echo md5($netMiner->name) ?>"></div>
 												<div class="table-responsive">
 													  <!-- .table - Uses sparkline charts-->
-													  <table id="net-pools-table-details" class="table table-striped datatable">
+													  <table id="net-pools-table-details-<?php echo md5($netMiner->name) ?>" class="net-pools-table table table-striped datatable">
 														  <thead>
 														  <tr>
 															  <th>Pool</th>
@@ -390,9 +439,10 @@
 														  <tbody class="net_pools_table">
 														</tbody>
 													</table><!-- /.table -->
-													<p class="net-pool-alert"></p>
+													<p class="net-pool-alert-<?php echo md5($netMiner->name) ?>"></p>
 												</div>
-											<?php endforeach; ?>
+												<?php if ($npi <= ($netCounts-1)) : ?><hr /><?php endif; ?>
+											<?php $npi++; endforeach; ?>
 										</div>
 									</div><!-- /.row - inside box -->
 								</div><!-- /.box-body -->
