@@ -968,15 +968,56 @@ log_message("error", var_export($pools, true));
 	// Get Bitstamp API to look at BTC/USD rates
 	public function getBtcUsdRates()
 	{
-		if ($json = @file_get_contents("https://www.bitstamp.net/api/ticker/"))
+		// wait 1d before recheck
+		if (time() > ($this->redis->get("bitstamp_update")+600))
 		{
-			$a = json_decode($json);
-			return $a;
-		}
-		else
+			log_message('error', "Refreshing Bitstamp data");
+			
+			$object = false;
+			
+			if ($json = @file_get_contents("https://www.bitstamp.net/api/ticker/"))
+			{
+				if ($jsonConv = @file_get_contents('https://www.bitstamp.net/api/eur_usd/'))
+				{
+					$conv = json_decode($jsonConv);
+					$exchangeEur = ($conv->sell+$conv->buy)/2;
+					$a = json_decode($json);
+					$o = array(
+						"high_eur" => round(($a->high/$exchangeEur), 2),
+						"last_eur" => round(($a->last/$exchangeEur), 2),
+						"high" => $a->high,
+						"last" => $a->last,
+						"timestamp" => $a->timestamp,
+						"bid_eur" => round(($a->bid/$exchangeEur), 2),
+						"vwap_eur" => round(($a->vwap/$exchangeEur), 2),
+						"bid" => $a->bid,
+						"vwap" => $a->vwap,
+						"volume" => $a->volume,
+						"low_eur" => round(($a->low/$exchangeEur), 2),
+						"ask_eur" => round(($a->ask/$exchangeEur), 2),
+						"low" => $a->low,
+						"ask" => $a->ask,
+						"eur_usd" => $exchangeEur
+					);
+	
+					$object = json_decode(json_encode($o), FALSE);
+				}
+			}
+			
+			if ($object)
+			{
+				$this->redis->set("bitstamp_update", time());
+			
+				$this->redis->set("bitstamp_data", json_encode($object));
+				
+				return $object;
+			}
+		} 
+		else 
 		{
-			return false;
+			return json_decode($this->redis->get("bitstamp_data"));
 		}
+		
 	}
 	
 	// Get Cryptsy API to look at BTC rates

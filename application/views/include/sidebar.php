@@ -105,13 +105,13 @@
 						<!-- BTC/USD rates -->
 						<li class="messages-menu">
                             <a href="#" class="dropdown-toggle" data-toggle="dropdown">
-                                <i class="fa fa-btc"></i> price: <?php echo $btc->last ?> <i class="fa fa-dollar"></i>
+                                <i class="fa fa-btc"></i> price: <?php echo $btc->last ?> <i class="fa fa-dollar"></i> <span class="small">(<?php echo $btc->last_eur ?> <i class="fa fa-eur"></i>)</span>
                             </a>
                             <ul class="dropdown-menu">
                                 <li class="header">Data from Bitstamp</li>
                                 <li>
                                     <!-- inner menu: contains the actual data -->
-                                    <ul class="menu" style="overflow: hidden; width: 100%; height: 200px;">
+                                    <ul class="menu" style="overflow: hidden; width: 100%; height: 300px;">
                                         <li>
                                             <a href="#">
                                             	<div class="pull-left" style="padding-left:15px;">
@@ -130,7 +130,7 @@
                                                     <i class="fa fa-arrow-circle-up"></i>
                                                 </div>
                                                 <h4>
-                                                    <?php echo $btc->high ?>
+                                                    <?php echo $btc->high ?> <i class="fa fa-dollar"></i> <span class="small">(<?php echo $btc->high_eur ?> <i class="fa fa-eur"></i>)</span>
                                                     <small><i class="fa fa-clock-o"></i> <?php echo date("H:i", $btc->timestamp) ?></small>
                                                 </h4>
                                                 <p>High</p>
@@ -142,10 +142,22 @@
                                                     <i class="fa fa-arrow-circle-down"></i>
                                                 </div>
                                                 <h4>
-                                                    <?php echo $btc->low ?>
+                                                    <?php echo $btc->low ?> <i class="fa fa-dollar"></i> <span class="small">(<?php echo $btc->low_eur ?> <i class="fa fa-eur"></i>)</span>
                                                     <small><i class="fa fa-clock-o"></i> <?php echo date("H:i", $btc->timestamp) ?></small>
                                                 </h4>
                                                 <p>Low</p>
+                                            </a>
+                                        </li>
+                                        <li>
+                                            <a href="#">
+                                            	<div class="pull-left" style="padding-left:15px;">
+                                                    <i class="fa fa-exchange"></i>
+                                                </div>
+                                                <h4>
+                                                    1 <i class="fa fa-eur"></i> == <?php echo $btc->eur_usd ?> <i class="fa fa-dollar"></i>
+                                                    <small><i class="fa fa-clock-o"></i> <?php echo date("H:i", $btc->timestamp) ?></small>
+                                                </h4>
+                                                <p>Eur/Usd Rate</p>
                                             </a>
                                         </li>
                                     </ul>                                </li>
