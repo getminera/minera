@@ -414,32 +414,66 @@
 									<div class="row">
 										<div class="col-sm-12">
 											<?php $npi = 1; $netCounts = count($netMiners); foreach ($netMiners as $netMiner) : ?>
-												<div class="mb20 net-pools-label-<?php echo md5($netMiner->name) ?>"></div>
-												<div class="table-responsive">
-													  <!-- .table - Uses sparkline charts-->
-													  <table id="net-pools-table-details-<?php echo md5($netMiner->name) ?>" class="net-pools-table table table-striped datatable">
-														  <thead>
-														  <tr>
-															  <th>Pool</th>
-															  <th>Url</th>
-															  <th>Type</th>
-															  <th>Status</th>
-															  <th>Pool HR</th>
-															  <th>CS</th>
-															  <th>PS</th>
-															  <th>CA</th>
-															  <th>PA</th>
-															  <th>CR</th>
-															  <th>PR</th>
-															  <th>Username</th>
-														  </tr>
-														  </thead>
-														  <tbody class="net_pools_table">
-														</tbody>
-													</table><!-- /.table -->
-													<p class="net-pool-alert-<?php echo md5($netMiner->name) ?>"></p>
+												<div id="net-<?php echo md5($netMiner->name) ?>">
+													<div class="mb20 net-pools-label-<?php echo md5($netMiner->name) ?>"></div>
+													<div class="table-responsive">
+														  <!-- .table - Uses sparkline charts-->
+														  <table id="net-pools-table-details-<?php echo md5($netMiner->name) ?>" class="net-pools-table table table-striped datatable">
+															  <thead>
+															  <tr>
+																  <th>&nbsp;</th>
+																  <th>Pool</th>
+																  <th>Url</th>
+																  <th>Type</th>
+																  <th>Status</th>
+																  <th>Pool HR</th>
+																  <th>CS</th>
+																  <th>PS</th>
+																  <th>CA</th>
+																  <th>PA</th>
+																  <th>CR</th>
+																  <th>PR</th>
+																  <th>Username</th>
+															  </tr>
+															  </thead>
+															  <tbody class="net_pools_table">
+															</tbody>
+														</table><!-- /.table -->
+														<p class="net-pool-alert-<?php echo md5($netMiner->name) ?>"></p>
+													</div>
+													<div class="net-pools-addbox-<?php echo md5($netMiner->name) ?>">
+														<button class="btn btn-xs btn-primary toggle-add-net-pool" data-open="0"><i class="fa fa-plus"></i> Add pool</button> <button class="btn btn-xs btn-danger"><i class="fa fa-gift"></i> Add donation pool</button>
+														<div class="form-group mt10" style="display:none;">
+															<div class="row sort-attach">
+														    	<div class="col-xs-5">
+														    		<div class="input-group">
+														    			<span class="input-group-addon"><i class="fa fa-cloud-download"></i></span>
+														    			<input type="text" class="form-control pool_url_<?php echo md5($netMiner->name) ?>" placeholder="Pool url" name="pool_url" value="" />
+														    		</div>
+														    	</div>
+														    	<div class="col-xs-3">
+														    		<div class="input-group">
+														    			<span class="input-group-addon"><i class="fa fa-user"></i></span>
+														    			<input type="text" class="form-control pool_username_<?php echo md5($netMiner->name) ?>" placeholder="username" name="pool_username" value=""  />
+														    		</div>
+														    	</div>
+														    	<div class="col-xs-3">
+														    		<div class="input-group">
+														    			<span class="input-group-addon"><i class="fa fa-lock"></i></span>
+														    			<input type="text" class="form-control pool_password_<?php echo md5($netMiner->name) ?>" placeholder="password" name="pool_password" value=""  />
+														    		</div>
+														    	</div>
+														    	<div class="col-xs-1">
+														    		<div class="input-group">
+														    			<button class="btn btn-sm btn-success add-net-pool" data-netminer="<?php echo md5($netMiner->name) ?>" data-network="<?php echo $netMiner->ip.':'.$netMiner->port ?>"><i class="fa fa-plus"></i> Add</button>
+														    		</div>
+														    	</div>
+														    </div>
+														</div>
+													</div>
+													<div class="add-pool-error-<?php echo md5($netMiner->name) ?> mt10 text-red"></div>
+													<?php if ($npi <= ($netCounts-1)) : ?><hr /><?php endif; ?>
 												</div>
-												<?php if ($npi <= ($netCounts-1)) : ?><hr /><?php endif; ?>
 											<?php $npi++; endforeach; ?>
 										</div>
 									</div><!-- /.row - inside box -->

@@ -520,7 +520,7 @@
                                             <label>Currently selected: <span class="badge bg-green"><?php echo $minerdSoftware ?></span></label>
 											<select name="minerd_software" id="minerd-software" class="form-control">
 												<option value="cpuminer" <?php if ($minerdSoftware == "cpuminer") : ?>selected<?php endif; ?>>CPUminer (GC3355 fork)</option>
-												<option value="bfgminer" <?php if ($minerdSoftware == "bfgminer") : ?>selected<?php endif; ?>>BFGminer 4.x (Official)</option>
+												<option value="bfgminer" <?php if ($minerdSoftware == "bfgminer") : ?>selected<?php endif; ?>>BFGminer 5.x (Official)</option>
 												<option value="cgminer" <?php if ($minerdSoftware == "cgminer") : ?>selected<?php endif; ?>>CGminer 4.x (Official)</option>
 												<option value="cgdmaxlzeus" <?php if ($minerdSoftware == "cgdmaxlzeus") : ?>selected<?php endif; ?>>CGminer (Dmaxl Zeus fork)</option>
 												<?php if ($activeCustomMiners) : ?>

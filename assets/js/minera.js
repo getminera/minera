@@ -1446,6 +1446,137 @@ function triggerError(msg)
 	return false;
 }
 
+// Select Pool on the fly
+$(document).on('click', '.select-net-pool', function(e) {
+	e.preventDefault();
+	$('.overlay').show();
+    var poolId = $(this).data('pool-id'),
+    	netConfig = $(this).data('pool-config');
+    $.ajax(_baseUrl+"/app/api?command=select_pool&poolId="+poolId+'&network='+netConfig, {
+        dataType: "text",
+        success: function (dataP) {
+        	if (dataP)
+        	{
+        		var dataJ = $.parseJSON(dataP);
+        		console.log(dataJ.STATUS[0].Msg);
+    			getStats(true);
+    			if (dataJ)
+    			{
+    				$('.net-pool-alert-'+md5(netKey)).html('Miner could take some minutes to complete the switching process. <pre style="font-size:10px;margin-top:10px;">'+dataP+'</pre>');
+    				setTimeout(function() {
+						$('.net-pool-alert-'+md5(netKey)).html('');
+	    			}, 30000);
+    			}
+    		}
+        }
+    });
+});
+
+// Remove Pool on the fly
+$(document).on('click', '.remove-net-pool', function(e) {
+	e.preventDefault();
+	$('.overlay').show();
+    var poolId = $(this).data('pool-id'),
+    	netConfig = $(this).data('pool-config');
+    $.ajax(_baseUrl+"/app/api?command=remove_pool&poolId="+poolId+'&network='+netConfig, {
+        dataType: "text",
+        success: function (dataP) {
+        	if (dataP)
+        	{
+        		var dataJ = $.parseJSON(dataP);
+        		console.log(dataJ.STATUS[0].Msg);
+    			getStats(true);
+    			if (dataJ)
+    			{
+    				$('.net-pool-alert-'+$(this).data('netminer')).html('Miner could take some minutes to complete the switching process. <pre style="font-size:10px;margin-top:10px;">'+dataP+'</pre>');
+    				setTimeout(function() {
+						$('.net-pool-alert-'+$(this).data('netminer')).html('');
+	    			}, 30000);
+    			}
+    		}
+        }
+    });
+});
+
+// Add network Pool on the fly
+$(document).on('click', '.toggle-add-net-pool', function(e) {
+	e.preventDefault();
+	//$('.overlay').show();
+	if ($(this).data('open')) {
+		$(this).nextAll('.form-group').fadeOut();
+		$(this).data('open', false);
+	} else {
+		$(this).nextAll('.form-group').fadeIn();
+		$(this).data('open', true);
+	}
+});
+
+$(document).on('click', '.add-net-pool', function(e) {
+	e.preventDefault();
+	$('.overlay').show();
+	if ($('.pool_url_'+$(this).data('netminer')).val() && $('.pool_username_'+$(this).data('netminer')).val() && $('.pool_password_'+$(this).data('netminer')).val()) {
+		$('.add-pool-error-'+$(this).data('netminer')).html('<i class="fa fa-warning"></i> Each field is required').fadeOut();
+		var params = {
+			command: 'add_pool',
+			url: $('.pool_url_'+$(this).data('netminer')).val(),
+			user: $('.pool_username_'+$(this).data('netminer')).val(),
+			pass: $('.pool_password_'+$(this).data('netminer')).val(),
+			network: $(this).data('network')
+		};
+		var query = $.param(params);
+
+		$.ajax(_baseUrl+"/app/api?"+query, {
+	        dataType: "text",
+	        success: function (dataP) {
+	        	if (dataP)
+	        	{
+	        		var dataJ = $.parseJSON(dataP);
+	        		//console.log(dataJ);
+	    			getStats(true);
+	    			if (dataJ)
+	    			{
+	    				$('.net-pool-alert-'+$(this).data('netminer')).html('Miner could take some minutes to complete the process. <pre style="font-size:10px;margin-top:10px;">'+dataP+'</pre>');
+	    				setTimeout(function() {
+							$('.net-pool-alert-'+$(this).data('netminer')).html('');
+		    			}, 30000);
+	    			}
+	    			$('.pool_url_'+$(this).data('netminer')).val("");
+					$('.pool_username_'+$(this).data('netminer')).val("");
+					$('.pool_password_'+$(this).data('netminer')).val("");
+	    		}
+	        }
+	    });
+	} else {
+		$('.add-pool-error-'+$(this).data('netminer')).html('<i class="fa fa-warning"></i> Each field is required').fadeIn();
+	}
+});
+
+// Select Pool on the fly
+$(document).on('click', '.select-pool', function(e) {
+	e.preventDefault();
+	$('.overlay').show();
+    var poolId = $(this).data('pool-id');
+    $.ajax(_baseUrl+"/app/api?command=select_pool&poolId="+poolId, {
+        dataType: "text",
+        success: function (dataP) {
+        	if (dataP)
+        	{
+        		var dataJ = $.parseJSON(dataP);
+        		
+    			getStats(true);
+    			if (dataJ)
+    			{
+    				$(".pool-alert").html('CG/BFGminer could take some minutes to complete the switching process. <pre style="font-size:10px;margin-top:10px;">'+dataP+'</pre>');
+    				
+    				setTimeout(function() {
+						$(".pool-alert").html('');
+	    			}, 30000);
+    			}
+    		}
+        }
+    });
+});
+
 // Stats scripts
 function getStats(refresh)
 {
@@ -1750,32 +1881,6 @@ function getStats(refresh)
 						] );
 					}
 					
-				});
-				
-				// Select Pool on the fly
-			    $(document).on('click', '.select-pool', function(e) {
-					e.preventDefault();
-					$('.overlay').show();
-				    var poolId = $(this).data('pool-id');
-				    $.ajax(_baseUrl+"/app/api?command=select_pool&poolId="+poolId, {
-				        dataType: "text",
-				        success: function (dataP) {
-				        	if (dataP)
-				        	{
-				        		var dataJ = $.parseJSON(dataP);
-				        		
-				    			getStats(true);
-				    			if (dataJ)
-				    			{
-				    				$(".pool-alert").html('CG/BFGminer could take some minutes to complete the switching process. <pre style="font-size:10px;margin-top:10px;">'+dataP+'</pre>');
-				    				
-				    				setTimeout(function() {
-										$(".pool-alert").html('');
-					    			}, 30000);
-				    			}
-				    		}
-				        }
-				    });
 				});
 			}
 			else
@@ -2166,7 +2271,7 @@ function getStats(refresh)
 										"stateSave": true,
 										"bAutoWidth": false,
 										//"sDom": 't',
-										"order": [[ 2, "asc" ]],
+										"order": [[ 4, "asc" ]],
 										"fnRowCallback": function( nRow, aData, iDisplayIndex ) {
 											//if(iDisplayIndex === 0)
 											//	nRow.className = "bg-dark";
@@ -2174,7 +2279,7 @@ function getStats(refresh)
 										},
 										"aoColumnDefs": [ 
 										{
-											"aTargets": [ 4 ],	
+											"aTargets": [ 5 ],	
 											"mRender": function ( data, type, full ) {
 												if (type === 'display')
 												{
@@ -2184,7 +2289,7 @@ function getStats(refresh)
 											},
 										},
 										{
-											"aTargets": [ 6, 8, 10 ],	
+											"aTargets": [ 7, 9, 11 ],	
 											"mRender": function ( data, type, full ) {
 												if (type === 'display')
 												{
@@ -2290,8 +2395,11 @@ function getStats(refresh)
 				
 									if ( $.fn.dataTable.isDataTable('#net-pools-table-details-'+md5(netKey)) )
 									{
+										pval.usershort = (pval.user.length > 15) ? pval.user.substring(0, 15)+'...' : pval.user;
+										
 										// Add Pool rows via datatable
 										$('#net-pools-table-details-'+md5(netKey)).dataTable().fnAddData( [
+											'<button class="btn btn-xs btn-danger '+pactivelabclass+' remove-net-pool" data-pool-id="'+pkey+'" data-pool-config="'+[networkMinerData.config.ip, networkMinerData.config.port].join(':')+'" data-netminer="'+md5(netKey)+'"><i class="fa fa-close"></i></button>',
 											'<button style="width:90px;" class="btn btn-sm btn-default '+pactivelabclass+' select-net-pool" data-pool-id="'+pkey+'" data-pool-config="'+[networkMinerData.config.ip, networkMinerData.config.port].join(':')+'"><i class="fa fa-cloud-'+picon+'"></i> '+pactivelab+'</button>',
 											purlicon+'<small data-toggle="popover" data-html="true" data-title="Priority: '+pval.priority+'" data-content="<small>'+purl+'</small>">'+pshorturl+'</small>',
 											'<span class="label label-'+plabel+'">'+ptype+'</span>',
@@ -2303,36 +2411,10 @@ function getStats(refresh)
 											pacceptedPrev,
 											prejected,
 											prejectedPrev,
-											'<span class="badge bg-'+puserlabel+'">'+pval.user+'</span>'
+											'<span class="badge bg-'+puserlabel+'" data-toggle="tooltip" title="'+pval.user+'">'+pval.usershort+'</span>'
 										] );
 									}
 									
-								});
-								
-								// Select Pool on the fly
-							    $(document).on('click', '.select-net-pool', function(e) {
-									e.preventDefault();
-									$('.overlay').show();
-								    var poolId = $(this).data('pool-id'),
-								    	netConfig = $(this).data('pool-config');
-								    $.ajax(_baseUrl+"/app/api?command=select_pool&poolId="+poolId+'&network='+netConfig, {
-								        dataType: "text",
-								        success: function (dataP) {
-								        	if (dataP)
-								        	{
-								        		var dataJ = $.parseJSON(dataP);
-								        		console.log(dataJ.STATUS[0].Msg);
-								    			getStats(true);
-								    			if (dataJ)
-								    			{
-								    				$('.net-pool-alert-'+md5(netKey)).html('CG/BFGminer could take some minutes to complete the switching process. <pre style="font-size:10px;margin-top:10px;">'+dataP+'</pre>');
-								    				setTimeout(function() {
-														$('.net-pool-alert-'+md5(netKey)).html('');
-									    			}, 30000);
-								    			}
-								    		}
-								        }
-								    });
 								});
 							}
 							else
@@ -2365,6 +2447,7 @@ function getStats(refresh)
 							// Add empty network pools table
 							$('.net-pools-label-'+md5(netKey)).html('<span class="label label-danger" data-toggle="popover" data-title="'+netKey+'" data-content="'+[networkMinerData.config.ip, networkMinerData.config.port].join(':')+'">'+netKey+'</span></span>')
 							$('#net-pools-table-details-'+md5(netKey)).html('<div class="alert alert-warning"><i class="fa fa-warning"></i><strong>No pools</strong> data available.</div>');
+							$('.net-pools-addbox-'+md5(netKey)).fadeOut();
 						}
 					});
 					

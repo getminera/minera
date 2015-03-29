@@ -61,6 +61,7 @@ class Cgminer_model extends CI_Model {
 		log_message("error", "Called Minerd with command: ".$cmd);
 		
 		$ip = "127.0.0.1"; $port = 4028;
+
 		if ($network) list($ip, $port) = explode(":", $network);
 		
 		$socket = $this->getsock($ip, $port);
