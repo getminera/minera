@@ -318,7 +318,6 @@
 													  <tr>
 														  <th>Pool</th>
 														  <th>Url</th>
-														  <th>Priority</th>
 														  <th>Type</th>
 														  <th>Status</th>
 														  <th>Pool HR</th>
@@ -423,7 +422,6 @@
 														  <tr>
 															  <th>Pool</th>
 															  <th>Url</th>
-															  <th>Priority</th>
 															  <th>Type</th>
 															  <th>Status</th>
 															  <th>Pool HR</th>

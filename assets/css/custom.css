@@ -44,6 +44,12 @@ body > .header { position: fixed !important; }
 .bg-light2 { background: #E4EBEF !important; color: #434343; }
 .bg-light-brown { background: #B29B88 !important; color: white; }
 
+.ellipsis {
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+
 .mt10 { margin-top: 10px; }
 .mt20 { margin-top: 20px; }
 .mt30 { margin-top: 30px; }

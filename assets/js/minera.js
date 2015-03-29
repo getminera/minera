@@ -1590,7 +1590,7 @@ function getStats(refresh)
 						},
 						"aoColumnDefs": [ 
 						{
-							"aTargets": [ 5 ],	
+							"aTargets": [ 4 ],	
 							"mRender": function ( data, type, full ) {
 								if (type === 'display')
 								{
@@ -1600,7 +1600,7 @@ function getStats(refresh)
 							},
 						},
 						{
-							"aTargets": [ 7, 9, 11 ],	
+							"aTargets": [ 6, 8, 10 ],	
 							"mRender": function ( data, type, full ) {
 								if (type === 'display')
 								{
@@ -1622,7 +1622,8 @@ function getStats(refresh)
 				// Add pools data
 				$.each( data.pools, function( pkey, pval ) 
 				{
-					var picon = "download",
+					var parser = document.createElement('a'),
+						picon = "download",
 						ptype = "failover",
 						pclass = "bg-light",
 						plabel = "light",
@@ -1633,7 +1634,16 @@ function getStats(refresh)
 						pactivelab = "Select This",
 						purlicon = "",
 						purl = pval.url,
+						pshorturl = purl,
 						pool_shares = 0;
+					
+					parser.href = pval.url;
+
+					if (parser.hostname) {
+						pshorturl = parser.hostname;
+					} else {
+						pshorturl = pval.url.replace('stratum+tcp://', '').split(':')[0];	
+					}
 					
 					if (pval.alive)
 					{
@@ -1665,7 +1675,7 @@ function getStats(refresh)
 						plabel = "primary";
 						pactivelabclass = "disabled";
 						pactivelab = "Selected";
-						purl = '<strong>'+pval.url+'</strong>';
+						pshorturl = '<strong>'+pshorturl+'</strong>';
 					}
 					
 					var pstatsId = pval.stats_id;
@@ -1711,8 +1721,7 @@ function getStats(refresh)
 						// Add Pool rows via datatable
 						$('#pools-table-details').dataTable().fnAddData( [
 							'<button style="width:90px;" class="btn btn-sm btn-default '+pactivelabclass+' select-pool" data-pool-id="'+pkey+'"><i class="fa fa-cloud-'+picon+'"></i> '+pactivelab+'</button>',
-							purlicon+'<small>'+purl+'</small>',
-							pval.priority,
+							purlicon+'<small data-toggle="popover" data-html="true" data-title="Priority: '+pval.priority+'" data-content="<small>'+purl+'</small>">'+pshorturl+'</small>',
 							'<span class="label label-'+plabel+'">'+ptype+'</span>',
 							'<span class="label label-'+paliveclass+'">'+palivelabel+'</span>',
 							phashData,
@@ -1744,6 +1753,7 @@ function getStats(refresh)
 				    			if (dataJ)
 				    			{
 				    				$(".pool-alert").html('CG/BFGminer could take some minutes to complete the switching process. <pre style="font-size:10px;margin-top:10px;">'+dataP+'</pre>');
+				    				
 				    				setTimeout(function() {
 										$(".pool-alert").html('');
 					    			}, 30000);
@@ -2149,7 +2159,7 @@ function getStats(refresh)
 										},
 										"aoColumnDefs": [ 
 										{
-											"aTargets": [ 5 ],	
+											"aTargets": [ 4 ],	
 											"mRender": function ( data, type, full ) {
 												if (type === 'display')
 												{
@@ -2159,7 +2169,7 @@ function getStats(refresh)
 											},
 										},
 										{
-											"aTargets": [ 7, 9, 11 ],	
+											"aTargets": [ 6, 8, 10 ],	
 											"mRender": function ( data, type, full ) {
 												if (type === 'display')
 												{
@@ -2167,7 +2177,7 @@ function getStats(refresh)
 												}
 												return data;
 											},
-										},
+										}
 										]
 									});
 								}
@@ -2175,7 +2185,8 @@ function getStats(refresh)
 								// Add pools data
 								$.each(networkMinerData.pools, function( pkey, pval ) 
 								{
-									var picon = "download",
+									var parser = document.createElement('a'),
+										picon = "download",
 										ptype = "failover",
 										pclass = "bg-light",
 										plabel = "light",
@@ -2186,7 +2197,16 @@ function getStats(refresh)
 										pactivelab = "Select This",
 										purlicon = "",
 										purl = pval.url,
+										pshorturl = purl,
 										pool_shares = 0;
+									
+									parser.href = pval.url;
+
+									if (parser.hostname) {
+										pshorturl = parser.hostname;
+									} else {
+										pshorturl = pval.url.replace('stratum+tcp://', '').split(':')[0];	
+									}
 									
 									if (pval.alive)
 									{
@@ -2218,7 +2238,7 @@ function getStats(refresh)
 										plabel = "primary";
 										pactivelabclass = "disabled";
 										pactivelab = "Selected";
-										purl = '<strong>'+pval.url+'</strong>';
+										pshorturl = '<strong>'+pshorturl+'</strong>';
 									}
 									
 									var pstatsId = pval.stats_id;
@@ -2258,8 +2278,7 @@ function getStats(refresh)
 										// Add Pool rows via datatable
 										$('#net-pools-table-details-'+md5(netKey)).dataTable().fnAddData( [
 											'<button style="width:90px;" class="btn btn-sm btn-default '+pactivelabclass+' select-net-pool" data-pool-id="'+pkey+'" data-pool-config="'+[networkMinerData.config.ip, networkMinerData.config.port].join(':')+'"><i class="fa fa-cloud-'+picon+'"></i> '+pactivelab+'</button>',
-											purlicon+'<small>'+purl+'</small>',
-											pval.priority,
+											purlicon+'<small data-toggle="popover" data-html="true" data-title="Priority: '+pval.priority+'" data-content="<small>'+purl+'</small>">'+pshorturl+'</small>',
 											'<span class="label label-'+plabel+'">'+ptype+'</span>',
 											'<span class="label label-'+paliveclass+'">'+palivelabel+'</span>',
 											phashData,
@@ -2334,24 +2353,32 @@ function getStats(refresh)
 						}
 					});
 					
+					var tPercentageRe = 0, tPercentageHw = 0, tot_last_share_secs = 0;
+					
 					if (networkMiners.total !== undefined) {
 						var totalShares = (networkMiners['total'].ac+networkMiners['total'].re+networkMiners['total'].hw),
 							tPercentageAc = (100*networkMiners['total'].ac/totalShares),
-							tPercentageRe = (100*networkMiners['total'].re/totalShares),
-							tPercentageHw = (100*networkMiners['total'].hw/totalShares),
-							tot_last_share_date = Math.min.apply(Math, tLastShares)*1000,
-							tot_last_share_secs = (tot_last_share_date > 0) ? (new Date().getTime() - tot_last_share_date)/1000 : 0;
+							tot_last_share_date = Math.min.apply(Math, tLastShares)*1000;
+						
+						tPercentageRe = (100*networkMiners['total'].re/totalShares);
+						tPercentageHw = (100*networkMiners['total'].hw/totalShares);
+						tot_last_share_secs = (tot_last_share_date > 0) ? (new Date().getTime() - tot_last_share_date)/1000 : 0;
 							
 						if (tot_last_share_secs < 0) tot_last_share_secs = 0;
 						
-						var devRow = '<tr class="dev-total"><td class="devs_table_name"><i class="gi gi-server"></i>&nbsp;&nbsp;Total</td><td class="devs_table_temp">-</td><td class="devs_table_freq">-</td><td class="devs_table_hash"><strong>'+ convertHashrate(netHashrates) +'</strong></td><td class="devs_table_sh">'+ networkMiners['total'].sh +'</td><td class="devs_table_ac">'+ networkMiners['total'].ac +'</td><td><small class="text-muted">'+parseFloat(tPercentageAc).toFixed(2)+'%</small></td><td class="devs_table_re">'+ networkMiners['total'].re +'</td><td><small class="text-muted">'+parseFloat(tPercentageRe).toFixed(2)+'%</small></td><td class="devs_table_hw">'+ networkMiners['total'].hw +'</td><td><small class="text-muted">'+parseFloat(tPercentageHw).toFixed(2)+'%</small></td><td class="devs_table_ls">'+ parseInt(tot_last_share_secs) +' secs ago</td><td><small class="text-muted">'+new Date(tot_last_share_date).toUTCString()+'</small></td></tr>'
+						var devRow = '<tr class="dev-total"><td class="devs_table_name"><i class="gi gi-server"></i>&nbsp;&nbsp;Total</td><td class="devs_table_temp">-</td><td class="devs_table_freq">-</td><td class="devs_table_hash"><strong>'+ convertHashrate(netHashrates) +'</strong></td><td class="devs_table_sh">'+ networkMiners['total'].sh +'</td><td class="devs_table_ac">'+ networkMiners['total'].ac +'</td><td><small class="text-muted">'+parseFloat(tPercentageAc).toFixed(2)+'%</small></td><td class="devs_table_re">'+ networkMiners['total'].re +'</td><td><small class="text-muted">'+parseFloat(tPercentageRe).toFixed(2)+'%</small></td><td class="devs_table_hw">'+ networkMiners['total'].hw +'</td><td><small class="text-muted">'+parseFloat(tPercentageHw).toFixed(2)+'%</small></td><td class="devs_table_ls">'+ parseInt(tot_last_share_secs) +' secs ago</td><td><small class="text-muted">'+new Date(tot_last_share_date).toUTCString()+'</small></td></tr>';				
 						
 						// Network Widgets
 						$(".network-widget-last-share").html(parseInt(tot_last_share_secs) + ' secs');
 						$(".network-widget-hwre-rates").html(parseFloat(tPercentageHw).toFixed(2) + '<sup style="font-size: 20px">%</sup> / ' + parseFloat(tPercentageRe).toFixed(2) + '<sup style="font-size: 20px">%</sup>');
 						
 					} else {
-						var devRow = '<tr class="dev-total"><td class="devs_table_name"><i class="gi gi-server"></i>&nbsp;&nbsp;Total</td><td class="devs_table_temp">-</td><td class="devs_table_freq">-</td><td class="devs_table_hash"><strong>-</strong></td><td class="devs_table_sh">-</td><td class="devs_table_ac">-</td><td><small class="text-muted">-</small></td><td class="devs_table_re">-</td><td><small class="text-muted">-</small></td><td class="devs_table_hw">-</td><td><small class="text-muted">-</small></td><td class="devs_table_ls">-</td><td><small class="text-muted">-</small></td></tr>'
+						var devRow = '<tr class="dev-total"><td class="devs_table_name"><i class="gi gi-server"></i>&nbsp;&nbsp;Total</td><td class="devs_table_temp">-</td><td class="devs_table_freq">-</td><td class="devs_table_hash"><strong>-</strong></td><td class="devs_table_sh">-</td><td class="devs_table_ac">-</td><td><small class="text-muted">-</small></td><td class="devs_table_re">-</td><td><small class="text-muted">-</small></td><td class="devs_table_hw">-</td><td><small class="text-muted">-</small></td><td class="devs_table_ls">-</td><td><small class="text-muted">-</small></td></tr>';
+						
+						// Network Widgets
+						$(".network-widget-last-share").html('&infin; secs');
+						$(".network-widget-hwre-rates").html('Not available');
+
 					}
 
 				    $('.network_devs_table_foot').html(devRow);

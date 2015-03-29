@@ -195,6 +195,7 @@ class App extends Main_Controller {
 		$data['algo'] = $this->util_model->checkAlgo(false);
 
 		// Load System settings
+		$data['mineraHostname'] = gethostname();
 		$data['mineraTimezone'] = $this->redis->get("minera_timezone");
 		$data['systemExtracommands'] = $this->redis->get("system_extracommands");
 		$data['scheduledEventStartTime'] = $this->redis->get("scheduled_event_start_time");
@@ -532,6 +533,12 @@ class App extends Main_Controller {
 			$dataObj->minerd_pools = $this->util_model->getPools();
 			
 			// System settings
+			
+			// System hostname
+			if ($this->input->post('system_hostname')) 
+			{
+				$this->util_model->setSystemHostname($this->input->post('system_hostname'));
+			}
 			
 			// Set the System Timezone
 			$timezone = $this->input->post('minera_timezone');
@@ -1139,24 +1146,26 @@ class App extends Main_Controller {
 			$this->redis->set("minera_system_id", $mineraSystemId);
 		}
 
-		if ($this->util_model->isOnline() && $anonynousStatsEnabled && $mineraSystemId)
+		if ($anonynousStatsEnabled && $mineraSystemId)
 		{
-			if (isset($stats->totals->hashrate))
-				$totalHashrate = $stats->totals->hashrate;
-				
-			if (isset($stats->devices))
-			{
-				$devs = (array)$stats->devices;
-				$totalDevices = count($devs);
+			if ($this->util_model->isOnline()) {
+				if (isset($stats->totals->hashrate))
+					$totalHashrate = $stats->totals->hashrate;
+					
+				if (isset($stats->devices))
+				{
+					$devs = (array)$stats->devices;
+					$totalDevices = count($devs);
+				}
+	
+				$minerdRunning = $this->redis->get("minerd_running_software");
+	
+				$anonStats = array("id" => $mineraSystemId, "algo" => $this->util_model->checkAlgo(), "hashrate" => $totalHashrate, "devices" => $totalDevices, "miner" => $minerdRunning, "timestamp" => time());
 			}
-
-			$minerdRunning = $this->redis->get("minerd_running_software");
-
-			$anonStats = array("id" => $mineraSystemId, "algo" => $this->util_model->checkAlgo(), "hashrate" => $totalHashrate, "devices" => $totalDevices, "miner" => $minerdRunning, "timestamp" => time());
-
+			
 			if ( $currentMinute == "00")
 			{
-				$this->util_model->sendAnonymousStats($mineraSystemId, $anonStats);
+				if ($this->util_model->isOnline()) $this->util_model->sendAnonymousStats($mineraSystemId, $anonStats);
 			}
 		}
 				

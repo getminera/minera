@@ -920,10 +920,18 @@
                             <div class="box-body">
 								<p>Setup the system options</p>
 
+									<!-- hostname -->
+                                    <div class="form-group">
+                                        <label>System hostname</label>
+										<p>Current hostname is: <span class="badge bg-blue"><?php echo $mineraHostname ?></span></p>
+                                        <p>You can change the Raspbian hostname where your Minera is running</p>
+                                        <input type="text" name="system_hostname" class="form-control" placeholder="Use numbers/letters, symbols allowed are dash and underscore" />
+									</div>
+									
 									<!-- timezone -->
                                     <div class="form-group">
                                         <label>System timezone</label>
-                                        <p>Current system time is: <span class="badge bg-dark"><?php echo date("c", time()); ?></span></p>
+                                        <p>Current system time is: <span class="badge bg-blue"><?php echo date("c", time()); ?></span></p>
                                         <p>You should change the timezone to reflect yours</p>
 										<select name="minera_timezone" class="form-control">
 											<?php foreach ($timezones as $timezone) : ?>
@@ -936,7 +944,7 @@
                                     <div class="form-group">
                                         <label>Startup extra commands (rc.local)</label>
                                         <p>If you need to launch any other extra command on boot, you can place them here. Each line will be appended to the file /etc/rc.local</p>
-                                        <textarea name="system_extracommands" class="form-control" rows="5" placeholder="There isn't any error control here" class="system_extracommands"><?php echo $systemExtracommands ?></textarea>
+                                        <textarea name="system_extracommands" class="form-control system_extracommands" rows="5" placeholder="There isn't any error control here"><?php echo $systemExtracommands ?></textarea>
 										<h6>(WARNING: you could harm your controller putting wrong strings here.)</h6>
 									</div>
 									
