@@ -471,7 +471,7 @@
 														    </div>
 														</div>
 													</div>
-													<div class="add-pool-error-<?php echo md5($netMiner->name) ?> mt10 text-red"></div>
+													<div class="net-pool-error-<?php echo md5($netMiner->name) ?> mt10 text-red"></div>
 													<?php if ($npi <= ($netCounts-1)) : ?><hr /><?php endif; ?>
 												</div>
 											<?php $npi++; endforeach; ?>

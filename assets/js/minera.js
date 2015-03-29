@@ -1477,7 +1477,8 @@ $(document).on('click', '.remove-net-pool', function(e) {
 	e.preventDefault();
 	$('.overlay').show();
     var poolId = $(this).data('pool-id'),
-    	netConfig = $(this).data('pool-config');
+    	netConfig = $(this).data('pool-config'),
+    	netMiner = $(this).data('netminer');
     $.ajax(_baseUrl+"/app/api?command=remove_pool&poolId="+poolId+'&network='+netConfig, {
         dataType: "text",
         success: function (dataP) {
@@ -1488,9 +1489,9 @@ $(document).on('click', '.remove-net-pool', function(e) {
     			getStats(true);
     			if (dataJ)
     			{
-    				$('.net-pool-alert-'+$(this).data('netminer')).html('Miner could take some minutes to complete the switching process. <pre style="font-size:10px;margin-top:10px;">'+dataP+'</pre>');
+    				$('.net-pool-alert-'+netMiner).html('Miner response: <pre style="font-size:10px;margin-top:10px;">'+dataP+'</pre>');
     				setTimeout(function() {
-						$('.net-pool-alert-'+$(this).data('netminer')).html('');
+						$('.net-pool-alert-'+netMiner).html('');
 	    			}, 30000);
     			}
     		}
@@ -1515,15 +1516,16 @@ $(document).on('click', '.add-net-pool', function(e) {
 	e.preventDefault();
 	$('.overlay').show();
 	if ($('.pool_url_'+$(this).data('netminer')).val() && $('.pool_username_'+$(this).data('netminer')).val() && $('.pool_password_'+$(this).data('netminer')).val()) {
-		$('.add-pool-error-'+$(this).data('netminer')).html('<i class="fa fa-warning"></i> Each field is required').fadeOut();
-		var params = {
-			command: 'add_pool',
-			url: $('.pool_url_'+$(this).data('netminer')).val(),
-			user: $('.pool_username_'+$(this).data('netminer')).val(),
-			pass: $('.pool_password_'+$(this).data('netminer')).val(),
-			network: $(this).data('network')
-		};
-		var query = $.param(params);
+		$('.net-pool-error-'+$(this).data('netminer')).html('').fadeOut();
+		var netMiner = $(this).data('netminer'),
+			params = {
+				command: 'add_pool',
+				url: $('.pool_url_'+$(this).data('netminer')).val(),
+				user: $('.pool_username_'+$(this).data('netminer')).val(),
+				pass: $('.pool_password_'+$(this).data('netminer')).val(),
+				network: $(this).data('network')
+			},
+			query = $.param(params);
 
 		$.ajax(_baseUrl+"/app/api?"+query, {
 	        dataType: "text",
@@ -1535,19 +1537,19 @@ $(document).on('click', '.add-net-pool', function(e) {
 	    			getStats(true);
 	    			if (dataJ)
 	    			{
-	    				$('.net-pool-alert-'+$(this).data('netminer')).html('Miner could take some minutes to complete the process. <pre style="font-size:10px;margin-top:10px;">'+dataP+'</pre>');
+	    				$('.net-pool-alert-'+netMiner).html('Miner response: <pre style="font-size:10px;margin-top:10px;">'+dataP+'</pre>');
 	    				setTimeout(function() {
-							$('.net-pool-alert-'+$(this).data('netminer')).html('');
+							$('.net-pool-alert-'+netMiner).html('');
 		    			}, 30000);
 	    			}
-	    			$('.pool_url_'+$(this).data('netminer')).val("");
-					$('.pool_username_'+$(this).data('netminer')).val("");
-					$('.pool_password_'+$(this).data('netminer')).val("");
+	    			$('.pool_url_'+netMiner).val('').addClass('error');
+					$('.pool_username_'+netMiner).val('').addClass('error');
+					$('.pool_password_'+netMiner).val('').addClass('error');
 	    		}
 	        }
 	    });
 	} else {
-		$('.add-pool-error-'+$(this).data('netminer')).html('<i class="fa fa-warning"></i> Each field is required').fadeIn();
+		$('.net-pool-error-'+netMiner).html('<i class="fa fa-warning"></i> Each field is required').fadeIn();
 	}
 });
 
