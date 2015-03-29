@@ -1255,6 +1255,11 @@ log_message("error", var_export($pools, true));
 		}
 	}
 	
+	public function setSystemUserPassword($password) {
+		exec("echo 'minera:".$password."' | sudo -S /usr/sbin/chpasswd");
+		return true;
+	}
+	
 	// Call shutdown cmd
 	public function shutdown()
 	{

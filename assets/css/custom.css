@@ -39,6 +39,7 @@ body > .header { position: fixed !important; }
 .modal-terminal { margin-top: 5%; width: 75%; }
 .modal-footer-center { margin: 0; padding: 6px 20px !important; text-align: center;}
 .font-bold { font-weight: bold;}
+.error {color: rgb(171, 21, 21);}
 
 .bg-dark-blue { background: #656F80 !important; color: white; }
 .bg-light2 { background: #E4EBEF !important; color: #434343; }

@@ -170,6 +170,7 @@ class App extends Main_Controller {
 		$data['minerdSoftware'] = $this->redis->get('minerd_software');
 		$data['minerdLog'] = $this->redis->get('minerd_log');
 		$data['minerdDebug'] = $this->redis->get('minerd_debug');
+		$data['minerdAppendConf'] = $this->redis->get('minerd_append_conf');
 		$data['minerdManualSettings'] = $this->redis->get('minerd_manual_settings');
 		$data['minerdSettings'] = $this->util_model->getCommandline();
 		$data['minerdJsonSettings'] = $this->redis->get("minerd_json_settings");
@@ -431,6 +432,10 @@ class App extends Main_Controller {
 				$this->redis->set('minerd_debug', $this->input->post('minerd_debug'));
 				$this->minerd_debug = $this->input->post('minerd_debug');
 				
+				// Append JSON conf
+				$this->redis->set('minerd_append_conf', $this->input->post('minerd_append_conf'));
+				$this->minerd_append_conf = $this->input->post('minerd_append_conf');
+				
 				// Extra options
 				if ($this->input->post('minerd_extraoptions'))
 				{
@@ -490,7 +495,9 @@ class App extends Main_Controller {
 			
 			// Add JSON conf to miner command
 			$exportConfigSettings = $settings;
-			$settings .= " -c ".$this->config->item("minerd_conf_file");
+			if ($this->redis->get('minerd_append_conf')) {
+				$settings .= " -c ".$this->config->item("minerd_conf_file");	
+			}
 			
 			// Save the JSON conf file
 			file_put_contents($this->config->item("minerd_conf_file"), $jsonConfFile);
@@ -538,6 +545,12 @@ class App extends Main_Controller {
 			if ($this->input->post('system_hostname')) 
 			{
 				$this->util_model->setSystemHostname($this->input->post('system_hostname'));
+			}
+			
+			// Minera user password
+			if ($this->input->post('system_password') && $this->input->post('system_password2')) 
+			{
+				$this->util_model->setSystemUserPassword($this->input->post('system_password'));
 			}
 			
 			// Set the System Timezone

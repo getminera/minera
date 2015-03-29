@@ -598,7 +598,17 @@
 													Enable debug <small>(--debug)</small>
 												</label>                                                
 											</div>
-										</div>												
+										</div>
+										
+										<!-- Append miner conf -->
+										<div class="form-group">
+											<div class="checkbox">
+												<label>
+													<input type="checkbox" name="minerd_append_conf" value="1" <?php if ($minerdAppendConf) : ?>checked=""<?php endif; ?> />
+													Append JSON conf <small>(-c /var/www/minera/conf/miner_conf.json)</small>
+												</label>                                                
+											</div>
+										</div>
 										
 										<!-- Start Frequency -->												
 										<div class="form-group" id="minerd-startfreq">
@@ -714,8 +724,12 @@
 									<div class="callout callout-info">
 										<h4>Miner will start with this syntax:</h4>
 										<h5><i><?php echo $this->config->item("screen_command") ?> <?php echo $this->config->item("minerd_command")."</i> <strong>".$minerdSettings ?></strong></h5>
-										<h4>JSON Conf:</h4>
-										<pre style="font-size:10px;"><?php $jsonConf =  json_decode($minerdJsonSettings); echo json_encode($jsonConf, JSON_PRETTY_PRINT); ?></pre>
+										<?php if ($minerdAppendConf) : ?>
+											<h4>JSON Conf:</h4>
+											<pre style="font-size:10px;"><?php $jsonConf =  json_decode($minerdJsonSettings); echo json_encode($jsonConf, JSON_PRETTY_PRINT); ?></pre>
+										<?php else: ?>
+											<h4 class="text-red">Warning you selected to not append the JSON conf.</h4>
+										<?php endif; ?>
 									</div>
 
 									<?php if ($minerdSoftware == "cpuminer" && $savedFrequencies) : ?>
@@ -925,7 +939,25 @@
                                         <label>System hostname</label>
 										<p>Current hostname is: <span class="badge bg-blue"><?php echo $mineraHostname ?></span></p>
                                         <p>You can change the Raspbian hostname where your Minera is running</p>
-                                        <input type="text" name="system_hostname" class="form-control" placeholder="Use numbers/letters, symbols allowed are dash and underscore" />
+                                        <div class="input-group">
+	                                        <span class="input-group-addon"><i class="fa fa-tag"></i></span>
+	                                        <input type="text" name="system_hostname" class="form-control" placeholder="Use numbers/letters, symbols allowed are dash and underscore" />
+                                        </div>
+									</div>
+									
+									<!-- system password -->
+                                    <div class="form-group">
+                                        <label>System password</label>
+                                        <p>Minera works with the system user <span class="badge bg-blue">minera</span>, here you can change the system user password</p>
+                                        <div class="input-group">
+											<span class="input-group-addon"><i class="fa fa-user-secret"></i></span>
+											<input type="password" class="form-control" id="system_password" name="system_password" placeholder="Password for Minera system user">
+										</div>
+										<div class="input-group mt10">
+											<span class="input-group-addon"><i class="fa fa-user-secret"></i></span>
+											<input type="password" class="form-control" name="system_password2" placeholder="Repeat the password to validate it">
+										</div>
+										<h6>This is not the web password! This is the system user password you should use to login into the system by SSH. For the <a href="#user-box">web password look below</a>.
 									</div>
 									
 									<!-- timezone -->
@@ -1002,27 +1034,30 @@
                             <div class="box-body">
 								<p>If you cannot (or don't want) to completely expose to internet your Minera system you can choose to connect it to the awesome <a href="http://www.mobileminerapp.com/" target="_blank">Mobileminer app</a> to check your stats from everywhere you are.<br />Please follow the instruction on the <a href="http://www.mobileminerapp.com/#gettingStarted" target="_blank">Mobileminer website</a>. To get started you only need to signup with your email address to retrieve your application key.</p>
 
-									<!-- mobileminer options -->
-									<div class="form-group">
-										<div class="checkbox">
-											<label>
-												<input type="checkbox" class="mobileminer-checkbox" name="mobileminer_enabled" value="1" <?php if ($mobileminerEnabled) : ?>checked=""<?php endif; ?> />
-												Enable Mobileminer
-											</label>                                                
-										</div>
+								<!-- mobileminer options -->
+								<div class="form-group">
+									<div class="checkbox">
+										<label>
+											<input type="checkbox" class="mobileminer-checkbox" name="mobileminer_enabled" value="1" <?php if ($mobileminerEnabled) : ?>checked=""<?php endif; ?> />
+											Enable Mobileminer
+										</label>                                                
 									</div>
+									<label class="mt10" for="mobileminer_system_name">System Name</label>
 									<div class="input-group">
-										<label for="mobileminer_system_name">System Name</label>
+										<span class="input-group-addon"><i class="fa fa-tag"></i></span>
 										<input type="text" class="form-control" name="mobileminer_system_name" placeholder="Give a name to this Minera system to identify it" value="<?php echo $mobileminerSystemName ?>">
 									</div>
+									<label class="mt10" for="mobileminer_email">Email</label>
 									<div class="input-group">
-										<label for="mobileminer_email">Email</label>
+										<span class="input-group-addon"><i class="fa fa-at"></i></span>
 										<input type="text" class="form-control" name="mobileminer_email" placeholder="Email you used to signup Mobileminer" value="<?php echo $mobileminerEmail ?>">
 									</div>
+									<label class="mt10" for="mobileminer_appkey">Application Key</label>
 									<div class="input-group">
-										<label for="mobileminer_appkey">Application Key</label>
+										<span class="input-group-addon"><i class="fa fa-key"></i></span>
 										<input type="password" class="form-control" name="mobileminer_appkey" placeholder="Your Mobileminer Application Key" value="<?php echo $mobileminerAppkey ?>">
 									</div>
+								</div>
                             </div>
 							<div class="box-footer">
 								<button type="submit" class="btn btn-primary save-minera-settings" name="save" value="1">Save</button>
@@ -1139,13 +1174,14 @@
 							<input type="hidden" name="save_password" value="1" />
                             <div class="box-body">
 								<p>Change the Minera lock screen password</p>
-								<div class="form-group">
-                                	<label for="password1">Password</label>
-									<input type="password" class="form-control" name="password" placeholder="Password">
+                               	<label for="password1">Password</label>
+								<div class="input-group">
+									<span class="input-group-addon"><i class="fa fa-lock"></i></span>
+									<input type="password" class="form-control" name="password" placeholder="Lock screen password">
 								</div>
-								<div class="form-group">
-                                	<label for="password2">Repeat password</label>
-									<input type="password" class="form-control" name="password2" placeholder="Repeat">
+								<div class="input-group mt10">
+									<span class="input-group-addon"><i class="fa fa-lock"></i></span>
+									<input type="password" class="form-control" name="password2" placeholder="Repeat the lock screen password">
 								</div>
                             </div>
 							<div class="box-footer">

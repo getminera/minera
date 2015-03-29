@@ -578,6 +578,14 @@ $(function() {
 			
 		}, "Select at least 1 rate (max 5)");
 		
+	    $.validator.addMethod("no_quote", function(value, element) {
+			if (!value.match(/\'/) )
+				return true;
+				
+			return false;
+			
+		}, "You can use any symbol but single quote");
+		
 		jQuery.validator.addMethod('validIP', function(value) {
 		    var split = value.split('.');
 		    if (split.length != 4) 
@@ -632,7 +640,14 @@ $(function() {
 				},
 				scheduled_event_time: {
 					number: true
-				}
+				},
+				system_password: {
+					minlength: 6,
+					no_quote: true
+				},
+			    system_password2: {
+			      equalTo: "#system_password"
+			    }
 			},
 		    errorPlacement: function(error, element) {
 				error.appendTo( $(element).closest(".input-group").parent().after() );
