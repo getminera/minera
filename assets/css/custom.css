@@ -40,6 +40,7 @@ body > .header { position: fixed !important; }
 .modal-footer-center { margin: 0; padding: 6px 20px !important; text-align: center;}
 .font-bold { font-weight: bold;}
 .error {color: rgb(171, 21, 21);}
+.active { font-weight: bold; }
 
 .bg-dark-blue { background: #656F80 !important; color: white; }
 .bg-light2 { background: #E4EBEF !important; color: #434343; }
@@ -61,6 +62,8 @@ body > .header { position: fixed !important; }
 .mb30 { margin-bottom: 30px; }
 .mb50 { margin-bottom: 50px; }
 
+.ml10 { margin-left: 10px; }
+
 .lockscreen {background: url(../img/bg-dark.jpg) repeat center center fixed !important;}
 .lockscreen-link, .lockscreen-name { color: #fff;}
 .lockscreen .headline { color: #ccc !important;}
@@ -69,7 +72,7 @@ body > .header { position: fixed !important; }
 .coinbase-donate-button { }
 .copyright { text-align: right; font-size: small;}
 .copyright a { color: #FF4D50; }
-.github-btn { float: right; margin-left: 10px; margin-top: -3px; }
+.github-btn { float: right; margin-left: 10px; margin-top: -3px; margin-right: 15px; }
 
 .bootstro-highlight { background-color: rgba(255, 255, 255, 0.2) !important; }
 

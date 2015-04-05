@@ -1,13 +1,10 @@
 	<div class="copyright">
 		<div class="github-btn">
-			<iframe src="http://ghbtns.com/github-btn.html?user=michelem09&repo=minera&type=watch&count=true"
-  allowtransparency="true" frameborder="0" scrolling="0" width="110" height="20"></iframe>
+			<!-- Place this tag where you want the button to render. -->
+			<a class="github-button" href="https://github.com/michelem09/minera" data-count-href="/michelem09/minera/stargazers" data-count-api="/repos/michelem09/minera#stargazers_count" data-count-aria-label="# stargazers on GitHub" aria-label="Star michelem09/minera on GitHub">Star</a>
 		</div>
   		<a href="http://getminera.com" target="_blank"><i class="fa fa-asterisk"></i> Minera</a> your next mining dashboard - Need a wallet? Try <a href="https://www.coinbase.com/join/michelem" target="_blank">Coinbase</a>
   	</div>
-	
-	<!--  Coinbase script -->
-	<script src="https://www.coinbase.com/assets/button.js" type="text/javascript"></script>
 	
 	<script src="<?php echo base_url('assets/js/extra/jquery-2.1.1.min.js') ?>"></script>
 	<script src="<?php echo base_url('assets/js/extra/jquery-ui-1.10.4.min.js') ?>"></script>
@@ -23,6 +20,7 @@
 
     <!-- ScrollTo -->
     <script src="<?php echo base_url('assets/js/extra/jquery.scrollTo.min.js') ?>" type="text/javascript"></script>
+    <script src="<?php echo base_url('assets/js/extra/scrollspy.js') ?>" type="text/javascript"></script>
     
     <!-- Ion rangeSlider -->
     <script src="<?php echo base_url('assets/js/extra/ion.rangeSlider.min.js') ?>" type="text/javascript"></script>
@@ -48,12 +46,18 @@
     <!-- Dashboard script -->
 	<!-- jQuery Knob -->
     <script src="<?php echo base_url('assets/js/extra/jquery.knob.js') ?>" type="text/javascript"></script>
+    
+    <!-- Github star -->
+	<script async defer id="github-bjs" src="https://buttons.github.io/buttons.js"></script>
+	
+	<!--  Coinbase script -->
+	<script async defer src="https://www.coinbase.com/assets/button.js" type="text/javascript"></script>
 	
     <!-- General script -->
     <script type="text/javascript">
 	    var _baseUrl = "<?php echo site_url() ?>";
 	</script>
-    <script src="<?php echo base_url('assets/js/minera.js') ?>" type="text/javascript"></script>
+    <script async defer src="<?php echo base_url('assets/js/minera.js') ?>" type="text/javascript"></script>
 	
 </body>
 </html>

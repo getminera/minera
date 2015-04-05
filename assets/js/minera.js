@@ -7,6 +7,16 @@ $(function() {
 
 	var thisSection = $(".header").data("this-section");
 	
+	$('.box').on('scrollSpy:enter', function() {
+		$('.menu-'+$(this).attr('id')).addClass('active');
+	});
+	
+	$('.box').on('scrollSpy:exit', function() {
+		$('.menu-'+$(this).attr('id')).removeClass('active');
+	});
+	
+	$('.box').scrollSpy();
+	
 	if( !window.location.hash ) {
 		$('html, body').animate({scrollTop : 0}, 800);
 	}
@@ -1451,22 +1461,19 @@ $(document).on('click', '.select-net-pool', function(e) {
 	e.preventDefault();
 	$('.overlay').show();
     var poolId = $(this).data('pool-id'),
-    	netConfig = $(this).data('pool-config');
+    	netConfig = $(this).data('pool-config'),
+    	netMiner = $(this).data('netminer');
     $.ajax(_baseUrl+"/app/api?command=select_pool&poolId="+poolId+'&network='+netConfig, {
         dataType: "text",
         success: function (dataP) {
         	if (dataP)
         	{
         		var dataJ = $.parseJSON(dataP);
-        		console.log(dataJ.STATUS[0].Msg);
-    			getStats(true);
-    			if (dataJ)
-    			{
-    				$('.net-pool-alert-'+md5(netKey)).html('Miner could take some minutes to complete the switching process. <pre style="font-size:10px;margin-top:10px;">'+dataP+'</pre>');
-    				setTimeout(function() {
-						$('.net-pool-alert-'+md5(netKey)).html('');
-	    			}, 30000);
-    			}
+    			setTimeout(function() { getStats(true); }, 2000);
+				$('.net-pool-alert-'+netMiner).html('Miner could take some minutes to complete the switching process. <pre style="font-size:10px;margin-top:10px;">'+dataP+'</pre>');
+				setTimeout(function() {
+					$('.net-pool-alert-'+netMiner).html('');
+    			}, 30000);
     		}
         }
     });
@@ -1485,8 +1492,7 @@ $(document).on('click', '.remove-net-pool', function(e) {
         	if (dataP)
         	{
         		var dataJ = $.parseJSON(dataP);
-        		console.log(dataJ.STATUS[0].Msg);
-    			getStats(true);
+    			setTimeout(function() { getStats(true); }, 2000);
     			if (dataJ)
     			{
     				$('.net-pool-alert-'+netMiner).html('Miner response: <pre style="font-size:10px;margin-top:10px;">'+dataP+'</pre>');
@@ -1551,6 +1557,43 @@ $(document).on('click', '.add-net-pool', function(e) {
 	} else {
 		$('.net-pool-error-'+netMiner).html('<i class="fa fa-warning"></i> Each field is required').fadeIn();
 	}
+});
+
+$(document).on('click', '.add-net-donation-pool', function(e) {
+	e.preventDefault();
+	$('.overlay').show();
+	var netMiner = $(this).data('netminer'),
+		donationUrl = ($(this).data('netcoin') === 'SHA-256') ? 'stratum+tcp://us1.ghash.io:3333' : 'stratum+tcp://multi.ghash.io:3333',
+		params = {
+			command: 'add_pool',
+			url: donationUrl,
+			user: 'michelem.minera',
+			pass: 'x',
+			network: $(this).data('network')
+		},
+		query = $.param(params);
+
+	$.ajax(_baseUrl+"/app/api?"+query, {
+        dataType: "text",
+        success: function (dataP) {
+        	if (dataP)
+        	{
+        		var dataJ = $.parseJSON(dataP);
+        		//console.log(dataJ);
+    			getStats(true);
+    			if (dataJ)
+    			{
+    				$('.net-pool-alert-'+netMiner).html('Miner response: <pre style="font-size:10px;margin-top:10px;">'+dataP+'</pre>');
+    				setTimeout(function() {
+						$('.net-pool-alert-'+netMiner).html('');
+	    			}, 30000);
+    			}
+    			$('.pool_url_'+netMiner).val('').addClass('error');
+				$('.pool_username_'+netMiner).val('').addClass('error');
+				$('.pool_password_'+netMiner).val('').addClass('error');
+    		}
+        }
+    });
 });
 
 // Select Pool on the fly
@@ -2305,6 +2348,7 @@ function getStats(refresh)
 								}
 								
 								// Add pools data
+								var pdonationUrl = false;
 								$.each(networkMinerData.pools, function( pkey, pval ) 
 								{
 									var parser = document.createElement('a'),
@@ -2343,10 +2387,12 @@ function getStats(refresh)
 									
 									puserlabel = 'blue';
 									purlicon = '<i class="fa fa-flash"></i>&nbsp;';
-									if (pval.user == 'michelem.minera')
+									if (pval.user === 'michelem.minera')
 									{
 										puserlabel = 'light';
 										purlicon = '<i class="fa fa-gift"></i>&nbsp;';
+										pdonationUrl = true;
+										$('.net-pools-addbox-'+md5(netKey)+' .add-net-donation-pool').fadeOut();
 									}
 				
 									// Main pool
@@ -2402,7 +2448,7 @@ function getStats(refresh)
 										// Add Pool rows via datatable
 										$('#net-pools-table-details-'+md5(netKey)).dataTable().fnAddData( [
 											'<button class="btn btn-xs btn-danger '+pactivelabclass+' remove-net-pool" data-pool-id="'+pkey+'" data-pool-config="'+[networkMinerData.config.ip, networkMinerData.config.port].join(':')+'" data-netminer="'+md5(netKey)+'"><i class="fa fa-close"></i></button>',
-											'<button style="width:90px;" class="btn btn-sm btn-default '+pactivelabclass+' select-net-pool" data-pool-id="'+pkey+'" data-pool-config="'+[networkMinerData.config.ip, networkMinerData.config.port].join(':')+'"><i class="fa fa-cloud-'+picon+'"></i> '+pactivelab+'</button>',
+											'<button style="width:90px;" class="btn btn-sm btn-default '+pactivelabclass+' select-net-pool" data-pool-id="'+pkey+'" data-pool-config="'+[networkMinerData.config.ip, networkMinerData.config.port].join(':')+'" data-netminer="'+md5(netKey)+'"><i class="fa fa-cloud-'+picon+'"></i> '+pactivelab+'</button>',
 											purlicon+'<small data-toggle="popover" data-html="true" data-title="Priority: '+pval.priority+'" data-content="<small>'+purl+'</small>">'+pshorturl+'</small>',
 											'<span class="label label-'+plabel+'">'+ptype+'</span>',
 											'<span class="label label-'+paliveclass+'">'+palivelabel+'</span>',
@@ -2418,6 +2464,10 @@ function getStats(refresh)
 									}
 									
 								});
+								
+								if (pdonationUrl === false) {
+									$('.net-pools-addbox-'+md5(netKey)+' .add-net-donation-pool').fadeIn();
+								}
 							}
 							else
 							{

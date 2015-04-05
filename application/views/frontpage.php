@@ -442,7 +442,7 @@
 														<p class="net-pool-alert-<?php echo md5($netMiner->name) ?>"></p>
 													</div>
 													<div class="net-pools-addbox-<?php echo md5($netMiner->name) ?>">
-														<button class="btn btn-xs btn-primary toggle-add-net-pool" data-open="0"><i class="fa fa-plus"></i> Add pool</button> <button class="btn btn-xs btn-danger"><i class="fa fa-gift"></i> Add donation pool</button>
+														<button class="btn btn-xs btn-primary toggle-add-net-pool" data-open="0"><i class="fa fa-plus"></i> Add pool</button> <button class="btn btn-xs btn-danger add-net-donation-pool" data-netminer="<?php echo md5($netMiner->name) ?>" data-network="<?php echo $netMiner->ip.':'.$netMiner->port ?>" data-netcoin="<?php echo $netMiner->algo ?>"><i class="fa fa-gift"></i> Add donation pool</button>
 														<div class="form-group mt10" style="display:none;">
 															<div class="row sort-attach">
 														    	<div class="col-xs-5">

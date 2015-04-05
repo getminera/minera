@@ -73,7 +73,7 @@
                     <span class="icon-bar"></span>
                 </a>
                 
-				<?php if (!$this->redis->get("minera_donation_time")) : ?>
+				<?php if ($sectionPage === "settings" && !$this->redis->get("minera_donation_time")) : ?>
 	                <div class="tip-button changetip_tipme_button" data-bid="gQGgJrG52qXazz5HqPX5sD" data-uid="b3JpMBt2XgQw5EVrz5QV86"></div><script>(function(document,script,id){var js,r=document.getElementsByTagName(script)[0],protocol=/^http:/.test(document.location)?'http':'https';if(!document.getElementById(id)){js=document.createElement(script);js.id=id;js.src=protocol+'://widgets.changetip.com/public/js/widgets.js';r.parentNode.insertBefore(js,r)}}(document,'script','changetip_w_0'));</script>
 				<?php endif; ?>
                 
@@ -292,62 +292,62 @@
                         	</a>
                         	<ul class="treeview-menu treeview-menu-settings" style="display: none;">
                                 <li>
-                                	<a href="<?php echo site_url("app/settings#donation-box") ?>" style="margin-left: 10px;">
+                                	<a href="<?php echo site_url("app/settings#donation-box") ?>" class="menu-donation-box ml10">
                                 		<i class="fa fa-gift"></i> Donation
                                 	</a>
                                 </li>
                                 <li>
-                                	<a href="<?php echo site_url("app/settings#dashboard-box") ?>" style="margin-left: 10px;">
+                                	<a href="<?php echo site_url("app/settings#dashboard-box") ?>" class="menu-dashboard-box ml10">
                                 		<i class="fa fa-dashboard"></i> Dashboard
                                 	</a>
                                 </li>
                                 <li>
-                                	<a href="<?php echo site_url("app/settings#pools-box") ?>" style="margin-left: 10px;">
+                                	<a href="<?php echo site_url("app/settings#pools-box") ?>" class="menu-pools-box ml10">
                                 		<i class="fa fa-cloud"></i> Pools
                                 	</a>
                                 </li>
                                 <li>
-                                	<a href="<?php echo site_url("app/settings#customer-miners-box") ?>" style="margin-left: 10px;">
+                                	<a href="<?php echo site_url("app/settings#customer-miners-box") ?>" class="menu-customer-miners-box ml10">
                                 		<i class="fa fa-desktop"></i> Custom Miners
                                 	</a>
                                 </li>
                                 <li>
-                                	<a href="<?php echo site_url("app/settings#local-miner-box") ?>" style="margin-left: 10px;">
+                                	<a href="<?php echo site_url("app/settings#local-miner-box") ?>" class="menu-local-miner-box ml10">
                                 		<i class="fa fa-gear"></i> Local Miner
                                 	</a>
                                 </li>
                                 <li>
-                                	<a href="<?php echo site_url("app/settings#network-miners-box") ?>" style="margin-left: 10px;">
+                                	<a href="<?php echo site_url("app/settings#network-miners-box") ?>" class="menu-network-miners-box ml10">
                                 		<i class="fa fa-server"></i> Network Miners
                                 	</a>
                                 </li>
                                 <li>
-                                	<a href="<?php echo site_url("app/settings#top-bar-box") ?>" style="margin-left: 10px;">
+                                	<a href="<?php echo site_url("app/settings#top-bar-box") ?>" class="menu-top-bar-box ml10">
                                 		<i class="fa fa-money"></i> Top Bar
                                 	</a>
                                 </li>
                                 <li>
-                                	<a href="<?php echo site_url("app/settings#system-box") ?>" style="margin-left: 10px;">
+                                	<a href="<?php echo site_url("app/settings#system-box") ?>" class="menu-system-box ml10">
                                 		<i class="fa fa-rocket"></i> System
                                 	</a>
                                 </li>
                                 <li>
-                                	<a href="<?php echo site_url("app/settings#mobileminer-box") ?>" style="margin-left: 10px;">
+                                	<a href="<?php echo site_url("app/settings#mobileminer-box") ?>" class="menu-mobileminer-box ml10">
                                 		<i class="fa fa-mobile-phone"></i> Mobileminer
                                 	</a>
                                 </li>
                                 <li>
-                                	<a href="<?php echo site_url("app/settings#importexport-box") ?>" style="margin-left: 10px;">
+                                	<a href="<?php echo site_url("app/settings#importexport-box") ?>" class="menu-importexport-box ml10">
                                 		<i class="fa fa-code-fork"></i> Import/Export/Share
                                 	</a>
                                 </li>
                                 <li>
-                                	<a href="<?php echo site_url("app/settings#user-box") ?>" style="margin-left: 10px;">
+                                	<a href="<?php echo site_url("app/settings#user-box") ?>" class="menu-user-box ml10">
                                 		<i class="fa fa-user"></i> User
                                 	</a>
                                 </li>
                                 <li>
-                                	<a href="<?php echo site_url("app/settings#resets-box") ?>" style="margin-left: 10px;">
+                                	<a href="<?php echo site_url("app/settings#resets-box") ?>" class="menu-resets-box ml10">
                                 		<i class="fa fa-warning"></i> Resets
                                 	</a>
                                 </li>
