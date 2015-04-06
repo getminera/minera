@@ -17,6 +17,24 @@
 			</div>
 		</div>
 		
+		<div id="modal-log" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="Logs" aria-hidden="true" data-backdrop="static" data-keyboard="false" >
+			<div class="modal-dialog modal-dialog-center modal-sm">
+				<div class="modal-content">
+					<div class="modal-header bg-red">
+						<h4 class="modal-title" id="modal-log-label"></h4>
+					</div>
+					<div class="modal-body">
+						<p>Please take care of the lines below, here you could find the problem why your miner is not running:</p>
+						<blockquote class="modal-log-lines"></blockquote>
+					</div>
+					<div class="modal-footer">
+						<h6 class="pull-left">if you are still in trouble please check also <a href="<?php echo base_url($this->config->item("minerd_log_url")); ?>" target="_blank"><i class="fa fa-briefcase"></i> the full log here</a></h6>
+						<button type="button" class="btn btn-default pull-right" data-dismiss="modal">Close</button>
+					</div>
+				</div>
+			</div>
+		</div>
+		
 		<div id="modal-sharing" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="SharingData" aria-hidden="true" data-backdrop="static" data-keyboard="false" >
 			<div class="modal-dialog modal-sm">
 				<div class="modal-content">

@@ -7,6 +7,7 @@ $(function() {
 
 	var thisSection = $(".header").data("this-section");
 	
+	/*
 	$('.box').on('scrollSpy:enter', function() {
 		$('.menu-'+$(this).attr('id')).addClass('active');
 	});
@@ -20,6 +21,7 @@ $(function() {
 	if( !window.location.hash ) {
 		$('html, body').animate({scrollTop : 0}, 800);
 	}
+	*/
 	
 	String.prototype.hashCode = function() {
 		var hash = 0, i, chr, len;
@@ -1626,12 +1628,14 @@ $(document).on('click', '.select-pool', function(e) {
 function getStats(refresh)
 {
 	var now = new Date().getTime();
-	var d = 0; var totalhash = 0; var totalac = 0; var totalre = 0; var totalhw = 0; var totalsh = 0; var totalfr = 0; var totalpoolhash = 0; var poolHash = 0;
-	var errorTriggered = false;
-	var pool_shares_seconds;
-
-	// Raw stats
-	var boxStats = $(".section-raw-stats");
+	var d = 0, totalhash = 0, totalac = 0, totalre = 0, totalhw = 0, totalsh = 0, totalfr = 0, totalpoolhash = 0, poolHash = 0,
+		errorTriggered = false,
+		pool_shares_seconds,
+		log_file = $(".app_data").data("minerd-log").replace(/^.*[\\\/]/, ''),
+		miner_status = $(".app_data").data("miner-status"),
+		// Raw stats
+		boxStats = $(".section-raw-stats");
+		
 	boxStats.hide();
 	
 	$('.overlay').show();
@@ -1682,12 +1686,34 @@ function getStats(refresh)
 			
 			if (data.notrunning)
 			{
-				errorTriggered = true;
 				$(".disable-if-not-running").fadeOut();
 				$(".enable-if-not-running").fadeIn();
-				$(".warning-message").html("Warning your local miner is offline");
-				$(".widget-warning").html("Not running");
 				$(".local-widget").removeClass('col-lg-4 col-sm-4').addClass('col-lg-6 col-sm-6');
+
+				if (miner_status) {
+					errorTriggered = true;
+					$(".warning-message").html('Your local miner is offline. Click here to check last logs.');
+					$(".widget-warning").html("Not running");
+					$.ajax(_baseUrl+"/app/api?command=tail_log&file="+log_file, {
+				        dataType: "text",
+				        success: function (dataP) {
+				        	if (dataP)
+				        	{
+				        		var dataJ = $.parseJSON(dataP);
+				        		$("#modal-log-label").html("Check the logs");
+				        		$("#modal-log .modal-log-lines").html(dataJ.join('<br />'));
+				    		}
+				        }
+				    });
+				    
+				    $(".warning-message").click(function (e) {
+					    e.preventDefault();
+						$('#modal-log').modal('show');
+				    })
+			    } else {
+					$(".disable-if-stopped").fadeOut();
+			    }
+
 			}
 			else if (data.error)
 			{
@@ -1697,6 +1723,22 @@ function getStats(refresh)
 				$(".warning-message").html(data.msg);
 				$(".widget-warning").html("Error");
 				$(".local-widget").removeClass('col-lg-4 col-sm-4').addClass('col-lg-6 col-sm-6');
+				$.ajax(_baseUrl+"/app/api?command=tail_log&file="+log_file, {
+			        dataType: "text",
+			        success: function (dataP) {
+			        	if (dataP)
+			        	{
+			        		var dataJ = $.parseJSON(dataP);
+			        		$("#modal-log-label").html("Check the logs");
+			        		$("#modal-log .modal-log-lines").html(dataJ.join('<br />'));
+			    		}
+			        }
+			    });
+			    
+			    $(".warning-message").click(function (e) {
+				    e.preventDefault();
+					$('#modal-log').modal('show');
+			    })
 			}
 			
 			if (refresh)

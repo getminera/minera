@@ -18,6 +18,7 @@
 					data-minerd-log="<?php echo ($minerdLog) ? base_url($this->config->item("minerd_log_url")) : null; ?>"
 					data-device-tree="<?php echo $dashboardDevicetree ?>"
 					data-dashboard-temp="<?php echo ($this->redis->get("dashboard_temp")) ? $this->redis->get("dashboard_temp") : "c"; ?>"
+					data-miner-status="<?php echo ($this->redis->get("minerd_status")) ? 1 : 0; ?>"
 				>
 
 					<div class="row">
@@ -124,7 +125,7 @@
 							<div class="row">
 
 								<!-- Warning  widget -->
-								<div class="col-lg-4 col-sm-4 col-xs-12 enable-if-not-running local-widget" style="display: none;">
+								<div class="col-lg-4 col-sm-4 col-xs-12 enable-if-not-running local-widget disable-if-stopped" style="display: none;">
 									<!-- small box -->
 									<div class="small-box bg-red">
 										<div class="inner">
@@ -132,10 +133,25 @@
 											<p>Local miner</p>
 										</div>
 										<div class="icon"><i class="ion ion-alert"></i></div>
-										<a href="#top" class="small-box-footer warning-message" data-toggle="tooltip" title="" data-original-title="It seems there is a problem with your local miner, try to restart it or check your settings.">...<i class="fa fa-arrow-circle-right"></i></a>
+										<a href="" class="small-box-footer warning-message" data-toggle="tooltip" title="" data-original-title="Your local miner is offline, try to restart it. If you are in trouble check your logs and settings.">...<i class="fa fa-arrow-circle-right"></i></a>
 									</div>
 								</div>
-															
+								
+								<!-- Stopped  widget -->
+								<?php if (!$this->redis->get("minerd_status")) : ?>
+								<div class="col-lg-4 col-sm-4 col-xs-12 enable-if-not-running local-widget" style="display: none;">
+									<!-- small box -->
+									<div class="small-box bg-gray">
+										<div class="inner">
+											<h3 class="widget-warning">Manually stopped</h3>
+											<p>Local miner</p>
+										</div>
+										<div class="icon"><i class="ion ion-power"></i></div>
+										<a href="#" data-miner-action="start" class="miner-action small-box-footer warning-message" data-toggle="tooltip" title="" data-original-title="Your local miner is offline, try to restart it.">Try to start it <i class="fa fa-arrow-circle-right"></i></a>
+									</div>
+								</div>
+								<?php endif; ?>
+
 								<!-- sys temp widget -->
 								<div class="col-lg-4 col-sm-4 col-xs-12 local-widget">
 									<!-- small box -->

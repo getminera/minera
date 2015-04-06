@@ -937,6 +937,12 @@ class App extends Main_Controller {
 			case "scan_network":
 				$o = json_encode($this->util_model->discoveryNetworkDevices());
 			break;
+			case "tail_log":
+				$o = json_encode($this->util_model->tailFile($this->input->get('file'), ($this->input->get('lines')) ? $this->input->get('lines') : 5));
+			break;
+			case "call_mobileminer":
+				$o = json_encode($this->util_model->callMobileminer());
+			break;
 			case "miner_action":
 				$action = ($this->input->get('action')) ? $this->input->get('action') : false;
 				switch($action)

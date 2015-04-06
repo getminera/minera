@@ -201,7 +201,7 @@ class Util_model extends CI_Model {
 					}
 				}
 				// Add config data
-				$a[$netMiner->name]->config = array('ip' => $netMiner->ip, 'port' => $netMiner->port);
+				$a[$netMiner->name]->config = array('ip' => $netMiner->ip, 'port' => $netMiner->port, 'algo' => $netMiner->algo);
 			}
 		}
 
@@ -1348,6 +1348,22 @@ log_message("error", var_export($pools, true));
 
 		return true;
 	}
+	
+	public function tailFile($filename, $lines) {
+		$file = file(FCPATH.APPPATH."logs/".$filename);
+		
+		if (count($file) > 0) {
+			for ($i = count($file)-$lines; $i < count($file); $i++) {
+				if ($i >= 0 && $file[$i]) {
+					$readlines[] = $file[$i] . "\n";
+				}
+			}
+		} else {
+			$readlines = array('No logs found');
+		}
+		
+		return $readlines;
+	}
 
 	public function saveCurrentFreq()
 	{
@@ -1734,17 +1750,19 @@ log_message("error", var_export($pools, true));
 		if ($this->isEnableMobileminer())
 		{
 			$stats = json_decode($this->getParsedStats($this->getMinerStats()));
+			$networkStats = $this->getNetworkMinerStats(true);
 			
 			// Params		
 			$params = array("emailAddress" => $this->redis->get("mobileminer_email"), "applicationKey" => $this->redis->get("mobileminer_appkey"), "apiKey" => $this->config->item('mobileminer_apikey'), "fetchCommands" => "true");
 			
-			// Pool data
+			// Local Pool data
 			$poolUrl = (isset($stats->pool->url)) ? $stats->pool->url : "no pool configured";
 			$poolStatus = (isset($stats->pool->alive) && $stats->pool->alive) ? "Alive" : "Dead";
 			
-			// Algo data
+			// Local Algo data
 			$algo = $this->checkAlgo();
-							
+			
+			// Local data				
 			$i = 0; $data = array();
 			if (isset($stats->devices) && count($stats->devices) > 0)
 			{
@@ -1786,7 +1804,63 @@ log_message("error", var_export($pools, true));
 					$i++;
 				}
 			}
-
+			
+			if (count($networkStats) > 0)
+			{
+				foreach ($networkStats as $netMinerName => $netMiner)
+				{
+					// Network Pool data
+					$netPoolUrl = (isset($netMiner->pool->url)) ? $netMiner->pool->url : "no pool configured";
+					$netPoolStatus = (isset($netMiner->pool->alive) && $netMiner->pool->alive) ? "Alive" : "Dead";
+					$netEnabled = (isset($netMiner->devices)) ? true : false;
+		
+					// Network data							
+					$i = 0;
+					if (isset($netMiner->devices) && count($netMiner->devices) > 0)
+					{
+						foreach ($netMiner->devices as $netDevName => $netDevice)
+						{
+							$data[] = array(
+								"MachineName" => $this->redis->get("mobileminer_system_name")." - ".$netMinerName,
+								"MinerName" => "Minera",
+								"CoinSymbol" => "",
+								"CoinName" => "",
+								"Algorithm" => $netMiner->config['algo'],
+								"Kind" => "Network",
+								"Name" => $netDevName,
+								"FullName" => $netDevName,
+								"PoolIndex" => 0,
+								"PoolName" => $netPoolUrl,
+								"Index" => $i,                                            
+								"DeviceID" => $i,
+								"Enabled" => $netEnabled,
+								"Status" => $netPoolStatus,
+								"Temperature" => (isset($netDevice->temperature)) ? $netDevice->temperature : false,
+								"FanSpeed" => 0,
+								"FanPercent" => 0,
+								"GpuClock" => 0,
+								"MemoryClock" => 0,
+								"GpuVoltage" => 0,
+								"GpuActivity" => 0,
+								"PowerTune" => 0,
+								"AverageHashrate" => ($netDevice->hashrate > 0) ? round(($netDevice->hashrate/1000), 0) : 0,
+								"CurrentHashrate" => ($netDevice->hashrate > 0) ? round(($netDevice->hashrate/1000), 0) : 0,
+								"AcceptedShares" => $netDevice->accepted,
+								"RejectedShares" => $netDevice->rejected,
+								"HardwareErrors" => $netDevice->hw_errors,
+								"Utility" => false,
+								"Intensity" => null,
+								"RejectedSharesPercent" => (($netDevice->accepted+$netDevice->rejected+$netDevice->hw_errors) > 0) ? round(($netDevice->rejected*100/($netDevice->accepted+$netDevice->rejected+$netDevice->hw_errors)), 3) : 0,
+								"HardwareErrorsPercent" => (($netDevice->accepted+$netDevice->rejected+$netDevice->hw_errors) > 0) ? round(($netDevice->hw_errors*100/($netDevice->accepted+$netDevice->rejected+$netDevice->hw_errors)), 3) : 0
+							);
+							$i++;
+						}
+					}					
+				}
+			}
+			
+			//log_message("error", var_export($networkStats, true));
+			
 			$resultGetActions = false; 
 			
 			if (count($data) > 0)
@@ -1804,29 +1878,29 @@ log_message("error", var_export($pools, true));
 			/*	
 			// Looking for actions to do
 			*/
-			$paramsGetActions = array("emailAddress" => $this->redis->get("mobileminer_email"), "applicationKey" => $this->redis->get("mobileminer_appkey"), "apiKey" => $this->config->item('mobileminer_apikey'), "machineName" => $this->redis->get("mobileminer_system_name"));
-			
-			//$resultGetActions = $this->useCurl($this->config->item('mobileminer_url_remotecommands'), $paramsGetActions, "GET");
-			
 			if ($resultGetActions)
-			{
+			{				
 				$resultGetActions = json_decode($resultGetActions);
+				log_message("error", var_export($resultGetActions, true));
 				if (is_array($resultGetActions) && count($resultGetActions) > 0)
 				{
 					$actionToDo = $resultGetActions[0];
 					
+					$paramsGetActions = array("emailAddress" => $this->redis->get("mobileminer_email"), "applicationKey" => $this->redis->get("mobileminer_appkey"), "apiKey" => $this->config->item('mobileminer_apikey'), "machineName" => $actionToDo->Machine->Name);
+
+					
 					// Do the mobileMiner action
 					if ($actionToDo->CommandText == "START")
 					{
-						if (!$this->isOnline()) $this->minerStart();
+						if ($actionToDo->Machine->Name === $this->redis->get("mobileminer_system_name") && !$this->isOnline()) $this->minerStart();
 					}
 					elseif ($actionToDo->CommandText == "STOP")
 					{
-						$this->minerStop();
+						if ($actionToDo->Machine->Name === $this->redis->get("mobileminer_system_name")) $this->minerStop();
 					}
 					elseif ($actionToDo->CommandText == "RESTART")
 					{
-						$this->minerRestart();
+						if ($actionToDo->Machine->Name === $this->redis->get("mobileminer_system_name")) $this->minerRestart();
 					}
 					elseif (preg_match("/SWITCH/", $actionToDo->CommandText))
 					{

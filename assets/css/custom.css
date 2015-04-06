@@ -41,6 +41,7 @@ body > .header { position: fixed !important; }
 .font-bold { font-weight: bold;}
 .error {color: rgb(171, 21, 21);}
 .active { font-weight: bold; }
+.modal-footer { background-color: #F9F9F9; }
 
 .bg-dark-blue { background: #656F80 !important; color: white; }
 .bg-light2 { background: #E4EBEF !important; color: #434343; }
