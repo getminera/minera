@@ -1,0 +1,126 @@
+[{
+    "miner": "cpuminer",
+    "miner_name": "CPUMiner",
+    "miner_device": "Gridseed Mini",
+    "miner_options": "--gc3355-detect --freq=838"
+},
+{
+    "miner": "cpuminer",
+    "miner_name": "CPUMiner",
+    "miner_device": "Gridseed Blade",
+    "miner_options": "--gc3355-detect --freq=825 --gc3355-chips=40"
+},
+{
+    "miner": "cgdmaxlzeus",
+    "miner_name": "CGminer Dmaxl",
+    "miner_device": "Gridseed Mini",
+    "miner_options": "--scrypt --scan-serial gridseed:auto --gridseed-options freq=838,chips=5"
+},
+{
+    "miner": "cgdmaxlzeus",
+    "miner_name": "CGminer Dmaxl",
+    "miner_device": "Gridseed Blade",
+    "miner_options": "--scrypt --scan-serial gridseed:auto --gridseed-options freq=825,chips=40"
+},
+{
+    "miner": "cgdmaxlzeus",
+    "miner_name": "CGminer Dmaxl",
+    "miner_device": "Gridseed generic per device",
+    "miner_options": "--scrypt --usb 1:7,1:8 --gridseed-options freq=X,chips=Y"
+},
+{
+    "miner": "cgdmaxlzeus",
+    "miner_name": "CGminer Dmaxl",
+    "miner_device": "Zeus Miner generic per device",
+    "miner_options": "--scrypt --scan-serial /dev/ttyUSB0 --zeus-chips X --zeus-clock Y"
+},
+{
+    "miner": "cgdmaxlzeus",
+    "miner_name": "CGminer Dmaxl",
+    "miner_device": "Zeus Miner Blizzard",
+    "miner_options": "--scrypt --scan-serial zeus:auto --zeus-chips 6 --zeus-clock 330"
+},
+{
+    "miner": "cgdmaxlzeus",
+    "miner_name": "CGminer Dmaxl",
+    "miner_device": "Zeus Miner Blizzard X6",
+    "miner_options": "--scrypt --scan-serial zeus:auto --zeus-chips 24 --zeus-clock 245"
+},
+{
+    "miner": "cgdmaxlzeus",
+    "miner_name": "CGminer Dmaxl",
+    "miner_device": "Zeus Miner Hurricane",
+    "miner_options": "--scrypt --scan-serial zeus:auto --zeus-chips 64 --zeus-clock 330"
+},
+{
+    "miner": "cgdmaxlzeus",
+    "miner_name": "CGminer Dmaxl",
+    "miner_device": "Zeus Miner Hurricane X2",
+    "miner_options": "--scrypt --scan-serial zeus:auto --zeus-chips 48 --zeus-clock 330"
+},
+{
+    "miner": "cgdmaxlzeus",
+    "miner_name": "CGminer Dmaxl",
+    "miner_device": "Zeus Miner Hurricane X6",
+    "miner_options": "--scrypt --scan-serial zeus:auto --zeus-chips 64 --zeus-clock 245"
+},
+{
+    "miner": "cgdmaxlzeus",
+    "miner_name": "CGminer Dmaxl",
+    "miner_device": "Zeus Miner Lightning X6",
+    "miner_options": "--scrypt --scan-serial zeus:auto --zeus-chips 256 --zeus-clock 245"
+},
+{
+    "miner": "cgdmaxlzeus",
+    "miner_name": "CGminer Dmaxl",
+    "miner_device": "Zeus Miner Thunder",
+    "miner_options": "--scrypt --scan-serial zeus:auto --zeus-chips 128 --zeus-clock 330"
+},
+{
+    "miner": "cgdmaxlzeus",
+    "miner_name": "CGminer Dmaxl",
+    "miner_device": "Zeus Miner Thunder X2",
+    "miner_options": "--scrypt --scan-serial zeus:auto --zeus-chips 96 --zeus-clock 330"
+},
+{
+    "miner": "cgdmaxlzeus",
+    "miner_name": "CGminer Dmaxl",
+    "miner_device": "Zeus Miner Thunder X6",
+    "miner_options": "--scrypt --scan-serial zeus:auto --zeus-chips 128 --zeus-clock 245"
+},
+{
+    "miner": "bfgminer",
+    "miner_name": "BFGminer",
+    "miner_device": "Gridseed Mini",
+    "miner_options": "--scrypt -S gsd:all --set gsd:clock=838"
+},
+{
+    "miner": "bfgminer",
+    "miner_name": "BFGminer",
+    "miner_device": "Gridseed Blade",
+    "miner_options": "--scrypt -S gsd:all --set gsd:clock=825"
+},
+{
+    "miner": "bfgminer",
+    "miner_name": "BFGminer",
+    "miner_device": "Gridseed generic per device",
+    "miner_options": "--scrypt --set gsd@/dev/ttyUSB0:clock=838"
+},
+{
+    "miner": "bfgminer",
+    "miner_name": "BFGminer",
+    "miner_device": "Zeus Miner generic",
+    "miner_options": "--scrypt -S zus:all --set zus:chips=X --set zus:clock=Y"
+},
+{
+    "miner": "bfgminer",
+    "miner_name": "BFGminer",
+    "miner_device": "Zeus Miner per device",
+    "miner_options": "--scrypt -S zus:/dev/ttyUSB0 --set zus:chips=6 --set zus:clock=328 -S zus:/dev/ttyUSB1 --set zus:chips=64 --set zus:clock=224"
+},
+{
+    "miner": "bfgminer",
+    "miner_name": "BFGminer",
+    "miner_device": "Zeus Miner + Gridseed mixed",
+    "miner_options": "--scrypt -S zus:all --set zus:chips=6 --set zus:clock=328 -S gridseed:all --set-device gridseed:clock=838"
+}]

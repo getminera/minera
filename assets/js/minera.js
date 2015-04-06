@@ -541,6 +541,21 @@ $(function() {
 	    
 	    $('#minerd-software').on('change', function() {
 			showHideMinerOptions(true);
+			$('#miners-conf').val('');
+			$('.miners-conf-box').fadeOut();
+	    });
+	    
+	    $('#miners-conf').on('change', function() {
+		    $('#minerd-software').val($(this).find(':selected').data('miner-id'));
+			$('.miners-conf-box').html('<code>'+$(this).val()+'</code>').fadeIn();
+			showHideMinerOptions(true);
+			$(".guided-options").fadeOut();
+			$(".manual-options").fadeIn();
+			$(".btn-manual-options").addClass("disabled");
+			$(".btn-guided-options").removeClass("disabled");
+			$("#manual_options").val(1);
+			$("#guided_options").val(0);
+			$(".manual-settings").val($(this).val());
 	    });
 	    
 	    $(document).on('click', '.del-custom-miner', function(e) {
@@ -1105,7 +1120,7 @@ function changeDonationWorth(profitability, value)
 
 // Show or Hide the options related to the selected miner software
 function showHideMinerOptions(change)
-{
+{	
     var sel = $('#minerd-software option:selected').text().match(/\[Custom Miner\]/);
     
     if ($('#minerd-software').val() !== "cpuminer" && sel === null)

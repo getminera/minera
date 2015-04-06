@@ -759,7 +759,7 @@ class Util_model extends CI_Model {
 	function autoAddMineraPool()
 	{
 		$pools = json_decode($this->getPools());
-log_message("error", var_export($pools, true));		
+
 		foreach ($pools as $pool)
 		{
 			$md5s[] = md5(strtolower($pool->url).strtolower($pool->username).strtolower($pool->password));
@@ -1275,6 +1275,27 @@ log_message("error", var_export($pools, true));
 	{
 		$r = shell_exec("sudo rm ".FCPATH.'minera-bin/custom/'.str_replace(" ", "\ ", $file));
 		return array('success' => $r);
+	}
+	
+	// Refresh miner confs
+	public function refreshMinerConf()
+	{
+		// wait 1w before recheck
+		if (file_exists(FCPATH."miners_conf.json") && time() > ($this->redis->get("miners_conf_update")+86400*7))
+		{
+			log_message('error', "Refreshing Cryptsy data");
+			
+			$data = json_decode(file_get_contents(FCPATH."miners_conf.json"), true);
+			
+			if ($data)
+			{
+				$this->redis->set("miners_conf_update", time());
+			
+				$this->redis->set("miners_conf", json_encode($data));
+			}
+		}
+		
+		return $this->redis->get("miners_conf");
 	}
 	
 	public function is_valid_domain_name($domain_name)
@@ -1881,7 +1902,7 @@ log_message("error", var_export($pools, true));
 			if ($resultGetActions)
 			{				
 				$resultGetActions = json_decode($resultGetActions);
-				log_message("error", var_export($resultGetActions, true));
+				//log_message("error", var_export($resultGetActions, true));
 				if (is_array($resultGetActions) && count($resultGetActions) > 0)
 				{
 					$actionToDo = $resultGetActions[0];
@@ -1902,6 +1923,7 @@ log_message("error", var_export($pools, true));
 					{
 						if ($actionToDo->Machine->Name === $this->redis->get("mobileminer_system_name")) $this->minerRestart();
 					}
+					// TODO Add switching for net miners too
 					elseif (preg_match("/SWITCH/", $actionToDo->CommandText))
 					{
 						$switch = explode("|", $actionToDo->CommandText);

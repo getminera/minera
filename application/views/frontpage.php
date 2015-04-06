@@ -495,6 +495,7 @@
 									</div><!-- /.row - inside box -->
 								</div><!-- /.box-body -->
 								<div class="box-footer">
+									<h6>Every changes here will be lost if you stop/restart your network miner</h6>
 									<h6>Legend: <strong>CS</strong> = Current Shares, <strong>PS</strong> = Previous shares, <strong>CA</strong> = Current Accepted, <strong>PA</strong> = Previous Accepted, <strong>CR</strong> = Current Rejected, <strong>PR</strong> = Previous Rejected</h6>
 									<h6><strong>Current</strong> is the current or last session, <strong>Previous</strong> is the total of all previous sessions. Pool HashRate is based on shares over the time per session.</h6>
 								</div>

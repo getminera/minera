@@ -156,6 +156,7 @@ class App extends Main_Controller {
 		$data['activeCustomMiners'] = json_decode($this->redis->get('active_custom_miners'));
 				
 		// Load miner settings
+		$data['builtInMinersConf'] = json_decode($this->util_model->refreshMinerConf());
 		$data['minerdCommand'] = $this->config->item("minerd_command");
 		$data['minerdAutorestart'] = $this->redis->get('minerd_autorestart');
 		$data['minerdAutorestartDevices'] = $this->redis->get('minerd_autorestart_devices');
@@ -963,7 +964,7 @@ class App extends Main_Controller {
 			case "test":
 				//$a = file_get_contents("api.json");
 				//$o = $this->redis->command("BGSAVE"); //$this->util_model->checkCronIsRunning(); //$this->util_model->sendAnonymousStats(123, "hello world!");
-				$o = json_encode($this->util_model->callMinerd()); //$this->util_model->getParsedStats($this->util_model->getMinerStats());
+				$o = $this->util_model->refreshMinerConf(); //$o = json_encode($this->util_model->callMinerd()); //$this->util_model->getParsedStats($this->util_model->getMinerStats());
 			break;
 		}
 		

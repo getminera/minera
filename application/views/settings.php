@@ -530,6 +530,16 @@
 												<?php endif; ?>
 											</select>
 											<h6>Pay attention: Minera is not responsible of any problem related to the miner software you are using. Minera acts only as frontend to manage the miner software. Please refer to miner software's related authors if you have question about them and how to use them.</h6>
+											<div>
+												<select name="miners_conf" id="miners-conf" class="form-control">
+													<option value="">--- Preconfigured miner options ---</option>
+													<?php foreach ($builtInMinersConf as $minerPreConf) : ?>
+														<option value="<?php echo $minerPreConf->miner_options ?>" data-miner-id="<?php echo $minerPreConf->miner ?>"><?php echo $minerPreConf->miner_name." - ".$minerPreConf->miner_device ?></option>
+													<?php endforeach; ?>
+												</select>
+												<h6>If you use preconfigured options check them before starting the miner, some of them require manual input in the manual options textarea below</h6>
+												<p class="miners-conf-box mt10 mb10"></p>
+											</div>
 										</div>
 									</div>
 
@@ -635,7 +645,7 @@
                                     <div class="form-group manual-options">
                                         <label>Manual options</label>
                                         <p>You have chosen to add all options manually, I will only add for you the pools list, you have to take care of the rest.</p>
-                                        <textarea name="minerd_manual_settings" class="form-control" rows="5" placeholder="Example: --gc3355-detect --gc3355-autotune --freq=850 --retries=1" class="minerd_manual_settings"><?php echo $minerdManualSettings ?></textarea>
+                                        <textarea name="minerd_manual_settings" class="form-control manual-settings" rows="5" placeholder="Example: --gc3355-detect --gc3355-autotune --freq=850 --retries=1" class="minerd_manual_settings"><?php echo $minerdManualSettings ?></textarea>
 										<h6>Please do not include the command name or the pools (they are automatically added).</h6>
 									</div>											
 
