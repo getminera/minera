@@ -13,13 +13,7 @@
 				</section>
 					
 				<!-- Main content -->
-				<section class="content app_data" 
-					data-refresh-time="<?php echo ($dashboard_refresh_time) ? $dashboard_refresh_time : 60; ?>"
-					data-minerd-log="<?php echo ($minerdLog) ? base_url($this->config->item("minerd_log_url")) : null; ?>"
-					data-device-tree="<?php echo $dashboardDevicetree ?>"
-					data-dashboard-temp="<?php echo ($this->redis->get("dashboard_temp")) ? $this->redis->get("dashboard_temp") : "c"; ?>"
-					data-miner-status="<?php echo ($this->redis->get("minerd_status")) ? 1 : 0; ?>"
-				>
+				<section class="content">
 
 					<div class="row">
 						
@@ -143,7 +137,7 @@
 									<!-- small box -->
 									<div class="small-box bg-gray">
 										<div class="inner">
-											<h3 class="widget-warning">Manually stopped</h3>
+											<h3 class="widget-warning">Off</h3>
 											<p>Local miner</p>
 										</div>
 										<div class="icon"><i class="ion ion-power"></i></div>
@@ -518,7 +512,7 @@
 									</div><!-- /. tools -->
 									<i class="fa fa-bullseye"></i>
 									
-									<h3 class="box-title" id="error-history">Accepted/Rejected/Errors</h3>
+									<h3 class="box-title" id="error-history">Local Accepted/Rejected/Errors</h3>
 								</div>
 								<div class="box-body chart-responsive">
 									<div class="chart" id="rehw-chart" style="height:160px;"></div>
@@ -562,7 +556,7 @@
 									</div><!-- /. tools -->
 									<i class="fa fa-bar-chart-o"></i>
 									
-									<h3 class="box-title" id="hashrate-history">Hashrate History</h3>
+									<h3 class="box-title" id="hashrate-history">Local Hashrate History</h3>
 								</div>
 								<div class="box-body chart-responsive">
 									<div class="chart" id="hashrate-chart" style="height:160px;"></div>
@@ -578,11 +572,11 @@
 									</div><!-- /. tools -->
 									<i class="fa fa-signal"></i>
 
-									<h3 class="box-title">Earnings calculator</h3>
+									<h3 class="box-title">Scrypt Earnings calculator</h3>
 								</div><!-- /.box-header -->
 								<div class="box-body" style="display: block;">
 									<div class="profitability-box">
-										<p>Profitability in <i class="fa fa-btc"></i>/Day per MH/s <a href="#" class="profitability-question"><small class="badge bg-light"><small><i class="fa fa-question"></i></small></small></a></p>
+										<p>Pool profitability in <i class="fa fa-btc"></i>/Day per MH/s <a href="#" class="profitability-question"><small class="badge bg-light"><small><i class="fa fa-question"></i></small></small></a></p>
 										<div class="callout callout-grey profitability-help" style="display:none;">
 											<p><small>If you know the profitability of your pool you can select it sliding the bar to get your possible earnings based on your current pool hashrate. Profitability is usually expressed as <i class="fa fa-btc"></i> per day per MH/s. You can see for example the <a href="http://www.clevermining.com/profits/30-days" target="_blank">Clevermining one, here</a>.</small></p>
 										</div>

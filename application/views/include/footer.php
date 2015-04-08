@@ -19,6 +19,7 @@
     <script src="<?php echo base_url('assets/js/app.js') ?>" type="text/javascript"></script>
 
     <!-- ScrollTo -->
+    <script src="<?php echo base_url('assets/js/extra/jquery.slimscroll.min.js') ?>" type="text/javascript"></script>
     <script src="<?php echo base_url('assets/js/extra/jquery.scrollTo.min.js') ?>" type="text/javascript"></script>
     <script src="<?php echo base_url('assets/js/extra/scrollspy.js') ?>" type="text/javascript"></script>
     
@@ -46,6 +47,9 @@
     <!-- Dashboard script -->
 	<!-- jQuery Knob -->
     <script src="<?php echo base_url('assets/js/extra/jquery.knob.js') ?>" type="text/javascript"></script>
+    
+	<!-- Underscore.js -->
+    <script src="<?php echo base_url('assets/js/extra/underscore-min.js') ?>" type="text/javascript"></script>
     
     <!-- Github star -->
 	<script async defer id="github-bjs" src="https://buttons.github.io/buttons.js"></script>

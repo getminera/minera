@@ -121,7 +121,7 @@ class Util_model extends CI_Model {
 	{
 		$a = new stdClass();
 		$altcoinData = $this->getAltcoinsRates();
-		$altc["altcoins_rates"] = $altcoinData;
+		$btcData = $this->getBtcUsdRates();
 		
 		if ($this->isOnline())
 		{
@@ -167,6 +167,9 @@ class Util_model extends CI_Model {
 		
 		// Add controller temp
 		$a->temp = $this->checkTemp();				
+		
+		// Add BTC rates
+		$a->btc_rates = $btcData;
 		
 		// Add AltCoin rates
 		$a->altcoins_rates = $altcoinData;
@@ -1025,24 +1028,22 @@ class Util_model extends CI_Model {
 	{
 		$ctx = stream_context_create(array('http' => array('timeout' => 3)));
 		
-		if ($json = @file_get_contents("http://pubapi.cryptsy.com/api.php?method=singlemarketdata&marketid=$id", 0, $ctx))
+		if ($json = @file_get_contents("https://www.cryptsy.com/api/v2/markets/$id", 0, $ctx))
 		{
 			$a = json_decode($json);
 			$o = false;
 			if ($a->success)
 			{
-				foreach ($a->return->markets as $code => $alt)
-				{
-					$o[$code] = array(
-						"primaryname" => $alt->primaryname, 
-						"secondaryname" => $alt->secondaryname, 
-						"primarycode" => $alt->primarycode, 
-						"secondarycode" => $alt->secondarycode, 
-						"label" => $alt->label, 
-						"price" => $alt->lasttradeprice,
-						"time" => time()
-					);
-				}
+				log_message("error", var_export($a->data->label, true));
+				$o[$id] = array(
+					"primaryname" => $a->data->label, 
+					"secondaryname" => $a->data->label, 
+					"primarycode" => $a->data->{'24hr'}->volume, 
+					"secondarycode" => $a->data->{'24hr'}->volume_btc, 
+					"label" => $a->data->label, 
+					"price" => $a->data->last_trade->price,
+					"time" => $a->data->last_trade->timestamp
+				);
 			}
 			return $o;
 		}
@@ -1055,18 +1056,19 @@ class Util_model extends CI_Model {
 	// Get Cryptsy API to look at currency IDs/Values
 	public function getCryptsyRateIds()
 	{
-		if ($json = @file_get_contents("http://pubapi.cryptsy.com/api.php?method=marketdatav2"))
+		if ($json = @file_get_contents("https://www.cryptsy.com/api/v2/markets"))
 		{
 			$a = json_decode($json);
 			
 			if ($a->success)
 			{
 				$o = array();
-				foreach ($a->return->markets as $coins => $market)
+
+				foreach ($a->data as $market)
 				{
-					if (preg_match("/\/BTC$/", $coins))
+					if (preg_match("/\/BTC$/", $market->label))
 					{
-						$o[$market->marketid] = array("codes" => $coins, "names" => $market->primaryname."/".$market->secondaryname);
+						$o[$market->id] = array("codes" => $market->label, "names" => $market->label);
 					}
 				}
 			}
@@ -1106,12 +1108,12 @@ class Util_model extends CI_Model {
 	}
 
 	// Refresh Cryptsy data IDs/Values
-	public function updateAltcoinsRates()
+	public function updateAltcoinsRates($force = false)
 	{
 		$oldData = ($this->redis->get("altcoins_data")) ? $this->redis->get("altcoins_data") : array("error" => "true");
 		
 		// wait 1d before recheck
-		if (time() > ($this->redis->get("altcoins_update")+3600))
+		if (time() > ($this->redis->get("altcoins_update")+3600) || $force)
 		{
 			if ($this->redis->get("altcoins_data_lock"))
 				return $oldData;
@@ -1283,7 +1285,7 @@ class Util_model extends CI_Model {
 		// wait 1w before recheck
 		if (file_exists(FCPATH."miners_conf.json") && time() > ($this->redis->get("miners_conf_update")+86400*7))
 		{
-			log_message('error', "Refreshing Cryptsy data");
+			log_message('error', "Refreshing Miners conf data");
 			
 			$data = json_decode(file_get_contents(FCPATH."miners_conf.json"), true);
 			

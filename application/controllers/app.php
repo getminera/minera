@@ -62,7 +62,6 @@ class App extends Main_Controller {
 		
 		$data['sectionPage'] = 'dashboard';
 		$data['minerdPools'] = json_decode($this->util_model->getPools());
-		$data['btc'] = $this->util_model->getBtcUsdRates();
 		$data['isOnline'] = $this->util_model->isOnline();
 		$data['minerdLog'] = $this->redis->get('minerd_log');
 		$data['savedFrequencies'] = $this->redis->get('current_frequencies');
@@ -93,7 +92,6 @@ class App extends Main_Controller {
 		$this->util_model->isLoggedIn();
 		
 		$data['sectionPage'] = 'charts';
-		$data['btc'] = $this->util_model->getBtcUsdRates();
 		$data['isOnline'] = $this->util_model->isOnline();
 		$data['htmlTag'] = "charts";
 		$data['chartsScript'] = true;
@@ -101,7 +99,10 @@ class App extends Main_Controller {
 		$data['settingsScript'] = false;
 		$data['mineraUpdate'] = $this->util_model->checkUpdate();
 		$data['pageTitle'] = ($this->redis->get("mobileminer_system_name")) ? $this->redis->get("mobileminer_system_name")." > Minera - Charts" : "Minera - Charts";
+		$data['dashboard_refresh_time'] = $this->redis->get("dashboard_refresh_time");
+		$data['minerdLog'] = $this->redis->get('minerd_log');
 		$data['dashboardSkin'] = ($this->redis->get("dashboard_skin")) ? $this->redis->get("dashboard_skin") : "black";
+		$data['dashboardDevicetree'] = ($this->redis->get("dashboard_devicetree")) ? $this->redis->get("dashboard_devicetree") : false;
 		$data['minerdRunning'] = $this->redis->get("minerd_running_software");
 		$data['minerdRunningUser'] = $this->redis->get("minerd_running_user");		
 		$data['minerdSoftware'] = $this->redis->get("minerd_software");
@@ -524,14 +525,17 @@ class App extends Main_Controller {
 			$dataObj->minera_donation_time = $mineraDonationTime;
 			$this->redis->set("dashboard_refresh_time", $dashSettings);
 			$dataObj->dashboard_refresh_time = $dashSettings;
-			$this->redis->set("dashboard_coin_rates", json_encode($coinRates));
-			$dataObj->dashboard_coin_rates = json_encode($coinRates);
 			$this->redis->set("dashboard_temp", $dashboardTemp);
 			$dataObj->dashboard_temp = $dashboardTemp;
 			$this->redis->set("dashboard_skin", $dashboardSkin);
 			$dataObj->dashboard_skin = $dashboardSkin;
 			$this->redis->set("dashboard_devicetree", $dashboardDevicetree);
 			$dataObj->dashboard_devicetree = $dashboardDevicetree;
+			if ($this->redis->get("dashboard_coin_rates") !== json_encode($coinRates)) {
+				$this->redis->set("dashboard_coin_rates", json_encode($coinRates));
+				$dataObj->dashboard_coin_rates = json_encode($coinRates);
+				$this->util_model->updateAltcoinsRates(true);
+			}
 			
 			if ($mineraDonationTime)
 			{
@@ -964,7 +968,7 @@ class App extends Main_Controller {
 			case "test":
 				//$a = file_get_contents("api.json");
 				//$o = $this->redis->command("BGSAVE"); //$this->util_model->checkCronIsRunning(); //$this->util_model->sendAnonymousStats(123, "hello world!");
-				$o = $this->util_model->refreshMinerConf(); //$o = json_encode($this->util_model->callMinerd()); //$this->util_model->getParsedStats($this->util_model->getMinerStats());
+				$o = $this->util_model->updateAltcoinsRates(); //$this->util_model->refreshMinerConf(); //$o = json_encode($this->util_model->callMinerd()); //$this->util_model->getParsedStats($this->util_model->getMinerStats());
 			break;
 		}
 		
@@ -1166,7 +1170,7 @@ class App extends Main_Controller {
 			$this->redis->set("minera_system_id", $mineraSystemId);
 		}
 
-		if ($anonynousStatsEnabled && $mineraSystemId)
+		if ($mineraSystemId)
 		{
 			if ($this->util_model->isOnline()) {
 				if (isset($stats->totals->hashrate))

@@ -1,7 +1,6 @@
 "use strict";
 
 $(function() {
-	
 	$("body").tooltip({ selector: '[data-toggle="tooltip"]', trigger: 'hover' });
 	$("body").popover({ selector: '[data-toggle="popover"]', trigger: 'hover' });
 
@@ -1473,6 +1472,24 @@ function triggerError(msg)
 	return false;
 }
 
+Number.prototype.noExponents= function(){
+    var data= String(this).split(/[eE]/);
+    if(data.length== 1) return data[0]; 
+
+    var  z= '', sign= this<0? '-':'',
+    str= data[0].replace('.', ''),
+    mag= Number(data[1])+ 1;
+
+    if(mag<0){
+        z= sign + '0.';
+        while(mag++) z += '0';
+        return z + str.replace(/^\-/,'');
+    }
+    mag -= str.length;  
+    while(mag--) z += '0';
+    return str + z;
+}
+
 // Select Pool on the fly
 $(document).on('click', '.select-net-pool', function(e) {
 	e.preventDefault();
@@ -1639,6 +1656,19 @@ $(document).on('click', '.select-pool', function(e) {
     });
 });
 
+// Define underscore variable template
+_.templateSettings.variable = "rc";
+
+var btcRatesTemplate = _.template(
+		$( "script.btc-rates-template" ).html()
+	),
+	altcoinsRatesTemplate = _.template(
+		$( "script.altcoins-rates-template" ).html()
+	),
+	avgStatsTemplate = _.template(
+		$( "script.avg-stats-template" ).html()
+	);
+	
 // Stats scripts
 function getStats(refresh)
 {
@@ -1649,7 +1679,8 @@ function getStats(refresh)
 		log_file = $(".app_data").data("minerd-log").replace(/^.*[\\\/]/, ''),
 		miner_status = $(".app_data").data("miner-status"),
 		// Raw stats
-		boxStats = $(".section-raw-stats");
+		boxStats = $(".section-raw-stats"),
+		thisSection = $(".header").data("this-section");
 		
 	boxStats.hide();
 	
@@ -1661,28 +1692,6 @@ function getStats(refresh)
 	// get Json data from minerd and create Knob, table and sysload
     $.getJSON( _baseUrl+"/app/stats", function( data ) 
     {
-    	// Add raw stats box
-		boxStats.find("span").html('<pre style="height:350px; overflow: scroll; font-size:10px;">' + JSON.stringify(data, undefined, 2) + '</pre>');
-		
-		// Add Altcoins rates
-		$('.altcoin-container').html('');
-		if (data['altcoins_rates'])
-		{
-			$.each( data['altcoins_rates'], function( key, val ) {
-				if (key != "error")
-				{
-					$.each(val, function (key, val) {
-						var timeprice = new Date(val.time*1000);
-						$('.altcoin-container').append('<li><a href="#"><div class="pull-left" style="padding-left:15px;"><i class="fa fa-stack-exchange"></i></div><h4 class="altcoin-price">'+ val.label + ': ' + val.price +'<small><i class="fa fa-clock-o"></i> '+ timeprice.toLocaleTimeString() +'</small></h4><p class="altcoin-label">'+ val.primaryname + '/' + val.secondaryname +'</p></a></li>');
-					});
-				}
-				else
-				{
-					$('.altcoin-container').append('<li><a href="#"><div class="pull-left" style="padding-left:15px;"><i class="fa fa-warning"></i></div><h4>There was an error getting<br />the Cryptsy data.</h4></a></li>');
-				}
-			});						
-		}
-
 		if (data['notloggedin'])
 		{
 			errorTriggered = true;
@@ -1783,11 +1792,25 @@ function getStats(refresh)
 				});
 			}
 			
+			// Add raw stats box
+			boxStats.find("span").html('<pre style="height:350px; overflow: scroll; font-size:10px;">' + JSON.stringify(data, undefined, 2) + '</pre>');
+			
+			// Add BTC rates
+		    if (data.btc_rates) {
+			    var btcRatesData = {}; btcRatesData.btc_rates = data.btc_rates;
+		        $(".messages-btc-rates").html(btcRatesTemplate(btcRatesData));
+			}
+			
+			// Add Altcoins rates
+		    if (data.altcoins_rates) {
+			    var altcoinsRatesData = {}; altcoinsRatesData.altcoins_rates = data.altcoins_rates;
+		        $(".mesages-altcoins-rates").html(altcoinsRatesTemplate(altcoinsRatesData));
+			}
+			
 			if (data.avg)
 			{
-				$('.avg-stats').empty();
-				
-				$.each( data.avg, function( akey, aval ) 
+				var avgStats = [], avgStatsData = {};
+				_.each( data.avg, function( aval, akey ) 
 				{
 					var avgs = {}; avgs.hrCurrentText = "-"; avgs.hrCurrent = 0; avgs.hrPast = 0;
 					if (aval[0])
@@ -1800,24 +1823,42 @@ function getStats(refresh)
 						avgs.hrPast = parseInt(aval[1].pool_hashrate / 1000);				
 					}
 
-					if (avgs.hrPast > avgs.hrCurrent)
-						avgs.arrow = '<i class="fa fa-chevron-down" style="color:#f56954;"></i>';
-					else if (avgs.hrPast < avgs.hrCurrent)
-						avgs.arrow = '<i class="fa fa-chevron-up" style="color:#00a65a;"></i>';
-					else
-						avgs.arrow = '<i class="fa fa-arrows-h"></i>';								
+					if (avgs.hrPast > avgs.hrCurrent) {
+						avgs.arrow = 'fa-chevron-down';
+						avgs.color = '#f56954';
+					} else if (avgs.hrPast < avgs.hrCurrent) {
+						avgs.arrow = 'fa-chevron-up';
+						avgs.color = '#00a65a';
+					} else {
+						avgs.arrow = 'fa-arrows-h';
+						avgs.color = '#ffffff';
+					}
 
 					if (akey == "1min")
 					{
-						$('.avg-1min').html(akey + ": " + avgs.hrCurrentText + " " + avgs.arrow);
+						avgStatsData = { avgonemin: akey + ": " + avgs.hrCurrentText, arrow: avgs.arrow, color: avgs.color };
 					}
 					else
 					{
-						var avgStats = '<li><a href="#"><div class="pull-left" style="padding-left:15px;">'+avgs.arrow+'</div><h4>'+avgs.hrCurrentText+'<small><i class="fa fa-dashboard"></i> Pool Hashrate</small></h4><p>'+akey+'</p></a></li>';
-						$('.avg-stats').append(avgStats);
+						avgStats.push({
+							arrow: avgs.arrow,
+							color: avgs.color,
+							hrCurrentText: avgs.hrCurrentText,
+							key: akey
+						});
 					}
 				});
+				
+				avgStatsData.avgs = avgStats;
+
+				$(".messages-avg").html(avgStatsTemplate(avgStatsData));
 			}
+			
+			$(".navbar .menu").slimscroll({
+		        height: "200px",
+		        alwaysVisible: false,
+		        size: "3px"
+		    }).css("width", "100%");
 
 			if (data.pools)
 			{
@@ -2728,91 +2769,92 @@ function getStats(refresh)
 	}); // End get live stats
 	
 	/* Morris.js Charts */
-	// get Json data from stored_stats url (redis) and create the graphs
-	$.getJSON(_baseUrl+"/app/api?command=history_stats&type=hourly", function( data ) 
-	{
-		var charts = {
-			areaHash: {},
-			areaRej: {}
-		};
-		
-		var data = Object.keys(data).map(function(key) { 
-			data[key]['timestamp'] = data[key]['timestamp']*1000; 
-			data[key]['hashrate'] = (data[key]['hashrate']/1000/1000).toFixed(2);
-			data[key]['pool_hashrate'] = (data[key]['pool_hashrate']/1000/1000).toFixed(2);									
-			return data[key];
-		});
-	
-		var redrawGraphs = function ()
+	if (thisSection === "dashboard") {
+		// get Json data from stored_stats url (redis) and create the graphs
+		$.getJSON(_baseUrl+"/app/api?command=history_stats&type=hourly", function( data ) 
 		{
-		    charts.areaHash.redraw();
-		    charts.areaRej.redraw();
-			    
-		    return false;
-		}
-		
-		var updateGraphs = function(charts, data)
-		{
-			console.log(data);
-		    charts.areaHash.setData(data);
-		    charts.areaRej.setData(data);
-			    
-		    return false;
-		}
-		
-		if (data.length && errorTriggered === false)
-		{
+			var charts = {
+				areaHash: {},
+				areaRej: {}
+			};
 			
-				
-				// Hashrate history graph
-				charts.areaHash = new Morris.Area({
-					element: 'hashrate-chart',
-					resize: true,
-					data: data,
-					xkey: 'timestamp',
-					ykeys: ['hashrate', 'pool_hashrate'],
-					ymax: 'auto',
-					postUnits: "Mh/s",
-					labels: ['Devices', 'Pool'],
-					lineColors: ['#3c8dbc', '#00c0ef'],
-					lineWidth: 2,
-					pointSize: 3,
-					hideHover: 'auto',
-					behaveLikeLine: true
-
-				});	
-				
-				// Rejected/Errors graph
-				charts.areaRej = new Morris.Area({
-					element: 'rehw-chart',
-					resize: true,
-					data: data,
-					xkey: 'timestamp',
-					ykeys: ['accepted', 'rejected', 'errors'],
-					ymax: 'auto',
-					labels: ['Accepted', 'Rejected', 'Errors'],
-					lineColors: ['#00a65a', '#f39c12', '#f56954'],
-					lineWidth: 2,
-					pointSize: 3,
-					hideHover: 'auto',
-					behaveLikeLine: true
-				});
-			
-			
-			$(window).resize(function() {
-				redrawGraphs()
+			var data = Object.keys(data).map(function(key) { 
+				data[key]['timestamp'] = data[key]['timestamp']*1000; 
+				data[key]['hashrate'] = (data[key]['hashrate']/1000/1000).toFixed(2);
+				data[key]['pool_hashrate'] = (data[key]['pool_hashrate']/1000/1000).toFixed(2);									
+				return data[key];
 			});
+		
+			var redrawGraphs = function ()
+			{
+			    charts.areaHash.redraw();
+			    charts.areaRej.redraw();
+				    
+			    return false;
+			}
 			
-			$('.sidebar-toggle').click(function() { redrawGraphs(); })
-		}
-		else
-		{
-			$('.chart').css({'height': '100%', 'overflow': 'visible', 'margin-top': '10px'}).html('<div class="alert alert-warning"><i class="fa fa-warning"></i><b>Ops!</b> <small>No data collected, You need at least 5 minutes of data to see the chart.</small></div>');	
-		}
-		
-		//$('.overlay').hide();
-		//$('.loading-img').hide();
-		
-	}); //End get stored stats
+			var updateGraphs = function(charts, data)
+			{
+				console.log(data);
+			    charts.areaHash.setData(data);
+			    charts.areaRej.setData(data);
+				    
+			    return false;
+			}
+			
+			if (data.length && errorTriggered === false)
+			{
+				
+					
+					// Hashrate history graph
+					charts.areaHash = new Morris.Area({
+						element: 'hashrate-chart',
+						resize: true,
+						data: data,
+						xkey: 'timestamp',
+						ykeys: ['hashrate', 'pool_hashrate'],
+						ymax: 'auto',
+						postUnits: "Mh/s",
+						labels: ['Devices', 'Pool'],
+						lineColors: ['#3c8dbc', '#00c0ef'],
+						lineWidth: 2,
+						pointSize: 3,
+						hideHover: 'auto',
+						behaveLikeLine: true
 	
+					});	
+					
+					// Rejected/Errors graph
+					charts.areaRej = new Morris.Area({
+						element: 'rehw-chart',
+						resize: true,
+						data: data,
+						xkey: 'timestamp',
+						ykeys: ['accepted', 'rejected', 'errors'],
+						ymax: 'auto',
+						labels: ['Accepted', 'Rejected', 'Errors'],
+						lineColors: ['#00a65a', '#f39c12', '#f56954'],
+						lineWidth: 2,
+						pointSize: 3,
+						hideHover: 'auto',
+						behaveLikeLine: true
+					});
+				
+				
+				$(window).resize(function() {
+					redrawGraphs()
+				});
+				
+				$('.sidebar-toggle').click(function() { redrawGraphs(); })
+			}
+			else
+			{
+				$('.chart').css({'height': '100%', 'overflow': 'visible', 'margin-top': '10px'}).html('<div class="alert alert-warning"><i class="fa fa-warning"></i><b>Ops!</b> <small>No data collected, You need at least 5 minutes of data to see the chart.</small></div>');	
+			}
+			
+			//$('.overlay').hide();
+			//$('.loading-img').hide();
+			
+		}); //End get stored stats
+	}
 } // End function getStats()

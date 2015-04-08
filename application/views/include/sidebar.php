@@ -1,4 +1,11 @@
-    <body class="skin-<?php echo $dashboardSkin ?>"<?php if ($appScript) : ?> onload="getStats(false);"<?php endif; ?>>
+    <body class="skin-<?php echo $dashboardSkin ?>" onload="getStats(false);">
+		<div class="app_data"
+			data-refresh-time="<?php echo ($dashboard_refresh_time) ? $dashboard_refresh_time : 60; ?>"
+			data-minerd-log="<?php echo ($minerdLog) ? base_url($this->config->item("minerd_log_url")) : null; ?>"
+			data-device-tree="<?php echo $dashboardDevicetree ?>"
+			data-dashboard-temp="<?php echo ($this->redis->get("dashboard_temp")) ? $this->redis->get("dashboard_temp") : "c"; ?>"
+			data-miner-status="<?php echo ($this->redis->get("minerd_status")) ? 1 : 0; ?>"
+		></div>
 
 		<!-- Modal -->
 		<div id="modal-saving" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="SavingData" aria-hidden="true" data-backdrop="static" data-keyboard="false" >
@@ -103,41 +110,63 @@
                                 <i class="fa fa-clock-o"></i> <span class="toptime"></span>
                             </a>
                         </li>
-                        <?php if ($appScript) : ?>
                         <!-- Averages -->
 						<li class="messages-menu messages-avg">
                             <a href="#" class="dropdown-toggle" data-toggle="dropdown">
-                                <i class="fa fa-dashboard"></i> <span class="avg-1min">Calculating...</span>
+                                <i class="fa fa-dashboard"></i> <span>Calculating...</span>
+                            </a>
+						<!-- BEGIN: Underscore Template Definition. -->
+						<script type="text/template" class="avg-stats-template">
+                            <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                                <i class="fa fa-dashboard"></i> <span><%- rc.avgonemin %> <i class="fa <%= rc.arrow %>" style="color:<%= rc.color %>;"></i></span>
                             </a>
                             <ul class="dropdown-menu">
                                 <li class="header">Average stats</li>
                                 <li>
                                     <!-- inner menu: contains the actual data -->
-                                    <ul class="menu avg-stats" style="overflow: hidden; width: 100%; height: 200px;"></ul>
+                                    <ul class="menu avg-stats" style="overflow: hidden; width: 100%; height: 200px;">
+	                                    <%	_.each( rc.avgs, function( avg ) { %>
+											<li>
+												<a href="#">
+													<div class="pull-left" style="padding-left:15px;">
+														<i class="fa <%= avg.arrow %>" style="color:<%= avg.color %>;"></i>
+													</div>
+													<h4><%- avg.hrCurrentText %><small><i class="fa fa-dashboard"></i> Pool Hashrate</small></h4>
+													<p><%- avg.key %></p>
+												</a>
+											</li>
+										<% }); %>
+                                    </ul>
                                 </li>
                                 <li class="footer"><a href="<?php echo site_url("app/charts") ?>">Go to Charts</a></li>
                             </ul>
                         </li>
-                        <?php endif; ?>
-						<?php if (isset($btc->volume)) : ?>
+                        </script>
+						<!-- END: Underscore Template Definition. -->
+
 						<!-- BTC/USD rates -->
-						<li class="messages-menu">
+						<li class="messages-menu messages-btc-rates">
+							<a href="#" class="dropdown-toggle dropdown-btc-rates" data-toggle="dropdown">
+	                            <i class="fa fa-btc"></i> <span class="avg-1min">Getting data...</span>
+							</a>
+						<!-- BEGIN: Underscore Template Definition. -->
+						<script type="text/template" class="btc-rates-template">
                             <a href="#" class="dropdown-toggle" data-toggle="dropdown">
-                                <i class="fa fa-btc"></i> price: <?php echo $btc->last ?> <i class="fa fa-dollar"></i> <span class="small">(<?php echo $btc->last_eur ?> <i class="fa fa-eur"></i>)</span>
+                                <i class="fa fa-btc"></i> price: <%- rc.btc_rates.last %> <i class="fa fa-dollar"></i> <span class="small">(<%- rc.btc_rates.last_eur %> <i class="fa fa-eur"></i>)</span>
                             </a>
                             <ul class="dropdown-menu">
                                 <li class="header">Data from Bitstamp</li>
                                 <li>
                                     <!-- inner menu: contains the actual data -->
-                                    <ul class="menu" style="overflow: hidden; width: 100%; height: 300px;">
+                                    <ul class="menu" style="overflow: hidden; width: 100%;">
                                         <li>
                                             <a href="#">
                                             	<div class="pull-left" style="padding-left:15px;">
                                                     <i class="fa fa-archive"></i>
                                                 </div>
                                                 <h4>
-                                                    <?php echo $btc->volume ?>
-                                                    <small><i class="fa fa-clock-o"></i> <?php echo date("H:i", $btc->timestamp) ?></small>
+                                                    <%- rc.btc_rates.volume %>
+                                                    <small><i class="fa fa-clock-o"></i> <%- moment(rc.btc_rates.timestamp, 'X').format('hh:mm:ss a') %></small>
                                                 </h4>
                                                 <p>Volume</p>
                                             </a>
@@ -148,8 +177,8 @@
                                                     <i class="fa fa-arrow-circle-up"></i>
                                                 </div>
                                                 <h4>
-                                                    <?php echo $btc->high ?> <i class="fa fa-dollar"></i> <span class="small">(<?php echo $btc->high_eur ?> <i class="fa fa-eur"></i>)</span>
-                                                    <small><i class="fa fa-clock-o"></i> <?php echo date("H:i", $btc->timestamp) ?></small>
+                                                    <%- rc.btc_rates.high %> <i class="fa fa-dollar"></i> <span class="small">(<%- rc.btc_rates.high_eur %> <i class="fa fa-eur"></i>)</span>
+                                                    <small><i class="fa fa-clock-o"></i> <%- moment(rc.btc_rates.timestamp, 'X').format('hh:mm:ss a') %></small>
                                                 </h4>
                                                 <p>High</p>
                                             </a>
@@ -160,8 +189,8 @@
                                                     <i class="fa fa-arrow-circle-down"></i>
                                                 </div>
                                                 <h4>
-                                                    <?php echo $btc->low ?> <i class="fa fa-dollar"></i> <span class="small">(<?php echo $btc->low_eur ?> <i class="fa fa-eur"></i>)</span>
-                                                    <small><i class="fa fa-clock-o"></i> <?php echo date("H:i", $btc->timestamp) ?></small>
+                                                    <%- rc.btc_rates.low %> <i class="fa fa-dollar"></i> <span class="small">(<%- rc.btc_rates.low_eur %> <i class="fa fa-eur"></i>)</span>
+                                                    <small><i class="fa fa-clock-o"></i> <%- moment(rc.btc_rates.timestamp, 'X').format('hh:mm:ss a') %></small>
                                                 </h4>
                                                 <p>Low</p>
                                             </a>
@@ -172,8 +201,8 @@
                                                     <i class="fa fa-exchange"></i>
                                                 </div>
                                                 <h4>
-                                                    1 <i class="fa fa-eur"></i> == <?php echo $btc->eur_usd ?> <i class="fa fa-dollar"></i>
-                                                    <small><i class="fa fa-clock-o"></i> <?php echo date("H:i", $btc->timestamp) ?></small>
+                                                    1 <i class="fa fa-eur"></i> / <%- rc.btc_rates.eur_usd %> <i class="fa fa-dollar"></i>
+                                                    <small><i class="fa fa-clock-o"></i> <%- moment(rc.btc_rates.timestamp, 'X').format('hh:mm:ss a') %></small>
                                                 </h4>
                                                 <p>Eur/Usd Rate</p>
                                             </a>
@@ -181,12 +210,17 @@
                                     </ul>                                </li>
                                 <li class="footer"><a href="https://www.bitstamp.net">Go to Bitstamp</a></li>
                             </ul>
-                        </li>
-                        <?php endif; ?>
+                        </script>
+						<!-- END: Underscore Template Definition. -->
+						</li>
                         
-                       	<?php if ($appScript) : ?>
                         <!-- Altcoins Rates -->
-						<li class="messages-menu">
+						<li class="messages-menu mesages-altcoins-rates">
+                            <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                                <i class="fa fa-money"></i> Dividing changes...
+                            </a>
+						<!-- BEGIN: Underscore Template Definition. -->
+						<script type="text/template" class="altcoins-rates-template">
                             <a href="#" class="dropdown-toggle" data-toggle="dropdown">
                                 <i class="fa fa-money"></i> Altcoin prices
                             </a>
@@ -194,15 +228,29 @@
                                 <li class="header">Data from Cryptsy</li>
                                 <li>
                                     <!-- inner menu: contains the actual data -->
-                                    <ul class="menu altcoin-container" style="overflow: hidden; width: 100%; height: 200px;">
-                                        <li>&nbsp;</li>
-                                        
+                                    <ul class="menu altcoin-container" style="overflow: hidden; width: 100%; height: 300px;">
+                                    <% _.each( rc.altcoins_rates, function( valM, keyM ) { %>
+										<% if (keyM != "error") { %>
+											<% _.each(valM, function (val, key) { %>
+												<li>
+													<a href="#">
+														<div class="pull-left" style="padding-left:15px;"><i class="fa fa-stack-exchange"></i></div>
+														<h4 class="altcoin-price"><%- val.label %>: <span class="small"><%- val.price.noExponents() %></span><small><i class="fa fa-clock-o"></i> <%- moment(val.time, 'X').format('hh:mm:ss a') %></small></h4>
+														<p class="altcoin-label"><%- val.primarycode.toFixed(0)%> / <%- val.secondarycode %> <i class="fa fa-btc"></i></p></a></li>
+											<%	}); %>
+										<%	} else { %>
+											<li>
+												<a href="#"><div class="pull-left" style="padding-left:15px;"><i class="fa fa-warning"></i></div><h4>There was an error getting<br />the Cryptsy data.</h4></a>
+											</li>
+										<% } %>
+									<%	});	%>                                        
                                     </ul>
                                 </li>
                                 <li class="footer"><a href="https://www.cryptsy.com/users/register?refid=243592">Register at Cryptsy</a></li>
                             </ul>
+                        </script>
+						<!-- END: Underscore Template Definition. -->
                         </li>
-                        <?php endif; ?>
                         
 					    <!-- Donate/Help dropdown -->
 					    <li class="dropdown user user-menu">
