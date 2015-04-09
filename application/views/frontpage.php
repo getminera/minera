@@ -137,7 +137,7 @@
 									<!-- small box -->
 									<div class="small-box bg-gray">
 										<div class="inner">
-											<h3 class="widget-warning">Off</h3>
+											<h3 class="widget-warning">Offline</h3>
 											<p>Local miner</p>
 										</div>
 										<div class="icon"><i class="ion ion-power"></i></div>

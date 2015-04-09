@@ -1831,7 +1831,7 @@ function getStats(refresh)
 						avgs.color = '#00a65a';
 					} else {
 						avgs.arrow = 'fa-arrows-h';
-						avgs.color = '#ffffff';
+						avgs.color = '#dddddd';
 					}
 
 					if (akey == "1min")
