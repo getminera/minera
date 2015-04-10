@@ -13,6 +13,15 @@ Since the 0.3.x version Minera supports the following miner softwares:
 * [CGminer latest original version](https://github.com/ckolivas/cgminer)
 * [CGminer Dmaxl Zeus fork](https://github.com/dmaxl/cgminer/)
 
+Since the 0.5.x version Minera supports also network miners as:
+
+* Antminer S1 / S3 / S5
+* Rockminer
+* Any network miner with cgminer
+* Other Minera system
+
+Please read more [how to config them here](https://github.com/michelem09/minera/wiki/Network-mining-devices)
+
 If you like it, please consider a donation:
 
     Bitcoin: 1AmREReHNLec9EaW7gLRdW31LNSDA9SGR1
@@ -47,8 +56,10 @@ This is a list of some of the Minera's features:
 * Temperature widget
 * Main pool widget
 * Uptime widget
-* Miner details table with per device sort, search, pagination
-* Pools table with **ON-THE-FLY** pool switch
+* Local Miner details table with per device sort, search, pagination
+* Local Pools table with on-the-fly pool switch
+* Network Miner details table with per device sort, search, pagination
+* Network Pools table with on-the-fly pool changes
 * Devices tree with cool graph
 * Hashrate history
 * Errors/Rejects history
@@ -78,6 +89,8 @@ This is a list of some of the Minera's features:
 * Scheduled event (reboot/restart)
 * Dashboard refresh time
 * Minera password management
+* Hostname change
+* System password change
 * Ability ato add custom miner software (like forks)
 * Skin selection
 
