@@ -815,7 +815,7 @@ $(function() {
 		}, 1000);
 			
 		// Refresh button
-		$(".refresh-btn").click( function(e) { e.preventDefault(); getStats(true); target_date = new Date().getTime(); });
+		$(document).on('click', '.refresh-btn', function(e) { e.preventDefault(); getStats(true); target_date = new Date().getTime(); });
 		
 		// Save frequency table button
 		$(".btn-saved-freq").click( function() {
@@ -1504,7 +1504,7 @@ $(document).on('click', '.select-net-pool', function(e) {
         	{
         		var dataJ = $.parseJSON(dataP);
     			setTimeout(function() { getStats(true); }, 2000);
-				$('.net-pool-alert-'+netMiner).html('Miner could take some minutes to complete the switching process. <pre style="font-size:10px;margin-top:10px;">'+dataP+'</pre>');
+				$('.net-pool-alert-'+netMiner).html('Miner could take some minutes to complete the switching process, try to <a href="#" class="refresh-btn">refresh the dashboard</a>. <pre style="font-size:10px;margin-top:10px;">'+dataP+'</pre>');
 				setTimeout(function() {
 					$('.net-pool-alert-'+netMiner).html('');
     			}, 30000);
@@ -1645,7 +1645,7 @@ $(document).on('click', '.select-pool', function(e) {
     			getStats(true);
     			if (dataJ)
     			{
-    				$(".pool-alert").html('CG/BFGminer could take some minutes to complete the switching process. <pre style="font-size:10px;margin-top:10px;">'+dataP+'</pre>');
+    				$(".pool-alert").html('CG/BFGminer could take some minutes to complete the switching process, try to <a href="#" class="refresh-btn">refresh the dashboard</a>.. <pre style="font-size:10px;margin-top:10px;">'+dataP+'</pre>');
     				
     				setTimeout(function() {
 						$(".pool-alert").html('');

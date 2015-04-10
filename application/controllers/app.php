@@ -34,12 +34,16 @@ class App extends Main_Controller {
 	*/
 	public function login()
 	{	
-		if (preg_match('/^[0-9a-f]{40}$/i', $this->redis->get('minera_password')))
+		if (preg_match('/^[0-9a-f]{40}$/', $this->redis->get('minera_password')))
 		{
 			$storedp = $this->redis->get('minera_password');
-		}
-		else
-		{
+		} elseif (preg_match('/^[a-f0-9]{32}$/', $this->redis->get('minera_password'))) {
+			$storedp = $this->redis->get('minera_password');
+			if ($this->input->post('password', true) && md5($this->input->post('password')) == $storedp) {
+				$storedp = sha1($this->input->post('password', true));
+				$this->redis->set('minera_password', $storedp);
+			}
+		} else {
 			$storedp = sha1($this->redis->get('minera_password'));
 			$this->redis->set('minera_password', $storedp);
 		}
