@@ -781,7 +781,7 @@ $(function() {
 		// Dashboard Scripts
 		
 		// Refresh stats when you come back in Minera tab
-		//window.onblur= function() { window.onfocus= function () { getStats(true); target_date = new Date().getTime(); }; };
+		window.onblur= function() { window.onfocus= function () { getStats(true); target_date = new Date().getTime(); }; };
 		
 		var refresh_time = $(".app_data").data("refresh-time");
 		
