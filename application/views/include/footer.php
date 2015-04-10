@@ -6,7 +6,7 @@
   		<a href="http://getminera.com" target="_blank"><i class="fa fa-asterisk"></i> Minera</a> your next mining dashboard - Need a wallet? Try <a href="https://www.coinbase.com/join/michelem" target="_blank">Coinbase</a>
   	</div>
 	
-	<script src="<?php echo base_url('assets/js/extra/jquery-2.1.1.min.js') ?>"></script>
+	<script src="<?php echo base_url('assets/js/extra/jquery-2.1.3.min.js') ?>"></script>
 	<script src="<?php echo base_url('assets/js/extra/jquery-ui-1.10.4.min.js') ?>"></script>
 	<script src="<?php echo base_url('assets/js/extra/jquery.ui.touch-punch.min.js') ?>"></script>
 	<script src="<?php echo base_url('assets/js/extra/lodash.min.js') ?>"></script>

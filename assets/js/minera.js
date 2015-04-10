@@ -781,7 +781,7 @@ $(function() {
 		// Dashboard Scripts
 		
 		// Refresh stats when you come back in Minera tab
-		$(window).focus(function() { getStats(true); target_date = new Date().getTime(); });
+		//window.onblur= function() { window.onfocus= function () { getStats(true); target_date = new Date().getTime(); }; };
 		
 		var refresh_time = $(".app_data").data("refresh-time");
 		
@@ -2307,8 +2307,7 @@ function getStats(refresh)
 							networkMiners[netKey] = networkMinerData.devices;
 							
 							// Add per network device stats
-							$.each( networkMinerData.devices, function( key, val ) {
-													
+							$.each( networkMinerData.devices, function( key, val ) {	
 						    	// these are the single devices stats
 						    	var hashrate = Math.round(val.hashrate/1000);
 								
@@ -2324,78 +2323,72 @@ function getStats(refresh)
 		
 								// this is the global stats
 								networkMiners["total"] = { "ac": tAc, "re": tRe, "hw": tHw, "sh": tSh };
-		
 						    });
+						    
 							
-							for (var indexDev in networkMiners)
+							for (var index in networkMiners[netKey])
 							{
-								if (indexDev != 'total') 
+								// Add per device rows in system table
+								var devData = {}; devData.hash = networkMiners[netKey][index].hash;
+								var share_date = new Date(networkMiners[netKey][index].ls*1000);
+								var rightnow = new Date().getTime();
+		
+								var last_share_secs = (networkMiners[netKey][index].ls > 0) ? (rightnow - share_date.getTime())/1000 : 0;
+								if (last_share_secs < 0) last_share_secs = 0;
+		
+								var totalWorkedShares = (networkMiners[netKey][index].ac+networkMiners[netKey][index].re+networkMiners[netKey][index].hw);
+								var percentageAc = (100*networkMiners[netKey][index].ac/totalWorkedShares);
+								var percentageRe = (100*networkMiners[netKey][index].re/totalWorkedShares);
+								var percentageHw = (100*networkMiners[netKey][index].hw/totalWorkedShares);
+		
+								// Add colored hashrates
+								if (last_share_secs >= 120 && last_share_secs < 240)
+									devData.label = "yellow"
+								else if (last_share_secs >= 240 && last_share_secs < 480)
+									devData.label = "red"
+								else if (last_share_secs >= 480)
+									devData.label = "muted"
+								else
+									devData.label = "green"
+															
+								var dev_serial = "serial not available";
+								if (networkMiners[netKey][index].serial)
 								{
-									for (var index in networkMiners[netKey])
-									{
-										// Add per device rows in system table
-										var devData = {}; devData.hash = networkMiners[netKey][index].hash;
-										var share_date = new Date(networkMiners[netKey][index].ls*1000);
-										var rightnow = new Date().getTime();
-				
-										var last_share_secs = (networkMiners[netKey][index].ls > 0) ? (rightnow - share_date.getTime())/1000 : 0;
-										if (last_share_secs < 0) last_share_secs = 0;
-				
-										var totalWorkedShares = (networkMiners[netKey][index].ac+networkMiners[netKey][index].re+networkMiners[netKey][index].hw);
-										var percentageAc = (100*networkMiners[netKey][index].ac/totalWorkedShares);
-										var percentageRe = (100*networkMiners[netKey][index].re/totalWorkedShares);
-										var percentageHw = (100*networkMiners[netKey][index].hw/totalWorkedShares);
-				
-										// Add colored hashrates
-										if (last_share_secs >= 120 && last_share_secs < 240)
-											devData.label = "yellow"
-										else if (last_share_secs >= 240 && last_share_secs < 480)
-											devData.label = "red"
-										else if (last_share_secs >= 480)
-											devData.label = "muted"
-										else
-											devData.label = "green"
-																	
-										var dev_serial = "serial not available";
-										if (networkMiners[netKey][index].serial)
-										{
-											dev_serial = "serial: "+networkMiners[netKey][index].serial;
-										}
-
-										/*
-										// Widgets
-										$(".widget-last-share").html(parseInt(last_share_secs) + ' secs');
-										$(".widget-hwre-rates").html(parseFloat(percentageHw).toFixed(2) + '<sup style="font-size: 20px">%</sup> / ' + parseFloat(percentageRe).toFixed(2) + '<sup style="font-size: 20px">%</sup>');
-										dev_serial = "";
-										//Sidebar hashrate
-										//$('.sidebar-hashrate').html("@ "+convertHashrate(items[index].hash));
-										*/
-										
-										if ( $.fn.dataTable.isDataTable('#network-miner-table-details') )
-										{
-											// New add rows via datatable
-											$('#network-miner-table-details').dataTable().fnAddData( [
-												'<span><i class="gi gi-server"></i>&nbsp;&nbsp;'+index+'<br /><span class="label label-success" data-toggle="popover" data-title="'+netKey+'" data-content="'+[networkMinerData.config.ip, networkMinerData.config.port].join(':')+'">'+netKey+'</span></span>',
-												networkMiners[netKey][index].temp,
-												networkMiners[netKey][index].fr,
-												devData,
-												networkMiners[netKey][index].sh,
-												networkMiners[netKey][index].ac,
-												parseFloat(percentageAc).toFixed(2),
-												networkMiners[netKey][index].re,
-												parseFloat(percentageRe).toFixed(2),
-												networkMiners[netKey][index].hw,
-												parseFloat(percentageHw).toFixed(2),
-												parseInt(last_share_secs),
-												'<small class="text-muted">'+share_date.toUTCString()+'</small>'
-											] );
-										}
-									}
+									dev_serial = "serial: "+networkMiners[netKey][index].serial;
 								}
-							}
+
+								/*
+								// Widgets
+								$(".widget-last-share").html(parseInt(last_share_secs) + ' secs');
+								$(".widget-hwre-rates").html(parseFloat(percentageHw).toFixed(2) + '<sup style="font-size: 20px">%</sup> / ' + parseFloat(percentageRe).toFixed(2) + '<sup style="font-size: 20px">%</sup>');
+								dev_serial = "";
+								//Sidebar hashrate
+								//$('.sidebar-hashrate').html("@ "+convertHashrate(items[index].hash));
+								*/
+								
+								if ( $.fn.dataTable.isDataTable('#network-miner-table-details') )
+								{
+									// New add rows via datatable
+									$('#network-miner-table-details').dataTable().fnAddData( [
+										'<span><i class="gi gi-server"></i>&nbsp;&nbsp;'+index+'<br /><span class="label label-success" data-toggle="popover" data-title="'+netKey+'" data-content="'+[networkMinerData.config.ip, networkMinerData.config.port].join(':')+'">'+netKey+'</span></span>',
+										networkMiners[netKey][index].temp,
+										networkMiners[netKey][index].fr,
+										devData,
+										networkMiners[netKey][index].sh,
+										networkMiners[netKey][index].ac,
+										parseFloat(percentageAc).toFixed(2),
+										networkMiners[netKey][index].re,
+										parseFloat(percentageRe).toFixed(2),
+										networkMiners[netKey][index].hw,
+										parseFloat(percentageHw).toFixed(2),
+										parseInt(last_share_secs),
+										'<small class="text-muted">'+share_date.toUTCString()+'</small>'
+									] );
+								}
+							}								
 							
 							// Add network pools table
-							$('.net-pools-label-'+md5(netKey)).html('<span class="label label-success" data-toggle="popover" data-title="'+netKey+'" data-content="'+[networkMinerData.config.ip, networkMinerData.config.port].join(':')+'">'+netKey+'</span></span>');
+							$('.net-pools-label-'+md5(netKey)).html('<h4><span class="label label-success" data-toggle="popover" data-title="'+netKey+'" data-content="'+[networkMinerData.config.ip, networkMinerData.config.port].join(':')+'">Online</span> '+netKey+'</h4>');
 
 							// Get main/active network pool data
 							if (networkMinerData.pool)
@@ -2595,7 +2588,7 @@ function getStats(refresh)
 							}
 							
 							// Add empty network pools table
-							$('.net-pools-label-'+md5(netKey)).html('<span class="label label-danger" data-toggle="popover" data-title="'+netKey+'" data-content="'+[networkMinerData.config.ip, networkMinerData.config.port].join(':')+'">'+netKey+'</span></span>')
+							$('.net-pools-label-'+md5(netKey)).html('<h4><span class="label label-danger" data-toggle="popover" data-title="'+netKey+'" data-content="'+[networkMinerData.config.ip, networkMinerData.config.port].join(':')+'">Offline</span> '+netKey+'</h4>')
 							$('#net-pools-table-details-'+md5(netKey)).html('<div class="alert alert-warning"><i class="fa fa-warning"></i><strong>No pools</strong> data available.</div>');
 							$('.net-pools-addbox-'+md5(netKey)).fadeOut();
 						}

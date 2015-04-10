@@ -196,11 +196,14 @@ class Util_model extends CI_Model {
 				if ($this->checkNetworkDevice($netMiner->ip, $netMiner->port)) 
 				{
 					$n = $this->getMinerStats($netMiner->ip.":".$netMiner->port);
+
 					if ($parsed === false)
 						$a[$netMiner->name] = $n;
 					else {
-						$a[$netMiner->name] = json_decode($this->getParsedStats($n, true));
-						$a[$netMiner->name]->pools = $n->pools;
+						if ($n) {
+							$a[$netMiner->name] = json_decode($this->getParsedStats($n, true));
+							$a[$netMiner->name]->pools = $n->pools;
+						}
 					}
 				}
 				// Add config data

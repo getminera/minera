@@ -424,6 +424,7 @@
 									<div class="row">
 										<div class="col-sm-12">
 											<?php $npi = 1; $netCounts = count($netMiners); foreach ($netMiners as $netMiner) : ?>
+												<hr />
 												<div id="net-<?php echo md5($netMiner->name) ?>">
 													<div class="mb20 net-pools-label-<?php echo md5($netMiner->name) ?>"></div>
 													<div class="table-responsive">
@@ -482,7 +483,6 @@
 														</div>
 													</div>
 													<div class="net-pool-error-<?php echo md5($netMiner->name) ?> mt10 text-red"></div>
-													<?php if ($npi <= ($netCounts-1)) : ?><hr /><?php endif; ?>
 												</div>
 											<?php $npi++; endforeach; ?>
 										</div>

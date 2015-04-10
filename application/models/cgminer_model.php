@@ -42,7 +42,7 @@ class Cgminer_model extends CI_Model {
 		$line = '';
 		while (true)
 		{
-			$byte = socket_read($socket, 1);
+			$byte = @socket_read($socket, 1);
 			if ($byte === false || $byte === '')
 				break;
 			if ($byte === "\0")
@@ -63,7 +63,7 @@ class Cgminer_model extends CI_Model {
 		$ip = "127.0.0.1"; $port = 4028;
 
 		if ($network) list($ip, $port) = explode(":", $network);
-		
+
 		$socket = $this->getsock($ip, $port);
 		if ($socket != null)
 		{

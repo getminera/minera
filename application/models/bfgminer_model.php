@@ -42,7 +42,7 @@ class Bfgminer_model extends CI_Model {
 		$line = '';
 		while (true)
 		{
-			$byte = socket_read($socket, 1);
+			$byte = @socket_read($socket, 1);
 			if ($byte === false || $byte === '')
 				break;
 			if ($byte === "\0")
