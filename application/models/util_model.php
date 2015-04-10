@@ -1590,6 +1590,12 @@ class Util_model extends CI_Model {
 		$lines[] = $logmsg;
 		
 		log_message('error', $logmsg);
+
+		$this->redis->del("altcoins_update");		
+		$this->util_model->updateAltcoinsRates(true);
+		$this->redis->del("minera_update");
+		$this->redis->del("minera_version");
+		$this->checkUpdate();
 				
 		// Run upgrade script
 		exec("cd ".FCPATH." && sudo -u " . $this->config->item("system_user") . " sudo ./upgrade_minera.sh", $out);
@@ -1599,10 +1605,6 @@ class Util_model extends CI_Model {
 		$lines[] = $logmsg;
 				
 		log_message('error', $logmsg);
-			
-		$this->redis->del("minera_update");
-		$this->redis->del("minera_version");
-		$this->checkUpdate();
 		
 		$logmsg = "End Update";
 		$lines[] = $logmsg;
