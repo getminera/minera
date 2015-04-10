@@ -1,4 +1,11 @@
-    <body class="skin-<?php echo $dashboardSkin ?>"<?php if ($appScript) : ?> onload="getStats(false);"<?php endif; ?>>
+    <body class="skin-<?php echo $dashboardSkin ?>" onload="getStats(false);">
+		<div class="app_data"
+			data-refresh-time="<?php echo ($dashboard_refresh_time) ? $dashboard_refresh_time : 60; ?>"
+			data-minerd-log="<?php echo ($minerdLog) ? base_url($this->config->item("minerd_log_url")) : null; ?>"
+			data-device-tree="<?php echo $dashboardDevicetree ?>"
+			data-dashboard-temp="<?php echo ($this->redis->get("dashboard_temp")) ? $this->redis->get("dashboard_temp") : "c"; ?>"
+			data-miner-status="<?php echo ($this->redis->get("minerd_status")) ? 1 : 0; ?>"
+		></div>
 
 		<!-- Modal -->
 		<div id="modal-saving" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="SavingData" aria-hidden="true" data-backdrop="static" data-keyboard="false" >
@@ -12,6 +19,24 @@
 					</div>
 					<div class="modal-footer modal-footer-center">
 						<h6>Page will automatically reload as soon as the process terminate.</h6>
+					</div>
+				</div>
+			</div>
+		</div>
+		
+		<div id="modal-log" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="Logs" aria-hidden="true" data-backdrop="static" data-keyboard="false" >
+			<div class="modal-dialog modal-dialog-center modal-sm">
+				<div class="modal-content">
+					<div class="modal-header bg-red">
+						<h4 class="modal-title" id="modal-log-label"></h4>
+					</div>
+					<div class="modal-body">
+						<p>Please take care of the lines below, here you could find the problem why your miner is not running:</p>
+						<blockquote class="modal-log-lines"></blockquote>
+					</div>
+					<div class="modal-footer">
+						<h6 class="pull-left">if you are still in trouble please check also <a href="<?php echo base_url($this->config->item("minerd_log_url")); ?>" target="_blank"><i class="fa fa-briefcase"></i> the full log here</a></h6>
+						<button type="button" class="btn btn-default pull-right" data-dismiss="modal">Close</button>
 					</div>
 				</div>
 			</div>
@@ -59,7 +84,7 @@
 			</div>
 		</div>
 		
-        <header class="header">
+        <header class="header" data-this-section="<?php echo $sectionPage ?>">
 
             <a href="<?php echo site_url('app/dashboard') ?>" class="logo">Minera</a>
 
@@ -73,8 +98,8 @@
                     <span class="icon-bar"></span>
                 </a>
                 
-				<?php if (!$this->redis->get("minera_donation_time")) : ?>
-	                <div class="cb-tip-button tip-button" data-content-location="http://getminera.com" data-href="//www.coinbase.com/tip_buttons/show_tip" data-to-user-id="516bb1500c8efad3b1000022"></div>
+				<?php if ($sectionPage === "settings" && !$this->redis->get("minera_donation_time")) : ?>
+	                <div class="tip-button changetip_tipme_button" data-bid="gQGgJrG52qXazz5HqPX5sD" data-uid="b3JpMBt2XgQw5EVrz5QV86"></div><script>(function(document,script,id){var js,r=document.getElementsByTagName(script)[0],protocol=/^http:/.test(document.location)?'http':'https';if(!document.getElementById(id)){js=document.createElement(script);js.id=id;js.src=protocol+'://widgets.changetip.com/public/js/widgets.js';r.parentNode.insertBefore(js,r)}}(document,'script','changetip_w_0'));</script>
 				<?php endif; ?>
                 
 				<div class="navbar-right">
@@ -85,41 +110,63 @@
                                 <i class="fa fa-clock-o"></i> <span class="toptime"></span>
                             </a>
                         </li>
-                        <?php if ($appScript) : ?>
                         <!-- Averages -->
 						<li class="messages-menu messages-avg">
                             <a href="#" class="dropdown-toggle" data-toggle="dropdown">
-                                <i class="fa fa-dashboard"></i> <span class="avg-1min">Calculating...</span>
+                                <i class="fa fa-dashboard"></i> <span>Calculating...</span>
+                            </a>
+						<!-- BEGIN: Underscore Template Definition. -->
+						<script type="text/template" class="avg-stats-template">
+                            <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                                <i class="fa fa-dashboard"></i> <span><%- rc.avgonemin %> <i class="fa <%= rc.arrow %>" style="color:<%= rc.color %>;"></i></span>
                             </a>
                             <ul class="dropdown-menu">
                                 <li class="header">Average stats</li>
                                 <li>
                                     <!-- inner menu: contains the actual data -->
-                                    <ul class="menu avg-stats" style="overflow: hidden; width: 100%; height: 200px;"></ul>
+                                    <ul class="menu avg-stats" style="overflow: hidden; width: 100%; height: 200px;">
+	                                    <%	_.each( rc.avgs, function( avg ) { %>
+											<li>
+												<a href="#">
+													<div class="pull-left" style="padding-left:15px;">
+														<i class="fa <%= avg.arrow %>" style="color:<%= avg.color %>;"></i>
+													</div>
+													<h4><%- avg.hrCurrentText %><small><i class="fa fa-dashboard"></i> Pool Hashrate</small></h4>
+													<p><%- avg.key %></p>
+												</a>
+											</li>
+										<% }); %>
+                                    </ul>
                                 </li>
                                 <li class="footer"><a href="<?php echo site_url("app/charts") ?>">Go to Charts</a></li>
                             </ul>
                         </li>
-                        <?php endif; ?>
-						<?php if (isset($btc->volume)) : ?>
+                        </script>
+						<!-- END: Underscore Template Definition. -->
+
 						<!-- BTC/USD rates -->
-						<li class="messages-menu">
+						<li class="messages-menu messages-btc-rates">
+							<a href="#" class="dropdown-toggle dropdown-btc-rates" data-toggle="dropdown">
+	                            <i class="fa fa-btc"></i> <span class="avg-1min">Getting data...</span>
+							</a>
+						<!-- BEGIN: Underscore Template Definition. -->
+						<script type="text/template" class="btc-rates-template">
                             <a href="#" class="dropdown-toggle" data-toggle="dropdown">
-                                <i class="fa fa-btc"></i> price: <?php echo $btc->last ?> <i class="fa fa-dollar"></i>
+                                <i class="fa fa-btc"></i> price: <%- rc.btc_rates.last %> <i class="fa fa-dollar"></i> <span class="small">(<%- rc.btc_rates.last_eur %> <i class="fa fa-eur"></i>)</span>
                             </a>
                             <ul class="dropdown-menu">
                                 <li class="header">Data from Bitstamp</li>
                                 <li>
                                     <!-- inner menu: contains the actual data -->
-                                    <ul class="menu" style="overflow: hidden; width: 100%; height: 200px;">
+                                    <ul class="menu" style="overflow: hidden; width: 100%;">
                                         <li>
                                             <a href="#">
                                             	<div class="pull-left" style="padding-left:15px;">
                                                     <i class="fa fa-archive"></i>
                                                 </div>
                                                 <h4>
-                                                    <?php echo $btc->volume ?>
-                                                    <small><i class="fa fa-clock-o"></i> <?php echo date("H:i", $btc->timestamp) ?></small>
+                                                    <%- rc.btc_rates.volume %>
+                                                    <small><i class="fa fa-clock-o"></i> <%- moment(rc.btc_rates.timestamp, 'X').format('hh:mm:ss a') %></small>
                                                 </h4>
                                                 <p>Volume</p>
                                             </a>
@@ -130,8 +177,8 @@
                                                     <i class="fa fa-arrow-circle-up"></i>
                                                 </div>
                                                 <h4>
-                                                    <?php echo $btc->high ?>
-                                                    <small><i class="fa fa-clock-o"></i> <?php echo date("H:i", $btc->timestamp) ?></small>
+                                                    <%- rc.btc_rates.high %> <i class="fa fa-dollar"></i> <span class="small">(<%- rc.btc_rates.high_eur %> <i class="fa fa-eur"></i>)</span>
+                                                    <small><i class="fa fa-clock-o"></i> <%- moment(rc.btc_rates.timestamp, 'X').format('hh:mm:ss a') %></small>
                                                 </h4>
                                                 <p>High</p>
                                             </a>
@@ -142,21 +189,38 @@
                                                     <i class="fa fa-arrow-circle-down"></i>
                                                 </div>
                                                 <h4>
-                                                    <?php echo $btc->low ?>
-                                                    <small><i class="fa fa-clock-o"></i> <?php echo date("H:i", $btc->timestamp) ?></small>
+                                                    <%- rc.btc_rates.low %> <i class="fa fa-dollar"></i> <span class="small">(<%- rc.btc_rates.low_eur %> <i class="fa fa-eur"></i>)</span>
+                                                    <small><i class="fa fa-clock-o"></i> <%- moment(rc.btc_rates.timestamp, 'X').format('hh:mm:ss a') %></small>
                                                 </h4>
                                                 <p>Low</p>
+                                            </a>
+                                        </li>
+                                        <li>
+                                            <a href="#">
+                                            	<div class="pull-left" style="padding-left:15px;">
+                                                    <i class="fa fa-exchange"></i>
+                                                </div>
+                                                <h4>
+                                                    1 <i class="fa fa-eur"></i> / <%- rc.btc_rates.eur_usd %> <i class="fa fa-dollar"></i>
+                                                    <small><i class="fa fa-clock-o"></i> <%- moment(rc.btc_rates.timestamp, 'X').format('hh:mm:ss a') %></small>
+                                                </h4>
+                                                <p>Eur/Usd Rate</p>
                                             </a>
                                         </li>
                                     </ul>                                </li>
                                 <li class="footer"><a href="https://www.bitstamp.net">Go to Bitstamp</a></li>
                             </ul>
-                        </li>
-                        <?php endif; ?>
+                        </script>
+						<!-- END: Underscore Template Definition. -->
+						</li>
                         
-                       	<?php if ($appScript) : ?>
                         <!-- Altcoins Rates -->
-						<li class="messages-menu">
+						<li class="messages-menu mesages-altcoins-rates">
+                            <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                                <i class="fa fa-money"></i> Dividing changes...
+                            </a>
+						<!-- BEGIN: Underscore Template Definition. -->
+						<script type="text/template" class="altcoins-rates-template">
                             <a href="#" class="dropdown-toggle" data-toggle="dropdown">
                                 <i class="fa fa-money"></i> Altcoin prices
                             </a>
@@ -164,15 +228,29 @@
                                 <li class="header">Data from Cryptsy</li>
                                 <li>
                                     <!-- inner menu: contains the actual data -->
-                                    <ul class="menu altcoin-container" style="overflow: hidden; width: 100%; height: 200px;">
-                                        <li>&nbsp;</li>
-                                        
+                                    <ul class="menu altcoin-container" style="overflow: hidden; width: 100%; height: 300px;">
+                                    <% _.each( rc.altcoins_rates, function( valM, keyM ) { %>
+										<% if (keyM != "error") { %>
+											<% _.each(valM, function (val, key) { %>
+												<li>
+													<a href="#">
+														<div class="pull-left" style="padding-left:15px;"><i class="fa fa-stack-exchange"></i></div>
+														<h4 class="altcoin-price"><%- val.label %>: <span class="small"><%- val.price.noExponents() %></span><small><i class="fa fa-clock-o"></i> <%- moment(val.time, 'X').format('hh:mm:ss a') %></small></h4>
+														<p class="altcoin-label"><%- val.primarycode.toFixed(0)%> / <%- val.secondarycode %> <i class="fa fa-btc"></i></p></a></li>
+											<%	}); %>
+										<%	} else { %>
+											<li>
+												<a href="#"><div class="pull-left" style="padding-left:15px;"><i class="fa fa-warning"></i></div><h4>There was an error getting<br />the Cryptsy data.</h4></a>
+											</li>
+										<% } %>
+									<%	});	%>                                        
                                     </ul>
                                 </li>
                                 <li class="footer"><a href="https://www.cryptsy.com/users/register?refid=243592">Register at Cryptsy</a></li>
                             </ul>
+                        </script>
+						<!-- END: Underscore Template Definition. -->
                         </li>
-                        <?php endif; ?>
                         
 					    <!-- Donate/Help dropdown -->
 					    <li class="dropdown user user-menu">
@@ -272,10 +350,74 @@
                                 <i class="fa fa-bar-chart-o"></i> <span>Charts</span>
                             </a>
                         </li>
-                        <li data-toggle="tooltip" title="" data-original-title="Go to the settings page">
-                        	<a href="<?php echo site_url("app/settings") ?>">
-                        		<i class="fa fa-gear"></i> <span>Settings</span>
+                        <li class="treeview">
+                        	<a href="#">
+                        		<i class="fa fa-gear"></i> 
+                        		<span>Settings</span>
+                                <i class="treeview-menu-settings-icon fa pull-right fa-angle-left"></i>
                         	</a>
+                        	<ul class="treeview-menu treeview-menu-settings" style="display: none;">
+                                <li>
+                                	<a href="<?php echo site_url("app/settings#donation-box") ?>" class="menu-donation-box ml10">
+                                		<i class="fa fa-gift"></i> Donation
+                                	</a>
+                                </li>
+                                <li>
+                                	<a href="<?php echo site_url("app/settings#dashboard-box") ?>" class="menu-dashboard-box ml10">
+                                		<i class="fa fa-dashboard"></i> Dashboard
+                                	</a>
+                                </li>
+                                <li>
+                                	<a href="<?php echo site_url("app/settings#pools-box") ?>" class="menu-pools-box ml10">
+                                		<i class="fa fa-cloud"></i> Pools
+                                	</a>
+                                </li>
+                                <li>
+                                	<a href="<?php echo site_url("app/settings#customer-miners-box") ?>" class="menu-customer-miners-box ml10">
+                                		<i class="fa fa-desktop"></i> Custom Miners
+                                	</a>
+                                </li>
+                                <li>
+                                	<a href="<?php echo site_url("app/settings#local-miner-box") ?>" class="menu-local-miner-box ml10">
+                                		<i class="fa fa-gear"></i> Local Miner
+                                	</a>
+                                </li>
+                                <li>
+                                	<a href="<?php echo site_url("app/settings#network-miners-box") ?>" class="menu-network-miners-box ml10">
+                                		<i class="fa fa-server"></i> Network Miners
+                                	</a>
+                                </li>
+                                <li>
+                                	<a href="<?php echo site_url("app/settings#top-bar-box") ?>" class="menu-top-bar-box ml10">
+                                		<i class="fa fa-money"></i> Top Bar
+                                	</a>
+                                </li>
+                                <li>
+                                	<a href="<?php echo site_url("app/settings#system-box") ?>" class="menu-system-box ml10">
+                                		<i class="fa fa-rocket"></i> System
+                                	</a>
+                                </li>
+                                <li>
+                                	<a href="<?php echo site_url("app/settings#mobileminer-box") ?>" class="menu-mobileminer-box ml10">
+                                		<i class="fa fa-mobile-phone"></i> Mobileminer
+                                	</a>
+                                </li>
+                                <li>
+                                	<a href="<?php echo site_url("app/settings#importexport-box") ?>" class="menu-importexport-box ml10">
+                                		<i class="fa fa-code-fork"></i> Import/Export/Share
+                                	</a>
+                                </li>
+                                <li>
+                                	<a href="<?php echo site_url("app/settings#user-box") ?>" class="menu-user-box ml10">
+                                		<i class="fa fa-user"></i> User
+                                	</a>
+                                </li>
+                                <li>
+                                	<a href="<?php echo site_url("app/settings#resets-box") ?>" class="menu-resets-box ml10">
+                                		<i class="fa fa-warning"></i> Resets
+                                	</a>
+                                </li>
+                            </ul>
                         </li>
                         <li class="treeview">
                             <a href="#">
@@ -326,7 +468,7 @@
                                 </li>
                             </ul>
                         </li>
-						<?php if ($isOnline && $appScript) : ?>
+						<?php if ($sectionPage === "dashboard" && (($isOnline && $appScript) || count($netMiners) > 0)) : ?>
                         	<li data-toggle="tooltip" title="" data-original-title="Refresh Dashboard">
                             	<a href="#" class="refresh-btn">
                                 	<i class="fa fa-refresh"></i> <span>Refresh</span><span class="badge bg-muted pull-right auto-refresh-time">auto in</span>

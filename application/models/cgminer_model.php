@@ -42,7 +42,7 @@ class Cgminer_model extends CI_Model {
 		$line = '';
 		while (true)
 		{
-			$byte = socket_read($socket, 1);
+			$byte = @socket_read($socket, 1);
 			if ($byte === false || $byte === '')
 				break;
 			if ($byte === "\0")
@@ -53,14 +53,18 @@ class Cgminer_model extends CI_Model {
 	}
 	
 	
-	function callMinerd($cmd = false)
+	function callMinerd($cmd = false, $network = false)
 	{
 		if (!$cmd)
 			$cmd = '{"command":"summary+devs+pools"}';
  
 		log_message("error", "Called Minerd with command: ".$cmd);
 		
-		$socket = $this->getsock('127.0.0.1', 4028);
+		$ip = "127.0.0.1"; $port = 4028;
+
+		if ($network) list($ip, $port) = explode(":", $network);
+
+		$socket = $this->getsock($ip, $port);
 		if ($socket != null)
 		{
 			socket_write($socket, $cmd, strlen($cmd));
@@ -118,16 +122,38 @@ class Cgminer_model extends CI_Model {
 				}
 			}
 			
+			if (isset($data->STATUS->STATUS) && $data->STATUS->STATUS == 'E') {
+				return array("error" => true, "msg" => $data->STATUS->Msg);				
+			}
+			
 			return $data;
 		}
 		
 		return array("error" => true, "msg" => "Miner error");
 	}
 	
-	public function selectPool($poolId)
+	public function selectPool($poolId, $network)
 	{
-		log_message("error", "Trying to switch pool ".(int)$poolId." to the main one.");
-		return $this->callMinerd('{"command":"switchpool", "parameter":'.(int)$poolId.'}');
+		log_message("error", "Trying to switch pool ".(int)$poolId." to the main one. (".$network.")");
+		$o = $this->callMinerd('{"command":"switchpool", "parameter":'.(int)$poolId.'}', $network);
+		log_message("error", var_export($o, true));
+		return $o;
+	}
+	
+	public function addPool($url, $user, $pass, $network)
+	{
+		log_message("error", "Trying to add pool parameter:".$url.",".$user.",".$pass." (".$network.")");
+		$o = $this->callMinerd('{"command":"addpool", "parameter":"'.$url.','.$user.','.$pass.'"}', $network);
+		log_message("error", var_export($o, true));
+		return $o;
+	}
+	
+	public function removePool($poolId, $network)
+	{
+		log_message("error", "Trying to remove pool ".(int)$poolId." (".$network.")");
+		$o = $this->callMinerd('{"command":"removepool", "parameter":'.(int)$poolId.'}', $network);
+		log_message("error", var_export($o, true));
+		return $o;
 	}
 	
 }

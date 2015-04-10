@@ -64,7 +64,7 @@ class Cpuminer_model extends CI_Model {
 		return json_decode($out);		
 	}
 	
-	public function selectPool($poolId)
+	public function selectPool($poolId, $network = false)
 	{
 		log_message("error", "Trying to switch pool ".(int)$poolId." to the main one.");
 		return $this->callMinerd(array("set" => "pool", "pool" => (int)$poolId));

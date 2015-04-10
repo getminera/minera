@@ -42,7 +42,7 @@ class Bfgminer_model extends CI_Model {
 		$line = '';
 		while (true)
 		{
-			$byte = socket_read($socket, 1);
+			$byte = @socket_read($socket, 1);
 			if ($byte === false || $byte === '')
 				break;
 			if ($byte === "\0")
@@ -124,10 +124,9 @@ class Bfgminer_model extends CI_Model {
 		return array("error" => true, "msg" => "Bfgminer error");
 	}
 	
-	public function selectPool($poolId)
+	public function selectPool($poolI, $network = false)
 	{
 		log_message("error", "Trying to switch pool ".(int)$poolId." to the main one.");
 		return $this->callMinerd('{"command":"switchpool", "parameter":'.(int)$poolId.'}');
-	}
-		
+	}	
 }

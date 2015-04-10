@@ -16,9 +16,15 @@
 				<section class="content">
 
 					<div class="row">
+						
+						<?php if (count($netMiners) > 0) : ?>
+						<section class="col-md-12 local-miners-title" style="display:none;">
+							<h4>Local <small>Miners</small></h4>
+						</section>
+						<?php endif; ?>
 
-						 <section class="col-md-12 section-raw-stats">
-						 	<div class="alert alert-info alert-dismissable">
+						<section class="col-md-12 section-raw-stats">
+							<div class="alert alert-info alert-dismissable">
 								<i class="fa fa-list"></i>
 								<button type="button" class="close close-stats" aria-hidden="true">×</button>
 								<p style="margin:20px 0;">The raw JSON parsed to display the dashboard is also available <a href="<?php echo site_url("app/stats") ?>" target="_blank">here</a>.</p>
@@ -69,8 +75,7 @@
 						
 						<!-- widgets section -->
 						<section class="col-md-12 widgets-section">
-							 <div class="row">
-							 
+							<div class="row disable-if-not-running">
 							 	<!-- total hashrate widget -->
 								<div class="col-lg-4 col-sm-4 col-xs-12">
 									<!-- small box -->
@@ -112,9 +117,37 @@
 							</div>							
 							
 							<div class="row">
-							
+
+								<!-- Warning  widget -->
+								<div class="col-lg-4 col-sm-4 col-xs-12 enable-if-not-running local-widget disable-if-stopped" style="display: none;">
+									<!-- small box -->
+									<div class="small-box bg-red">
+										<div class="inner">
+											<h3 class="widget-warning"><i class="ion ion-loading-c"></i></h3>
+											<p>Local miner</p>
+										</div>
+										<div class="icon"><i class="ion ion-alert"></i></div>
+										<a href="" class="small-box-footer warning-message" data-toggle="tooltip" title="" data-original-title="Your local miner is offline, try to restart it. If you are in trouble check your logs and settings.">...<i class="fa fa-arrow-circle-right"></i></a>
+									</div>
+								</div>
+								
+								<!-- Stopped  widget -->
+								<?php if (!$this->redis->get("minerd_status")) : ?>
+								<div class="col-lg-4 col-sm-4 col-xs-12 enable-if-not-running local-widget" style="display: none;">
+									<!-- small box -->
+									<div class="small-box bg-gray">
+										<div class="inner">
+											<h3 class="widget-warning">Offline</h3>
+											<p>Local miner</p>
+										</div>
+										<div class="icon"><i class="ion ion-power"></i></div>
+										<a href="#" data-miner-action="start" class="miner-action small-box-footer warning-message" data-toggle="tooltip" title="" data-original-title="Your local miner is offline, try to restart it.">Try to start it <i class="fa fa-arrow-circle-right"></i></a>
+									</div>
+								</div>
+								<?php endif; ?>
+
 								<!-- sys temp widget -->
-								<div class="col-lg-4 col-sm-4 col-xs-12">
+								<div class="col-lg-4 col-sm-4 col-xs-12 local-widget">
 									<!-- small box -->
 									<div class="small-box sys-temp-box bg-blue">
 										<div class="inner">
@@ -127,7 +160,7 @@
 								</div>
 								
 								<!-- main pool -->
-								<div class="col-lg-4 col-sm-4 col-xs-12">
+								<div class="col-lg-4 col-sm-4 col-xs-12 disable-if-not-running">
 									<!-- small box -->
 									<div class="small-box bg-dark">
 										<div class="inner">
@@ -140,7 +173,7 @@
 								</div>
 								
 								<!-- uptime widget -->
-								<div class="col-lg-4 col-sm-4 col-xs-12">
+								<div class="col-lg-4 col-sm-4 col-xs-12 disable-if-not-running">
 									<!-- small box -->
 									<div class="small-box bg-aqua">
 										<div class="inner">
@@ -156,10 +189,62 @@
 							
 						</section>
 						
+						<!-- network widgets section -->
+						<?php if (count($netMiners) > 0) : ?>
+						<div class="network-miners-widget-section">
+							<section class="col-md-12 local-miners-title">
+								<h4>Network <small>Miners</small></h4>
+							</section>
+						</div>
+						
+						<section class="network-miners-widget-section col-md-12 widgets-section">
+							<div class="row">
+							 	<!-- total network hashrate widget -->
+								<div class="col-lg-4 col-sm-4 col-xs-12">
+									<!-- small box -->
+									<div class="small-box bg-dark-blue">
+										<div class="inner">
+											<h3 class="network-widget-total-hashrate"><i class="ion ion-loading-c"></i></h3>
+											<p>Network Pool Hashrate</p>
+										</div>
+										<div class="icon"><i class="ion ion-ios7-speedometer-outline"></i></div>
+										<a href="#network-pools-details" class="small-box-footer">Totals net devices <i class="fa fa-arrow-circle-right"></i></a>
+									</div>
+								</div>
+								
+								<!-- network hw/re widget -->
+								<div class="col-lg-4 col-sm-4 col-xs-12">
+									<!-- small box -->
+									<div class="small-box bg-light2">
+										<div class="inner">
+											<h3 class="network-widget-hwre-rates"><i class="ion ion-loading-c"></i></h3>
+											<p>Network Error/Rejected Rates</p>
+										</div>
+										<div class="icon"><i class="ion ion-alert-circled"></i></div>
+										<a href="#network-details" class="small-box-footer">Details <i class="fa fa-arrow-circle-right"></i></a>
+									</div>
+								</div>
+								
+								<!-- last network share widget -->
+								<div class="col-lg-4 col-sm-4 col-xs-12">
+									<!-- small box -->
+									<div class="small-box bg-light-brown">
+										<div class="inner">
+											<h3 class="network-widget-last-share"><i class="ion ion-loading-c"></i></h3>
+											<p>Last Network Share</p>
+										</div>
+										<div class="icon"><i class="ion ion-ios7-stopwatch-outline"></i></div>
+										<a href="#network-details" class="small-box-footer">Network details <i class="fa fa-arrow-circle-right"></i></a>
+									</div>
+								</div>
+							</div>							
+						</section>
+						<?php endif; ?>
+						
 						<!-- Top section -->
 						<section class="hidden-xs col-md-12 connectedSortable ui-sortable top-section">
 						
-							<!-- Miner box -->
+							<!-- Local Miner box -->
 							<div class="box box-light">
 							   	<div class="overlay"></div>
 							   	<div class="loading-img"></div>
@@ -171,7 +256,7 @@
 									</div><!-- /. tools -->
 									<i class="fa fa-desktop"></i>
 
-									<h3 class="box-title" id="miner-details">Miner details</h3>
+									<h3 class="box-title" id="miner-details">Local Miner details</h3>
 								</div>
 								<div class="box-body">
 									<div class="row">
@@ -204,23 +289,23 @@
 										</div>
 									</div><!-- /.row - inside box -->
 								</div><!-- /.box-body -->
-									 <div class="box-footer">
-									 	<div class="legend pull-right">
-									 		<h6>Colors based on last share time: <i class="fa fa-circle text-success"></i> Good&nbsp;&nbsp;&nbsp;<i class="fa fa-circle text-warning"></i> Warning&nbsp;&nbsp;&nbsp;<i class="fa fa-circle text-danger"></i> Critical&nbsp;&nbsp;&nbsp;<i class="fa fa-circle text-muted"></i> Possibly dead</h6>
-									 	</div>
-									 	<?php if ($savedFrequencies && $minerdRunning == "cpuminer") : ?>
-									 	<button class="btn btn-primary btn-sm btn-saved-freq" data-toggle="tooltip" title="" data-original-title="Look at saved frequencies"><i class="fa fa-eye"></i> Saved frequencies</button>
-									 	<?php else: ?>
-									 	&nbsp;
-									 	<?php endif; ?>
-									 	<div class="freq-box" style="display:none; margin-top:10px;">
-										  	<h6>You can find this on the <a href="<?php echo site_url("app/settings") ?>">settings page</a> too.</h6>
-											<pre id="miner-freq" style="font-size:10px; margin-top:10px;">--gc3355-freq=<?php echo $savedFrequencies ?></pre>
-									 	</div>
-									</div>
+								<div class="box-footer">
+									<div class="legend pull-right">
+								 		<h6>Colors based on last share time: <i class="fa fa-circle text-success"></i> Good&nbsp;&nbsp;&nbsp;<i class="fa fa-circle text-warning"></i> Warning&nbsp;&nbsp;&nbsp;<i class="fa fa-circle text-danger"></i> Critical&nbsp;&nbsp;&nbsp;<i class="fa fa-circle text-muted"></i> Possibly dead</h6>
+								 	</div>
+								 	<?php if ($savedFrequencies && $minerdRunning == "cpuminer") : ?>
+								 	<button class="btn btn-primary btn-sm btn-saved-freq" data-toggle="tooltip" title="" data-original-title="Look at saved frequencies"><i class="fa fa-eye"></i> Saved frequencies</button>
+								 	<?php else: ?>
+								 	&nbsp;
+								 	<?php endif; ?>
+								 	<div class="freq-box" style="display:none; margin-top:10px;">
+									  	<h6>You can find this on the <a href="<?php echo site_url("app/settings") ?>">settings page</a> too.</h6>
+										<pre id="miner-freq" style="font-size:10px; margin-top:10px;">--gc3355-freq=<?php echo $savedFrequencies ?></pre>
+								 	</div>
+								</div>
 							</div><!-- /.miner box -->
 							
-							<!-- Pools box -->
+							<!-- Local Pools box -->
 							<div class="box box-light">
 							   	<div class="overlay"></div>
 							   	<div class="loading-img"></div>
@@ -231,7 +316,7 @@
 									</div><!-- /. tools -->
 									<i class="fa fa-cloud"></i>
 
-									<h3 class="box-title" id="pools-details">Pools details</h3>
+									<h3 class="box-title" id="pools-details">Local Pools details</h3>
 								</div>
 								<div class="box-body">
 									<div class="row">
@@ -243,7 +328,6 @@
 													  <tr>
 														  <th>Pool</th>
 														  <th>Url</th>
-														  <th>Priority</th>
 														  <th>Type</th>
 														  <th>Status</th>
 														  <th>Pool HR</th>
@@ -268,82 +352,156 @@
 									<h6>Legend: <strong>CS</strong> = Current Shares, <strong>PS</strong> = Previous shares, <strong>CA</strong> = Current Accepted, <strong>PA</strong> = Previous Accepted, <strong>CR</strong> = Current Rejected, <strong>PR</strong> = Previous Rejected</h6>
 									<h6><strong>Current</strong> is the current or last session, <strong>Previous</strong> is the total of all previous sessions. Pool HashRate is based on shares over the time per session.</h6>
 								</div>
-							</div><!-- /.miner box -->	
+							</div><!-- /.local pools box -->
+							
+							<!-- Network Miners box -->
+							<?php if (count($netMiners) > 0) : ?>
+							<div id="network-details" class="box box-light network-miner-details" style="display:none;">
+							   	<div class="overlay"></div>
+							   	<div class="loading-img"></div>
+								<div class="box-header" style="cursor: move;">
+									<!-- tools box -->
+									<div class="pull-right box-tools">
+										<button class="btn btn-default btn-xs" data-widget="collapse" data-toggle="tooltip" title="" data-original-title="Collapse"><i class="fa fa-minus"></i></button>
+									</div><!-- /. tools -->
+									<i class="fa fa-server"></i>
+
+									<h3 class="box-title" id="miner-details">Network Miners details</h3>
+								</div>
+								<div class="box-body">
+									<div class="row">
+										<div class="col-sm-12">
+											<div class="table-responsive">
+												  <table id="network-miner-table-details" class="table table-striped datatable">
+													  <thead>
+													  <tr>
+														  <th>DEV</th>
+														  <th>Temp</th>
+														  <th>Frequency</th>
+														  <th>Dev HR</th>
+														  <th>Shares</th>
+														  <th>AC</th>
+														  <th>% AC</th>
+														  <th>RE</th>
+														  <th>% RE</th>
+														  <th>HW</th>
+														  <th>% HW</th>
+														  <th>Last share</th>
+														  <th>Last share time</th>
+													  </tr>
+													  </thead>
+													  <tbody class="network_devs_table">
+													</tbody>
+													  <tfoot class="network_devs_table_foot">
+													</tfoot>
+												</table><!-- /.table -->
+											  </div>
+										</div>
+									</div><!-- /.row - inside box -->
+								</div><!-- /.box-body -->
+								<div class="box-footer">
+									<div class="legend pull-right">
+								 		<h6>Colors based on last share time: <i class="fa fa-circle text-success"></i> Good&nbsp;&nbsp;&nbsp;<i class="fa fa-circle text-warning"></i> Warning&nbsp;&nbsp;&nbsp;<i class="fa fa-circle text-danger"></i> Critical&nbsp;&nbsp;&nbsp;<i class="fa fa-circle text-muted"></i> Possibly dead</h6>
+									</div>
+									<div>&nbsp;</div>
+								</div>
+							</div><!-- /.network miner box -->
+							
+							<!-- Network pools box -->
+							<div id="network-pools-details" class="box box-light">
+							   	<div class="overlay"></div>
+							   	<div class="loading-img"></div>
+								<div class="box-header" style="cursor: move;">
+									<!-- tools box -->
+									<div class="pull-right box-tools">
+										<button class="btn btn-default btn-xs" data-widget="collapse" data-toggle="tooltip" title="" data-original-title="Collapse"><i class="fa fa-minus"></i></button>
+									</div><!-- /. tools -->
+									<i class="fa fa-cloud"></i>
+
+									<h3 class="box-title" id="pools-details" >Network Pools details</h3>
+								</div>
+								<div class="box-body">
+									<div class="row">
+										<div class="col-sm-12">
+											<?php $npi = 1; $netCounts = count($netMiners); foreach ($netMiners as $netMiner) : ?>
+												<hr />
+												<div id="net-<?php echo md5($netMiner->name) ?>">
+													<div class="mb20 net-pools-label-<?php echo md5($netMiner->name) ?>"></div>
+													<div class="table-responsive">
+														  <!-- .table - Uses sparkline charts-->
+														  <table id="net-pools-table-details-<?php echo md5($netMiner->name) ?>" class="net-pools-table table table-striped datatable">
+															  <thead>
+															  <tr>
+																  <th>&nbsp;</th>
+																  <th>Pool</th>
+																  <th>Url</th>
+																  <th>Type</th>
+																  <th>Status</th>
+																  <th>Pool HR</th>
+																  <th>CS</th>
+																  <th>PS</th>
+																  <th>CA</th>
+																  <th>PA</th>
+																  <th>CR</th>
+																  <th>PR</th>
+																  <th>Username</th>
+															  </tr>
+															  </thead>
+															  <tbody class="net_pools_table">
+															</tbody>
+														</table><!-- /.table -->
+														<p class="net-pool-alert-<?php echo md5($netMiner->name) ?>"></p>
+													</div>
+													<div class="net-pools-addbox-<?php echo md5($netMiner->name) ?>">
+														<button class="btn btn-xs btn-primary toggle-add-net-pool" data-open="0"><i class="fa fa-plus"></i> Add pool</button> <button class="btn btn-xs btn-danger add-net-donation-pool" data-netminer="<?php echo md5($netMiner->name) ?>" data-network="<?php echo $netMiner->ip.':'.$netMiner->port ?>" data-netcoin="<?php echo $netMiner->algo ?>"><i class="fa fa-gift"></i> Add donation pool</button>
+														<div class="form-group mt10" style="display:none;">
+															<div class="row sort-attach">
+														    	<div class="col-xs-5">
+														    		<div class="input-group">
+														    			<span class="input-group-addon"><i class="fa fa-cloud-download"></i></span>
+														    			<input type="text" class="form-control pool_url_<?php echo md5($netMiner->name) ?>" placeholder="Pool url" name="pool_url" value="" />
+														    		</div>
+														    	</div>
+														    	<div class="col-xs-3">
+														    		<div class="input-group">
+														    			<span class="input-group-addon"><i class="fa fa-user"></i></span>
+														    			<input type="text" class="form-control pool_username_<?php echo md5($netMiner->name) ?>" placeholder="username" name="pool_username" value=""  />
+														    		</div>
+														    	</div>
+														    	<div class="col-xs-3">
+														    		<div class="input-group">
+														    			<span class="input-group-addon"><i class="fa fa-lock"></i></span>
+														    			<input type="text" class="form-control pool_password_<?php echo md5($netMiner->name) ?>" placeholder="password" name="pool_password" value=""  />
+														    		</div>
+														    	</div>
+														    	<div class="col-xs-1">
+														    		<div class="input-group">
+														    			<button class="btn btn-sm btn-success add-net-pool" data-netminer="<?php echo md5($netMiner->name) ?>" data-network="<?php echo $netMiner->ip.':'.$netMiner->port ?>"><i class="fa fa-plus"></i> Add</button>
+														    		</div>
+														    	</div>
+														    </div>
+														</div>
+													</div>
+													<div class="net-pool-error-<?php echo md5($netMiner->name) ?> mt10 text-red"></div>
+												</div>
+											<?php $npi++; endforeach; ?>
+										</div>
+									</div><!-- /.row - inside box -->
+								</div><!-- /.box-body -->
+								<div class="box-footer">
+									<h6>Every changes here will be lost if you stop/restart your network miner</h6>
+									<h6>Legend: <strong>CS</strong> = Current Shares, <strong>PS</strong> = Previous shares, <strong>CA</strong> = Current Accepted, <strong>PA</strong> = Previous Accepted, <strong>CR</strong> = Current Rejected, <strong>PR</strong> = Previous Rejected</h6>
+									<h6><strong>Current</strong> is the current or last session, <strong>Previous</strong> is the total of all previous sessions. Pool HashRate is based on shares over the time per session.</h6>
+								</div>
+							</div><!-- /.network pools box -->
+							<?php endif; ?>
 							
 						</section>
 						
 						<!-- Right col -->
 						<section class="col-md-6 col-xs-12 connectedSortable ui-sortable right-section">
-						
-							<!-- Profitability box -->
-							<div class="box box-dark">
-								<div class="box-header" style="cursor: move;">
-									<!-- tools box -->
-									<div class="pull-right box-tools">
-										<button class="btn btn-default btn-xs" data-widget="collapse" data-toggle="tooltip" title="" data-original-title="Collapse"><i class="fa fa-minus"></i></button>
-									</div><!-- /. tools -->
-									<i class="fa fa-signal"></i>
-
-									<h3 class="box-title">Earnings calculator</h3>
-								</div><!-- /.box-header -->
-								<div class="box-body" style="display: block;">
-									<div class="profitability-box">
-										<p>Profitability in <i class="fa fa-btc"></i>/Day per MH/s <a href="#" class="profitability-question"><small class="badge bg-light"><small><i class="fa fa-question"></i></small></small></a></p>
-										<div class="callout callout-grey profitability-help" style="display:none;">
-											<p><small>If you know the profitability of your pool you can select it sliding the bar to get your possible earnings based on your current pool hashrate. Profitability is usually expressed as <i class="fa fa-btc"></i> per day per MH/s. You can see for example the <a href="http://www.clevermining.com/profits/30-days" target="_blank">Clevermining one, here</a>.</small></p>
-										</div>
-										<div class="margin-bottom">
-											<input type="text" name="default_profitability" id="profitability-slider" value="" />
-										</div>
-									</div>
-								</div><!-- /.box-body -->
-								<div class="box-footer">
-									<div class="profitability-results"><small>Drag and slide the bar above to set your pool profitability and calculate your current possible earnings.</small></div>
-								</div>
-							</div><!-- /.tree box -->
 							
-							<!-- Tree box -->
-							<div class="box box-dark">
-							   	<div class="overlay"></div>
-							   	<div class="loading-img"></div>
-								<div class="box-header" style="cursor: move;">
-									<!-- tools box -->
-									<div class="pull-right box-tools">
-										<button class="btn btn-default btn-xs" data-widget="collapse" data-toggle="tooltip" title="" data-original-title="Collapse"><i class="fa fa-minus"></i></button>
-									</div><!-- /. tools -->
-									<i class="fa fa-sitemap"></i>
-
-									<h3 class="box-title">Device Tree</h3>
-								</div><!-- /.box-header -->
-								<div class="box-body" style="display: block;">
-									<div class="row padding-vert" id="devs-total" ></div>
-									<div class="row padding-vert" id="devs"></div>
-								</div><!-- /.box-body -->
-							</div><!-- /.tree box -->
-												 
-						</section><!-- Right col -->
-						
-						<!-- Left col -->
-						<section class="col-md-6 col-xs-12 connectedSortable ui-sortable left-section">
-							
-							<!-- Hashrate box chart -->
-							<div class="box box-primary">
-							   	<div class="overlay"></div>
-							   	<div class="loading-img"></div>
-								<div class="box-header">
-									<!-- tools box -->
-									<div class="pull-right box-tools">
-										<button class="btn btn-default btn-xs" data-widget="collapse" data-toggle="tooltip" title="" data-original-title="Collapse"><i class="fa fa-minus"></i></button>
-									</div><!-- /. tools -->
-									<i class="fa fa-bar-chart-o"></i>
-									
-									<h3 class="box-title" id="hashrate-history">Hashrate History</h3>
-								</div>
-								<div class="box-body chart-responsive">
-									<div class="chart" id="hashrate-chart" style="height:160px;"></div>
-								</div>
-							</div><!-- /.hashrate box -->
-							
+							<!-- A/R/H chart -->
 							<div class="box box-primary">
 							   	<div class="overlay"></div>
 							   	<div class="loading-img"></div>
@@ -354,12 +512,12 @@
 									</div><!-- /. tools -->
 									<i class="fa fa-bullseye"></i>
 									
-									<h3 class="box-title" id="error-history">Accepted/Rejected/Errors</h3>
+									<h3 class="box-title" id="error-history">Local Accepted/Rejected/Errors</h3>
 								</div>
 								<div class="box-body chart-responsive">
 									<div class="chart" id="rehw-chart" style="height:160px;"></div>
 								</div>
-							</div>
+							</div><!-- /.A/R/H chart -->
 							
 							<!-- System box -->
 							<div class="box box-light">
@@ -381,6 +539,56 @@
 									<h6 class="sysuptime"></h6>
 							   </div>
 							</div><!-- /.system box -->
+												 
+						</section><!-- Right col -->
+						
+						<!-- Left col -->
+						<section class="col-md-6 col-xs-12 connectedSortable ui-sortable left-section">
+							
+							<!-- Hashrate box chart -->
+							<div class="box box-primary">
+							   	<div class="overlay"></div>
+							   	<div class="loading-img"></div>
+								<div class="box-header">
+									<!-- tools box -->
+									<div class="pull-right box-tools">
+										<button class="btn btn-default btn-xs" data-widget="collapse" data-toggle="tooltip" title="" data-original-title="Collapse"><i class="fa fa-minus"></i></button>
+									</div><!-- /. tools -->
+									<i class="fa fa-bar-chart-o"></i>
+									
+									<h3 class="box-title" id="hashrate-history">Local Hashrate History</h3>
+								</div>
+								<div class="box-body chart-responsive">
+									<div class="chart" id="hashrate-chart" style="height:160px;"></div>
+								</div>
+							</div><!-- /.hashrate box -->
+							
+							<!-- Profitability box -->
+							<div class="box box-dark">
+								<div class="box-header" style="cursor: move;">
+									<!-- tools box -->
+									<div class="pull-right box-tools">
+										<button class="btn btn-default btn-xs" data-widget="collapse" data-toggle="tooltip" title="" data-original-title="Collapse"><i class="fa fa-minus"></i></button>
+									</div><!-- /. tools -->
+									<i class="fa fa-signal"></i>
+
+									<h3 class="box-title">Scrypt Earnings calculator</h3>
+								</div><!-- /.box-header -->
+								<div class="box-body" style="display: block;">
+									<div class="profitability-box">
+										<p>Pool profitability in <i class="fa fa-btc"></i>/Day per MH/s <a href="#" class="profitability-question"><small class="badge bg-light"><small><i class="fa fa-question"></i></small></small></a></p>
+										<div class="callout callout-grey profitability-help" style="display:none;">
+											<p><small>If you know the profitability of your pool you can select it sliding the bar to get your possible earnings based on your current pool hashrate. Profitability is usually expressed as <i class="fa fa-btc"></i> per day per MH/s. You can see for example the <a href="http://www.clevermining.com/profits/30-days" target="_blank">Clevermining one, here</a>.</small></p>
+										</div>
+										<div class="margin-bottom">
+											<input type="text" name="default_profitability" id="profitability-slider" value="" />
+										</div>
+									</div>
+								</div><!-- /.box-body -->
+								<div class="box-footer">
+									<div class="profitability-results"><small>Drag and slide the bar above to set your pool profitability and calculate your current possible earnings.</small></div>
+								</div>
+							</div><!-- /.tree box -->
 						
 						</section><!-- /.left col -->
 					   
@@ -390,6 +598,27 @@
 					
 						<!-- Bottom section -->
 						<section class="col-md-12 connectedSortable ui-sortable bottom-section">
+							
+							<?php if ($dashboardDevicetree) : ?>
+							<!-- Tree box -->
+							<div class="box box-dark">
+							   	<div class="overlay"></div>
+							   	<div class="loading-img"></div>
+								<div class="box-header" style="cursor: move;">
+									<!-- tools box -->
+									<div class="pull-right box-tools">
+										<button class="btn btn-default btn-xs" data-widget="collapse" data-toggle="tooltip" title="" data-original-title="Collapse"><i class="fa fa-minus"></i></button>
+									</div><!-- /. tools -->
+									<i class="fa fa-sitemap"></i>
+
+									<h3 class="box-title">Device Tree</h3>
+								</div><!-- /.box-header -->
+								<div class="box-body" style="display: block;">
+									<div class="row padding-vert" id="devs-total" ></div>
+									<div class="row padding-vert" id="devs"></div>
+								</div><!-- /.box-body -->
+							</div><!-- /.tree box -->
+							<?php endif; ?>
 						
 							<!-- Real time log box -->
 							<div class="box box-light">

@@ -58,6 +58,7 @@ usermod -a -G www-data minera
 echo -e "Update redis values\n-----\n"
 redis-cli del minera_update
 redis-cli del minera_version
+redis-cli del altcoins_update
 
 echo -e "Copying cg/bfgminer udev rules\n-----\n"
 sudo cp conf/01-cgminer.rules /etc/udev/rules.d/
@@ -82,6 +83,12 @@ if [ $LIBUSBCOUNT -lt 2 ];
 then
         cd minera-bin/src/libusb
         sudo make install
+        cd ../libusb-fix
+        cp libusb-1.0.so.2.0.0 /usr/local/lib
+        cd /usr/local/lib
+        rm libusb-1.0.so
+        ln -s libusb-1.0.so.2.0.0 libusb-1.0.so
+        ln -s libusb-1.0.so.2.0.0 libusb-1.0.so.2
 fi
 
 sudo ldconfig

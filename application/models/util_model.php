@@ -14,7 +14,6 @@ class Util_model extends CI_Model {
 		// load Miner Model
 		// Switch model for CGMiner/BFGMiner/CPUMiner
 		$this->switchMinerSoftware();
-
 		parent::__construct();
 	}
 
@@ -29,7 +28,7 @@ class Util_model extends CI_Model {
 		return true;
 	}
 	
-	public function switchMinerSoftware($software = false)
+	public function switchMinerSoftware($software = false, $network = false)
 	{
 		if ($this->redis->get("minerd_use_root"))
 		{
@@ -106,6 +105,8 @@ class Util_model extends CI_Model {
 			$this->load->model('cgminer_model', 'miner');
 		}
 		
+		if ($network) $this->load->model('cgminer_model', 'network_miner');
+		
 		return true;
 	}
 	
@@ -118,72 +119,113 @@ class Util_model extends CI_Model {
 	// Get the live stats from miner
 	public function getStats()
 	{
+		$a = new stdClass();
 		$altcoinData = $this->getAltcoinsRates();
-		$altc["altcoins_rates"] = $altcoinData;
+		$btcData = $this->getBtcUsdRates();
 		
 		if ($this->isOnline())
 		{
 			$miner = $this->getMinerStats();
 
 			$a = json_decode($this->getParsedStats($miner));
-
+			
 			if (is_object($a) && is_object($miner))
-			{				
-				// Add sysload stats
-				$a->sysload = sys_getloadavg();
-				
-				// Add sysuptime
-				$a->sysuptime = $this->getSysUptime();
-				
-				// Add controller temp
-				$a->temp = $this->checkTemp();				
-				
-				// Add AltCoin rates
-				$a->altcoins_rates = $altcoinData;
-				
-				$a->pools = $miner->pools;
-				
-				// Add average stats
-				$a->avg = $this->getStoredAvgStats();
+			{			
+				$a->pools = $miner->pools;	
 				
 				// Encode and save the latest
-				$o = json_encode($a);
-				$this->redis->set("latest_stats", $o);
-				
-				return $o;
+				$l = json_encode($a);
+				$this->redis->set("latest_stats", $l);
 			}
 			else
 			{
 				if ($latestSaved = $this->redis->get("latest_stats"))
 				{
-					return $latestSaved;
+					$a = json_decode($latestSaved);
 				}
 				else
 				{
-					return json_encode(array_merge(array("error" => true), $altc));
+					$a->error = true;
+					$a->msg = "There are no stats to be displayed.";
 				}
-			}			
+			}
 		}
 		else
 		{
-			return json_encode(array_merge(array("notrunning" => true), $altc));
+			$a->notrunning = true;
 		}
 		
-		return false;
+		$a->network_miners = $this->getNetworkMinerStats(true);
+		
+		//log_message("error", var_export($netStats, true));
+		
+		// Add sysload stats
+		$a->sysload = sys_getloadavg();
+		
+		// Add sysuptime
+		$a->sysuptime = $this->getSysUptime();
+		
+		// Add controller temp
+		$a->temp = $this->checkTemp();				
+		
+		// Add BTC rates
+		$a->btc_rates = $btcData;
+		
+		// Add AltCoin rates
+		$a->altcoins_rates = $altcoinData;
+		
+		// Add average stats
+		$a->avg = $this->getStoredAvgStats();
+
+		return json_encode($a);		
+	}
+	
+	public function getNetworkMinerStats($parsed)
+	{
+		$a = array();
+		
+		$netMiners = $this->getNetworkMiners();
+		
+		if (count($netMiners) > 0)
+		{
+			$this->load->model('cgminer_model', 'network_miner');
+			
+			foreach ($netMiners as $netMiner) {
+				$a[$netMiner->name] = new stdClass();
+
+				if ($this->checkNetworkDevice($netMiner->ip, $netMiner->port)) 
+				{
+					$n = $this->getMinerStats($netMiner->ip.":".$netMiner->port);
+
+					if ($parsed === false)
+						$a[$netMiner->name] = $n;
+					else {
+						if ($n) {
+							$a[$netMiner->name] = json_decode($this->getParsedStats($n, true));
+							$a[$netMiner->name]->pools = $n->pools;
+						}
+					}
+				}
+				// Add config data
+				$a[$netMiner->name]->config = array('ip' => $netMiner->ip, 'port' => $netMiner->port, 'algo' => $netMiner->algo);
+			}
+		}
+
+		return $a;
 	}
 	
 	// Get the specific miner stats
-	public function getMinerStats()
+	public function getMinerStats($network = false)
 	{
 		$tmpPools = null; $pools = array();
 		
-		if ($this->isOnline())
+		if ($this->isOnline($network))
 		{
-			$a = $this->miner->callMinerd();
+			$a = ($network) ? $this->network_miner->callMinerd(false, $network) : $this->miner->callMinerd();
 
 			if (is_object($a))
 			{
-				if ($this->_minerdSoftware == "cpuminer")
+				if ($this->_minerdSoftware == "cpuminer" && !$network)
 					$pools = (isset($a->pools)) ? $a->pools : false;
 				else
 				{
@@ -270,7 +312,7 @@ class Util_model extends CI_Model {
 	// Parse the miner stats to add devices
 	// with a summary total and active pool
 	*/
-	public function getParsedStats($stats)
+	public function getParsedStats($stats, $network = false)
 	{		
 		$d = 0; $tdevice = array(); $tdtemperature = 0; $tdfrequency = 0; $tdaccepted = 0; $tdrejected = 0; $tdhwerrors = 0; $tdshares = 0; $tdhashrate = 0; $devicePoolActives = false;
 		$return = false;
@@ -292,7 +334,7 @@ class Util_model extends CI_Model {
 		$poolHashrate = 0;
 
 		// CPUminer devices stats
-		if ($this->_minerdSoftware == "cpuminer")
+		if ($this->_minerdSoftware == "cpuminer" && !$network)
 		{
 			if (isset($stats->devices))
 			{
@@ -382,15 +424,14 @@ class Util_model extends CI_Model {
 					$devicePoolIndex[] = $device->{'Last Share Pool'};
 				}				
 				
-				$devicePoolActives = array_count_values($devicePoolIndex);
-				
+				$devicePoolActives = array_count_values($devicePoolIndex);				
 			}
 			
 			if (isset($stats->summary[0]->SUMMARY[0]))
 			{
 				$totals = $stats->summary[0]->SUMMARY[0];
 
-				$return['totals']['temperature'] = ($tdtemperature) ? round(($tdtemperature/$d), 0) : false;				
+				$return['totals']['temperature'] = ($tdtemperature) ? round(($tdtemperature/$d), 2) : false;				
 				$return['totals']['frequency'] = ($tdfrequency) ? round(($tdfrequency/$d), 0) : false;
 				$return['totals']['accepted'] = $totals->Accepted;
 				$return['totals']['rejected'] = $totals->Rejected;
@@ -408,36 +449,43 @@ class Util_model extends CI_Model {
 		
 		if (isset($stats->pools))
 		{
+			$return['pool']['hashrate'] = 0;
+			$return['pool']['url'] = null;
+			$return['pool']['alive'] = 0;
+
 			foreach ($stats->pools as $poolIndex => $pool)
 			{
-				if ($this->_minerdSoftware == "cpuminer")
+				if ($this->_minerdSoftware == "cpuminer" && !$network)
 				{
 					if (isset($pool->active) && $pool->active == 1)
 					{
+						$return['pool']['url'] = $pool->url;
+						$return['pool']['alive'] = $pool->alive;
+
 						foreach($pool->stats as $session)
 						{
 							if ($session->stats_id == $pool->stats_id)
 							{
 								// Calculate pool hashrate
 								$poolHashrate = round(65536.0 * ($session->shares / (time() - $session->start_time)), 0);
+								$return['pool']['hashrate'] = $poolHashrate;
 							}
 						}
 					}
 				}
 				else
 				{
-					if ($devicePoolActives && array_key_exists($poolIndex, $devicePoolActives))
+					if (isset($pool->active) && $pool->active == 1)
 					{
-						$poolHashrate = $cgbfgminerPoolHashrate;	
+						$return['pool']['url'] = $pool->url;
+						$return['pool']['alive'] = $pool->alive;
 					}
+					$return['pool']['hashrate'] = $cgbfgminerPoolHashrate;
+
 				}
-					
-				$return['pool']['hashrate'] = $poolHashrate;
-				$return['pool']['url'] = $pool->url;
-				$return['pool']['alive'] = $pool->alive;
 			}
 		}
-	
+		
 		return json_encode($return);
 	}
 
@@ -630,6 +678,8 @@ class Util_model extends CI_Model {
 		
 		if ($stats)
 		{
+			$poolDonationId = false;
+			
 			// Add pool donation ID to the stats
 			if ($stats->pools && count($stats->pools) > 0)
 			{
@@ -715,7 +765,7 @@ class Util_model extends CI_Model {
 	function autoAddMineraPool()
 	{
 		$pools = json_decode($this->getPools());
-log_message("error", var_export($pools, true));		
+
 		foreach ($pools as $pool)
 		{
 			$md5s[] = md5(strtolower($pool->url).strtolower($pool->username).strtolower($pool->password));
@@ -924,15 +974,56 @@ log_message("error", var_export($pools, true));
 	// Get Bitstamp API to look at BTC/USD rates
 	public function getBtcUsdRates()
 	{
-		if ($json = @file_get_contents("https://www.bitstamp.net/api/ticker/"))
+		// wait 1d before recheck
+		if (time() > ($this->redis->get("bitstamp_update")+600))
 		{
-			$a = json_decode($json);
-			return $a;
-		}
-		else
+			log_message('error', "Refreshing Bitstamp data");
+			
+			$object = false;
+			
+			if ($json = @file_get_contents("https://www.bitstamp.net/api/ticker/"))
+			{
+				if ($jsonConv = @file_get_contents('https://www.bitstamp.net/api/eur_usd/'))
+				{
+					$conv = json_decode($jsonConv);
+					$exchangeEur = ($conv->sell+$conv->buy)/2;
+					$a = json_decode($json);
+					$o = array(
+						"high_eur" => round(($a->high/$exchangeEur), 2),
+						"last_eur" => round(($a->last/$exchangeEur), 2),
+						"high" => $a->high,
+						"last" => $a->last,
+						"timestamp" => $a->timestamp,
+						"bid_eur" => round(($a->bid/$exchangeEur), 2),
+						"vwap_eur" => round(($a->vwap/$exchangeEur), 2),
+						"bid" => $a->bid,
+						"vwap" => $a->vwap,
+						"volume" => $a->volume,
+						"low_eur" => round(($a->low/$exchangeEur), 2),
+						"ask_eur" => round(($a->ask/$exchangeEur), 2),
+						"low" => $a->low,
+						"ask" => $a->ask,
+						"eur_usd" => $exchangeEur
+					);
+	
+					$object = json_decode(json_encode($o), FALSE);
+				}
+			}
+			
+			if ($object)
+			{
+				$this->redis->set("bitstamp_update", time());
+			
+				$this->redis->set("bitstamp_data", json_encode($object));
+				
+				return $object;
+			}
+		} 
+		else 
 		{
-			return false;
+			return json_decode($this->redis->get("bitstamp_data"));
 		}
+		
 	}
 	
 	// Get Cryptsy API to look at BTC rates
@@ -940,24 +1031,22 @@ log_message("error", var_export($pools, true));
 	{
 		$ctx = stream_context_create(array('http' => array('timeout' => 3)));
 		
-		if ($json = @file_get_contents("http://pubapi.cryptsy.com/api.php?method=singlemarketdata&marketid=$id", 0, $ctx))
+		if ($json = @file_get_contents("https://www.cryptsy.com/api/v2/markets/$id", 0, $ctx))
 		{
 			$a = json_decode($json);
 			$o = false;
 			if ($a->success)
 			{
-				foreach ($a->return->markets as $code => $alt)
-				{
-					$o[$code] = array(
-						"primaryname" => $alt->primaryname, 
-						"secondaryname" => $alt->secondaryname, 
-						"primarycode" => $alt->primarycode, 
-						"secondarycode" => $alt->secondarycode, 
-						"label" => $alt->label, 
-						"price" => $alt->lasttradeprice,
-						"time" => time()
-					);
-				}
+				log_message("error", var_export($a->data->label, true));
+				$o[$id] = array(
+					"primaryname" => $a->data->label, 
+					"secondaryname" => $a->data->label, 
+					"primarycode" => $a->data->{'24hr'}->volume, 
+					"secondarycode" => $a->data->{'24hr'}->volume_btc, 
+					"label" => $a->data->label, 
+					"price" => $a->data->last_trade->price,
+					"time" => $a->data->last_trade->timestamp
+				);
 			}
 			return $o;
 		}
@@ -970,18 +1059,19 @@ log_message("error", var_export($pools, true));
 	// Get Cryptsy API to look at currency IDs/Values
 	public function getCryptsyRateIds()
 	{
-		if ($json = @file_get_contents("http://pubapi.cryptsy.com/api.php?method=marketdatav2"))
+		if ($json = @file_get_contents("https://www.cryptsy.com/api/v2/markets"))
 		{
 			$a = json_decode($json);
 			
 			if ($a->success)
 			{
 				$o = array();
-				foreach ($a->return->markets as $coins => $market)
+
+				foreach ($a->data as $market)
 				{
-					if (preg_match("/\/BTC$/", $coins))
+					if (preg_match("/\/BTC$/", $market->label))
 					{
-						$o[$market->marketid] = array("codes" => $coins, "names" => $market->primaryname."/".$market->secondaryname);
+						$o[$market->id] = array("codes" => $market->label, "names" => $market->label);
 					}
 				}
 			}
@@ -1021,12 +1111,12 @@ log_message("error", var_export($pools, true));
 	}
 
 	// Refresh Cryptsy data IDs/Values
-	public function updateAltcoinsRates()
+	public function updateAltcoinsRates($force = false)
 	{
 		$oldData = ($this->redis->get("altcoins_data")) ? $this->redis->get("altcoins_data") : array("error" => "true");
 		
 		// wait 1d before recheck
-		if (time() > ($this->redis->get("altcoins_update")+3600))
+		if (time() > ($this->redis->get("altcoins_update")+3600) || $force)
 		{
 			if ($this->redis->get("altcoins_data_lock"))
 				return $oldData;
@@ -1092,12 +1182,21 @@ log_message("error", var_export($pools, true));
 		}		
 		
 		return false;
-	}	
+	}
 	
-	// Check if the minerd if running
-	public function isOnline($count = 0)
+	public function getNetworkMiners()
 	{
-		if(!($fp = @fsockopen("127.0.0.1", 4028, $errno, $errstr, 1)))
+		return json_decode($this->redis->get('network_miners'));
+	}
+
+	// Check if the minerd if running
+	public function isOnline($network = false)
+	{
+		$ip = "127.0.0.1"; $port = 4028;
+		
+		if ($network) list($ip, $port) = explode(":", $network);	
+
+		if(!($fp = @fsockopen($ip, $port, $errno, $errstr, 1)))
 		{
 				return false;
 		}		
@@ -1183,6 +1282,51 @@ log_message("error", var_export($pools, true));
 		return array('success' => $r);
 	}
 	
+	// Refresh miner confs
+	public function refreshMinerConf()
+	{
+		// wait 1w before recheck
+		if (file_exists(FCPATH."miners_conf.json") && time() > ($this->redis->get("miners_conf_update")+86400*7))
+		{
+			log_message('error', "Refreshing Miners conf data");
+			
+			$data = json_decode(file_get_contents(FCPATH."miners_conf.json"), true);
+			
+			if ($data)
+			{
+				$this->redis->set("miners_conf_update", time());
+			
+				$this->redis->set("miners_conf", json_encode($data));
+			}
+		}
+		
+		return $this->redis->get("miners_conf");
+	}
+	
+	public function is_valid_domain_name($domain_name)
+	{
+	    return (preg_match("/^([a-z\d](-*[a-z\d])*)(\.([a-z\d](-*[a-z\d])*))*$/i", $domain_name) //valid chars check
+            && preg_match("/^.{1,253}$/", $domain_name) //overall length check
+            && preg_match("/^[^\.]{1,63}(\.[^\.]{1,63})*$/", $domain_name)   ); //length of each label
+	}
+	
+	public function setSystemHostname($hostname) {
+		if($this->is_valid_domain_name($hostname))
+		{
+			exec("sudo hostname " . $hostname);
+		    return true;
+		} 
+		else 
+		{
+			return false;	
+		}
+	}
+	
+	public function setSystemUserPassword($password) {
+		exec("echo 'minera:".$password."' | sudo -S /usr/sbin/chpasswd");
+		return true;
+	}
+	
 	// Call shutdown cmd
 	public function shutdown()
 	{
@@ -1230,15 +1374,56 @@ log_message("error", var_export($pools, true));
 
 		return true;
 	}
+	
+	public function tailFile($filename, $lines) {
+		$file = file(FCPATH.APPPATH."logs/".$filename);
+		
+		if (count($file) > 0) {
+			for ($i = count($file)-$lines; $i < count($file); $i++) {
+				if ($i >= 0 && $file[$i]) {
+					$readlines[] = $file[$i] . "\n";
+				}
+			}
+		} else {
+			$readlines = array('No logs found');
+		}
+		
+		return $readlines;
+	}
 
 	public function saveCurrentFreq()
 	{
 		return $this->miner->saveCurrentFreq();
 	}
 
-	public function selectPool($poolId)
+	public function selectPool($poolId, $network = false)
 	{
-		return $this->miner->selectPool($poolId);
+		if ($network) {
+			$this->switchMinerSoftware(false, true);
+			return $this->network_miner->selectPool($poolId, $network);
+		}
+			
+		return $this->miner->selectPool($poolId, $network);
+	}
+	
+	public function addPool($url, $user, $pass, $network = false)
+	{
+		if ($network) {
+			$this->switchMinerSoftware(false, true);
+			return $this->network_miner->addPool($url, $user, $pass, $network);
+		}
+		
+		return $this->miner->addPool($url, $user, $pass, $network);
+	}
+	
+	public function removePool($poolId, $network = false)
+	{
+		if ($network) {
+			$this->switchMinerSoftware(false, true);
+			return $this->network_miner->removePool($poolId, $network);
+		}
+					
+		return $this->miner->removePool($poolId, $network);
 	}
 			
 	// Stop miner
@@ -1405,6 +1590,12 @@ log_message("error", var_export($pools, true));
 		$lines[] = $logmsg;
 		
 		log_message('error', $logmsg);
+
+		$this->redis->del("altcoins_update");		
+		$this->util_model->updateAltcoinsRates(true);
+		$this->redis->del("minera_update");
+		$this->redis->del("minera_version");
+		$this->checkUpdate();
 				
 		// Run upgrade script
 		exec("cd ".FCPATH." && sudo -u " . $this->config->item("system_user") . " sudo ./upgrade_minera.sh", $out);
@@ -1414,10 +1605,6 @@ log_message("error", var_export($pools, true));
 		$lines[] = $logmsg;
 				
 		log_message('error', $logmsg);
-			
-		$this->redis->del("minera_update");
-		$this->redis->del("minera_version");
-		$this->checkUpdate();
 		
 		$logmsg = "End Update";
 		$lines[] = $logmsg;
@@ -1591,17 +1778,19 @@ log_message("error", var_export($pools, true));
 		if ($this->isEnableMobileminer())
 		{
 			$stats = json_decode($this->getParsedStats($this->getMinerStats()));
+			$networkStats = $this->getNetworkMinerStats(true);
 			
 			// Params		
 			$params = array("emailAddress" => $this->redis->get("mobileminer_email"), "applicationKey" => $this->redis->get("mobileminer_appkey"), "apiKey" => $this->config->item('mobileminer_apikey'), "fetchCommands" => "true");
 			
-			// Pool data
+			// Local Pool data
 			$poolUrl = (isset($stats->pool->url)) ? $stats->pool->url : "no pool configured";
 			$poolStatus = (isset($stats->pool->alive) && $stats->pool->alive) ? "Alive" : "Dead";
 			
-			// Algo data
+			// Local Algo data
 			$algo = $this->checkAlgo();
-							
+			
+			// Local data				
 			$i = 0; $data = array();
 			if (isset($stats->devices) && count($stats->devices) > 0)
 			{
@@ -1643,7 +1832,63 @@ log_message("error", var_export($pools, true));
 					$i++;
 				}
 			}
-
+			
+			if (count($networkStats) > 0)
+			{
+				foreach ($networkStats as $netMinerName => $netMiner)
+				{
+					// Network Pool data
+					$netPoolUrl = (isset($netMiner->pool->url)) ? $netMiner->pool->url : "no pool configured";
+					$netPoolStatus = (isset($netMiner->pool->alive) && $netMiner->pool->alive) ? "Alive" : "Dead";
+					$netEnabled = (isset($netMiner->devices)) ? true : false;
+		
+					// Network data							
+					$i = 0;
+					if (isset($netMiner->devices) && count($netMiner->devices) > 0)
+					{
+						foreach ($netMiner->devices as $netDevName => $netDevice)
+						{
+							$data[] = array(
+								"MachineName" => $this->redis->get("mobileminer_system_name")." - ".$netMinerName,
+								"MinerName" => "Minera",
+								"CoinSymbol" => "",
+								"CoinName" => "",
+								"Algorithm" => $netMiner->config['algo'],
+								"Kind" => "Network",
+								"Name" => $netDevName,
+								"FullName" => $netDevName,
+								"PoolIndex" => 0,
+								"PoolName" => $netPoolUrl,
+								"Index" => $i,                                            
+								"DeviceID" => $i,
+								"Enabled" => $netEnabled,
+								"Status" => $netPoolStatus,
+								"Temperature" => (isset($netDevice->temperature)) ? $netDevice->temperature : false,
+								"FanSpeed" => 0,
+								"FanPercent" => 0,
+								"GpuClock" => 0,
+								"MemoryClock" => 0,
+								"GpuVoltage" => 0,
+								"GpuActivity" => 0,
+								"PowerTune" => 0,
+								"AverageHashrate" => ($netDevice->hashrate > 0) ? round(($netDevice->hashrate/1000), 0) : 0,
+								"CurrentHashrate" => ($netDevice->hashrate > 0) ? round(($netDevice->hashrate/1000), 0) : 0,
+								"AcceptedShares" => $netDevice->accepted,
+								"RejectedShares" => $netDevice->rejected,
+								"HardwareErrors" => $netDevice->hw_errors,
+								"Utility" => false,
+								"Intensity" => null,
+								"RejectedSharesPercent" => (($netDevice->accepted+$netDevice->rejected+$netDevice->hw_errors) > 0) ? round(($netDevice->rejected*100/($netDevice->accepted+$netDevice->rejected+$netDevice->hw_errors)), 3) : 0,
+								"HardwareErrorsPercent" => (($netDevice->accepted+$netDevice->rejected+$netDevice->hw_errors) > 0) ? round(($netDevice->hw_errors*100/($netDevice->accepted+$netDevice->rejected+$netDevice->hw_errors)), 3) : 0
+							);
+							$i++;
+						}
+					}					
+				}
+			}
+			
+			//log_message("error", var_export($networkStats, true));
+			
 			$resultGetActions = false; 
 			
 			if (count($data) > 0)
@@ -1661,30 +1906,31 @@ log_message("error", var_export($pools, true));
 			/*	
 			// Looking for actions to do
 			*/
-			$paramsGetActions = array("emailAddress" => $this->redis->get("mobileminer_email"), "applicationKey" => $this->redis->get("mobileminer_appkey"), "apiKey" => $this->config->item('mobileminer_apikey'), "machineName" => $this->redis->get("mobileminer_system_name"));
-			
-			//$resultGetActions = $this->useCurl($this->config->item('mobileminer_url_remotecommands'), $paramsGetActions, "GET");
-			
 			if ($resultGetActions)
-			{
+			{				
 				$resultGetActions = json_decode($resultGetActions);
+				//log_message("error", var_export($resultGetActions, true));
 				if (is_array($resultGetActions) && count($resultGetActions) > 0)
 				{
 					$actionToDo = $resultGetActions[0];
 					
+					$paramsGetActions = array("emailAddress" => $this->redis->get("mobileminer_email"), "applicationKey" => $this->redis->get("mobileminer_appkey"), "apiKey" => $this->config->item('mobileminer_apikey'), "machineName" => $actionToDo->Machine->Name);
+
+					
 					// Do the mobileMiner action
 					if ($actionToDo->CommandText == "START")
 					{
-						if (!$this->isOnline()) $this->minerStart();
+						if ($actionToDo->Machine->Name === $this->redis->get("mobileminer_system_name") && !$this->isOnline()) $this->minerStart();
 					}
 					elseif ($actionToDo->CommandText == "STOP")
 					{
-						$this->minerStop();
+						if ($actionToDo->Machine->Name === $this->redis->get("mobileminer_system_name")) $this->minerStop();
 					}
 					elseif ($actionToDo->CommandText == "RESTART")
 					{
-						$this->minerRestart();
+						if ($actionToDo->Machine->Name === $this->redis->get("mobileminer_system_name")) $this->minerRestart();
 					}
+					// TODO Add switching for net miners too
 					elseif (preg_match("/SWITCH/", $actionToDo->CommandText))
 					{
 						$switch = explode("|", $actionToDo->CommandText);
@@ -1721,6 +1967,66 @@ log_message("error", var_export($pools, true));
 		}
 		
 		return false;
+	}
+	
+	public function checkNetworkDevice($ip, $port=4028) 
+	{
+		$connection = @fsockopen($ip, 4028, $errno, $errstr, 0.1);
+		
+	    if (is_resource($connection))
+	    {	
+	        fclose($connection);
+	        
+	        return true;
+	    }
+	    
+	    return false;
+	}
+	
+	public function discoveryNetworkDevices() {
+		$localIp = $_SERVER['SERVER_ADDR'];
+
+		list($w, $x, $y, $z) = explode('.', $localIp);
+				
+		$range = implode(".", array($w, $x, $y, '0'))."/24";
+		$addresses = array();
+		$opens = array();
+		
+		@list($ip, $len) = explode('/', $range);
+		
+		if (($min = ip2long($ip)) !== false) {
+		  $max = ($min | (1<<(32-$len))-1);
+		  for ($i = $min; $i < $max; $i++)
+		    $addresses[] = long2ip($i);
+		}
+
+		$stored = $this->getNetworkMiners();
+		$current = array($localIp);
+		
+		foreach ($stored as $net) {
+			$current[] = $net->ip;
+		}
+		
+		foreach ($addresses as $address)
+		{
+		    $connection = @fsockopen($address, 4028, $errno, $errstr, 0.01);
+		
+		    if (is_resource($connection) && !in_array($address, $current))
+		    {
+		        $opens[] = array('ip' => $address, 'name' => $this->getRandomStarName());
+		
+		        fclose($connection);
+		    }
+		}
+		
+		return $opens;
+		
+	}
+	
+	public function getRandomStarName() {
+		$array = array("Andromeda", "Antlia", "Apus", "Aquarius", "Aquila", "Ara", "Aries", "Auriga", "Boötes", "Caelum", "Camelopardalis", "Cancer", "Canes Venatici", "Canis Major", "Canis Minor", "Capricornus", "Carina", "Cassiopeia", "Centaurus", "Cepheus", "Cetus", "Chamaeleon", "Circinus", "Columba", "Coma Berenices", "Corona Austrina", "Corona Borealis", "Corvus", "Crater", "Crux", "Cygnus", "Delphinus", "Dorado", "Draco", "Equuleus", "Eridanus", "Fornax", "Gemini", "Grus", "Hercules", "Horologium", "Hydra", "Hydrus", "Indus", "Lacerta", "Leo", "Leo Minor", "Lepus", "Libra", "Lupus", "Lynx", "Lyra", "Mensa", "Microscopium", "Monoceros", "Musca", "Norma", "Octans", "Ophiuchus", "Orion", "Pavo", "Pegasus", "Perseus", "Phoenix", "Pictor", "Pisces", "Piscis Austrinus", "Puppis", "Pyxis", "Reticulum", "Sagitta", "Sagittarius", "Scorpius", "Sculptor", "Scutum", "Serpens", "Sextans", "Taurus", "Telescopium", "Triangulum", "Triangulum Australe", "Tucana", "Ursa Major", "Ursa Minor", "Vela", "Virgo", "Volans", "Vulpecula");
+		
+		return $array[array_rand($array)];
 	}
 	
 	public function setTimezone($timezone)
