@@ -959,9 +959,9 @@ $(function() {
 		                setTimeout(get_log, poll);
 		            } else {
 		                if (s == "error")
-		                    error(xhr.statusText);
+		                    console.log(xhr.statusText);
 		                else
-		                    error("AJAX Error: " + s);
+		                    console.log("AJAX Error: " + s);
 		            }
 		        }
 		    });
