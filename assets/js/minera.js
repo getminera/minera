@@ -1289,31 +1289,33 @@ function createChart(period, text_period)
 
 function createMon(key, hash, totalhash, maxHashrate, ac, re, hw, sh, freq, color)
 {
+	var col, toAppend, color, size, skin, thickness, fontsize, name, max;
+		
 	if (key == "total")
 	{
-		var col = 12;
-		var toAppend = "#devs-total";
-		var color = "#f56954";
-		var size = 140;
-		var skin = "tron";
-		var thickness = ".2";
-		var fontsize = "10pt";
+		col = 12,
+		toAppend = "#devs-total";
+		color = "#f56954";
+		size = 140;
+		skin = "tron";
+		thickness = ".2";
+		fontsize = "10pt";
 	}
 	else
 	{
-		var col = 4;
-		var toAppend = "#devs";
-		var color = getExaColor(color);
-		var size = 80;
-		var skin = "basic";
-		var thickness = ".2";
-		var fontsize = "8pt";
+		col = 4;
+		toAppend = "#devs";
+		color = getExaColor(color);
+		size = 80;
+		skin = "basic";
+		thickness = ".2";
+		fontsize = "8pt";
 	}
 	
 	if (freq)
-		var name = key + " @ " + freq + "Mhz";
+		name = key + " @ " + freq + "Mhz";
 	else
-		var name = key;			
+		name = key;			
 
 	// Add per device knob graph
 	var devBox = '<div class="col-xs-'+col+' text-center" id="master-'+ key +'"><input type="text" class="'+ key +'" /><div class="knob-label"><p><strong>'+name+'</strong></p><p>A: '+ac+' - R: '+re+' - H: '+hw+'</p></div></div>';
