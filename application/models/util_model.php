@@ -251,11 +251,19 @@ class Util_model extends CI_Model {
 					{
 						foreach ($tmpPools as $poolIndex => $tmpPool)
 						{
+							if (isset($tmpPool->Works)) {
+								$getworks = $tmpPool->Works;
+							} elseif (isset($tmpPool->Getworks)) {
+								$getworks = $tmpPool->Getworks;
+							} else {
+								$getworks = false;
+							}
+							
 							$stats = new stdClass();
 							$stats->start_time = false;
 							$stats->accepted = $tmpPool->Accepted;
 							$stats->rejected = $tmpPool->Rejected;
-							$stats->shares = $tmpPool->Works;
+							$stats->shares = $getworks;
 							$stats->stop_time = false;
 							$stats->stats_id = 1;
 							
