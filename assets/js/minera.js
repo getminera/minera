@@ -1415,7 +1415,7 @@ function createMon(key, hash, totalhash, maxHashrate, ac, re, hw, sh, freq, colo
 function convertHashrate(hash)
 {
 	if (hash > 900000000)
-		return (hash/1000000).toFixed(2) + 'Th/s';
+		return (hash/1000000000).toFixed(2) + 'Th/s';
 	else if (hash > 900000)
 		return (hash/1000000).toFixed(2) + 'Gh/s';
 	else if (hash > 900)
