@@ -59,6 +59,9 @@ echo -e "Update redis values\n-----\n"
 redis-cli del minera_update
 redis-cli del minera_version
 redis-cli del altcoins_update
+redis-cli del dashboard_coin_rates
+redis-cli del cryptsy_data
+redis-cli del cryptsy_update
 
 echo -e "Copying cg/bfgminer udev rules\n-----\n"
 sudo cp conf/01-cgminer.rules /etc/udev/rules.d/
