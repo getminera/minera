@@ -1322,6 +1322,7 @@ class Util_model extends CI_Model {
 		if($this->is_valid_domain_name($hostname))
 		{
 			exec("sudo hostname " . $hostname);
+			exec("sudo echo ".$hostname." > /etc/hostname");
 		    return true;
 		} 
 		else 
