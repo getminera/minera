@@ -1,12 +1,16 @@
 [submodule "minera-bin/src/cpuminer-gc3355"]
 	path = minera-bin/src/cpuminer-gc3355
 	url = https://github.com/siklon/cpuminer-gc3355.git
+	ignore = dirty
 [submodule "minera-bin/src/bfgminer"]
 	path = minera-bin/src/bfgminer
 	url = https://github.com/luke-jr/bfgminer
+	ignore = dirty
 [submodule "minera-bin/src/cgminer"]
 	path = minera-bin/src/cgminer
 	url = https://github.com/ckolivas/cgminer
+	ignore = dirty
 [submodule "minera-bin/src/cgminer-dmaxl-zeus"]
 	path = minera-bin/src/cgminer-dmaxl-zeus
 	url = https://github.com/dmaxl/cgminer/
+	ignore = dirty
