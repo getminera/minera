@@ -43,7 +43,7 @@ CGMINER_MINERA_BINARY="cgminer"
  
 function buildMiner {
 	if [[ $LINK_ONLY -eq 0 ]]; then
-		if [[ -f "$BUILD_PATH/.git" ]]; then
+		if [[ -d "$BUILD_PATH/.git" ]]; then
 			cd $BUILD_PATH
 			echo "Pulling repo $BUILD_REPO"
 			git fetch --all
