@@ -1323,7 +1323,7 @@ class Util_model extends CI_Model {
 		{
 			exec("sudo hostname " . $hostname);
 			exec("echo ".$hostname." | sudo tee /etc/hostname");
-			exec("echo -e 127.0.0.1\t".$hostname." | sudo tee --append /etc/hosts");
+			exec("echo 127.0.0.1     ".$hostname." | sudo tee --append /etc/hosts");
 		    return true;
 		} 
 		else 
