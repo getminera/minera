@@ -219,7 +219,7 @@ $(function() {
 		   	$("#modal-saving-label").html("Generating export file, please wait...");
 	    	$('#modal-saving').modal('show');
 	    	
-	    	var saveUrl = _baseUrl+"app/save_settings";
+	    	var saveUrl = _baseUrl+"/app/save_settings";
 	    	var formData = $("#minersettings").serialize();
 	
 			$.ajax({
