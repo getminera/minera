@@ -28,7 +28,9 @@ If you like it, please consider a donation:
 
 Thanks.
 
-**[Download minera-latest.img.zip](http://getminera.com/download/latest)**
+**[Download from official server (UK) minera-latest.img.zip](http://getminera.com/download/latest)**
+
+**[Download from mirror (MEGA) minera-latest.img.zip](https://mega.co.nz/#!iZUTQYDD!x1iHxWfr3jYW1BVAx0kXO6Nx0hq8pdPgP7z6hyafyEM)**
 
 Look below for how to install / how to use it.
 _______
