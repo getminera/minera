@@ -2,4 +2,5 @@ conf/*.json
 conf/index.html
 application/logs
 minera-bin/custom/*
+minera-bin/cgminerStartupScript
 *.log
