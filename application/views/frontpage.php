@@ -343,6 +343,36 @@
 													  <tbody class="pools_table">
 													</tbody>
 												</table><!-- /.table -->
+												<div class="pools-addbox">
+													<button class="btn btn-xs btn-primary toggle-add-pool" data-open="0"><i class="fa fa-plus"></i> Add pool</button>
+													<div class="form-group mt10" style="display:none;">
+														<div class="row sort-attach">
+													    	<div class="col-xs-5">
+													    		<div class="input-group">
+													    			<span class="input-group-addon"><i class="fa fa-cloud-download"></i></span>
+													    			<input type="text" class="form-control local_pool_url" placeholder="Pool url" name="local_pool_url" value="" />
+													    		</div>
+													    	</div>
+													    	<div class="col-xs-3">
+													    		<div class="input-group">
+													    			<span class="input-group-addon"><i class="fa fa-user"></i></span>
+													    			<input type="text" class="form-control local_pool_username" placeholder="username" name="local_pool_username" value=""  />
+													    		</div>
+													    	</div>
+													    	<div class="col-xs-3">
+													    		<div class="input-group">
+													    			<span class="input-group-addon"><i class="fa fa-lock"></i></span>
+													    			<input type="text" class="form-control local_pool_password" placeholder="password" name="local_pool_password" value=""  />
+													    		</div>
+													    	</div>
+													    	<div class="col-xs-1">
+													    		<div class="input-group">
+													    			<button class="btn btn-sm btn-success add-pool"><i class="fa fa-plus"></i> Add</button>
+													    		</div>
+													    	</div>
+													    </div>
+													</div>
+												</div>
 												<p class="pool-alert"></p>
 											  </div>
 										</div>

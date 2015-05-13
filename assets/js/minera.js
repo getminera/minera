@@ -1492,6 +1492,10 @@ Number.prototype.noExponents= function(){
     return str + z;
 }
 
+// ****************************** //
+// NETWORK miners pools functions //
+// ****************************** //
+
 // Select Pool on the fly
 $(document).on('click', '.select-net-pool', function(e) {
 	e.preventDefault();
@@ -1632,6 +1636,10 @@ $(document).on('click', '.add-net-donation-pool', function(e) {
     });
 });
 
+// ****************************** //
+//  LOCAL miners pools functions  //
+// ****************************** //
+
 // Select Pool on the fly
 $(document).on('click', '.select-pool', function(e) {
 	e.preventDefault();
@@ -1657,6 +1665,59 @@ $(document).on('click', '.select-pool', function(e) {
         }
     });
 });
+
+// Toggle local pool on the fly
+$(document).on('click', '.toggle-add-pool', function(e) {
+	e.preventDefault();
+	//$('.overlay').show();
+	if ($(this).data('open')) {
+		$(this).nextAll('.form-group').fadeOut();
+		$(this).data('open', false);
+	} else {
+		$(this).nextAll('.form-group').fadeIn();
+		$(this).data('open', true);
+	}
+});
+
+$(document).on('click', '.add-pool', function(e) {
+	e.preventDefault();
+	$('.overlay').show();
+	if ($('.local_pool_url').val() && $('.local_pool_username').val() && $('.local_pool_password').val()) {
+		$('.pool-alert').html('').fadeOut();
+		var params = {
+				command: 'add_pool',
+				url: $('.local_pool_url').val(),
+				user: $('.local_pool_username').val(),
+				pass: $('.local_pool_password').val()
+			},
+			query = $.param(params);
+		console.log(query);
+		/*$.ajax(_baseUrl+"/app/api?"+query, {
+	        dataType: "text",
+	        success: function (dataP) {
+	        	if (dataP)
+	        	{
+	        		var dataJ = $.parseJSON(dataP);
+	        		//console.log(dataJ);
+	    			getStats(true);
+	    			if (dataJ)
+	    			{
+	    				$('.net-pool-alert-'+netMiner).html('Miner response: <pre style="font-size:10px;margin-top:10px;">'+dataP+'</pre>');
+	    				setTimeout(function() {
+							$('.net-pool-alert-'+netMiner).html('');
+		    			}, 30000);
+	    			}
+	    			$('.local_pool_url').val('').addClass('error');
+					$('.local_pool_username').val('').addClass('error');
+					$('.local_pool_password').val('').addClass('error');
+	    		}
+	        }
+	    });*/
+	} else {
+		$('.pool-alert').html('<i class="fa fa-warning"></i> Each field is required').fadeIn();
+	}
+});
+
 
 // Define underscore variable template
 _.templateSettings.variable = "rc";
