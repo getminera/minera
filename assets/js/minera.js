@@ -1655,7 +1655,7 @@ $(document).on('click', '.select-pool', function(e) {
     			getStats(true);
     			if (dataJ)
     			{
-    				$(".pool-alert").html('CG/BFGminer could take some minutes to complete the switching process, try to <a href="#" class="refresh-btn">refresh the dashboard</a>.. <pre style="font-size:10px;margin-top:10px;">'+dataP+'</pre>');
+    				$(".pool-alert").html('CG/BFGminer could take some minutes to complete the switching process, try to <a href="#" class="refresh-btn">refresh the dashboard</a>.. <pre style="font-size:10px;margin-top:10px;">'+dataP+'</pre>').fadeIn();
     				
     				setTimeout(function() {
 						$(".pool-alert").html('');
@@ -1691,8 +1691,8 @@ $(document).on('click', '.add-pool', function(e) {
 				pass: $('.local_pool_password').val()
 			},
 			query = $.param(params);
-		console.log(query);
-		/*$.ajax(_baseUrl+"/app/api?"+query, {
+
+		$.ajax(_baseUrl+"/app/api?"+query, {
 	        dataType: "text",
 	        success: function (dataP) {
 	        	if (dataP)
@@ -1702,9 +1702,9 @@ $(document).on('click', '.add-pool', function(e) {
 	    			getStats(true);
 	    			if (dataJ)
 	    			{
-	    				$('.net-pool-alert-'+netMiner).html('Miner response: <pre style="font-size:10px;margin-top:10px;">'+dataP+'</pre>');
+	    				$('.pool-alert').html('Miner response: <pre style="font-size:10px;margin-top:10px;">'+dataP+'</pre>').fadeIn();
 	    				setTimeout(function() {
-							$('.net-pool-alert-'+netMiner).html('');
+							$('.pool-alert').html('');
 		    			}, 30000);
 	    			}
 	    			$('.local_pool_url').val('').addClass('error');
@@ -1712,11 +1712,41 @@ $(document).on('click', '.add-pool', function(e) {
 					$('.local_pool_password').val('').addClass('error');
 	    		}
 	        }
-	    });*/
+	    });
 	} else {
 		$('.pool-alert').html('<i class="fa fa-warning"></i> Each field is required').fadeIn();
 	}
 });
+
+// Remove local pool on the fly
+$(document).on('click', '.remove-pool', function(e) {
+	e.preventDefault();
+
+	if ($(".app_data").data("miner-running") !== 'cpuminer' && $(".app_data").data("miner-running") !== undefined) {
+		$('.overlay').show();
+	    var poolId = $(this).data('pool-id');
+	    $.ajax(_baseUrl+"/app/api?command=remove_pool&poolId="+poolId, {
+	        dataType: "text",
+	        success: function (dataP) {
+	        	if (dataP)
+	        	{
+	        		var dataJ = $.parseJSON(dataP);
+	    			setTimeout(function() { getStats(true); }, 2000);
+	    			if (dataJ)
+	    			{
+	    				$('.pool-alert').html('Miner response: <pre style="font-size:10px;margin-top:10px;">'+dataP+'</pre>').fadeIn();
+	    				setTimeout(function() {
+							$('.pool-alert').html('');
+		    			}, 30000);
+	    			}
+	    		}
+	        }
+	    });
+	} else {
+		$('.pool-alert').html('<pre style="font-size:10px;margin-top:10px;">Sorry, but CPUMiner doesn\'t support remove pool on the fly</pre>').fadeIn();
+	}
+});
+
 
 
 // Define underscore variable template
@@ -1942,7 +1972,7 @@ function getStats(refresh)
 						},
 						"aoColumnDefs": [ 
 						{
-							"aTargets": [ 4 ],	
+							"aTargets": [ 5 ],	
 							"mRender": function ( data, type, full ) {
 								if (type === 'display')
 								{
@@ -1952,7 +1982,7 @@ function getStats(refresh)
 							},
 						},
 						{
-							"aTargets": [ 6, 8, 10 ],	
+							"aTargets": [ 7, 9, 11 ],	
 							"mRender": function ( data, type, full ) {
 								if (type === 'display')
 								{
@@ -2072,6 +2102,7 @@ function getStats(refresh)
 					{
 						// Add Pool rows via datatable
 						$('#pools-table-details').dataTable().fnAddData( [
+							'<button class="btn btn-xs btn-danger '+pactivelabclass+' remove-pool" data-pool-id="'+pkey+'"><i class="fa fa-close"></i></button>',
 							'<button style="width:90px;" class="btn btn-sm btn-default '+pactivelabclass+' select-pool" data-pool-id="'+pkey+'"><i class="fa fa-cloud-'+picon+'"></i> '+pactivelab+'</button>',
 							purlicon+'<small data-toggle="popover" data-html="true" data-title="Priority: '+pval.priority+'" data-content="<small>'+purl+'</small>">'+pshorturl+'</small>',
 							'<span class="label label-'+plabel+'">'+ptype+'</span>',

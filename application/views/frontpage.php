@@ -326,6 +326,7 @@
 												  <table id="pools-table-details" class="table table-striped datatable">
 													  <thead>
 													  <tr>
+														  <th>&nbsp;</th>
 														  <th>Pool</th>
 														  <th>Url</th>
 														  <th>Type</th>
@@ -346,31 +347,35 @@
 												<div class="pools-addbox">
 													<button class="btn btn-xs btn-primary toggle-add-pool" data-open="0"><i class="fa fa-plus"></i> Add pool</button>
 													<div class="form-group mt10" style="display:none;">
-														<div class="row sort-attach">
-													    	<div class="col-xs-5">
-													    		<div class="input-group">
-													    			<span class="input-group-addon"><i class="fa fa-cloud-download"></i></span>
-													    			<input type="text" class="form-control local_pool_url" placeholder="Pool url" name="local_pool_url" value="" />
-													    		</div>
-													    	</div>
-													    	<div class="col-xs-3">
-													    		<div class="input-group">
-													    			<span class="input-group-addon"><i class="fa fa-user"></i></span>
-													    			<input type="text" class="form-control local_pool_username" placeholder="username" name="local_pool_username" value=""  />
-													    		</div>
-													    	</div>
-													    	<div class="col-xs-3">
-													    		<div class="input-group">
-													    			<span class="input-group-addon"><i class="fa fa-lock"></i></span>
-													    			<input type="text" class="form-control local_pool_password" placeholder="password" name="local_pool_password" value=""  />
-													    		</div>
-													    	</div>
-													    	<div class="col-xs-1">
-													    		<div class="input-group">
-													    			<button class="btn btn-sm btn-success add-pool"><i class="fa fa-plus"></i> Add</button>
-													    		</div>
-													    	</div>
-													    </div>
+														<?php if ($minerdRunning != 'cpuminer') : ?>
+															<div class="row sort-attach">
+														    	<div class="col-xs-5">
+														    		<div class="input-group">
+														    			<span class="input-group-addon"><i class="fa fa-cloud-download"></i></span>
+														    			<input type="text" class="form-control local_pool_url" placeholder="Pool url" name="local_pool_url" value="" />
+														    		</div>
+														    	</div>
+														    	<div class="col-xs-3">
+														    		<div class="input-group">
+														    			<span class="input-group-addon"><i class="fa fa-user"></i></span>
+														    			<input type="text" class="form-control local_pool_username" placeholder="username" name="local_pool_username" value=""  />
+														    		</div>
+														    	</div>
+														    	<div class="col-xs-3">
+														    		<div class="input-group">
+														    			<span class="input-group-addon"><i class="fa fa-lock"></i></span>
+														    			<input type="text" class="form-control local_pool_password" placeholder="password" name="local_pool_password" value=""  />
+														    		</div>
+														    	</div>
+														    	<div class="col-xs-1">
+														    		<div class="input-group">
+														    			<button class="btn btn-sm btn-success add-pool"><i class="fa fa-plus"></i> Add</button>
+														    		</div>
+														    	</div>
+														    </div>
+													    <?php else : ?>
+															<p class="well">Sorry but CPUMiner doesn't support add/remove pools on the fly, try another miner software.</p>
+														<?php endif; ?>
 													</div>
 												</div>
 												<p class="pool-alert"></p>
