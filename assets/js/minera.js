@@ -2767,12 +2767,7 @@ function getStats(refresh)
 	if (thisSection === "dashboard") {
 		// get Json data from stored_stats url (redis) and create the graphs
 		$.getJSON(_baseUrl+"/app/api?command=history_stats&type=hourly", function( data ) 
-		{
-			var charts = {
-				areaHash: {},
-				areaRej: {}
-			};
-			
+		{		
 			var data = Object.keys(data).map(function(key) { 
 				data[key]['timestamp'] = data[key]['timestamp']*1000; 
 				data[key]['hashrate'] = (data[key]['hashrate']/1000/1000).toFixed(2);
@@ -2788,7 +2783,7 @@ function getStats(refresh)
 			    return false;
 			}
 			
-			var updateGraphs = function(charts, data)
+			var updateGraphs = function()
 			{
 				console.log(data);
 			    charts.areaHash.setData(data);
@@ -2799,7 +2794,11 @@ function getStats(refresh)
 			
 			if (data.length && errorTriggered === false)
 			{
-				
+					// Initialise new obj
+					var charts = {
+						areaHash: {},
+						areaRej: {}
+					};
 					
 					// Hashrate history graph
 					charts.areaHash = new Morris.Area({
