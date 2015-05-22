@@ -24,7 +24,7 @@ $(function() {
 	
 	String.prototype.hashCode = function() {
 		var hash = 0, i, chr, len;
-		if (this.length == 0) return hash;
+		if (this.length === 0) return hash;
 		for (i = 0, len = this.length; i < len; i++) {
 			chr   = this.charCodeAt(i);
 			hash  = ((hash << 5) - hash) + chr;
@@ -35,7 +35,7 @@ $(function() {
 	
 	// Smmoth scroll
 	$('a[href*=#]:not([href=#])').click(function() {
-	    if (location.pathname.replace(/^\//,'') == this.pathname.replace(/^\//,'') && location.hostname == this.hostname) {
+	    if (location.pathname.replace(/^\//,'') === this.pathname.replace(/^\//,'') && location.hostname === this.hostname) {
 			var target = $(this.hash);
 			target = target.length ? target : $('[name=' + this.hash.slice(1) +']');
 			if (target.length) {
@@ -595,8 +595,8 @@ $(function() {
 	    
 	    showHideMinerOptions(false);
 	    	    
-	    if ($("#manual_options").val() == "1") $(".guided-options").hide();
-	    if ($("#guided_options").val() == "1") $(".manual-options").hide();
+	    if ($("#manual_options").val() === "1") $(".guided-options").hide();
+	    if ($("#guided_options").val() === "1") $(".manual-options").hide();
 	    $(".btn-manual-options").click(function() {
 	    	$(".guided-options").fadeOut();
 			$(".manual-options").fadeIn();
@@ -640,7 +640,7 @@ $(function() {
 		            
 		    for (var i=0; i<split.length; i++) {
 		        var s = split[i];
-		        if (s.length==0 || isNaN(s) || s<0 || s>255)
+		        if (s.length === 0 || isNaN(s) || s<0 || s>255)
 		            return false;
 		    }
 		    return true;
@@ -969,7 +969,7 @@ $(function() {
 		        error: function (xhr, s, t) {
 		            loading = false;
 		
-		            if (xhr.status === 416 || xhr.status == 404) {
+		            if (xhr.status === 416 || xhr.status === 404) {
 		                /* 416: Requested range not satisfiable: log was truncated. */
 		                /* 404: Retry soon, I guess */
 		
@@ -979,7 +979,7 @@ $(function() {
 		
 		                setTimeout(get_log, poll);
 		            } else {
-		                if (s == "error")
+		                if (s === "error")
 		                    console.log(xhr.statusText);
 		                else
 		                    console.log("AJAX Error: " + s);
@@ -1006,7 +1006,7 @@ $(function() {
 		    if (reverse) {
 		        var t_a = t.split(/\n/g);
 		        t_a.reverse();
-		        if (t_a[0] == "") 
+		        if (t_a[0] === "") 
 		            t_a.shift();
 		        t = t_a.join("\n");
 		    }
@@ -1187,19 +1187,19 @@ function showHideMinerOptions(change)
     
     if (change)
     {
-    	if ($('#minerd-software').val() == "cpuminer")
+    	if ($('#minerd-software').val() === "cpuminer")
 		{
 			$(".group-minerdsoftware").append('<h6 class="detail-minerdsoftware"><a href="https://github.com/siklon/cpuminer-gc3355" target="_blank"><small class="badge bg-red">CPUminer-GC3355</small></a> is a fork of Cpuminer and is the best software for gridseed devices like Minis and Blades. It is fully optimised and supports autotune, autodetection, frequency and it\'s really stable. <a href="https://github.com/siklon/cpuminer-gc3355" target="_blank">More info</a>.</h6>');
 		}
-		else if ($('#minerd-software').val() == "bfgminer")
+		else if ($('#minerd-software').val() === "bfgminer")
 		{
 			$(".group-minerdsoftware").append('<h6 class="detail-minerdsoftware"><a href="https://github.com/luke-jr/bfgminer" target="_blank"><small class="badge bg-red">BFGminer</small></a> has a really large amount of devices supported, it has also a lot of features you can use to get the best from your devices. It\'s a stable software. <a href="https://github.com/luke-jr/bfgminer" target="_blank">More info</a>.</h6>');
 		}
-		else if ($('#minerd-software').val() == "cgminer")
+		else if ($('#minerd-software').val() === "cgminer")
 		{
 			$(".group-minerdsoftware").append('<h6 class="detail-minerdsoftware"><a href="https://github.com/ckolivas/cgminer" target="_blank"><small class="badge bg-red">CGminer</small></a> is similar to bfgminer, supports a large amount of devices but probably is less updated than bfg. It\'s a stable software. <a href="https://github.com/ckolivas/cgminer" target="_blank">More info</a>.</h6>');
 		}
-		else if ($('#minerd-software').val() == "cgdmaxlzeus")
+		else if ($('#minerd-software').val() === "cgdmaxlzeus")
 		{
 			$(".group-minerdsoftware").append('<h6 class="detail-minerdsoftware"><a href="https://github.com/dmaxl/cgminer/" target="_blank"><small class="badge bg-red">CGminer Dmaxl Zeus</small></a> is a Cgminer 4.3.5 fork with GridSeed and Zeus scrypt ASIC support, it has some issues with Minera. Stability is unknown. <a href="https://github.com/dmaxl/cgminer/" target="_blank">More info</a>.</h6>');
 		}
@@ -1312,7 +1312,7 @@ function createMon(key, hash, totalhash, maxHashrate, ac, re, hw, sh, freq, colo
 {
 	var col, toAppend, color, size, skin, thickness, fontsize, name, max;
 		
-	if (key == "total")
+	if (key === "total")
 	{
 		col = 12,
 		toAppend = "#devs-total";
@@ -1359,7 +1359,7 @@ function createMon(key, hash, totalhash, maxHashrate, ac, re, hw, sh, freq, colo
         "height":size,
 		"draw" : function () { 
 			// "tron" case
-            if (this.o.skin == 'tron') {
+            if (this.o.skin === 'tron') {
 				
                 var a = this.angle(this.cv)  // Angle
                         , sa = this.startAngle          // Previous start angle
@@ -1406,7 +1406,7 @@ function createMon(key, hash, totalhash, maxHashrate, ac, re, hw, sh, freq, colo
 		}
 	});
 	
-	if (key == "total")
+	if (key === "total")
 		max = totalhash;
 	else
 		max = maxHashrate;
@@ -1461,11 +1461,11 @@ function convertMS(ms)
 
 function getExaColor(color)
 {
-	if (color == "green")
+	if (color === "green")
 		return "#00a65a";
-	else if (color == "yellow")
+	else if (color === "yellow")
 		return "#f39c12";
-	else if (color == "red")
+	else if (color === "red")
 		return "#f56954";
 	else
 		return "#999";
@@ -1497,7 +1497,7 @@ function triggerError(msg)
 
 Number.prototype.noExponents= function(){
     var data= String(this).split(/[eE]/);
-    if(data.length== 1) return data[0]; 
+    if(data.length === 1) return data[0]; 
 
     var  z= '', sign= this<0? '-':'',
     str= data[0].replace('.', ''),
@@ -1768,6 +1768,25 @@ $(document).on('click', '.remove-pool', function(e) {
 	}
 });
 
+$(document).on('click', '.cron-unlock', function(e) {
+   	e.preventDefault();
+	
+   	$("#modal-saving-label").html("Unlocking cron...");
+	$('#modal-saving').modal('show');
+	
+	var apiUrl = _baseUrl+"/app/api?command=cron_unlock";
+
+	$.ajax({
+		type: "GET",
+		url: apiUrl,
+		cache: false,
+		success:  function(resp){
+			$('#modal-saving').modal('hide');
+			getStats(true);
+		}
+	});
+});
+
 
 
 // Define underscore variable template
@@ -1906,6 +1925,13 @@ function getStats(refresh)
 				});
 			}
 			
+			// Cron status
+			if (data.cron) {
+				$('.cron-status').fadeIn();
+			} else {
+				$('.cron-status').fadeOut();
+			}
+			
 			// Add raw stats box
 			boxStats.find("span").html('<pre style="height:350px; overflow: scroll; font-size:10px;">' + JSON.stringify(data, undefined, 2) + '</pre>');
 			
@@ -1948,7 +1974,7 @@ function getStats(refresh)
 						avgs.color = '#dddddd';
 					}
 
-					if (akey == "1min")
+					if (akey === "1min")
 					{
 						avgStatsData = { avgonemin: akey + ": " + avgs.hrCurrentText, arrow: avgs.arrow, color: avgs.color };
 					}
@@ -2065,7 +2091,7 @@ function getStats(refresh)
 					
 					puserlabel = 'blue';
 					purlicon = '<i class="fa fa-flash"></i>&nbsp;';
-					if (pval.user == 'michelem.minera')
+					if (pval.user === 'michelem.minera')
 					{
 						puserlabel = 'light';
 						purlicon = '<i class="fa fa-gift"></i>&nbsp;';
@@ -2092,7 +2118,7 @@ function getStats(refresh)
 					{
 						var pstats = pval.stats[p];
 
-						if (pstatsId == pstats.stats_id)
+						if (pstatsId === pstats.stats_id)
 						{
 							phashData.pstart_time = new Date(pstats.start_time*1000);
 							phashData.pstart_time = phashData.pstart_time.toUTCString();
@@ -2286,7 +2312,7 @@ function getStats(refresh)
 					
 					var devRow = '<tr class="dev-'+index+'"><td class="devs_table_name"><i class="glyphicon glyphicon-hdd"></i>&nbsp;&nbsp;'+index+dev_serial+'</td><td class="devs_table_temp">'+ items[index].temp + '</td><td class="devs_table_freq">'+ items[index].fr + 'MHz</td><td class="devs_table_hash"><strong>'+ convertHashrate(items[index].hash) +'</strong></td><td class="devs_table_sh">'+ items[index].sh +'</td><td class="devs_table_ac">'+ items[index].ac +'</td><td><small class="text-muted">'+parseFloat(percentageAc).toFixed(2)+'%</small></td><td class="devs_table_re">'+ items[index].re +'</td><td><small class="text-muted">'+parseFloat(percentageRe).toFixed(2)+'%</small></td><td class="devs_table_hw">'+ items[index].hw +'</td><td><small class="text-muted">'+parseFloat(percentageHw).toFixed(2)+'%</small></td><td class="devs_table_ls">'+ parseInt(last_share_secs) +' secs ago</td><td><small class="text-muted">'+share_date.toUTCString()+'</small></td></tr>'
 				
-					if (index == "total")
+					if (index === "total")
 					{
 						// TODO add row total via datatable
 					    $('.devs_table_foot').html(devRow);		
@@ -2626,7 +2652,7 @@ function getStats(refresh)
 									{
 										var pstats = pval.stats[p];
 				
-										if (pstatsId == pstats.stats_id)
+										if (pstatsId === pstats.stats_id)
 										{
 											phashData.pstart_time = new Date(pstats.start_time*1000);
 											phashData.pstart_time = phashData.pstart_time.toUTCString();
@@ -2827,9 +2853,9 @@ function getStats(refresh)
 			// Add server load average knob graph
 			$.each( data['sysload'], function( lkey, lval ) 
 			{
-				if (lkey == 0) var llabel = "1min";
-				if (lkey == 1) var llabel = "5min";
-				if (lkey == 2) var llabel = "15min";
+				if (lkey === 0) var llabel = "1min";
+				if (lkey === 1) var llabel = "5min";
+				if (lkey === 2) var llabel = "15min";
 			
 				var loadBox = '<div class="col-xs-4 text-center" id="loadavg-'+ lkey +'" style="border-right: 1px solid #f4f4f4"><input type="text" class="loadstep-'+ lkey +'" data-width="60" data-height="60" /><div class="knob-label"><p>'+llabel+'</p></div></div>';
 

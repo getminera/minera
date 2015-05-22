@@ -570,6 +570,29 @@
 									</div>
 									<hr />
 									
+									<!-- General options -->
+									<div class="general-options">
+										<!-- Logging -->
+										<div class="form-group" id="minerd-log">
+											<div class="checkbox">
+												<label>
+													<input type="checkbox" name="minerd_log" value="1" <?php if ($minerdLog) : ?>checked=""<?php endif; ?> />
+													Enable logging <small class="legend-option-log"></small>
+												</label>                                                
+											</div>
+										</div>
+										
+										<!-- Append miner conf -->
+										<div class="form-group">
+											<div class="checkbox">
+												<label>
+													<input type="checkbox" name="minerd_append_conf" value="1" <?php if ($minerdAppendConf) : ?>checked=""<?php endif; ?> />
+													Append JSON conf <small>(-c /var/www/minera/conf/miner_conf.json)</small>
+												</label>                                                
+											</div>
+										</div>
+									</div>
+									
 									<div class="guided-options">
 
 										<!-- Scrypt -->
@@ -591,26 +614,6 @@
 												</label>                                                
 											</div>
 										</div>
-
-										<!-- Auto-Tune -->
-										<div class="form-group" id="minerd-autotune">
-											<div class="checkbox">
-												<label>
-													<input type="checkbox" name="minerd_autotune" value="1" <?php if ($minerdAutotune) : ?>checked=""<?php endif; ?> />
-													Enable frequency auto tuning <small>(--gc3355-autotune)</small>
-												</label>                                                
-											</div>
-										</div>
-
-										<!-- Logging -->
-										<div class="form-group" id="minerd-log">
-											<div class="checkbox">
-												<label>
-													<input type="checkbox" name="minerd_log" value="1" <?php if ($minerdLog) : ?>checked=""<?php endif; ?> />
-													Enable logging <small class="legend-option-log"></small>
-												</label>                                                
-											</div>
-										</div>
 										
 										<!-- Debug -->
 										<div class="form-group">
@@ -620,14 +623,14 @@
 													Enable debug <small>(--debug)</small>
 												</label>                                                
 											</div>
-										</div>
-										
-										<!-- Append miner conf -->
-										<div class="form-group">
+										</div>									
+
+										<!-- Auto-Tune -->
+										<div class="form-group" id="minerd-autotune">
 											<div class="checkbox">
 												<label>
-													<input type="checkbox" name="minerd_append_conf" value="1" <?php if ($minerdAppendConf) : ?>checked=""<?php endif; ?> />
-													Append JSON conf <small>(-c /var/www/minera/conf/miner_conf.json)</small>
+													<input type="checkbox" name="minerd_autotune" value="1" <?php if ($minerdAutotune) : ?>checked=""<?php endif; ?> />
+													Enable frequency auto tuning <small>(--gc3355-autotune)</small>
 												</label>                                                
 											</div>
 										</div>
@@ -659,8 +662,8 @@
                                         <p>You have chosen to add all options manually, I will only add for you the pools list, you have to take care of the rest.</p>
                                         <textarea name="minerd_manual_settings" class="form-control manual-settings" rows="5" placeholder="Example: --gc3355-detect --gc3355-autotune --freq=850 --retries=1" class="minerd_manual_settings"><?php echo $minerdManualSettings ?></textarea>
 										<h6>Please do not include the command name or the pools (they are automatically added).</h6>
-									</div>											
-
+									</div>
+									
 									<!-- Minerd API Allow -->
                                     <div class="form-group" id="minerd-api-allow">
                                         <label>API Allow</label>

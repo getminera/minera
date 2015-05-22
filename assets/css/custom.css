@@ -63,6 +63,8 @@ body > .header { position: fixed !important; }
 .mb30 { margin-bottom: 30px; }
 .mb50 { margin-bottom: 50px; }
 
+.p10 { padding: 10px; }
+
 .ml10 { margin-left: 10px; }
 
 .lockscreen {background: url(../img/bg-dark.jpg) repeat center center fixed !important;}

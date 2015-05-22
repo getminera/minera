@@ -106,6 +106,26 @@
                 
 				<div class="navbar-right">
 					<ul class="nav navbar-nav">
+						<!-- Cron status -->
+						<li class="messages-menu cron-status" style="display:none;">
+                            <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                                <i class="fa fa-spin fa-cog"></i>
+                            </a>
+                            <ul class="dropdown-menu">
+                                <li class="header">Cron is running</li>
+                                <li>
+                                	<ul class="menu">
+	                                	<li class="p10">
+		                                	Cron process runs every minute and should take not more than 30 seconds to terminate.<br />
+		                                	If this icon is permanent, click the button below to unlock the cron.
+		                                	<div class="text-center mt10">
+			                                	<button class="btn btn-default cron-unlock">Unlock cron</button>
+		                                	</div>
+	                                	</li>
+                                	</ul>
+                                </li>
+                            </ul>
+                        </li>
 						<!-- Clock -->
 						<li class="messages-menu">
                             <a href="#" class="clock">

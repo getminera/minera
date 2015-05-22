@@ -336,6 +336,40 @@ class App extends Main_Controller {
 			$dataObj->manual_options = $this->input->post('manual_options');
 			$dataObj->guided_options = $this->input->post('guided_options');
 			
+			// General options
+			// CPUMiner specific
+			if ($minerSoftware == "cpuminer")
+			{
+				// Logging
+				$minerdLog = false;
+				if ($this->input->post('minerd_log'))
+				{
+					$confArray["log"] = $this->config->item("minerd_log_file");
+					$minerdLog = $this->input->post('minerd_log');
+				}
+				$this->redis->set('minerd_log', $minerdLog);
+				$dataObj->minerd_log = $minerdLog;
+			}
+			// CG/BFGminer specific
+			else
+			{
+				// Logging
+				if ($this->input->post('minerd_log'))
+				{
+					$confArray["log-file"] = $this->config->item("minerd_log_file");
+					$this->redis->set('minerd_log', $this->input->post('minerd_log'));
+					$dataObj->minerd_log = $this->input->post('minerd_log');
+				}
+				else
+				{
+					$this->redis->del('minerd_log');
+				}
+			}
+										
+			// Append JSON conf
+			$this->redis->set('minerd_append_conf', $this->input->post('minerd_append_conf'));
+			$this->minerd_append_conf = $this->input->post('minerd_append_conf');				
+				
 			if ($this->input->post('manual_options'))
 			{
 				// Manual options
@@ -373,17 +407,6 @@ class App extends Main_Controller {
 					}
 					$this->redis->set('minerd_startfreq', $this->input->post('minerd_startfreq'));
 					$dataObj->minerd_startfreq = $this->input->post('minerd_startfreq');
-					
-					// Logging
-					$minerdLog = false;
-					if ($this->input->post('minerd_log'))
-					{
-						$confArray["log"] = $this->config->item("minerd_log_file");
-						$minerdLog = $this->input->post('minerd_log');
-					}
-					$this->redis->set('minerd_log', $minerdLog);
-					$dataObj->minerd_log = $minerdLog;
-
 				}
 				// CG/BFGminer specific
 				else
@@ -419,19 +442,6 @@ class App extends Main_Controller {
 					}
 					$this->redis->set('minerd_autodetect', $this->input->post('minerd_autodetect'));
 					$dataObj->minerd_autodetect = $this->input->post('minerd_autodetect');
-					
-					// Logging
-					if ($this->input->post('minerd_log'))
-					{
-						$confArray["log-file"] = $this->config->item("minerd_log_file");
-						$this->redis->set('minerd_log', $this->input->post('minerd_log'));
-						$dataObj->minerd_log = $this->input->post('minerd_log');
-					}
-					else
-					{
-						$this->redis->del('minerd_log');
-					}
-
 				}				
 
 				// Debug
@@ -441,10 +451,6 @@ class App extends Main_Controller {
 				}
 				$this->redis->set('minerd_debug', $this->input->post('minerd_debug'));
 				$this->minerd_debug = $this->input->post('minerd_debug');
-				
-				// Append JSON conf
-				$this->redis->set('minerd_append_conf', $this->input->post('minerd_append_conf'));
-				$this->minerd_append_conf = $this->input->post('minerd_append_conf');
 				
 				// Extra options
 				if ($this->input->post('minerd_extraoptions'))
@@ -910,6 +916,9 @@ class App extends Main_Controller {
 			break;
 			case "update_minera":
 				$o = $this->util_model->update();
+			break;
+			case "cron_unlock":
+				$o = $this->redis->del("cron_lock");
 			break;
 			case "stats":
 				$o = $this->util_model->getStats();

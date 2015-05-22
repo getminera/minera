@@ -162,6 +162,9 @@ class Util_model extends CI_Model {
 		// Add sysload stats
 		$a->sysload = sys_getloadavg();
 		
+		// Add cron status
+		$a->cron = $this->redis->get("cron_lock");
+		
 		// Add sysuptime
 		$a->sysuptime = $this->getSysUptime();
 		
