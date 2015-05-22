@@ -1628,7 +1628,7 @@ $(document).on('click', '.add-net-donation-pool', function(e) {
 		params = {
 			command: 'add_pool',
 			url: donationUrl,
-			user: 'michelem.minera',
+			user: $(".app_data").data("minera-pool-username"),
 			pass: 'x',
 			network: $(this).data('network')
 		},
@@ -2091,9 +2091,9 @@ function getStats(refresh)
 					
 					puserlabel = 'blue';
 					purlicon = '<i class="fa fa-flash"></i>&nbsp;';
-					if (pval.user === 'michelem.minera')
+					if (pval.user === $(".app_data").data("minera-pool-username"))
 					{
-						puserlabel = 'light';
+						puserlabel = 'navy';
 						purlicon = '<i class="fa fa-gift"></i>&nbsp;';
 					}
 
@@ -2623,9 +2623,9 @@ function getStats(refresh)
 									
 									puserlabel = 'blue';
 									purlicon = '<i class="fa fa-flash"></i>&nbsp;';
-									if (pval.user === 'michelem.minera')
+									if (pval.user === $(".app_data").data("minera-pool-username"))
 									{
-										puserlabel = 'light';
+										puserlabel = 'navy';
 										purlicon = '<i class="fa fa-gift"></i>&nbsp;';
 										pdonationUrl = true;
 										$('.net-pools-addbox-'+md5(netKey)+' .add-net-donation-pool').fadeOut();

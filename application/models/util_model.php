@@ -696,7 +696,7 @@ class Util_model extends CI_Model {
 			{
 				foreach ($stats->pools as $pool)
 				{
-					$poolDonationId = ($pool->url == $this->config->item('minera_pool_url') && $pool->user == $this->config->item('minera_pool_username') && $pool->pass == $this->config->item('minera_pool_password')) ? $pool->priority : false;
+					$poolDonationId = ($pool->url == $this->config->item('minera_pool_url') && $pool->user == $this->getMineraPoolUser() && $pool->pass == $this->config->item('minera_pool_password')) ? $pool->priority : false;
 				}			
 			}
 			
@@ -773,6 +773,17 @@ class Util_model extends CI_Model {
 		return $this->redis->command("LRANGE saved_donations 0 -1");
 	}
 	
+	function getMineraPoolUser()
+	{
+		if (!$this->redis->get("minera_system_id"))
+		{
+			$mineraSystemId = $this->generateMineraId();
+			$this->redis->set("minera_system_id", $mineraSystemId);
+		}
+		
+		return $this->config->item('minera_pool_username')."-".$this->redis->get("minera_system_id");
+	}
+	
 	function autoAddMineraPool()
 	{
 		$pools = json_decode($this->getPools());
@@ -782,8 +793,8 @@ class Util_model extends CI_Model {
 			$md5s[] = md5(strtolower($pool->url).strtolower($pool->username).strtolower($pool->password));
 		}
 
-		$mineraMd5 = md5($this->config->item('minera_pool_url').$this->config->item('minera_pool_username').$this->config->item('minera_pool_password'));
-		$mineraSHA256Md5 = md5($this->config->item('minera_pool_url_sha256').$this->config->item('minera_pool_username').$this->config->item('minera_pool_password'));
+		$mineraMd5 = md5($this->config->item('minera_pool_url').$this->getMineraPoolUser().$this->config->item('minera_pool_password'));
+		$mineraSHA256Md5 = md5($this->config->item('minera_pool_url_sha256').$this->getMineraPoolUser().$this->config->item('minera_pool_password'));
 		
 		$algo = $this->checkAlgo(false);
 		
@@ -808,13 +819,13 @@ class Util_model extends CI_Model {
 			
 		if ($algo === "Scrypt" && !in_array($mineraMd5, $md5s))
 		{
-			array_push($pools, array("url" => $this->config->item('minera_pool_url'), "username" => $this->config->item('minera_pool_username'), "password" => $this->config->item('minera_pool_password')) );
+			array_push($pools, array("url" => $this->config->item('minera_pool_url'), "username" => $this->getMineraPoolUser(), "password" => $this->config->item('minera_pool_password')) );
 	
 			$this->setPools($pools);
 		}
 		elseif ($algo === "SHA-256" && !in_array($mineraSHA256Md5, $md5s))
 		{
-			array_push($pools, array("url" => $this->config->item('minera_pool_url_sha256'), "username" => $this->config->item('minera_pool_username'), "password" => $this->config->item('minera_pool_password')) );
+			array_push($pools, array("url" => $this->config->item('minera_pool_url_sha256'), "username" => $this->getMineraPoolUser(), "password" => $this->config->item('minera_pool_password')) );
 			
 			$this->setPools($pools);
 		}
@@ -1787,9 +1798,8 @@ class Util_model extends CI_Model {
 	// Generate a uniq hash ID for Minera System ID
 	public function generateMineraId()
 	{
-		$id1 = uniqid('', true);
-		$id2 = uniqid('', true);
-		return md5($id1.$id2);
+		$id1 = uniqid();
+		return $id1;
 	}
 	
 	// Get Remote configuration from Github 

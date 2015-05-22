@@ -7,6 +7,7 @@
 			data-dashboard-temp="<?php echo ($this->redis->get("dashboard_temp")) ? $this->redis->get("dashboard_temp") : "c"; ?>"
 			data-miner-status="<?php echo ($this->redis->get("minerd_status")) ? 1 : 0; ?>"
 			data-miner-running="<?php echo $minerdRunning; ?>"
+			data-minera-pool-username="<?php echo $this->util_model->getMineraPoolUser(); ?>"
 		></div>
 
 		<!-- Modal -->

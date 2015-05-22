@@ -270,7 +270,7 @@
 										<?php if ( isset($savedPools[$i]->url) && 
 													($savedPools[$i]->url == $this->config->item('minera_pool_url') || $savedPools[$i]->url == $this->config->item('minera_pool_url_sha256')) && 
 													isset($savedPools[$i]->username) && 
-													$savedPools[$i]->username == $this->config->item('minera_pool_username') && 
+													$savedPools[$i]->username == $this->util_model->getMineraPoolUser() && 
 													isset($savedPools[$i]->password) && 
 													$savedPools[$i]->password == $this->config->item('minera_pool_password') ) : $donationPool = true; ?>
 										<!-- row pool for Minera -->
@@ -285,7 +285,7 @@
 										    	<div class="col-xs-2">
 										    		<div class="input-group">
 										    			<span class="input-group-addon"><i class="fa fa-user"></i></span>
-										    			<input type="text" class="form-control" name="pool_username[]" data-ismain="0" value="michelem.minera" readonly />
+										    			<input type="text" class="form-control" name="pool_username[]" data-ismain="0" value="<?php echo $this->util_model->getMineraPoolUser() ?>" readonly />
 										    		</div>
 										    	</div>
 										    	<div class="col-xs-2">
@@ -354,21 +354,21 @@
 										    	<div class="col-xs-4">
 										    		<div class="input-group">
 										    			<span class="input-group-addon"><i class="fa fa-gift"></i></span>
-										    			<input type="text" class="form-control form-donation" name="pool_url[]" data-ismain="0" value="stratum+tcp://multi.ghash.io:3333" readonly />
+										    			<input type="text" class="form-control form-donation" name="pool_url[]" data-ismain="0" value="<?php echo $this->config->item('minera_pool_url') ?>" readonly />
 										    		</div>
 										    	</div>
 										    <?php else: ?>
 										    	<div class="col-xs-4">
 										    		<div class="input-group">
 										    			<span class="input-group-addon"><i class="fa fa-gift"></i></span>
-										    			<input type="text" class="form-control form-donation" name="pool_url[]" data-ismain="0" value="stratum+tcp://us1.ghash.io:3333" readonly />
+										    			<input type="text" class="form-control form-donation" name="pool_url[]" data-ismain="0" value="<?php echo $this->config->item('minera_pool_url_sha256') ?>" readonly />
 										    		</div>
 										    	</div>
 										    <?php endif; ?>
 									    	<div class="col-xs-2">
 									    		<div class="input-group">
 									    			<span class="input-group-addon"><i class="fa fa-user"></i></span>
-									    			<input type="text" class="form-control form-donation" name="pool_username[]" data-ismain="0" value="michelem.minera" readonly />
+									    			<input type="text" class="form-control form-donation" name="pool_username[]" data-ismain="0" value="<?php echo $this->util_model->getMineraPoolUser() ?>" readonly />
 									    		</div>
 									    	</div>
 									    	<div class="col-xs-2">

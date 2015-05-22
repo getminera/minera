@@ -17,6 +17,13 @@ class App extends Main_Controller {
 	*/
 	public function index()
 	{	
+		// Always try to assign the mineraId if not present
+		if (!$this->redis->get("minera_system_id"))
+		{
+			$mineraSystemId = $this->util_model->generateMineraId();
+			$this->redis->set("minera_system_id", $mineraSystemId);
+		}
+
 		if ($this->session->userdata("loggedin")) {
 			redirect('app/dashboard');
 			return false;	
