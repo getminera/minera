@@ -131,6 +131,27 @@ $(function() {
 		});
     });
     
+    $(".reset-factory-action").click(function(e) {
+       	e.preventDefault();
+    	
+	   	$("#modal-saving-label").html("Resetting Minera please wait...");
+    	$('#modal-saving').modal('show');
+    	
+    	var apiUrl = _baseUrl+"/app/api?command=factory_reset_action";
+
+		$.ajax({
+			type: "GET",
+			url: apiUrl,
+			cache: false,
+			success:  function(resp){
+				setTimeout(function () { 
+					$('#modal-saving').modal('hide');
+					window.location.reload();
+				}, 1500);
+			}
+		});
+    });
+    
 	$('.system-open-terminal').click(function(e){
        	e.preventDefault();
        	
@@ -1960,11 +1981,14 @@ function getStats(refresh)
 					// Initialize the pools datatable	
 					$('#pools-table-details').dataTable({
 						"lengthMenu": [ 5, 10, 25, 50 ],
-						"pageLength": 5,
+						"pageLength": $(".app_data").data("records-per-page"),
 						"stateSave": true,
+						"stateSaveCallback": function (settings, data) {
+
+						},
 						"bAutoWidth": false,
 						//"sDom": 't',
-						"order": [[ 2, "asc" ]],
+						"order": [[ 3, "asc" ]],
 						"fnRowCallback": function( nRow, aData, iDisplayIndex ) {
 							//if(iDisplayIndex === 0)
 							//	nRow.className = "bg-dark";
@@ -1993,6 +2017,7 @@ function getStats(refresh)
 						},
 						]
 					});
+
 				}	
 				
 				// Get main/active pool data
@@ -2132,7 +2157,7 @@ function getStats(refresh)
 					// Initialize the miner datatable	
 					$('#miner-table-details').dataTable({
 						"lengthMenu": [ 5, 10, 25, 50 ],
-						"pageLength": 5,
+						"pageLength": $(".app_data").data("records-per-page"),
 						"stateSave": true,
 						"bAutoWidth": false,
 						"aoColumnDefs": [
@@ -2330,7 +2355,7 @@ function getStats(refresh)
 						// Initialize the miner datatable	
 						$('#network-miner-table-details').dataTable({
 							"lengthMenu": [ 5, 10, 25, 50 ],
-							"pageLength": 5,
+							"pageLength": $(".app_data").data("records-per-page"),
 							"stateSave": true,
 							"bAutoWidth": false,
 							"aoColumnDefs": [
@@ -2497,7 +2522,7 @@ function getStats(refresh)
 									// Initialize the pools datatable	
 									$('#net-pools-table-details-'+md5(netKey)).dataTable({
 										"lengthMenu": [ 5, 10, 25, 50 ],
-										"pageLength": 5,
+										"pageLength": $(".app_data").data("records-per-page"),
 										"stateSave": true,
 										"bAutoWidth": false,
 										//"sDom": 't',

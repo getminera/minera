@@ -1,3 +1,3 @@
 #!/bin/bash
 
-/var/www/minera/minera-bin/cgminer-dmaxl-zeus --scrypt --zeus-chips 128 --zeus-clock 224 --zeus-nocheck-golden -c /var/www/minera/conf/miner_conf.json 2>/var/log/minera/cgminerdmaxlzeus.log
+/var/www/minera/minera-bin/cgminer-dmaxl-zeus --scrypt --scan-serial gridseed:auto --gridseed-options freq=888,chips=5 -c /var/www/minera/conf/miner_conf.json 2>/var/log/minera/cgminerdmaxlzeus.log

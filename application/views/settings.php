@@ -193,6 +193,18 @@
 												</label>                                                
 											</div>
 										</div>
+										
+										<!-- Records per page -->
+										<div class="form-group">
+											<label>Data tables</label>
+											<p>Default records per page</p>
+											<select name="dashboard_table_records" id="dashboard-table-records" class="form-control">
+												<option value="5" <?php if ($dashboardTableRecords == "5") : ?>selected<?php endif; ?>>5</option>
+												<option value="10" <?php if ($dashboardTableRecords == "10") : ?>selected<?php endif; ?>>10</option>
+												<option value="25" <?php if ($dashboardTableRecords == "25") : ?>selected<?php endif; ?>>25</option>
+												<option value="50" <?php if ($dashboardTableRecords == "50") : ?>selected<?php endif; ?>>50</option>
+											</select>
+										</div>
 	                                </div>
 									<div class="box-footer">
 										<button type="submit" class="btn btn-primary save-minera-settings" name="save" value="1">Save</button>
@@ -1214,15 +1226,23 @@
                         </div>
 						
                         <div class="box-body">
-							<p>If you are in trouble or you wanna start over, you can resets some of the stored data.</p>
-							<div class="form-group">
-                            	<button type="submit" class="btn btn-danger reset-action" data-reset-action="charts"><i class="fa fa-eraser"></i> Reset Charts data</button>
-                            	<h6>This resets all the stored stats needed by the charts, so charts will start from zero.</h6>
-							</div>
-							<div class="form-group">
-                            	<button type="submit" class="btn btn-danger reset-action" data-reset-action="options"><i class="fa fa-eraser"></i> Reset Guided/manual settings</button>
-								<h6>If you have problem choosing between guided/manual options above you can reset them here.</h6>
-							</div>
+	                        <div class="row">
+	                        <div class="col-md-10">
+								<p>If you are in trouble or you wanna start over, you can resets some of the stored data or reset everything to factory default.</p>
+								<div class="form-group">
+	                            	<button type="submit" class="btn btn-danger reset-action" data-reset-action="charts"><i class="fa fa-eraser"></i> Reset Charts data</button>
+	                            	<h6>This resets all the stored stats needed by the charts, so charts will start from zero.</h6>
+								</div>
+								<div class="form-group">
+	                            	<button type="submit" class="btn btn-danger reset-action" data-reset-action="options"><i class="fa fa-eraser"></i> Reset Guided/manual settings</button>
+									<h6>If you have problem choosing between guided/manual options above you can reset them here.</h6>
+								</div>
+								<div class="form-group">
+	                            	<button type="submit" class="btn btn-danger reset-factory-action"><i class="fa fa-recycle"></i> Reset to factory default</button>
+									<h6>This will reset your Minera to the factory default settings (it doesn't change anything at system level, only the web interface with all the relative data will be reset, this includes: lock password, stats, charts, miner settings, saved miner configs, pools, etc...)</h6>
+								</div>
+	                        </div>
+	                        </div>
                         </div>
 						<div class="box-footer">
 							<h6>Clicking the reset buttons resets data immediately, there isn't any confirmation to do. Reset actions aren't recoverable, data will be lost.</h6>

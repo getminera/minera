@@ -2,10 +2,7 @@
 			<aside class="right-side">				   
 				<!-- Content Header (Page header) -->
 				<section class="content-header" data-toggle="dropdown">
-					<h1>
-						Mining
-						<small>Dashboard</small>
-					</h1>
+					<h1>Mining <small>Dashboard</small></h1>
 					<ol class="breadcrumb">
 						<li><button class="btn btn-default btn-xs view-raw-stats"><i class="fa fa-list"></i> raw stats</button></li>
 						<li><a href="<?php echo site_url("app/settings") ?>"><i class="fa fa-gear"></i> Settings</a></li>
@@ -19,7 +16,7 @@
 						
 						<?php if (count($netMiners) > 0) : ?>
 						<section class="col-md-12 local-miners-title" style="display:none;">
-							<h4>Local <small>Miners</small></h4>
+							<h4>Local <small>Miner</small></h4>
 						</section>
 						<?php endif; ?>
 
@@ -256,7 +253,7 @@
 									</div><!-- /. tools -->
 									<i class="fa fa-desktop"></i>
 
-									<h3 class="box-title" id="miner-details">Local Miner details</h3>
+									<h3 class="box-title" id="miner-details">Local Miner details <small><?php echo ($minerdRunning) ? '('.$minerdRunning.')' : ''; ?></small></h3>
 								</div>
 								<div class="box-body">
 									<div class="row">
@@ -316,7 +313,7 @@
 									</div><!-- /. tools -->
 									<i class="fa fa-cloud"></i>
 
-									<h3 class="box-title" id="pools-details">Local Pools details</h3>
+									<h3 class="box-title" id="pools-details">Local Pools details <small><?php echo ($minerdRunning) ? '('.$minerdRunning.')' : ''; ?></small></h3>
 								</div>
 								<div class="box-body">
 									<div class="row">

@@ -1,6 +1,7 @@
     <body class="skin-<?php echo $dashboardSkin ?>" onload="getStats(false);">
 		<div class="app_data"
 			data-refresh-time="<?php echo ($dashboard_refresh_time) ? $dashboard_refresh_time : 60; ?>"
+			data-records-per-page="<?php echo ($dashboardTableRecords) ? $dashboardTableRecords : 5; ?>"
 			data-minerd-log="<?php echo ($minerdLog) ? base_url($this->config->item("minerd_log_url")) : null; ?>"
 			data-device-tree="<?php echo $dashboardDevicetree ?>"
 			data-dashboard-temp="<?php echo ($this->redis->get("dashboard_temp")) ? $this->redis->get("dashboard_temp") : "c"; ?>"

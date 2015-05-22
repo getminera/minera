@@ -1649,6 +1649,87 @@ class Util_model extends CI_Model {
 		return $o;
 	}
 	
+	public function factoryReset() 
+	{
+		$this->minerStop();
+		sleep(3);
+		
+		// SET
+		$this->redis->set("minerd_autorestart", 0);
+		$this->redis->set("minerd_delaytime", 5);
+		$this->redis->set("scheduled_event_time", "");
+		$this->redis->set("minera_donation_time", 0);
+		$this->redis->set("minerd_autorestart_time", 600);
+		$this->redis->set("minerd_manual_settings", "");
+		$this->redis->set("minerd_extraoptions", "");
+		$this->redis->set("minerd_use_root", 0);
+		$this->redis->set("minerd_settings", "");
+		$this->redis->set("minerd_autotune", 0);
+		$this->redis->set("mobileminer_system_name", "");
+		$this->redis->set("mobileminer_email", "");
+		$this->redis->set("mobileminer_appkey", "");
+		$this->redis->set("minerd_startfreq", 0);
+		$this->redis->set("current_frequencies", 0);
+		$this->redis->set("dashboard_temp", "c");
+		$this->redis->set("dashboard_table_records", 10);
+		$this->redis->set("minera_timezone", "GMT");
+		$this->redis->set("dashboard_devicetree", 0);
+		$this->redis->set("minerd_software", "cpuminer");
+		$this->redis->set("manual_options", 0);
+		$this->redis->set("minerd_autorecover", 0);
+		$this->redis->set("scheduled_event_action", "");
+		$this->redis->set("anonymous_stats", 1);
+		$this->redis->set("dashboard_skin", "black");
+		$this->redis->set("guided_options", 1);
+		$this->redis->set("mobileminer_enabled", 0);
+		$this->redis->set("minerd_autorestart_devices", 0);
+		$this->redis->set("minerd_log", 0);
+		$this->redis->set("minerd_status", 0);
+		$this->redis->set("minerd_scrypt", 0);
+		$this->redis->set("dashboard_refresh_time", 300);
+		$this->redis->set("donation_time_remain", 1);
+		$this->redis->set("scheduled_event_start_time", "");
+		$this->redis->set("minera_password", "70e880b1effe0f770849d985231aed2784e11b38");
+		$this->redis->set("dashboard_coin_rates", json_encode(array()));
+		$this->redis->set("system_extracommands", "");
+		$this->redis->set("minerd_append_conf", 1);
+		$this->redis->set("minerd_running_user", "minera");
+		$this->redis->set("minerd_debug", 0);
+		$this->redis->set("pool_global_proxy", "");
+		$this->redis->set("minerd_pools", "");
+		$this->redis->set("minerd_autodetect", 0);
+		$this->redis->set("minerd_api_allow_extra", "");
+		
+		// DEL
+		$this->redis->del("minera_version");
+		$this->redis->del("active_custom_miners");
+		$this->redis->del("minera_update");
+		$this->redis->del("cryptsy_update");
+		$this->redis->del("latest_stats");
+		$this->redis->del("minerd_avg_stats_86400");
+		$this->redis->del("minerd_avg_stats_3600");
+		$this->redis->del("minerd_avg_stats_300");
+		$this->redis->del("saved_miner_configs");
+		$this->redis->del("cryptsy_data");
+		$this->redis->del("bitstamp_data");
+		$this->redis->del("saved_donations");
+		$this->redis->del("minera_remote_config");
+		$this->redis->del("export_settings");
+		$this->redis->del("altcoins_data");
+		$this->redis->del("network_miners");
+		$this->redis->del("minerd_totals_stats");
+		$this->redis->del("miners_conf");
+		$this->redis->del("miners_conf_update");
+		$this->redis->del("minerd_delta_stats");
+		$this->redis->del("saved_miner_config:*");
+		$this->redis->del("minerd_json_settings");
+		$this->redis->del("import_data_tmp");
+		$this->redis->del("bitstamp_update");
+		$this->redis->del("altcoins_update");
+		
+		return true;		
+	}
+	
 	// Check Minera version
 	public function checkUpdate()
 	{

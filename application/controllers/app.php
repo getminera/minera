@@ -74,6 +74,7 @@ class App extends Main_Controller {
 		$data['settingsScript'] = false;
 		$data['mineraUpdate'] = $this->util_model->checkUpdate();
 		$data['dashboard_refresh_time'] = $this->redis->get("dashboard_refresh_time");
+		$data['dashboardTableRecords'] = $this->redis->get("dashboard_table_records");
 		$data['dashboardDevicetree'] = ($this->redis->get("dashboard_devicetree")) ? $this->redis->get("dashboard_devicetree") : false;
 		$data['pageTitle'] = ($this->redis->get("mobileminer_system_name")) ? $this->redis->get("mobileminer_system_name")." > Minera - Dashboard" : "Minera - Dashboard";
 		$data['dashboardSkin'] = ($this->redis->get("dashboard_skin")) ? $this->redis->get("dashboard_skin") : "black";
@@ -104,6 +105,7 @@ class App extends Main_Controller {
 		$data['mineraUpdate'] = $this->util_model->checkUpdate();
 		$data['pageTitle'] = ($this->redis->get("mobileminer_system_name")) ? $this->redis->get("mobileminer_system_name")." > Minera - Charts" : "Minera - Charts";
 		$data['dashboard_refresh_time'] = $this->redis->get("dashboard_refresh_time");
+		$data['dashboardTableRecords'] = $this->redis->get("dashboard_table_records");
 		$data['minerdLog'] = $this->redis->get('minerd_log');
 		$data['dashboardSkin'] = ($this->redis->get("dashboard_skin")) ? $this->redis->get("dashboard_skin") : "black";
 		$data['dashboardDevicetree'] = ($this->redis->get("dashboard_devicetree")) ? $this->redis->get("dashboard_devicetree") : false;
@@ -199,6 +201,7 @@ class App extends Main_Controller {
 		$data['dashboardTemp'] = ($this->redis->get("dashboard_temp")) ? $this->redis->get("dashboard_temp") : "c";
 		$data['dashboardSkin'] = ($this->redis->get("dashboard_skin")) ? $this->redis->get("dashboard_skin") : "black";
 		$data['dashboardDevicetree'] = ($this->redis->get("dashboard_devicetree")) ? $this->redis->get("dashboard_devicetree") : false;
+		$data['dashboardTableRecords'] = ($this->redis->get("dashboard_table_records")) ? $this->redis->get("dashboard_table_records") : 5;
 		$data['algo'] = $this->util_model->checkAlgo(false);
 
 		// Load System settings
@@ -264,6 +267,7 @@ class App extends Main_Controller {
 			$this->redis->set("altcoins_update", (time()-3600));
 			$dashboardTemp = $this->input->post('dashboard_temp');
 			$dashboardSkin = $this->input->post('dashboard_skin');
+			$dashboardTableRecords = $this->input->post('dashboard_table_records');
 			$dashboardDevicetree = $this->input->post('dashboard_devicetree');
 			
 			// Pools
@@ -533,6 +537,8 @@ class App extends Main_Controller {
 			$dataObj->dashboard_temp = $dashboardTemp;
 			$this->redis->set("dashboard_skin", $dashboardSkin);
 			$dataObj->dashboard_skin = $dashboardSkin;
+			$this->redis->set("dashboard_table_records", $dashboardTableRecords);
+			$dataObj->dashboard_table_records = $dashboardTableRecords;
 			$this->redis->set("dashboard_devicetree", $dashboardDevicetree);
 			$dataObj->dashboard_devicetree = $dashboardDevicetree;
 			if ($this->redis->get("dashboard_coin_rates") !== json_encode($coinRates)) {
@@ -870,7 +876,7 @@ class App extends Main_Controller {
 			redirect("app/dashboard");
 		}
 	}
-
+	
 	/*
 	// API controller
 	*/
@@ -922,6 +928,12 @@ class App extends Main_Controller {
 			break;
 			case "reset_action":
 				$o = $this->util_model->reset($this->input->get('action'));
+				$this->session->set_flashdata('message', '<b>Success!</b> Data has been reset.');
+				$this->session->set_flashdata('message_type', 'success');
+			break;
+			case "factory_reset_action":
+				$o = $this->util_model->factoryReset();
+				$this->cron();
 				$this->session->set_flashdata('message', '<b>Success!</b> Data has been reset.');
 				$this->session->set_flashdata('message_type', 'success');
 			break;
