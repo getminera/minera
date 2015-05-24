@@ -360,6 +360,14 @@ class App extends Main_Controller {
 			// CG/BFGminer specific
 			else
 			{
+				// API Allow
+				if ($this->input->post('minerd_api_allow_extra'))
+				{
+					$confArray["api-allow"] .= ",".$this->input->post('minerd_api_allow_extra');			
+				}
+				$this->redis->set('minerd_api_allow_extra', $this->input->post('minerd_api_allow_extra'));
+				$dataObj->minerd_api_allow_extra = $this->input->post('minerd_api_allow_extra');
+					
 				// Logging
 				if ($this->input->post('minerd_log'))
 				{
@@ -418,22 +426,6 @@ class App extends Main_Controller {
 				// CG/BFGminer specific
 				else
 				{					
-					// API Allow
-					if ($this->input->post('minerd_api_allow_extra'))
-					{
-						$confArray["api-allow"] .= ",".$this->input->post('minerd_api_allow_extra');			
-					}
-					$this->redis->set('minerd_api_allow_extra', $this->input->post('minerd_api_allow_extra'));
-					$dataObj->minerd_api_allow_extra = $this->input->post('minerd_api_allow_extra');
-					
-					// Scrypt
-					if ($this->input->post('minerd_scrypt'))
-					{
-						$confArray["scrypt"] = true;			
-					}
-					$this->redis->set('minerd_scrypt', $this->input->post('minerd_scrypt'));
-					$dataObj->minerd_scrypt = $this->input->post('minerd_scrypt');
-					
 					// Scrypt
 					if ($this->input->post('minerd_scrypt'))
 					{

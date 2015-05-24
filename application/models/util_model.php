@@ -100,7 +100,7 @@ class Util_model extends CI_Model {
 			$this->config->set_item('screen_command_stop', '/usr/bin/screen -S '.$this->_minerdSoftware.' -X quit');
 			$this->config->set_item('minerd_command', FCPATH.'minera-bin/custom/'.$this->_minerdSoftware);
 			$this->config->set_item('minerd_log_file', '/var/log/minera/'.$this->_minerdSoftware.'.log');
-			$this->config->set_item('minerd_special_log', false);
+			$this->config->set_item('minerd_special_log', true);
 			$this->config->set_item('minerd_log_url', 'application/logs/'.$this->_minerdSoftware.'.log');
 			$this->load->model('cgminer_model', 'miner');
 		}
@@ -228,8 +228,10 @@ class Util_model extends CI_Model {
 
 			if (is_object($a))
 			{
-				if ($this->_minerdSoftware == "cpuminer" && !$network)
+				if ($this->_minerdSoftware == "cpuminer" && !$network) {
 					$pools = (isset($a->pools)) ? $a->pools : false;
+												log_message("error", var_export($pools, true));
+				} 
 				else
 				{
 					$devicePoolActives = false;
@@ -297,7 +299,10 @@ class Util_model extends CI_Model {
 					{
 						foreach ($pools as $pool)
 						{
-							$pool->alive = $this->checkPool($pool->url);
+							if (isset($pool->url))
+								$pool->alive = $this->checkPool($pool->url);
+							else
+								$pool->alive = false;
 						}	
 					}
 				}
@@ -451,10 +456,16 @@ class Util_model extends CI_Model {
 				$return['totals']['hashrate'] = $tdhashrate;
 				$return['totals']['last_share'] = $totals->{'Last getwork'};
 				
-				if ($this->_minerdSoftware == "cgdmaxlzeus" || $this->_minerdSoftware == "cgminer")
+				//log_message("error", var_export($stats->summary[0]->STATUS[0]->Description, true));
+				
+				if ($this->_minerdSoftware == "cgdmaxlzeus" || 
+					$this->_minerdSoftware == "cgminer" || 
+					(isset($stats->summary[0]->STATUS[0]->Description) && preg_match("/cgminer/", $stats->summary[0]->STATUS[0]->Description
+				))) {
 					$cgbfgminerPoolHashrate = round($totals->{'Total MH'} / $totals->Elapsed * 1000000); //round(65536.0 * ($totals->{'Difficulty Accepted'} / $totals->Elapsed), 0); //round(($totals->{'Network Blocks'}*71582788/1000), 0);
-				else
+				} else {
 					$cgbfgminerPoolHashrate = round(($totals->{'Work Utility'}*71582788), 0);
+				}
 			}
 		}
 		

@@ -1624,7 +1624,7 @@ $(document).on('click', '.add-net-donation-pool', function(e) {
 	e.preventDefault();
 	$('.overlay').show();
 	var netMiner = $(this).data('netminer'),
-		donationUrl = ($(this).data('netcoin') === 'SHA-256') ? 'stratum+tcp://us1.ghash.io:3333' : 'stratum+tcp://multi.ghash.io:3333',
+		donationUrl = ($(this).data('netcoin') === 'SHA-256') ? $(".app_data").data("minera-pool-url-sha256") : $(".app_data").data("minera-pool-url-scrypt"),
 		params = {
 			command: 'add_pool',
 			url: donationUrl,
