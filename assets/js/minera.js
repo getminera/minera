@@ -1435,6 +1435,8 @@ function createMon(key, hash, totalhash, maxHashrate, ac, re, hw, sh, freq, colo
 
 function convertHashrate(hash)
 {
+	if (hash > 900000000000)
+		return (hash/1000000000000).toFixed(2) + 'Ph/s';
 	if (hash > 900000000)
 		return (hash/1000000000).toFixed(2) + 'Th/s';
 	else if (hash > 900000)
@@ -1915,6 +1917,11 @@ function getStats(refresh)
 				{
 					$('#pools-table-details').dataTable().fnClearTable();
 					$('#pools-table-details').dataTable().fnDestroy();	
+				}
+				if ( $.fn.dataTable.isDataTable('#profit-table-details') )
+				{
+					$('#profit-table-details').dataTable().fnClearTable();
+					$('#profit-table-details').dataTable().fnDestroy();	
 				}
 				$('.net-pools-table').each(function(key, obj) {
 					if ( $.fn.dataTable.isDataTable($(this)) )
@@ -2789,7 +2796,7 @@ function getStats(refresh)
 			if (data.temp)
 			{
 				var temp_bar = "bg-blue";
-				var temp_text = "It's cool here, wanna join me?"
+				var temp_text = "It's cool here"
 				var sys_temp = parseFloat(data['temp']['value']);
 				
 				if (data['temp']['scale'] === "c")
@@ -2827,6 +2834,109 @@ function getStats(refresh)
 			{
 				$('.widget-sys-temp').html("N.a.");
 				$('.sys-temp-footer').html('Temperature not available <i class="fa fa-arrow-circle-right">');
+			}
+			
+			// Get profitability stats
+			if (data.profits)
+			{
+				if ( !$.fn.dataTable.isDataTable('#profit-table-details') )
+				{
+					// Initialize the pools datatable	
+					$('#profit-table-details').dataTable({
+						"bAutoWidth": false,
+						"lengthChange": false,
+						"paging": false,
+						"searching": false,
+						"info": false,
+						"stateSave": true,
+						"order": [[ 6, "desc" ]],
+						"fnRowCallback": function( row, data, index ) {
+							// Green the best one
+							if ( data[3].max === data[3].coin ) {
+								$('td', row).addClass('bg-light-green');
+					    	}
+						},
+						"aoColumnDefs": [{
+							"aTargets": [ 3 ],	
+							"mRender": function ( data, type, full ) {
+								if (type === 'display')
+								{
+									return '<small class="text-muted">'+data.blocks+'</span>';
+								}
+								return data;
+							},
+						},{
+							"aTargets": [ 4 ],	
+							"mRender": function ( data, type, full ) {
+								if (type === 'display')
+								{
+									return (data) ? '<span class="badge bg-light-blue">'+convertHashrate(data)+'</span>' : '<span class="badge badge-muted">n.a.</span>';
+								}
+								return data;
+							},
+						},{
+							"aTargets": [ 5, 6, 7 ],	
+							"mRender": function ( data, type, full ) {
+								if (type === 'display')
+								{
+									return '<i class="fa fa-btc"></i> '+data;
+								}
+								return data;
+							},
+						},{
+							"aTargets": [ 8 ],	
+							"mRender": function ( data, type, full ) {
+								if (type === 'display')
+								{
+									if (data >= 100)
+										return '<small class="label bg-green">'+data+'%</span>';
+									else
+										return '<small class="label bg-red">'+data+'%</span>';
+								}
+								return data;
+							},
+						},{
+							"aTargets": [ 1, 9 ],	
+							"mRender": function ( data, type, full ) {
+								if (type === 'display')
+								{
+									return '<small class="text-muted">'+data+'</span>';
+								}
+								return data;
+							},
+						}],
+					});	
+				}	
+
+				var ltc = _.filter(data.profits, function (v) { return v.symbol === 'ltc'; });
+				ltc = (ltc[0]) ? ltc[0] : 0;
+				var maxProfit = _.max(data.profits, function (v) { return (v.btc_profitability*100/ltc.btc_profitability); });
+
+				// Add pools data
+				$.each( data.profits, function( coin, profit ) 
+				{	
+					if ( $.fn.dataTable.isDataTable('#profit-table-details') && !profit.error )
+					{
+						// Add profit rows via datatable
+						$('#profit-table-details').dataTable().fnAddData( [
+							'<span class="label label-dark" data-toggle="tooltip" data-title="'+profit.coin.charAt(0).toUpperCase() + profit.coin.slice(1)+'">'+ profit.symbol.toUpperCase() +'</span>',
+							profit.difficulty.toFixed(2),
+							profit.reward.toFixed(2),
+							{blocks: profit.blocks.toFixed(0), max: maxProfit.symbol, coin: profit.symbol},
+							profit.networkhashps,
+							profit.price.toFixed(8),
+							(data.totals.hashrate/1000000*profit.btc_profitability).toFixed(8),
+							profit.btc_profitability.toFixed(8),
+							(profit.btc_profitability*100/ltc.btc_profitability).toFixed(2),
+							profit.coin_profitability.toFixed(8)
+						] );
+					}
+					
+				});
+			}
+			else
+			{
+				$('#profit-table-details').html('<div class="alert alert-warning"><i class="fa fa-warning"></i><strong>No coins</strong> data available.</div>');
 			}
 			
 			// Add Miner Uptime widget

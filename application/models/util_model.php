@@ -179,6 +179,9 @@ class Util_model extends CI_Model {
 		
 		// Add average stats
 		$a->avg = $this->getStoredAvgStats();
+		
+		// Add coins profitability
+		$a->profits = json_decode($this->redis->get('coins_profitability'));
 
 		return json_encode($a);		
 	}
@@ -230,7 +233,6 @@ class Util_model extends CI_Model {
 			{
 				if ($this->_minerdSoftware == "cpuminer" && !$network) {
 					$pools = (isset($a->pools)) ? $a->pools : false;
-												log_message("error", var_export($pools, true));
 				} 
 				else
 				{
@@ -1003,6 +1005,16 @@ class Util_model extends CI_Model {
 	// Crypto rates related stuff
 	//
 	*/
+	
+	// Get profitability per coin
+	public function getProfitability($coin = null) {
+		$ctx = stream_context_create(array('http' => array('timeout' => 10)));
+		$profit = json_encode(array());
+		
+		$profit = @file_get_contents('http://getminera.com/api/profit', 0, $ctx);
+		
+		return $profit;
+	}
 	
 	// Get Bitstamp API to look at BTC/USD rates
 	public function getBtcUsdRates()

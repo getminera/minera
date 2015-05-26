@@ -945,6 +945,9 @@ class App extends Main_Controller {
 				$this->session->set_flashdata('message', '<b>Success!</b> Data has been reset.');
 				$this->session->set_flashdata('message_type', 'success');
 			break;
+			case "profitability":
+				$o = $this->util_model->getProfitability();
+			break;
 			case "import_file":
 				$o = json_encode($this->util_model->importFile($this->input->post()));
 			break;
@@ -992,7 +995,7 @@ class App extends Main_Controller {
 			case "test":
 				//$a = file_get_contents("api.json");
 				//$o = $this->redis->command("BGSAVE"); //$this->util_model->checkCronIsRunning(); //$this->util_model->sendAnonymousStats(123, "hello world!");
-				$o = $this->util_model->updateAltcoinsRates(); //$this->util_model->refreshMinerConf(); //$o = json_encode($this->util_model->callMinerd()); //$this->util_model->getParsedStats($this->util_model->getMinerStats());
+				$o = $this->util_model->getProfitability(); //$this->util_model->updateAltcoinsRates(); //$this->util_model->refreshMinerConf(); //$o = json_encode($this->util_model->callMinerd()); //$this->util_model->getParsedStats($this->util_model->getMinerStats());
 			break;
 		}
 		
@@ -1091,6 +1094,11 @@ class App extends Main_Controller {
 		if ( $currentHour == "04" && $currentMinute == "00")
 		{
 			$this->util_model->storeAvgStats(86400);
+		}
+		
+		// Store coins profitability
+		if ($profit = $this->util_model->getProfitability()) {
+			$this->redis->set("coins_profitability", $profit);
 		}
 		
 		// Activate/Deactivate time donation pool if enable

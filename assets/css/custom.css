@@ -46,6 +46,7 @@ body > .header { position: fixed !important; }
 .bg-dark-blue { background: #656F80 !important; color: white; }
 .bg-light2 { background: #E4EBEF !important; color: #434343; }
 .bg-light-brown { background: #B29B88 !important; color: white; }
+.bg-light-green { background: rgba(136, 229, 152, 0.30) !important; }
 
 .ellipsis {
 	white-space: nowrap;

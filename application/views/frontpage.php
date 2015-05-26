@@ -240,6 +240,52 @@
 						
 						<!-- Top section -->
 						<section class="hidden-xs col-md-12 connectedSortable ui-sortable top-section">
+							
+							<!-- Profit box -->
+							<div class="box box-light">
+							   	<div class="overlay"></div>
+							   	<div class="loading-img"></div>
+								<div class="box-header" style="cursor: move;">
+									<!-- tools box -->
+									<div class="pull-right box-tools">
+										<button class="btn btn-default btn-xs" data-widget="collapse" data-toggle="tooltip" title="" data-original-title="Collapse"><i class="fa fa-minus"></i></button>
+									</div><!-- /. tools -->
+									<i class="fa fa-desktop"></i>
+
+									<h3 class="box-title" id="miner-details">Mining profitability <small class="profit-whatmine"></small></h3>
+								</div>
+								<div class="box-body">
+									<div class="row">
+										<div class="col-sm-12">
+											<div class="table-responsive">
+												  <table id="profit-table-details" class="table table-striped datatable">
+													  <thead>
+													  <tr>
+														  <th><i class="fa fa-money"></i> Coin</th>
+														  <th><i class="fa fa-line-chart"></i> Difficulty</th>
+														  <th><i class="fa fa-trophy"></i> Reward</th>
+														  <th><i class="fa fa-th"></i> Blocks</th>
+														  <th><i class="fa fa-dashboard"></i> Hash Rate</th>
+														  <th><i class="fa fa-exchange"></i> Exchange Rate</th>
+														  <th><i class="fa fa-btc"></i> Earnings</th>
+														  <th>BTC / 1MH</th>
+														  <th>% / LTC</th>
+														  <th>Coins / 1MH</th>
+													  </tr>
+													  </thead>
+													  <tbody class="profit_table">
+													</tbody>
+													  <tfoot class="profit_table_foot">
+													</tfoot>
+												</table><!-- /.table -->
+											  </div>
+										</div>
+									</div><!-- /.row - inside box -->
+								</div><!-- /.box-body -->
+								<div class="box-footer">
+							 		<h6>Exchange rates taken by <a href="https://www.cryptsy.com/users/register?refid=243592">Cryptsy</a> are updated every 10 minutes, everything else are in real time.</h6>
+								</div>
+							</div><!-- /.profit box -->
 						
 							<!-- Local Miner box -->
 							<div class="box box-light">
@@ -623,14 +669,14 @@
 							</div><!-- /.tree box -->
 						
 						</section><!-- /.left col -->
-					   
+						
 					</div><!-- /.row -->
 					
 					<div class="row">
 					
 						<!-- Bottom section -->
 						<section class="col-md-12 connectedSortable ui-sortable bottom-section">
-							
+														
 							<?php if ($dashboardDevicetree) : ?>
 							<!-- Tree box -->
 							<div class="box box-dark">
