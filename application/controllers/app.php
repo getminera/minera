@@ -18,11 +18,7 @@ class App extends Main_Controller {
 	public function index()
 	{	
 		// Always try to assign the mineraId if not present
-		if (!$this->redis->get("minera_system_id"))
-		{
-			$mineraSystemId = $this->util_model->generateMineraId();
-			$this->redis->set("minera_system_id", $mineraSystemId);
-		}
+		$mineraSystemId = $this->util_model->generateMineraId();
 
 		if ($this->session->userdata("loggedin")) {
 			redirect('app/dashboard');
@@ -623,11 +619,7 @@ class App extends Main_Controller {
 			if ($this->input->post('anonymous_stats'))
 			{
 				$anonymousStats = $this->input->post('anonymous_stats');
-				if (!$this->redis->get("minera_system_id"))
-				{
-					$mineraSystemId = $this->util_model->generateMineraId();
-					$this->redis->set("minera_system_id", $mineraSystemId);
-				}
+				$mineraSystemId = $this->util_model->generateMineraId();
 			}
 			$this->redis->set("anonymous_stats", $anonymousStats);
 			$dataObj->anonymous_stats = $anonymousStats;
@@ -995,7 +987,7 @@ class App extends Main_Controller {
 			case "test":
 				//$a = file_get_contents("api.json");
 				//$o = $this->redis->command("BGSAVE"); //$this->util_model->checkCronIsRunning(); //$this->util_model->sendAnonymousStats(123, "hello world!");
-				$o = $this->util_model->getProfitability(); //$this->util_model->updateAltcoinsRates(); //$this->util_model->refreshMinerConf(); //$o = json_encode($this->util_model->callMinerd()); //$this->util_model->getParsedStats($this->util_model->getMinerStats());
+				$o = $this->util_model->currentVersion(); //$this->util_model->updateAltcoinsRates(); //$this->util_model->refreshMinerConf(); //$o = json_encode($this->util_model->callMinerd()); //$this->util_model->getParsedStats($this->util_model->getMinerStats());
 			break;
 		}
 		
@@ -1195,12 +1187,7 @@ class App extends Main_Controller {
 		
 		// Send anonymous stats
 		$anonynousStatsEnabled = $this->redis->get("anonymous_stats");
-		$mineraSystemId = $this->redis->get("minera_system_id");
-		if (!$mineraSystemId)
-		{
-			$mineraSystemId = $this->util_model->generateMineraId();
-			$this->redis->set("minera_system_id", $mineraSystemId);
-		}
+		$mineraSystemId = $this->util_model->generateMineraId();
 
 		if ($mineraSystemId)
 		{
@@ -1216,7 +1203,7 @@ class App extends Main_Controller {
 	
 				$minerdRunning = $this->redis->get("minerd_running_software");
 	
-				$anonStats = array("id" => $mineraSystemId, "algo" => $this->util_model->checkAlgo(), "hashrate" => $totalHashrate, "devices" => $totalDevices, "miner" => $minerdRunning, "timestamp" => time());
+				$anonStats = array("id" => $mineraSystemId, "algo" => $this->util_model->checkAlgo(), "hashrate" => $totalHashrate, "devices" => $totalDevices, "miner" => $minerdRunning, "version" => $this->util_model->currentVersion(true), "timestamp" => time());
 			}
 			
 			if ( $currentMinute == "00")

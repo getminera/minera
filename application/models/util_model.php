@@ -157,6 +157,9 @@ class Util_model extends CI_Model {
 		
 		$a->network_miners = $this->getNetworkMinerStats(true);
 		
+		// Add local algo used
+		$a->algo = $this->checkAlgo(true);
+		
 		//log_message("error", var_export($netStats, true));
 		
 		// Add sysload stats
@@ -788,11 +791,7 @@ class Util_model extends CI_Model {
 	
 	function getMineraPoolUser()
 	{
-		if (!$this->redis->get("minera_system_id"))
-		{
-			$mineraSystemId = $this->generateMineraId();
-			$this->redis->set("minera_system_id", $mineraSystemId);
-		}
+		$mineraSystemId = $this->generateMineraId();
 		
 		return $this->config->item('minera_pool_username')."-".$this->redis->get("minera_system_id");
 	}
@@ -1774,23 +1773,24 @@ class Util_model extends CI_Model {
 		if (time() > ($this->redis->command("HGET minera_update timestamp")+3600))
 		{
 			log_message('error', "Checking Minera updates");
-			
-			$this->redis->command("HSET minera_update timestamp ".time());
 
 			$latestConfig = $this->getRemoteJsonConfig();
-
 			$localVersion = $this->currentVersion();
-			$this->redis->command("HSET minera_update new_version ".$latestConfig->version);
-
-			if ($latestConfig->version != $localVersion)
-			{
-				log_message('error', "Found a new Minera update");
-
-				$this->redis->command("HSET minera_update value 1");
-				return true;
+			
+			if (isset($latestConfig->version)) {
+				$this->redis->command("HSET minera_update timestamp ".time());
+				$this->redis->command("HSET minera_update new_version ".$latestConfig->version);
+	
+				if ($latestConfig->version != $localVersion)
+				{
+					log_message('error', "Found a new Minera update");
+	
+					$this->redis->command("HSET minera_update value 1");
+					return true;
+				}
+			
+				$this->redis->command("HSET minera_update value 0");
 			}
-		
-			$this->redis->command("HSET minera_update value 0");			
 		}
 		else
 		{
@@ -1802,13 +1802,13 @@ class Util_model extends CI_Model {
 	}
 
 	// Get local Minera version
-	public function currentVersion()
+	public function currentVersion($cron = false)
 	{
 		// wait 1h before recheck
-		if (time() > ($this->redis->command("HGET minera_version timestamp")+3600))
+		if (time() > ((int)$this->redis->command("HGET minera_version timestamp")+3600) && $cron == false)
 		{
 			$this->redis->command("HSET minera_version timestamp ".time());
-			$localConfig = json_decode(file_get_contents(base_url('minera.json')));		
+			$localConfig = json_decode(file_get_contents(base_url('minera.json')));
 			$this->redis->command("HSET minera_version value ".$localConfig->version);
 			return $localConfig->version;
 		}
@@ -1821,8 +1821,10 @@ class Util_model extends CI_Model {
 	// Generate a uniq hash ID for Minera System ID
 	public function generateMineraId()
 	{
-		$id1 = uniqid();
-		return $id1;
+		$mac = shell_exec('sudo cat /sys/class/net/eth0/address');
+		$id = substr(strtolower(preg_replace('/[0-9_\/]+/','',base64_encode(sha1(trim($mac))))),0,16);
+		$this->redis->set("minera_system_id", $id);
+		return $id;
 	}
 	
 	// Get Remote configuration from Github 
@@ -1849,7 +1851,6 @@ class Util_model extends CI_Model {
 		log_message("error", "Sending anonymous stats");
 		
 		$result = $this->useCurl($this->config->item('minera_anonymous_url')."/".$id, false, "POST", json_encode($stats));
-		//$result = $this->useCurl($this->config->item('minera_anonymous_url'), $params, "POST", json_encode($stats));
 
 		return $result;
 	}

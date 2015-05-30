@@ -250,11 +250,53 @@
 									<div class="pull-right box-tools">
 										<button class="btn btn-default btn-xs" data-widget="collapse" data-toggle="tooltip" title="" data-original-title="Collapse"><i class="fa fa-minus"></i></button>
 									</div><!-- /. tools -->
-									<i class="fa fa-desktop"></i>
+									<i class="fa fa-line-chart"></i>
 
 									<h3 class="box-title" id="miner-details">Mining profitability <small class="profit-whatmine"></small></h3>
 								</div>
 								<div class="box-body">
+									<div class="row">
+										<div class="col-sm-2">
+											<div class="input-group">
+								    			<span class="input-group-addon"><i class="fa fa-dashboard"></i></span>
+								    			<input type="text" class="form-control profit_data profit_hashrate" placeholder="Hashrate" name="profit_hashrate" value="" />
+								    		</div>
+								    	</div>
+										<div class="col-sm-1">
+											<select name="profit_unit" class="form-control profit_data profit_unit">
+												<option value="1000000000">PH/s</option>
+												<option value="1000000">TH/s</option>
+												<option value="1000">GH/s</option>
+												<option value="1" selected>MH/s</option>
+												<option value="0.001">KH/s</option>
+											</select>
+										</div>
+										<div class="col-sm-1">
+											<select name="profit_period" class="form-control profit_data profit_period">
+												<option value="0.0416">Hour</option>
+												<option value="1" selected>Day</option>
+												<option value="7">Week</option>
+												<option value="30">Month</option>
+											</select>
+										</div>
+										<div class="col-sm-2">
+											<div class="radio">
+												<label>
+													<input type="radio" name="profit_algo profit_data" value="scrypt" checked />
+													Scrypt 
+												</label>&nbsp;                                               
+												<label>
+													<input type="radio" name="profit_algo profit_data" value="sha256" />
+													SHA-256
+												</label>                                                
+											</div>
+										</div>
+									</div>
+									<div class="row">
+										<div class="col-sm-6">
+							    			<h6><i class="fa fa-btc"></i> Earnings column calculation data: <span class="label label-primary profit_local_hashrate"></span> <span class="label label-info">Day</span> <span class="label label-dark profit_local_algo"></span></h6>
+								    	</div>
+									</div>
 									<div class="row">
 										<div class="col-sm-12">
 											<div class="table-responsive">
@@ -262,7 +304,7 @@
 													  <thead>
 													  <tr>
 														  <th><i class="fa fa-money"></i> Coin</th>
-														  <th><i class="fa fa-line-chart"></i> Difficulty</th>
+														  <th><i class="fa fa-bullseye"></i> Difficulty</th>
 														  <th><i class="fa fa-trophy"></i> Reward</th>
 														  <th><i class="fa fa-th"></i> Blocks</th>
 														  <th><i class="fa fa-dashboard"></i> Hash Rate</th>

@@ -1444,7 +1444,7 @@ function convertHashrate(hash)
 	else if (hash > 900)
 		return (hash/1000).toFixed(2) + 'Mh/s';
 	else
-		return hash + 'Kh/s';
+		return hash.toFixed(0) + 'Kh/s';
 }
 
 function convertMS(ms) 
@@ -2841,7 +2841,7 @@ function getStats(refresh)
 			{
 				if ( !$.fn.dataTable.isDataTable('#profit-table-details') )
 				{
-					// Initialize the pools datatable	
+					// Initialize the profit datatable	
 					$('#profit-table-details').dataTable({
 						"bAutoWidth": false,
 						"lengthChange": false,
@@ -2852,7 +2852,7 @@ function getStats(refresh)
 						"order": [[ 6, "desc" ]],
 						"fnRowCallback": function( row, data, index ) {
 							// Green the best one
-							if ( data[3].max === data[3].coin ) {
+							if ( data[3] && data[3].max === data[3].coin ) {
 								$('td', row).addClass('bg-light-green');
 					    	}
 						},
@@ -2870,7 +2870,7 @@ function getStats(refresh)
 							"mRender": function ( data, type, full ) {
 								if (type === 'display')
 								{
-									return (data) ? '<span class="badge bg-light-blue">'+convertHashrate(data)+'</span>' : '<span class="badge badge-muted">n.a.</span>';
+									return (data > 0) ? '<span class="badge bg-light-blue">'+convertHashrate(data)+'</span>' : '<span class="badge badge-muted">n.a.</span>';
 								}
 								return data;
 							},
@@ -2889,9 +2889,9 @@ function getStats(refresh)
 								if (type === 'display')
 								{
 									if (data >= 100)
-										return '<small class="label bg-green">'+data+'%</span>';
+										return '<small class="label label-success">'+data+'%</span>';
 									else
-										return '<small class="label bg-red">'+data+'%</span>';
+										return '<small class="label label-danger">'+data+'%</span>';
 								}
 								return data;
 							},
@@ -2910,11 +2910,16 @@ function getStats(refresh)
 
 				var ltc = _.filter(data.profits, function (v) { return v.symbol === 'ltc'; });
 				ltc = (ltc[0]) ? ltc[0] : 0;
-				var maxProfit = _.max(data.profits, function (v) { return (v.btc_profitability*100/ltc.btc_profitability); });
+				
+				var maxProfit = _.max(data.profits, function (v) { return (v.btc_profitability*100/ltc.btc_profitability); }),
+					currentProfitData = data.totals.hashrate/1000000;
 
-				// Add pools data
+				$('.profit_local_hashrate').html(convertHashrate(data.totals.hashrate/1000));
+				$('.profit_local_algo').html(data.algo);
+				
+				// Add initial profit data
 				$.each( data.profits, function( coin, profit ) 
-				{	
+				{						
 					if ( $.fn.dataTable.isDataTable('#profit-table-details') && !profit.error )
 					{
 						// Add profit rows via datatable
@@ -2923,15 +2928,49 @@ function getStats(refresh)
 							profit.difficulty.toFixed(2),
 							profit.reward.toFixed(2),
 							{blocks: profit.blocks.toFixed(0), max: maxProfit.symbol, coin: profit.symbol},
-							profit.networkhashps,
+							(profit.networkhashps) ? profit.networkhashps/1000 : 0,
 							profit.price.toFixed(8),
-							(data.totals.hashrate/1000000*profit.btc_profitability).toFixed(8),
+							(currentProfitData*profit.btc_profitability).toFixed(8),
 							profit.btc_profitability.toFixed(8),
 							(profit.btc_profitability*100/ltc.btc_profitability).toFixed(2),
 							profit.coin_profitability.toFixed(8)
 						] );
 					}
 					
+				});
+				
+				// Recalculate value when user change input elements
+				$('.profit_data').change(function (e) {
+					var selHashrate = $('.profit_hashrate').val(),
+						selUnit = $('.profit_unit').val(),
+						selPeriod = $('.profit_period').val();
+					
+					currentProfitData = (selHashrate > 0) ? selUnit*selHashrate*selPeriod : data.totals.hashrate/1000000;
+					
+					
+					// Add profit data
+					$('#profit-table-details').dataTable().fnClearTable();
+						
+					$.each( data.profits, function( coin, profit ) 
+					{						
+						if ( $.fn.dataTable.isDataTable('#profit-table-details') && !profit.error )
+						{
+							// Add profit rows via datatable
+							$('#profit-table-details').dataTable().fnAddData( [
+								'<span class="label label-dark" data-toggle="tooltip" data-title="'+profit.coin.charAt(0).toUpperCase() + profit.coin.slice(1)+'">'+ profit.symbol.toUpperCase() +'</span>',
+								profit.difficulty.toFixed(2),
+								profit.reward.toFixed(2),
+								{blocks: profit.blocks.toFixed(0), max: maxProfit.symbol, coin: profit.symbol},
+								(profit.networkhashps) ? profit.networkhashps/1000 : 0,
+								profit.price.toFixed(8),
+								(currentProfitData*profit.btc_profitability).toFixed(8),
+								profit.btc_profitability.toFixed(8),
+								(profit.btc_profitability*100/ltc.btc_profitability).toFixed(2),
+								profit.coin_profitability.toFixed(8)
+							] );
+						}
+						
+					});
 				});
 			}
 			else
