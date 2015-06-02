@@ -259,42 +259,34 @@
 										<div class="col-sm-2">
 											<div class="input-group">
 								    			<span class="input-group-addon"><i class="fa fa-dashboard"></i></span>
-								    			<input type="text" class="form-control profit_data profit_hashrate" placeholder="Hashrate" name="profit_hashrate" value="" />
+								    			<input type="text" class="form-control profit_hashrate" placeholder="Hashrate" name="profit_hashrate" value="" />
 								    		</div>
 								    	</div>
-										<div class="col-sm-1">
+										<div class="col-sm-2">
 											<select name="profit_unit" class="form-control profit_data profit_unit">
-												<option value="1000000000">PH/s</option>
-												<option value="1000000">TH/s</option>
-												<option value="1000">GH/s</option>
-												<option value="1" selected>MH/s</option>
-												<option value="0.001">KH/s</option>
-											</select>
-										</div>
-										<div class="col-sm-1">
-											<select name="profit_period" class="form-control profit_data profit_period">
-												<option value="0.0416">Hour</option>
-												<option value="1" selected>Day</option>
-												<option value="7">Week</option>
-												<option value="30">Month</option>
+												<option value="1000000000" data-profit-unit="PH/s">PH/s</option>
+												<option value="1000000" data-profit-unit="TH/s">TH/s</option>
+												<option value="1000" data-profit-unit="GH/s">GH/s</option>
+												<option value="1" data-profit-unit="MH/s" selected>MH/s</option>
+												<option value="0.001" data-profit-unit="KH/s">KH/s</option>
 											</select>
 										</div>
 										<div class="col-sm-2">
-											<div class="radio">
-												<label>
-													<input type="radio" name="profit_algo profit_data" value="scrypt" checked />
-													Scrypt 
-												</label>&nbsp;                                               
-												<label>
-													<input type="radio" name="profit_algo profit_data" value="sha256" />
-													SHA-256
-												</label>                                                
-											</div>
+											<select name="profit_period" class="form-control profit_data profit_period">
+												<option value="0.0416" data-profit-period="Hour">Hour</option>
+												<option value="1" data-profit-period="Day" selected>Day</option>
+												<option value="7" data-profit-period="Week">Week</option>
+												<option value="30" data-profit-period="Month">Month</option>
+											</select>
+										</div>
+										<div class="col-sm-3 profit_algo" data-profit-algo="<?php echo strtolower(str_replace("-", "", $localAlgo)) ?>">
+											<button class="btn btn-default profit_algo_scrypt active" data-algo="Scrypt">Scrypt</button>&nbsp;
+											<button class="btn btn-default profit_algo_sha256" data-algo="SHA-256">SHA-256</button>
 										</div>
 									</div>
 									<div class="row">
 										<div class="col-sm-6">
-							    			<h6><i class="fa fa-btc"></i> Earnings column calculation data: <span class="label label-primary profit_local_hashrate"></span> <span class="label label-info">Day</span> <span class="label label-dark profit_local_algo"></span></h6>
+							    			<h6><i class="fa fa-btc"></i> Earnings column calculation data: <span class="label label-primary profit_local_hashrate"></span> <span class="label label-info profit_local_period">Day</span> <span class="label label-dark profit_local_algo"></span></h6>
 								    	</div>
 									</div>
 									<div class="row">
@@ -325,7 +317,7 @@
 									</div><!-- /.row - inside box -->
 								</div><!-- /.box-body -->
 								<div class="box-footer">
-							 		<h6>Exchange rates taken by <a href="https://www.cryptsy.com/users/register?refid=243592">Cryptsy</a> are updated every 10 minutes, everything else are in real time.</h6>
+							 		<h6>Exchange rates taken by <a href="https://www.cryptsy.com/users/register?refid=243592">Cryptsy</a> are updated every 10 minutes, everything else are in real time. Profit formula is: <i>( time / (difficulty * 2^32) / hashrate ) * reward</i></h6>
 								</div>
 							</div><!-- /.profit box -->
 						

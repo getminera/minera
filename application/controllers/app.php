@@ -85,6 +85,7 @@ class App extends Main_Controller {
 		$data['minerdRunningUser'] = $this->redis->get("minerd_running_user");
 		$data['minerdSoftware'] = $this->redis->get("minerd_software");
 		$data['netMiners'] = $this->util_model->getNetworkMiners();
+		$data['localAlgo'] = $this->util_model->checkAlgo($this->util_model->isOnline());
 		
 		$this->load->view('include/header', $data);
 		$this->load->view('include/sidebar', $data);
