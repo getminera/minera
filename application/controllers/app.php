@@ -468,37 +468,8 @@ class App extends Main_Controller {
 			$this->redis->set('pool_global_proxy', $this->input->post('pool_global_proxy'));
 			$dataObj->pool_global_proxy = $this->input->post('pool_global_proxy');
 					
-			foreach ($pools as $pool)
-			{
-				if ($minerSoftware == "cgminer" OR $minerSoftware == "cgdmaxlzeus")
-				{
-					// CGminer has different method to add proxy pool
-					if (!empty($pool['proxy']))
-					{
-						$addPools[] = " -o ".$pool['proxy']."|".$pool['url']." -u ".$pool['username']." -p ".$pool['password'];
-						$poolsArray[] = array("url" => $pool['proxy']."|".$pool['url'], "user" => $pool['username'], "pass" => $pool['password']);	
-					}
-					else
-					{
-						$addPools[] = " -o ".$pool['url']." -u ".$pool['username']." -p ".$pool['password'];
-						$poolsArray[] = array("url" => $pool['url'], "user" => $pool['username'], "pass" => $pool['password']);
-					}
-				}
-				else
-				{
-					if (!empty($pool['proxy']))
-					{
-						log_message("error", "hell");
-						$addPools[] = " -o ".$pool['url']." -x ".$pool['proxy']." -u ".$pool['username']." -p ".$pool['password'];
-						$poolsArray[] = array("url" => $pool['url'], "user" => $pool['username'], "pass" => $pool['password'], "pool-proxy" => $pool['proxy']);	
-					}
-					else
-					{
-						$addPools[] = " -o ".$pool['url']." -u ".$pool['username']." -p ".$pool['password'];
-						$poolsArray[] = array("url" => $pool['url'], "user" => $pool['username'], "pass" => $pool['password']);
-					}		
-				}
-			}
+			$poolsArray = $this->util_model->parsePools($minerSoftware, $pools);
+			
 			$confArray['pools'] = $poolsArray;
 			
 			// Prepare JSON conf

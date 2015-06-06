@@ -841,6 +841,18 @@ class Util_model extends CI_Model {
 			
 			$this->setPools($pools);
 		}
+		
+		$newPools = $this->getPools();
+		$conf = json_decode($this->redis->get("minerd_json_settings"));
+		$conf->pools = $this->parsePools($this->redis->get("minerd_software"), json_decode($newPools, true));
+
+		$jsonConfRedis = json_encode($conf);
+		$jsonConfFile = json_encode($conf, JSON_PRETTY_PRINT);
+		
+		//log_message("error", var_export($conf, true));
+		// Save the JSON conf file
+		file_put_contents($this->config->item("minerd_conf_file"), $jsonConfFile);
+		$this->redis->set("minerd_json_settings", $jsonConfRedis);
 	}
 	
 	function setPools($pools)
@@ -851,6 +863,42 @@ class Util_model extends CI_Model {
 	function getPools()
 	{
 		return $this->redis->get("minerd_pools");
+	}
+	
+	function parsePools($minerSoftware, $pools)
+	{
+		$poolsArray = array();
+		
+		if (is_array($pools)) {
+			foreach ($pools as $pool)
+			{
+				if ($minerSoftware == "cgminer" OR $minerSoftware == "cgdmaxlzeus")
+				{
+					// CGminer has different method to add proxy pool
+					if (!empty($pool['proxy']))
+					{
+						$poolsArray[] = array("url" => $pool['proxy']."|".$pool['url'], "user" => $pool['username'], "pass" => $pool['password']);	
+					}
+					else
+					{
+						$poolsArray[] = array("url" => $pool['url'], "user" => $pool['username'], "pass" => $pool['password']);
+					}
+				}
+				else
+				{
+					if (!empty($pool['proxy']))
+					{
+						$poolsArray[] = array("url" => $pool['url'], "user" => $pool['username'], "pass" => $pool['password'], "pool-proxy" => $pool['proxy']);	
+					}
+					else
+					{
+						$poolsArray[] = array("url" => $pool['url'], "user" => $pool['username'], "pass" => $pool['password']);
+					}		
+				}
+			}
+		}
+		
+		return  $poolsArray;
 	}
 	
 	function setCommandline($string)
@@ -1822,7 +1870,7 @@ class Util_model extends CI_Model {
 	public function generateMineraId()
 	{
 		$mac = shell_exec('sudo cat /sys/class/net/eth0/address');
-		$id = substr(strtolower(preg_replace('/[0-9_\/]+/','',base64_encode(sha1(trim($mac))))),0,16);
+		$id = substr(strtolower(preg_replace('/[0-9_\/]+/','',base64_encode(sha1(trim($mac))))),0,12);
 		$this->redis->set("minera_system_id", $id);
 		return $id;
 	}

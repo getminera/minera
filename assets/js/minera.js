@@ -2959,8 +2959,8 @@ function getStats(refresh)
 				var updateProfitDataTable = function (data, currentProfitData) {
 					// Add profit data
 					$('#profit-table-details').dataTable().fnClearTable();
-					
-					$('.profit_local_hashrate').html( ($('.profit_hashrate').val() > 0) ? $('.profit_hashrate').val()+$('.profit_unit').find('option:selected').data('profit-unit') : convertHashrate(data.totals.hashrate/1000));
+					var thisHash = (data.totals && data.totals.hashrate) ? data.totals.hashrate/1000 : 0;
+					$('.profit_local_hashrate').html( ($('.profit_hashrate').val() > 0) ? $('.profit_hashrate').val()+$('.profit_unit').find('option:selected').data('profit-unit') : convertHashrate(thisHash));
 					$('.profit_local_period').html($('.profit_period').find('option:selected').data('profit-period'));
 					$('.profit_local_algo').html($('.profit_algo').data('profit-algo'));
 						
@@ -2992,7 +2992,7 @@ function getStats(refresh)
 				var maxProfit = _.max(data.profits, function (v) { return (v.btc_profitability*100/ltc.btc_profitability); }),
 					currentProfitData = {};
 					
-				currentProfitData.hash = data.totals.hashrate/1000000;
+				currentProfitData.hash = (data.totals && data.totals.hashrate) ? data.totals.hashrate/1000000 : 0;
 				
 				updateProfitDataTable(data, currentProfitData);
 
