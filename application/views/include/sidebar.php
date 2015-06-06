@@ -356,19 +356,43 @@
                         <div class="pull-left info">
                             <p>Hello, your miner is</p>
 							<?php if ($isOnline) : ?>
-	                            <a href="#"><i class="fa fa-circle text-success"></i> Online <?php if ($minerdRunning) : ?><small class="pull-right badge bg-green"><?php echo $minerdRunning ?></small><?php endif; ?></a>
+	                            <a href="<?php echo site_url("app/dashboard") ?>"><i class="fa fa-circle text-success"></i> Online <?php if ($minerdRunning) : ?><small class="pull-right badge bg-green"><?php echo $minerdRunning ?></small><?php endif; ?></a>
 	                        <?php else: ?>
-	                            <a href="#"><i class="fa fa-circle text-muted"></i> Offline <?php if ($minerdSoftware) : ?><small class="pull-right badge bg-muted"><?php echo $minerdSoftware ?></small><?php endif; ?></a>
+	                            <a href="<?php echo site_url("app/settings") ?>" data-toggle="tooltip" title="" data-original-title="Go to the settings page"><i class="fa fa-circle text-muted"></i> Offline <?php if ($minerdSoftware) : ?><small class="pull-right badge bg-muted"><?php echo $minerdSoftware ?></small><?php endif; ?></a>
 							<?php endif; ?>
                         </div>
                     </div>
 
                     <!-- sidebar menu -->
                     <ul class="sidebar-menu">
-                        <li data-toggle="tooltip" title="" data-original-title="Go to the dashboard page">
-                            <a href="<?php echo site_url("app/dashboard") ?>">
-                                <i class="fa fa-dashboard"></i> <span>Dashboard</span>
-                            </a>
+                        <li class="treeview" data-toggle="tooltip" title="" data-original-title="Go to the dashboard page">
+                        	<a href="<?php echo site_url("app/dashboard") ?>">
+                        		<i class="fa fa-dashboard"></i> 
+                        		<span>Dashboard</span>
+                                <i class="treeview-menu-dashboard-icon fa pull-right fa-angle-left"></i>
+                        	</a>
+                        	<ul class="treeview-menu treeview-menu-dashboard" style="display: none;">
+                                <li>
+                                	<a href="<?php echo site_url("app/dashboard#top-widgets") ?>" class="menu-top-widgets-box ml10">
+                                		<i class="fa fa-th"></i> Widgets
+                                	</a>
+                                </li>
+                                <li>
+                                	<a href="<?php echo site_url("app/dashboard#dashboard-box") ?>" class="menu-dashboard-box ml10">
+                                		<i class="fa fa-dashboard"></i> Dashboard
+                                	</a>
+                                </li>
+                                <li>
+                                	<a href="<?php echo site_url("app/dashboard#pools-box") ?>" class="menu-pools-box ml10">
+                                		<i class="fa fa-cloud"></i> Pools
+                                	</a>
+                                </li>
+                                <li>
+                                	<a href="<?php echo site_url("app/dashboard#customer-miners-box") ?>" class="menu-customer-miners-box ml10">
+                                		<i class="fa fa-desktop"></i> Custom Miners
+                                	</a>
+                                </li>
+                            </ul>
                         </li>
                         <li data-toggle="tooltip" title="" data-original-title="Go to the charts page">
                             <a href="<?php echo site_url("app/charts") ?>">

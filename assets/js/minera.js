@@ -800,6 +800,11 @@ $(function() {
 	} else if (thisSection === "dashboard") {
 		
 		// Dashboard Scripts
+	    if (window.location.href.match(/dashboard/g))
+	    {
+		    $(".treeview-menu-dashboard-icon").removeClass("fa-angle-left").addClass("fa-angle-down");
+			$(".treeview-menu-dashboard").fadeIn();
+	    }
 		
 		// Refresh stats when you come back in Minera tab
 		window.onblur= function() { window.onfocus= function () { getStats(true); target_date = new Date().getTime(); }; };

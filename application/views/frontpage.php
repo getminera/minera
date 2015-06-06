@@ -12,7 +12,7 @@
 				<!-- Main content -->
 				<section class="content">
 
-					<div class="row">
+					<div class="row top-widgets">
 						
 						<?php if (count($netMiners) > 0) : ?>
 						<section class="col-md-12 local-miners-title" style="display:none;">

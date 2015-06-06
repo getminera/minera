@@ -73,6 +73,12 @@ $(function() {
         alwaysVisible: false,
         size: "3px"
     }).css("width", "100%");
+    
+    $(".sidebar").slimscroll({
+        height: "100%",
+        alwaysVisible: false,
+        size: "3px"
+    }).css("width", "220px");
 
     /*
      * INITIALIZE BUTTON TOGGLE
