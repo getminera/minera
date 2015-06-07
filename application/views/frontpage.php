@@ -12,7 +12,7 @@
 				<!-- Main content -->
 				<section class="content">
 
-					<div class="row top-widgets">
+					<div class="row" id="box-widgets">
 						
 						<?php if (count($netMiners) > 0) : ?>
 						<section class="col-md-12 local-miners-title" style="display:none;">
@@ -242,7 +242,7 @@
 						<section class="hidden-xs col-md-12 connectedSortable ui-sortable top-section">
 							
 							<!-- Profit box -->
-							<div class="box box-light">
+							<div class="box box-light" id="box-profit">
 							   	<div class="overlay"></div>
 							   	<div class="loading-img"></div>
 								<div class="box-header" style="cursor: move;">
@@ -322,7 +322,7 @@
 							</div><!-- /.profit box -->
 						
 							<!-- Local Miner box -->
-							<div class="box box-light">
+							<div class="box box-light" id="box-local-miner">
 							   	<div class="overlay"></div>
 							   	<div class="loading-img"></div>
 								<div class="box-header" style="cursor: move;">
@@ -383,7 +383,7 @@
 							</div><!-- /.miner box -->
 							
 							<!-- Local Pools box -->
-							<div class="box box-light">
+							<div class="box box-light" id="box-local-pools">
 							   	<div class="overlay"></div>
 							   	<div class="loading-img"></div>
 								<div class="box-header" style="cursor: move;">
@@ -611,7 +611,7 @@
 						</section>
 						
 						<!-- Right col -->
-						<section class="col-md-6 col-xs-12 connectedSortable ui-sortable right-section">
+						<section class="col-md-6 col-xs-12 connectedSortable ui-sortable right-section" id="box-charts">
 							
 							<!-- A/R/H chart -->
 							<div class="box box-primary">
@@ -733,7 +733,7 @@
 							<?php endif; ?>
 						
 							<!-- Real time log box -->
-							<div class="box box-light">
+							<div class="box box-light" id="box-log">
 								<div class="box-header" style="cursor: move;">
 									<!-- tools box -->
 									<div class="pull-right box-tools">
@@ -759,7 +759,7 @@
 							
 							<?php if (!$this->redis->get("minera_donation_time")) : ?>					
 							<!-- Donations box -->
-							<div class="box bg-light box-danger">
+							<div class="box bg-light box-danger" id="box-donation">
 								<div class="box-header">
 									<!-- tools box -->
 									<div class="pull-right box-tools">

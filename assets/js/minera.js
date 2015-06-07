@@ -170,7 +170,7 @@ $(function() {
 	});
 	
 	if (thisSection === "charts") {
-
+	    
 		// Chart Scripts
 		createChart('hourly', '5 minutes');		    
 		createChart('daily', '15 minutes');
@@ -185,6 +185,7 @@ $(function() {
 	    if (window.location.href.match(/settings/g))
 	    {
 		    $(".treeview-menu-settings-icon").removeClass("fa-angle-left").addClass("fa-angle-down");
+		    $(".treeview-menu-settings-icon").parent("a").first().addClass("activeTree");
 			$(".treeview-menu-settings").fadeIn();
 	    }
 	    
@@ -803,6 +804,7 @@ $(function() {
 	    if (window.location.href.match(/dashboard/g))
 	    {
 		    $(".treeview-menu-dashboard-icon").removeClass("fa-angle-left").addClass("fa-angle-down");
+		    $(".treeview-menu-dashboard-icon").parent("a").first().addClass("activeTree");
 			$(".treeview-menu-dashboard").fadeIn();
 	    }
 		

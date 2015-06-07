@@ -373,28 +373,55 @@
                         	</a>
                         	<ul class="treeview-menu treeview-menu-dashboard" style="display: none;">
                                 <li>
-                                	<a href="<?php echo site_url("app/dashboard#top-widgets") ?>" class="menu-top-widgets-box ml10">
+                                	<a href="<?php echo site_url("app/dashboard#box-widgets") ?>" class="menu-top-widgets-box ml10">
                                 		<i class="fa fa-th"></i> Widgets
                                 	</a>
                                 </li>
                                 <li>
-                                	<a href="<?php echo site_url("app/dashboard#dashboard-box") ?>" class="menu-dashboard-box ml10">
-                                		<i class="fa fa-dashboard"></i> Dashboard
+                                	<a href="<?php echo site_url("app/dashboard#box-profit") ?>" class="menu-profit-box ml10">
+                                		<i class="fa fa-line-chart"></i> Mining profitability
                                 	</a>
                                 </li>
                                 <li>
-                                	<a href="<?php echo site_url("app/dashboard#pools-box") ?>" class="menu-pools-box ml10">
-                                		<i class="fa fa-cloud"></i> Pools
+                                	<a href="<?php echo site_url("app/dashboard#box-local-miner") ?>" class="menu-local-miner-box ml10">
+                                		<i class="fa fa-desktop"></i> Local miner
                                 	</a>
                                 </li>
                                 <li>
-                                	<a href="<?php echo site_url("app/dashboard#customer-miners-box") ?>" class="menu-customer-miners-box ml10">
-                                		<i class="fa fa-desktop"></i> Custom Miners
+                                	<a href="<?php echo site_url("app/dashboard#box-local-pools") ?>" class="menu-local-pools-box ml10">
+                                		<i class="fa fa-cloud"></i> Local Pools
+                                	</a>
+                                </li>
+                                <?php if (count($netMiners) > 0) : ?>
+                                <li>
+                                	<a href="<?php echo site_url("app/dashboard#network-details") ?>" class="menu-network-miners-box ml10">
+                                		<i class="fa fa-server"></i> Network miners
+                                	</a>
+                                </li>
+                                <li>
+                                	<a href="<?php echo site_url("app/dashboard#network-pools-details") ?>" class="menu-network-pools-box ml10">
+                                		<i class="fa fa-cloud"></i> Network Pools
+                                	</a>
+                                </li>
+                                <?php endif; ?>
+                                <li>
+                                	<a href="<?php echo site_url("app/dashboard#box-charts") ?>" class="menu-charts-box ml10">
+                                		<i class="fa fa-bar-chart"></i> Charts
+                                	</a>
+                                </li>
+                                <li>
+                                	<a href="<?php echo site_url("app/dashboard#box-log") ?>" class="menu-log-box ml10">
+                                		<i class="fa fa-file"></i> Log
+                                	</a>
+                                </li>
+                                <li>
+                                	<a href="<?php echo site_url("app/dashboard#box-donation") ?>" class="menu-donation-box ml10">
+                                		<i class="fa fa-gift"></i> Donation
                                 	</a>
                                 </li>
                             </ul>
                         </li>
-                        <li data-toggle="tooltip" title="" data-original-title="Go to the charts page">
+                        <li class="sidebar-charts" data-toggle="tooltip" title="" data-original-title="Go to the charts page">
                             <a href="<?php echo site_url("app/charts") ?>">
                                 <i class="fa fa-bar-chart-o"></i> <span>Charts</span>
                             </a>

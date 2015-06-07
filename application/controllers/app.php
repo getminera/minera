@@ -116,6 +116,7 @@ class App extends Main_Controller {
 		$data['minerdRunning'] = $this->redis->get("minerd_running_software");
 		$data['minerdRunningUser'] = $this->redis->get("minerd_running_user");		
 		$data['minerdSoftware'] = $this->redis->get("minerd_software");
+		$data['netMiners'] = $this->util_model->getNetworkMiners();
 		
 		$this->load->view('include/header', $data);
 		$this->load->view('include/sidebar', $data);
@@ -194,6 +195,7 @@ class App extends Main_Controller {
 		$data['globalPoolProxy'] = $this->redis->get("pool_global_proxy");
 		
 		$data['networkMiners'] = json_decode($this->redis->get('network_miners'));
+		$data['netMiners'] = $this->util_model->getNetworkMiners();
 		
 		// Load Dashboard settings
 		$data['mineraStoredDonations'] = $this->util_model->getStoredDonations();

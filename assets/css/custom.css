@@ -41,6 +41,9 @@ body > .header { position: fixed !important; }
 .font-bold { font-weight: bold;}
 .error {color: rgb(171, 21, 21);}
 .active { font-weight: bold; }
+.activeTree { background-color: rgb(107, 107, 107); color: #fff !important; }
+.skin-black .sidebar .sidebar-menu .treeview a:hover { color: #fff !important; }
+.skin-blue .sidebar .sidebar-menu .treeview a:hover { color: #555 !important; }
 .modal-footer { background-color: #F9F9F9; }
 
 .bg-dark-blue { background: #656F80 !important; color: white; }
