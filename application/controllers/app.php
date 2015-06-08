@@ -19,6 +19,9 @@ class App extends Main_Controller {
 	{	
 		// Always try to assign the mineraId if not present
 		$mineraSystemId = $this->util_model->generateMineraId();
+		
+		// Remove old Minera pool
+		$this->util_model->removeOldMineraPool();
 
 		if ($this->session->userdata("loggedin")) {
 			redirect('app/dashboard');

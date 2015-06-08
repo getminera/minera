@@ -855,6 +855,32 @@ class Util_model extends CI_Model {
 		$this->redis->set("minerd_json_settings", $jsonConfRedis);
 	}
 	
+	function removeOldMineraPool() 
+	{
+		$pools = json_decode($this->getPools());
+		$newPools = array();
+		
+		foreach ($pools as $pool)
+		{
+			
+			if ($pool->username !== 'michelem.minera') {
+				$newPools[] = $pool;
+			}
+		}
+		
+		$this->setPools($newPools);
+		
+		$conf = json_decode($this->redis->get("minerd_json_settings"));
+		$conf->pools = $this->parsePools($this->redis->get("minerd_software"), json_decode(json_encode($newPools), true));
+
+		$jsonConfRedis = json_encode($conf);
+		$jsonConfFile = json_encode($conf, JSON_PRETTY_PRINT);
+
+		// Save the JSON conf file
+		file_put_contents($this->config->item("minerd_conf_file"), $jsonConfFile);
+		$this->redis->set("minerd_json_settings", $jsonConfRedis);
+	}
+	
 	function setPools($pools)
 	{
 		return $this->redis->set("minerd_pools", json_encode($pools));
@@ -1810,6 +1836,9 @@ class Util_model extends CI_Model {
 		$this->redis->del("import_data_tmp");
 		$this->redis->del("bitstamp_update");
 		$this->redis->del("altcoins_update");
+		
+		// Add donation pool
+		$this->autoAddMineraPool();
 		
 		return true;		
 	}
