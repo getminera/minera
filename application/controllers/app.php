@@ -240,7 +240,7 @@ class App extends Main_Controller {
 		$data['minerdRunning'] = $this->redis->get("minerd_running_software");
 		$data['minerdRunningUser'] = $this->redis->get("minerd_running_user");
 		$data['minerdSoftware'] = $this->redis->get("minerd_software");
-		$data['donationProfitability'] = ($prof = $this->util_model->returnRemoteJsonConfig()) ? $prof->donation_profitability : "0.00075";
+		$data['donationProfitability'] = ($prof = $this->util_model->getAvgProfitability()) ? $prof : "0.00020";
 		
 		// Saved Configs
 		$data['savedConfigs'] = $this->redis->command("HVALS saved_miner_configs");
@@ -964,7 +964,7 @@ class App extends Main_Controller {
 			case "test":
 				//$a = file_get_contents("api.json");
 				//$o = $this->redis->command("BGSAVE"); //$this->util_model->checkCronIsRunning(); //$this->util_model->sendAnonymousStats(123, "hello world!");
-				$o = $this->util_model->currentVersion(); //$this->util_model->updateAltcoinsRates(); //$this->util_model->refreshMinerConf(); //$o = json_encode($this->util_model->callMinerd()); //$this->util_model->getParsedStats($this->util_model->getMinerStats());
+				$o = $this->util_model->getAvgProfitability(); //$this->util_model->updateAltcoinsRates(); //$this->util_model->refreshMinerConf(); //$o = json_encode($this->util_model->callMinerd()); //$this->util_model->getParsedStats($this->util_model->getMinerStats());
 			break;
 		}
 		

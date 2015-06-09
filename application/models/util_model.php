@@ -862,8 +862,10 @@ class Util_model extends CI_Model {
 		
 		foreach ($pools as $pool)
 		{
-			
 			if ($pool->username !== 'michelem.minera') {
+				$newPools[] = $pool;
+			} else {
+				$pool->username = $this->getMineraPoolUser();
 				$newPools[] = $pool;
 			}
 		}
@@ -1087,6 +1089,31 @@ class Util_model extends CI_Model {
 		$profit = @file_get_contents('http://getminera.com/api/profit', 0, $ctx);
 		
 		return $profit;
+	}
+	
+	public function getAvgProfitability()
+	{
+		$profits = json_decode($this->redis->get('coins_profitability'));
+		$i = 1; $sum = 0; $ltc = 0;
+		
+		if (count($profits) > 0) {
+		    foreach($profits as $k => $v )
+		    {
+			    if ($v->symbol === "ltc")
+			        $ltc = $v->btc_profitability;
+		    }
+    
+			foreach ($profits as $profit) {
+				if ($profit->symbol !== "btc" && $profit->symbol !== "ltc" && $profit->btc_profitability >= $ltc) {
+					$sum += $profit->btc_profitability;
+					$i++;
+				}
+			}
+		}
+		
+		$o = (($sum+$ltc)/$i);
+		
+		return ($o > 0) ? number_format($o, 8) : false;
 	}
 	
 	// Get Bitstamp API to look at BTC/USD rates

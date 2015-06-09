@@ -1060,10 +1060,10 @@ $(function() {
 		
 		$("#profitability-slider").ionRangeSlider({
 			min: 0,
-			max: 0.01,
+			max: 0.001,
 			to: 0,
 			type: 'single',
-			step: 0.0001,
+			step: 0.00001,
 			postfix: ' <i class="fa fa-btc"></i>',
 			hasGrid: true,
 			onChange: function (obj) {
