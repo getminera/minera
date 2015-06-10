@@ -59,7 +59,7 @@ var Frontpage = function()
 	  * the exports object.
 	  */
 	 return exports;
-}
+};
 
 /**
  * To initialize our Frontpage class, we need

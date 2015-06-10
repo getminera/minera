@@ -1,6 +1,6 @@
-"use strict";
-
 $(function() {
+	'use strict';
+	
 	$("body").tooltip({ selector: '[data-toggle="tooltip"]', trigger: 'hover' });
 	$("body").popover({ selector: '[data-toggle="popover"]', trigger: 'hover' });
 
@@ -74,7 +74,7 @@ $(function() {
         //Add time to the headline and update every 500 milliseconds
         $('.toptime').html(h + ":" + m + ":" + s + " " + day_or_night);
         setTimeout(function() {
-            startTime()
+            startTime();
         }, 500);
     }
 
@@ -289,17 +289,17 @@ $(function() {
 					}
 					
 					var htmlRow =
-						'<tr class="config-'+resp.timestamp+'"> \
-							<td><small class="label label-info">'+date.format("MM/DD/YY h:mm a")+'</small></td> \
-							<td><small class="label bg-blue">'+resp.software+'</small></td> \
-							<td><small class="font-bold">'+resp.settings+'</small></td> \
-							<td><small>' + pools + '</small></td> \
-							<td class="text-center"> \
-								<a href="#" class="share-config-open" data-config-id="'+resp.timestamp+'" data-toggle="tooltip" data-title="Share saved config"><i class="fa fa-share-square-o"></i></a> \
-								<a href="#" class="load-config-action" style="margin-left:10px;" data-config-id="'+resp.timestamp+'" data-toggle="tooltip" data-title="Load saved config"><i class="fa fa-upload"></i></a> \
-								<a href="#" class="delete-config-action" style="margin-left:10px;" data-config-id="'+resp.timestamp+'" data-toggle="tooltip" data-title="Delete saved config"><i class="fa fa-times"></i></a> \
-							</td> \
-						</tr>';
+						'<tr class="config-'+resp.timestamp+'">' +
+							'<td><small class="label label-info">'+date.format("MM/DD/YY h:mm a")+'</small></td>' +
+							'<td><small class="label bg-blue">'+resp.software+'</small></td>' +
+							'<td><small class="font-bold">'+resp.settings+'</small></td>' +
+							'<td><small>' + pools + '</small></td>' +
+							'<td class="text-center">' +
+								'<a href="#" class="share-config-open" data-config-id="'+resp.timestamp+'" data-toggle="tooltip" data-title="Share saved config"><i class="fa fa-share-square-o"></i></a>' +
+								'<a href="#" class="load-config-action" style="margin-left:10px;" data-config-id="'+resp.timestamp+'" data-toggle="tooltip" data-title="Load saved config"><i class="fa fa-upload"></i></a>' +
+								'<a href="#" class="delete-config-action" style="margin-left:10px;" data-config-id="'+resp.timestamp+'" data-toggle="tooltip" data-title="Delete saved config"><i class="fa fa-times"></i></a>' +
+							'</td>' +
+						'</tr>'; 
 							
 					$('#saved-configs-table tbody').append(htmlRow);
 					
@@ -415,7 +415,7 @@ $(function() {
 							$(".net-group:first .net-row .net_miner_status").removeClass('label-primary').addClass('label-success');
 						});
 						
-						setTimeout(function () { saveSettings(true, true) }, 2000);
+						setTimeout(function () { saveSettings(true, true); }, 2000);
 					} else {
 						$(".alert-no-net-devices").fadeIn();
 						setTimeout(function () { $(".alert-no-net-devices").fadeOut(); }, 5000);
@@ -738,7 +738,7 @@ $(function() {
 				$(this).rules('add', {
 					required: {
 						depends: function(element) {
-							return ($(element).parent().parent().parent().find('.pool_username').val() != '' || $(element).parent().parent().parent().find('.pool_password').val() != '');
+							return ($(element).parent().parent().parent().find('.pool_username').val() !== '' || $(element).parent().parent().parent().find('.pool_password').val() !== '');
 						}
 					}
 				});
@@ -755,7 +755,7 @@ $(function() {
 				$(this).rules('add', {
 					required: {
 						depends: function(element) {
-							return ($(element).parent().parent().parent().find('.pool_url').val() != '' || $(element).parent().parent().parent().find('.pool_password').val() != '');
+							return ($(element).parent().parent().parent().find('.pool_url').val() !== '' || $(element).parent().parent().parent().find('.pool_password').val() !== '');
 						}
 					}
 				});
@@ -772,7 +772,7 @@ $(function() {
 				$(this).rules('add', {
 					required: {
 						depends: function(element) {
-							return ($(element).parent().parent().parent().find('.pool_username').val() != '' || $(element).parent().parent().parent().find('.pool_url').val() != '');
+							return ($(element).parent().parent().parent().find('.pool_username').val() !== '' || $(element).parent().parent().parent().find('.pool_url').val() !== '');
 						}
 					}
 				});
@@ -783,7 +783,7 @@ $(function() {
 			$(this).rules('add', {
 				required: {
 					depends: function(element) {
-						return ($(element).parent().parent().parent().find('.net_miner_ip').val() != '' || $(element).parent().parent().parent().find('.net_miner_port').val() != '');
+						return ($(element).parent().parent().parent().find('.net_miner_ip').val() !== '' || $(element).parent().parent().parent().find('.net_miner_port').val() !== '');
 					}
 				}
 			});
@@ -792,7 +792,7 @@ $(function() {
 			$(this).rules('add', {
 				required: {
 					depends: function(element) {
-						return ($(element).parent().parent().parent().find('.net_miner_name').val() != '' || $(element).parent().parent().parent().find('.net_miner_port').val() != '');
+						return ($(element).parent().parent().parent().find('.net_miner_name').val() !== '' || $(element).parent().parent().parent().find('.net_miner_port').val() !== '');
 					}
 				},
 				validIP: true
@@ -802,7 +802,7 @@ $(function() {
 			$(this).rules('add', {
 				required: {
 					depends: function(element) {
-						return ($(element).parent().parent().parent().find('.net_miner_ip').val() != '' || $(element).parent().parent().parent().find('.net_miner_name').val() != '');
+						return ($(element).parent().parent().parent().find('.net_miner_ip').val() !== '' || $(element).parent().parent().parent().find('.net_miner_name').val() !== '');
 					}
 				},
 				number: true
@@ -835,7 +835,7 @@ $(function() {
 		    var current_date = new Date().getTime();
 		    var seconds_left = (target_date + (refresh_time*1000 + 1000) - current_date) / 1000;
 				//console.log(parseInt(seconds_left));
-			if (parseInt(seconds_left) != 0)
+			if (parseInt(seconds_left) !== 0)
 			{
 			    // do some time calculations
 				minutes = parseInt(seconds_left / 60);
@@ -875,8 +875,8 @@ $(function() {
 		});
 		
 		// Raw stats click
-		$(".view-raw-stats").click( function() { $(".section-raw-stats").fadeIn() });
-		$(".close-stats").click( function() { $(".section-raw-stats").fadeOut() });
+		$(".view-raw-stats").click( function() { $(".section-raw-stats").fadeIn(); });
+		$(".close-stats").click( function() { $(".section-raw-stats").fadeOut(); });
 		
 		//Make the dashboard widgets sortable Using jquery UI
 		$(".connectedSortable").sortable({
@@ -953,12 +953,12 @@ $(function() {
 		                size = data.length;
 		            }
 		
-		            var added = false;
+		            var added = false, start = 0;
 		
 		            if (log_size === 0) {
 		                /* Clip leading part-line if not the whole file */
 		                if (data.length < size) {
-		                    var start = data.indexOf("\n");
+		                    start = data.indexOf("\n");
 		                    log_data = data.substring(start + 1);
 		                } else {
 		                    log_data = data;
@@ -970,7 +970,7 @@ $(function() {
 		                log_data += data.substring(1);
 		
 		                if (log_data.length > load_log) {
-		                    var start = log_data.indexOf("\n", log_data.length - load_log);
+		                    start = log_data.indexOf("\n", log_data.length - load_log);
 		                    log_data = log_data.substring(start + 1);
 		                }
 		
@@ -1003,7 +1003,7 @@ $(function() {
 		            }
 		        }
 		    });
-		}
+		};
 		
 		var scroll_log = function(where) {
 		    for (var i = 0; i < scrollelems.length; i++) {
@@ -1013,7 +1013,7 @@ $(function() {
 		        else
 		            s.scrollTop(where);
 		    }
-		}
+		};
 		
 		var show_log = function() {
 		    if (pause_log) return;
@@ -1034,7 +1034,7 @@ $(function() {
 		    $(dataelem).text(t);
 		    if (!reverse)
 		        scroll_log(-1);
-		}
+		};
 					
 		/* Add pause toggle */
 		$('.pause-log').click(function (e) {
@@ -1091,7 +1091,7 @@ $(function() {
 *********************/
 
 function loadScript(url, callback){
-    var script = document.createElement("script")
+    var script = document.createElement("script");
     script.type = "text/javascript";
 
     if (script.readyState){  //IE
@@ -1139,18 +1139,17 @@ function saveSettings(hide, saveonly)
 
 function changeDonationWorth(profitability, value) 
 {
-	var amount = (profitability / 24 / 60 * value);
-	var string = (value > 0) ? "about" : "exactly";
+	var amount = (profitability / 24 / 60 * value), string = (value > 0) ? "about" : "exactly", h = 0, new_value = 0, period = 0;
 
 	if (value >= 60)
 	{
-		var h = Math.floor(value / 60);
-		var new_value = value % 60;
-    	var period = h + ' hour(s) ' + ((new_value > 0) ? ' and ' + new_value + ' minute(s)' : '');
+		h = Math.floor(value / 60);
+		new_value = value % 60;
+    	period = h + ' hour(s) ' + ((new_value > 0) ? ' and ' + new_value + ' minute(s)' : '');
 	}
 	else
 	{
-    	var period = value + ' minutes';
+    	period = value + ' minutes';
 	}
 	
 	$(".donation-worth").html('<small>Mining for ' + period + ' in a day your donation per MH/s worths ' + string + ':</small> <span class="label label-success"><i class="fa fa-btc"></i>&nbsp;' + amount.toFixed(8) + '</span>');
@@ -1257,18 +1256,17 @@ function createChart(period, text_period)
 	// get Json data from stored_stats url (redis) and create the graphs
 	$.getJSON( _baseUrl+"/app/api?command=history_stats&type="+period, function( data ) 
 	{
-	    var refresh = false;
-	    var areaHash = {};
-	    var areaRej = {};
-	    
-		var data = Object.keys(data).map(function(key) { 
-					data[key]['timestamp'] = data[key]['timestamp']*1000; 
-					data[key]['hashrate'] = (data[key]['hashrate']/1000/1000).toFixed(2);
-					data[key]['pool_hashrate'] = (data[key]['pool_hashrate']/1000/1000).toFixed(2);									
+	    var refresh = false, 
+	    	areaHash = {}, 
+	    	areaRej = {}, 
+	    	dataChart = Object.keys(data).map(function(key) { 
+					data[key].timestamp = data[key].timestamp*1000; 
+					data[key].hashrate = (data[key].hashrate/1000/1000).toFixed(2);
+					data[key].pool_hashrate = (data[key].pool_hashrate/1000/1000).toFixed(2);									
 					return data[key];
 			});
 	
-		if (data.length > 0)
+		if (dataChart.length > 0)
 		{
 			
 			if (refresh === false)
@@ -1277,7 +1275,7 @@ function createChart(period, text_period)
 				areaHash = new Morris.Area({
 					element: 'hashrate-chart-'+period,
 					resize: true,
-					data: data,
+					data: dataChart,
 					xkey: 'timestamp',
 					ykeys: ['hashrate', 'pool_hashrate'],
 					ymax: 'auto',
@@ -1295,7 +1293,7 @@ function createChart(period, text_period)
 				areaRej = new Morris.Area({
 					element: 'rehw-chart-'+period,
 					resize: true,
-					data: data,
+					data: dataChart,
 					xkey: 'timestamp',
 					ykeys: ['accepted', 'rejected', 'errors'],
 					ymax: 'auto',
@@ -1309,14 +1307,14 @@ function createChart(period, text_period)
 			}
 			else
 			{
-				updateGraphs(data);
+				updateGraphs(dataChart);
 			}
 			
 			$(window).resize(function() {
-				redrawGraphs()
+				redrawGraphs();
 			});
 			
-			$('.sidebar-toggle').click(function() { redrawGraphs(); })
+			$('.sidebar-toggle').click(function() { redrawGraphs(); });
 		}
 		else
 		{
@@ -1349,11 +1347,11 @@ function createChart(period, text_period)
 
 function createMon(key, hash, totalhash, maxHashrate, ac, re, hw, sh, freq, color)
 {
-	var col, toAppend, color, size, skin, thickness, fontsize, name, max;
+	var col, toAppend, size, skin, thickness, fontsize, name, max;
 		
 	if (key === "total")
 	{
-		col = 12,
+		col = 12;
 		toAppend = "#devs-total";
 		color = "#f56954";
 		size = 140;
@@ -1400,24 +1398,20 @@ function createMon(key, hash, totalhash, maxHashrate, ac, re, hw, sh, freq, colo
 			// "tron" case
             if (this.o.skin === 'tron') {
 				
-                var a = this.angle(this.cv)  // Angle
-                        , sa = this.startAngle          // Previous start angle
-                        , sat = this.startAngle         // Start angle
-                        , ea                            // Previous end angle
-                        , eat = sat + a                 // End angle
-                        , r = true;
+                var a = this.angle(this.cv),  // Angle
+                	sa = this.startAngle,          // Previous start angle
+                    sat = this.startAngle,         // Start angle
+                    ea,                            // Previous end angle
+                    eat = sat + a,                 // End angle
+                    r = true;
 
                 this.g.lineWidth = this.lineWidth;
 
-                this.o.cursor
-                        && (sat = eat - 0.3)
-                        && (eat = eat + 0.3);
+                this.o.cursor && (sat = eat - 0.3) && (eat = eat + 0.3);
 
                 if (this.o.displayPrevious) {
                     ea = this.startAngle + this.angle(this.value);
-                    this.o.cursor
-                            && (sa = ea - 0.3)
-                            && (ea = ea + 0.3);
+                    this.o.cursor && (sa = ea - 0.3) && (ea = ea + 0.3);
                     this.g.beginPath();
                     this.g.strokeStyle = this.previousColor;
                     this.g.arc(this.xy, this.xy, this.radius - this.lineWidth, sa, ea, false);
@@ -1467,7 +1461,7 @@ function createMon(key, hash, totalhash, maxHashrate, ac, re, hw, sh, freq, colo
 	    {
 		        $('.'+key).val(Math.ceil(this.value)).trigger('change');
 	    }
-	})
+	});
 	    
 	$('.'+key).css('font-size', fontsize);
 }
@@ -1498,7 +1492,7 @@ function convertMS(ms)
 	h = h % 24;
 
 	return { d: d, h: h, m: m, s: s };
-};
+}
 
 function getExaColor(color)
 {
@@ -1552,7 +1546,7 @@ Number.prototype.noExponents= function(){
     mag -= str.length;  
     while(mag--) z += '0';
     return str + z;
-}
+};
 
 // ****************************** //
 // NETWORK miners pools functions //
@@ -1623,10 +1617,10 @@ $(document).on('click', '.toggle-add-net-pool', function(e) {
 $(document).on('click', '.add-net-pool', function(e) {
 	e.preventDefault();
 	$('.overlay').show();
+	var netMiner = $(this).data('netminer');
 	if ($('.pool_url_'+$(this).data('netminer')).val() && $('.pool_username_'+$(this).data('netminer')).val() && $('.pool_password_'+$(this).data('netminer')).val()) {
 		$('.net-pool-error-'+$(this).data('netminer')).html('').fadeOut();
-		var netMiner = $(this).data('netminer'),
-			params = {
+		var params = {
 				command: 'add_pool',
 				url: $('.pool_url_'+$(this).data('netminer')).val(),
 				user: $('.pool_username_'+$(this).data('netminer')).val(),
@@ -1866,7 +1860,7 @@ function getStats(refresh)
 	// get Json data from minerd and create Knob, table and sysload
     $.getJSON( _baseUrl+"/app/stats", function( data ) 
     {
-		if (data['notloggedin'])
+		if (data.notloggedin)
 		{
 			errorTriggered = true;
 			triggerError('It seems your session expired.');
@@ -1907,7 +1901,7 @@ function getStats(refresh)
 				    $(".warning-message").click(function (e) {
 					    e.preventDefault();
 						$('#modal-log').modal('show');
-				    })
+				    });
 			    } else {
 					$(".disable-if-stopped").fadeOut();
 			    }
@@ -1936,7 +1930,7 @@ function getStats(refresh)
 			    $(".warning-message").click(function (e) {
 				    e.preventDefault();
 					$('#modal-log').modal('show');
-			    })
+			    });
 			}
 			
 			if (refresh)
@@ -2239,9 +2233,9 @@ function getStats(refresh)
 								if (type === 'display')
 								{
 									if (data)
-										return '<small class="label bg-blue">'+data +'&deg;</small>'
+										return '<small class="label bg-blue">'+data +'&deg;</small>';
 									else
-										return '<small class="label label-muted">n.a.</small>'
+										return '<small class="label label-muted">n.a.</small>';
 								}
 								return data;
 							},
@@ -2252,9 +2246,9 @@ function getStats(refresh)
 								if (type === 'display')
 								{
 									if (data)
-										return '<small class="label label-light">'+data +' MHz</small>'
+										return '<small class="label label-light">'+data +' MHz</small>';
 									else
-										return '<small class="label label-light">not available</small>'
+										return '<small class="label label-light">not available</small>';
 								}
 								return data;
 							},
@@ -2264,7 +2258,7 @@ function getStats(refresh)
 							"mRender": function ( data, type, full ) {
 								if (type === 'display')
 								{
-									return '<small class="badge bg-'+data.label+'">'+ convertHashrate(data.hash) +'</small>'
+									return '<small class="badge bg-'+data.label+'">'+ convertHashrate(data.hash) +'</small>';
 								}
 								return data.hash;
 							}
@@ -2274,7 +2268,7 @@ function getStats(refresh)
 							"mRender": function ( data, type, full ) {
 								if (type === 'display')
 								{
-									return data +' secs ago'
+									return data +' secs ago';
 								}
 								return data;
 							}
@@ -2284,7 +2278,7 @@ function getStats(refresh)
 							"mRender": function ( data, type, full ) {
 								if (type === 'display')
 								{
-									return '<small class="text-muted">' + data + '%</small>'
+									return '<small class="text-muted">' + data + '%</small>';
 								}
 								return data;
 							}
@@ -2308,12 +2302,12 @@ function getStats(refresh)
 		    	var maxHashrate = Math.max.apply(Math, hashrates);
 
 				var avgFr = (data.totals.frequency) ? data.totals.frequency : "n.a.";
-				var totTemp = (data.totals.temperature) ? data.totals.temperature : "n.a."
+				var totTemp = (data.totals.temperature) ? data.totals.temperature : "n.a.";
 				
 				totalhash = Math.round(data.totals.hashrate/1000);
 
 				// this is the global stats
-				items["total"] = { "temp": totTemp, "serial": "", "hash": totalhash, "ac": data.totals.accepted, "re": data.totals.rejected, "hw": data.totals.hw_errors, "fr": avgFr, "sh": data.totals.shares, "ls":  data.totals.last_share};
+				items.total = { "temp": totTemp, "serial": "", "hash": totalhash, "ac": data.totals.accepted, "re": data.totals.rejected, "hw": data.totals.hw_errors, "fr": avgFr, "sh": data.totals.shares, "ls":  data.totals.last_share};
 				
 				for (var index in items) 
 				{
@@ -2333,13 +2327,13 @@ function getStats(refresh)
 
 					// Add colored hashrates
 					if (last_share_secs >= 120 && last_share_secs < 240)
-						devData.label = "yellow"
+						devData.label = "yellow";
 					else if (last_share_secs >= 240 && last_share_secs < 480)
-						devData.label = "red"
+						devData.label = "red";
 					else if (last_share_secs >= 480)
-						devData.label = "muted"
+						devData.label = "muted";
 					else
-						devData.label = "green"
+						devData.label = "green";
 												
 					var dev_serial = "serial not available";
 					if (index != "total" && items[index].serial)
@@ -2356,7 +2350,7 @@ function getStats(refresh)
 						//$('.sidebar-hashrate').html("@ "+convertHashrate(items[index].hash));
 					}
 					
-					var devRow = '<tr class="dev-'+index+'"><td class="devs_table_name"><i class="glyphicon glyphicon-hdd"></i>&nbsp;&nbsp;'+index+dev_serial+'</td><td class="devs_table_temp">'+ items[index].temp + '</td><td class="devs_table_freq">'+ items[index].fr + 'MHz</td><td class="devs_table_hash"><strong>'+ convertHashrate(items[index].hash) +'</strong></td><td class="devs_table_sh">'+ items[index].sh +'</td><td class="devs_table_ac">'+ items[index].ac +'</td><td><small class="text-muted">'+parseFloat(percentageAc).toFixed(2)+'%</small></td><td class="devs_table_re">'+ items[index].re +'</td><td><small class="text-muted">'+parseFloat(percentageRe).toFixed(2)+'%</small></td><td class="devs_table_hw">'+ items[index].hw +'</td><td><small class="text-muted">'+parseFloat(percentageHw).toFixed(2)+'%</small></td><td class="devs_table_ls">'+ parseInt(last_share_secs) +' secs ago</td><td><small class="text-muted">'+share_date.toUTCString()+'</small></td></tr>'
+					var devRow = '<tr class="dev-'+index+'"><td class="devs_table_name"><i class="glyphicon glyphicon-hdd"></i>&nbsp;&nbsp;'+index+dev_serial+'</td><td class="devs_table_temp">'+ items[index].temp + '</td><td class="devs_table_freq">'+ items[index].fr + 'MHz</td><td class="devs_table_hash"><strong>'+ convertHashrate(items[index].hash) +'</strong></td><td class="devs_table_sh">'+ items[index].sh +'</td><td class="devs_table_ac">'+ items[index].ac +'</td><td><small class="text-muted">'+parseFloat(percentageAc).toFixed(2)+'%</small></td><td class="devs_table_re">'+ items[index].re +'</td><td><small class="text-muted">'+parseFloat(percentageRe).toFixed(2)+'%</small></td><td class="devs_table_hw">'+ items[index].hw +'</td><td><small class="text-muted">'+parseFloat(percentageHw).toFixed(2)+'%</small></td><td class="devs_table_ls">'+ parseInt(last_share_secs) +' secs ago</td><td><small class="text-muted">'+share_date.toUTCString()+'</small></td></tr>';
 				
 					if (index === "total")
 					{
@@ -2437,9 +2431,9 @@ function getStats(refresh)
 									if (type === 'display')
 									{
 										if (data)
-											return '<small class="label bg-blue">'+data +'&deg;</small>'
+											return '<small class="label bg-blue">'+data +'&deg;</small>';
 										else
-											return '<small class="label label-muted">n.a.</small>'
+											return '<small class="label label-muted">n.a.</small>';
 									}
 									return data;
 								},
@@ -2450,9 +2444,9 @@ function getStats(refresh)
 									if (type === 'display')
 									{
 										if (data)
-											return '<small class="label label-light">'+data +' MHz</small>'
+											return '<small class="label label-light">'+data +' MHz</small>';
 										else
-											return '<small class="label label-light">not available</small>'
+											return '<small class="label label-light">not available</small>';
 									}
 									return data;
 								},
@@ -2462,7 +2456,7 @@ function getStats(refresh)
 								"mRender": function ( data, type, full ) {
 									if (type === 'display')
 									{
-										return '<small class="badge bg-'+data.label+'">'+ convertHashrate(data.hash) +'</small>'
+										return '<small class="badge bg-'+data.label+'">'+ convertHashrate(data.hash) +'</small>';
 									}
 									return data.hash;
 								}
@@ -2472,7 +2466,7 @@ function getStats(refresh)
 								"mRender": function ( data, type, full ) {
 									if (type === 'display')
 									{
-										return data +' secs ago'
+										return data +' secs ago';
 									}
 									return data;
 								}
@@ -2482,7 +2476,7 @@ function getStats(refresh)
 								"mRender": function ( data, type, full ) {
 									if (type === 'display')
 									{
-										return '<small class="text-muted">' + data + '%</small>'
+										return '<small class="text-muted">' + data + '%</small>';
 									}
 									return data;
 								}
@@ -2513,7 +2507,7 @@ function getStats(refresh)
 								tLastShares.push(val.last_share);
 		
 								// this is the global stats
-								networkMiners["total"] = { "ac": tAc, "re": tRe, "hw": tHw, "sh": tSh };
+								networkMiners.total = { "ac": tAc, "re": tRe, "hw": tHw, "sh": tSh };
 						    });
 						    
 							
@@ -2534,13 +2528,13 @@ function getStats(refresh)
 		
 								// Add colored hashrates
 								if (last_share_secs >= 120 && last_share_secs < 240)
-									devData.label = "yellow"
+									devData.label = "yellow";
 								else if (last_share_secs >= 240 && last_share_secs < 480)
-									devData.label = "red"
+									devData.label = "red";
 								else if (last_share_secs >= 480)
-									devData.label = "muted"
+									devData.label = "muted";
 								else
-									devData.label = "green"
+									devData.label = "green";
 															
 								var dev_serial = "serial not available";
 								if (networkMiners[netKey][index].serial)
@@ -2779,33 +2773,33 @@ function getStats(refresh)
 							}
 							
 							// Add empty network pools table
-							$('.net-pools-label-'+md5(netKey)).html('<h4><span class="label label-danger" data-toggle="popover" data-title="'+netKey+'" data-content="'+[networkMinerData.config.ip, networkMinerData.config.port].join(':')+'">Offline</span> '+netKey+'</h4>')
+							$('.net-pools-label-'+md5(netKey)).html('<h4><span class="label label-danger" data-toggle="popover" data-title="'+netKey+'" data-content="'+[networkMinerData.config.ip, networkMinerData.config.port].join(':')+'">Offline</span> '+netKey+'</h4>');
 							$('#net-pools-table-details-'+md5(netKey)).html('<div class="alert alert-warning"><i class="fa fa-warning"></i><strong>No pools</strong> data available.</div>');
 							$('.net-pools-addbox-'+md5(netKey)).fadeOut();
 						}
 					});
 					
-					var tPercentageRe = 0, tPercentageHw = 0, tot_last_share_secs = 0;
+					var tPercentageRe = 0, tPercentageHw = 0, tot_last_share_secs = 0, netDevRow;
 					
 					if (networkMiners.total !== undefined) {
-						var totalShares = (networkMiners['total'].ac+networkMiners['total'].re+networkMiners['total'].hw),
-							tPercentageAc = (100*networkMiners['total'].ac/totalShares),
+						var totalShares = (networkMiners.total.ac+networkMiners.total.re+networkMiners.total.hw),
+							tPercentageAc = (100*networkMiners.total.ac/totalShares),
 							tot_last_share_date = Math.min.apply(Math, tLastShares)*1000;
 						
-						tPercentageRe = (100*networkMiners['total'].re/totalShares);
-						tPercentageHw = (100*networkMiners['total'].hw/totalShares);
+						tPercentageRe = (100*networkMiners.total.re/totalShares);
+						tPercentageHw = (100*networkMiners.total.hw/totalShares);
 						tot_last_share_secs = (tot_last_share_date > 0) ? (new Date().getTime() - tot_last_share_date)/1000 : 0;
 							
 						if (tot_last_share_secs < 0) tot_last_share_secs = 0;
 						
-						var devRow = '<tr class="dev-total"><td class="devs_table_name"><i class="gi gi-server"></i>&nbsp;&nbsp;Total</td><td class="devs_table_temp">-</td><td class="devs_table_freq">-</td><td class="devs_table_hash"><strong>'+ convertHashrate(netHashrates) +'</strong></td><td class="devs_table_sh">'+ networkMiners['total'].sh +'</td><td class="devs_table_ac">'+ networkMiners['total'].ac +'</td><td><small class="text-muted">'+parseFloat(tPercentageAc).toFixed(2)+'%</small></td><td class="devs_table_re">'+ networkMiners['total'].re +'</td><td><small class="text-muted">'+parseFloat(tPercentageRe).toFixed(2)+'%</small></td><td class="devs_table_hw">'+ networkMiners['total'].hw +'</td><td><small class="text-muted">'+parseFloat(tPercentageHw).toFixed(2)+'%</small></td><td class="devs_table_ls">'+ parseInt(tot_last_share_secs) +' secs ago</td><td><small class="text-muted">'+new Date(tot_last_share_date).toUTCString()+'</small></td></tr>';				
+						netDevRow = '<tr class="dev-total"><td class="devs_table_name"><i class="gi gi-server"></i>&nbsp;&nbsp;Total</td><td class="devs_table_temp">-</td><td class="devs_table_freq">-</td><td class="devs_table_hash"><strong>'+ convertHashrate(netHashrates) +'</strong></td><td class="devs_table_sh">'+ networkMiners.total.sh +'</td><td class="devs_table_ac">'+ networkMiners.total.ac +'</td><td><small class="text-muted">'+parseFloat(tPercentageAc).toFixed(2)+'%</small></td><td class="devs_table_re">'+ networkMiners.total.re +'</td><td><small class="text-muted">'+parseFloat(tPercentageRe).toFixed(2)+'%</small></td><td class="devs_table_hw">'+ networkMiners.total.hw +'</td><td><small class="text-muted">'+parseFloat(tPercentageHw).toFixed(2)+'%</small></td><td class="devs_table_ls">'+ parseInt(tot_last_share_secs) +' secs ago</td><td><small class="text-muted">'+new Date(tot_last_share_date).toUTCString()+'</small></td></tr>';				
 						
 						// Network Widgets
 						$(".network-widget-last-share").html(parseInt(tot_last_share_secs) + ' secs');
 						$(".network-widget-hwre-rates").html(parseFloat(tPercentageHw).toFixed(2) + '<sup style="font-size: 20px">%</sup> / ' + parseFloat(tPercentageRe).toFixed(2) + '<sup style="font-size: 20px">%</sup>');
 						
 					} else {
-						var devRow = '<tr class="dev-total"><td class="devs_table_name"><i class="gi gi-server"></i>&nbsp;&nbsp;Total</td><td class="devs_table_temp">-</td><td class="devs_table_freq">-</td><td class="devs_table_hash"><strong>-</strong></td><td class="devs_table_sh">-</td><td class="devs_table_ac">-</td><td><small class="text-muted">-</small></td><td class="devs_table_re">-</td><td><small class="text-muted">-</small></td><td class="devs_table_hw">-</td><td><small class="text-muted">-</small></td><td class="devs_table_ls">-</td><td><small class="text-muted">-</small></td></tr>';
+						netDevRow = '<tr class="dev-total"><td class="devs_table_name"><i class="gi gi-server"></i>&nbsp;&nbsp;Total</td><td class="devs_table_temp">-</td><td class="devs_table_freq">-</td><td class="devs_table_hash"><strong>-</strong></td><td class="devs_table_sh">-</td><td class="devs_table_ac">-</td><td><small class="text-muted">-</small></td><td class="devs_table_re">-</td><td><small class="text-muted">-</small></td><td class="devs_table_hw">-</td><td><small class="text-muted">-</small></td><td class="devs_table_ls">-</td><td><small class="text-muted">-</small></td></tr>';
 						
 						// Network Widgets
 						$(".network-widget-last-share").html('&infin; secs');
@@ -2813,7 +2807,7 @@ function getStats(refresh)
 
 					}
 
-				    $('.network_devs_table_foot').html(devRow);
+				    $('.network_devs_table_foot').html(netDevRow);
 				    
 				    //Add Network Main pool widget
 					$(".network-widget-total-hashrate").html(convertHashrate(netPoolHashrates));
@@ -2825,8 +2819,8 @@ function getStats(refresh)
 				}
 				else
 				{
-					var nodevsMsg = '<div class="alert alert-warning"><i class="fa fa-warning"></i>No network devices found</div>';
-					$('#network-miner-table-details').html(nodevsMsg);
+					var nonetdevsMsg = '<div class="alert alert-warning"><i class="fa fa-warning"></i>No network devices found</div>';
+					$('#network-miner-table-details').html(nonetdevsMsg);
 					$('.network-miners-widget-section').hide();
 				}
 			} // End network miner details
@@ -2834,36 +2828,40 @@ function getStats(refresh)
 			// Add controller temperature
 			if (data.temp)
 			{
-				var temp_bar = "bg-blue";
-				var temp_text = "It's cool here"
-				var sys_temp = parseFloat(data['temp']['value']);
+				var temp_bar = "bg-blue", 
+					temp_text = "It's cool here",
+					sys_temp = parseFloat(data.temp.value),
+					tempthres1,
+					tempthres2,
+					tempthres3,
+					sys_temp_box;
 				
-				if (data['temp']['scale'] === "c")
+				if (data.temp.scale === "c")
 				{
-					var tempthres1 = 40; var tempthres2 = 60; var tempthres3 = 75;
+					tempthres1 = 40; tempthres2 = 60; tempthres3 = 75;
 				}
 				else
 				{
-					var tempthres1 = 104; var tempthres2 = 140; var tempthres3 = 167;
+					tempthres1 = 104; tempthres2 = 140; tempthres3 = 167;
 				}
 				
 				if (sys_temp > tempthres1 && sys_temp < tempthres2)
 				{
 					temp_bar = "bg-green";
-					temp_text = "I'm warm and fine"
+					temp_text = "I'm warm and fine";
 				}
 				else if (sys_temp >= tempthres2 && sys_temp < tempthres3)
 				{
 					temp_bar = "bg-yellow";
-					temp_text = "Well, it's going to be hot here..."
+					temp_text = "Well, it's going to be hot here...";
 				}
 				else if (sys_temp > tempthres3)
 				{
 					temp_bar = "bg-red";
-					temp_text = "HEY MAN! I'm burning! Blow blow!"
+					temp_text = "HEY MAN! I'm burning! Blow blow!";
 				}
 				
-				var sys_temp_box = parseFloat(sys_temp).toFixed(2)+'&deg;'+$(".app_data").data("dashboard-temp");
+				sys_temp_box = parseFloat(sys_temp).toFixed(2)+'&deg;'+$(".app_data").data("dashboard-temp");
 				//<div class="progress xs progress-striped active"><div class="progress-bar progress-bar-'+temp_bar+'" role="progressbar" aria-valuenow="'+parseInt(sys_temp)+'" aria-valuemin="0" aria-valuemax="100" style="width: '+parseInt(sys_temp)+'%"></div></div>';
 				$('.sys-temp-box').addClass(temp_bar);
 				$('.sys-temp-footer').html(temp_text+' <i class="fa fa-arrow-circle-right">');
@@ -3087,7 +3085,7 @@ function getStats(refresh)
 			}
 						
 			// Add Miner Uptime widget
-			var uptime = convertMS(now - data['start_time']*1000);
+			var uptime = convertMS(now - data.start_time*1000);
 
 			var human_uptime = "";
 			for (var ukey in uptime) {
@@ -3098,21 +3096,22 @@ function getStats(refresh)
 			$(".uptime-footer").html("Started on <strong>"+startdate.toUTCString()+"</strong>");
 			
 			// Add System Uptime
-			var sysuptime = convertMS(data['sysuptime']*1000);
-
-			var human_sysuptime = "";
-			for (var ukey in sysuptime) {
-				human_sysuptime = human_sysuptime + "" + sysuptime[ukey] + ukey + " ";
+			var sysuptime = convertMS(data.sysuptime*1000),
+				human_sysuptime = "",
+				llabel;
+				
+			for (var uukey in sysuptime) {
+				human_sysuptime = human_sysuptime + "" + sysuptime[uukey] + uukey + " ";
 			}
 			
 			$(".sysuptime").html("System has been up for: <strong>" + human_sysuptime + "</strong>");
 		    
 			// Add server load average knob graph
-			$.each( data['sysload'], function( lkey, lval ) 
+			$.each( data.sysload, function( lkey, lval ) 
 			{
-				if (lkey === 0) var llabel = "1min";
-				if (lkey === 1) var llabel = "5min";
-				if (lkey === 2) var llabel = "15min";
+				if (lkey === 0) llabel = "1min";
+				if (lkey === 1) llabel = "5min";
+				if (lkey === 2) llabel = "15min";
 			
 				var loadBox = '<div class="col-xs-4 text-center" id="loadavg-'+ lkey +'" style="border-right: 1px solid #f4f4f4"><input type="text" class="loadstep-'+ lkey +'" data-width="60" data-height="60" /><div class="knob-label"><p>'+llabel+'</p></div></div>';
 
@@ -3120,8 +3119,9 @@ function getStats(refresh)
 				
 				$(".sysload").append(loadBox);
 				
-				var lmax = 1; var lcolor = "rgb(71, 134, 81)"
-				if (lval >= 0 && lval <= 1) { lmax = 1; var lcolor = "#00a65a"; }
+				var lmax = 1, lcolor = "rgb(71, 134, 81)";
+				
+				if (lval >= 0 && lval <= 1) { lmax = 1; lcolor = "#00a65a"; }
 				else if (lval > 1 && lval <= 5) { lmax = 5; lcolor = "#f39c12"; }
 				else if (lval > 5 && lval <= 10) { lmax = 10; lcolor = "#f56954"; }
 				else { lmax = lval+(lval*10/100); lcolor = "#777777"; }
@@ -3130,7 +3130,7 @@ function getStats(refresh)
 			        "readOnly": true,
 			        "fgColor":lcolor,
 					'draw' : function () {
-						$(this.i).val(this.cv)
+						$(this.i).val(this.cv);
 					}
 				});
 					
@@ -3151,7 +3151,7 @@ function getStats(refresh)
 				    {
 				        $('.loadstep-'+lkey).val(this.value).trigger('change');
 				    }
-				})
+				});
 				    
 				$('.loadstep-'+lkey).css('font-size','10px');
 			});
@@ -3168,10 +3168,10 @@ function getStats(refresh)
 		// get Json data from stored_stats url (redis) and create the graphs
 		$.getJSON(_baseUrl+"/app/api?command=history_stats&type=hourly", function( data ) 
 		{		
-			var data = Object.keys(data).map(function(key) { 
-				data[key]['timestamp'] = data[key]['timestamp']*1000; 
-				data[key]['hashrate'] = (data[key]['hashrate']/1000/1000).toFixed(2);
-				data[key]['pool_hashrate'] = (data[key]['pool_hashrate']/1000/1000).toFixed(2);									
+			var dataMorris = Object.keys(data).map(function(key) { 
+				data[key].timestamp = data[key].timestamp*1000; 
+				data[key].hashrate = (data[key].hashrate/1000/1000).toFixed(2);
+				data[key].pool_hashrate = (data[key].pool_hashrate/1000/1000).toFixed(2);									
 				return data[key];
 			});
 		
@@ -3181,18 +3181,18 @@ function getStats(refresh)
 			    charts.areaRej.redraw();
 				    
 			    return false;
-			}
+			};
 			
 			var updateGraphs = function()
 			{
-				console.log(data);
-			    charts.areaHash.setData(data);
-			    charts.areaRej.setData(data);
+				console.log(dataMorris);
+			    charts.areaHash.setData(dataMorris);
+			    charts.areaRej.setData(dataMorris);
 				    
 			    return false;
-			}
+			};
 			
-			if (data.length && errorTriggered === false)
+			if (dataMorris.length && errorTriggered === false)
 			{
 					// Initialise new obj
 					var charts = {
@@ -3204,7 +3204,7 @@ function getStats(refresh)
 					charts.areaHash = new Morris.Area({
 						element: 'hashrate-chart',
 						resize: true,
-						data: data,
+						data: dataMorris,
 						xkey: 'timestamp',
 						ykeys: ['hashrate', 'pool_hashrate'],
 						ymax: 'auto',
@@ -3222,7 +3222,7 @@ function getStats(refresh)
 					charts.areaRej = new Morris.Area({
 						element: 'rehw-chart',
 						resize: true,
-						data: data,
+						data: dataMorris,
 						xkey: 'timestamp',
 						ykeys: ['accepted', 'rejected', 'errors'],
 						ymax: 'auto',
@@ -3236,10 +3236,10 @@ function getStats(refresh)
 				
 				
 				$(window).resize(function() {
-					redrawGraphs()
+					redrawGraphs();
 				});
 				
-				$('.sidebar-toggle').click(function() { redrawGraphs(); })
+				$('.sidebar-toggle').click(function() { redrawGraphs(); });
 			}
 			else
 			{

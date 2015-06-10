@@ -12,17 +12,18 @@
 	
 	<title>Minera - <?php echo $pageTitle ?></title>
 	
+	<link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,600,700,300italic,400italic,600italic|Kaushan+Script" rel="stylesheet" type="text/css" />
+
 	<link href="<?php echo base_url('favicon.ico') ?>" rel="icon">
-	<link href="<?php echo base_url('assets/vendor/font-awesome/css/font-awesome.css') ?>" rel="stylesheet" />
-	<link href="<?php echo base_url('assets/vendor/ionicons/css/ionicons.css') ?>" rel="stylesheet" />
-	<link href="<?php echo base_url('assets/vendor/bootstrap/dist/css/bootstrap.css') ?>" rel="stylesheet" />
-	<link href="<?php echo base_url('assets/vendor/bootstrap-switch/dist/css/bootstrap3/bootstrap-switch.min.css') ?>" rel="stylesheet">
-	<link href="<?php echo base_url('assets/vendor/datatables-bootstrap3-plugin/media/css/datatables-bootstrap3.css') ?>" rel="stylesheet" />
-	<link href="<?php echo base_url('assets/vendor/morrisjs/morris.css') ?>" rel="stylesheet" />
-	<link href="<?php echo base_url('assets/vendor/ion.rangeSlider/css/ion.rangeSlider.css') ?>" rel="stylesheet" />
-	<link href="<?php echo base_url('assets/vendor/ion.rangeSlider/css/ion.rangeSlider.skinFlat.css') ?>" rel="stylesheet" />	
-	<link href="<?php echo base_url('assets/vendor/blueimp-file-upload/css/jquery.fileupload.css') ?>" rel="stylesheet" />	
-	<link href="<?php echo base_url('assets/vendor/blueimp-file-upload/css/jquery.fileupload-ui.css') ?>" rel="stylesheet" />
-	<link href="<?php echo base_url('assets/css/AdminLTE.css') ?>" rel="stylesheet" />
-	<link href="<?php echo base_url('assets/css/custom.css') ?>" rel="stylesheet" />
+	
+	<?php if ($this->config->item("ENV") !== "production") : ?>
+		<?php
+		$medias = json_decode(file_get_contents(base_url('assets/media.json')));
+		foreach ($medias->css as $css) : 
+		?>
+			<link href="<?php echo base_url($css) ?>" rel="stylesheet" />
+		<?php endforeach; ?>
+	<?php else : ?>
+		<link href="<?php echo base_url('assets/css/application.min.css') ?>" rel="stylesheet" type="text/css" />
+	<?php endif; ?>
 </head>

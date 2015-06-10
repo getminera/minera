@@ -85,6 +85,80 @@ body > .header { position: fixed !important; }
 
 .bootstro-highlight { background-color: rgba(255, 255, 255, 0.2) !important; }
 
+.spin::before{
+  -webkit-animation: spin 1s infinite linear;
+	-moz-animation: spin 1s infinite linear;
+	-ms-animation: spin 1s infinite linear;
+	-o-animation: spin 1s infinite linear;
+	animation: spin 1s infinite linear;
+}
+
+@keyframes "spin" {
+ from {
+    -webkit-transform: rotate(0deg);
+   	-moz-transform: rotate(0deg);
+   	-o-transform: rotate(0deg);
+   	-ms-transform: rotate(0deg);
+   	transform: rotate(0deg);
+ }
+ to {
+    -webkit-transform: rotate(359deg);
+   	-moz-transform: rotate(359deg);
+   	-o-transform: rotate(359deg);
+   	-ms-transform: rotate(359deg);
+   	transform: rotate(359deg);
+ }
+
+}
+
+@-moz-keyframes spin {
+ from {
+   -moz-transform: rotate(0deg);
+   transform: rotate(0deg);
+ }
+ to {
+   -moz-transform: rotate(359deg);
+   transform: rotate(359deg);
+ }
+
+}
+
+@-webkit-keyframes "spin" {
+ from {
+   -webkit-transform: rotate(0deg);
+   transform: rotate(0deg);
+ }
+ to {
+   -webkit-transform: rotate(359deg);
+   transform: rotate(359deg);
+ }
+
+}
+
+@-ms-keyframes "spin" {
+ from {
+   -ms-transform: rotate(0deg);
+   transform: rotate(0deg);
+ }
+ to {
+   -ms-transform: rotate(359deg);
+   transform: rotate(359deg);
+ }
+
+}
+
+@-o-keyframes "spin" {
+ from {
+   -o-transform: rotate(0deg);
+   transform: rotate(0deg);
+ }
+ to {
+   -o-transform: rotate(359deg);
+   transform: rotate(359deg);
+ }
+
+}
+
 @media all and (max-width : 960px) { 
 	.messages-menu { display: none !important;}
 }

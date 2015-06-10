@@ -1,0 +1,40 @@
+{
+	"js": [
+		"assets/vendor/jquery/dist/jquery.js",
+		"assets/vendor/jquery-ui/jquery-ui.js",
+		"assets/vendor/jqueryui-touch-punch/jquery.ui.touch-punch.js",
+		"assets/vendor/bootstrap/dist/js/bootstrap.js",
+		"assets/vendor/bootstrap-switch/dist/js/bootstrap-switch.min.js",
+		"assets/vendor/md5/src/md5.js",
+		"assets/vendor/jquery.slimscroll/jquery.slimscroll.js",
+		"assets/vendor/jquery.scrollTo/jquery.scrollTo.js",
+		"assets/vendor/jquery-scrollspy-thesmart/scrollspy.js",
+		"assets/vendor/ion.rangeSlider/js/ion.rangeSlider.js",
+		"assets/vendor/datatables/media/js/jquery.dataTables.js",
+		"assets/vendor/datatables-bootstrap3-plugin/media/js/datatables-bootstrap3.js",
+		"assets/vendor/momentjs/moment.js",
+		"assets/vendor/raphael/raphael.js",
+		"assets/vendor/morrisjs/morris.js",
+		"assets/vendor/jquery-validate/dist/jquery.validate.js",
+		"assets/vendor/jquery.iframe-transport/jquery.iframe-transport.js",
+		"assets/vendor/blueimp-file-upload/js/jquery.fileupload.js",
+		"assets/vendor/jquery-knob/js/jquery.knob.js",
+		"assets/vendor/underscore/underscore.js",
+		"assets/js/app.js",
+		"assets/js/minera.js"
+	],
+	"css": [
+		"assets/vendor/font-awesome/css/font-awesome.css",
+		"assets/vendor/ionicons/css/ionicons.css",
+		"assets/vendor/bootstrap/dist/css/bootstrap.css",
+		"assets/vendor/bootstrap-switch/dist/css/bootstrap3/bootstrap-switch.min.css",
+		"assets/vendor/datatables-bootstrap3-plugin/media/css/datatables-bootstrap3.css",
+		"assets/vendor/morrisjs/morris.css",
+		"assets/vendor/ion.rangeSlider/css/ion.rangeSlider.css",
+		"assets/vendor/ion.rangeSlider/css/ion.rangeSlider.skinFlat.css",
+		"assets/vendor/blueimp-file-upload/css/jquery.fileupload.css",
+		"assets/vendor/blueimp-file-upload/css/jquery.fileupload-ui.css",
+		"assets/css/AdminLTE.css",
+		"assets/css/custom.css"
+	]
+}

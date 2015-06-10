@@ -78,7 +78,7 @@
 									<!-- small box -->
 									<div class="small-box bg-red">
 										<div class="inner">
-											<h3 class="widget-total-hashrate"><i class="ion ion-loading-c"></i></h3>
+											<h3 class="widget-total-hashrate"><i class="ion spin ion-load-c"></i></h3>
 											<p>Pool Hashrate</p>
 										</div>
 										<div class="icon"><i class="ion ion-ios-speedometer-outline"></i></div>
@@ -91,7 +91,7 @@
 									<!-- small box -->
 									<div class="small-box bg-light">
 										<div class="inner">
-											<h3 class="widget-hwre-rates"><i class="ion ion-loading-c"></i></h3>
+											<h3 class="widget-hwre-rates"><i class="ion spin ion-load-c"></i></h3>
 											<p>Error/Rejected rates</p>
 										</div>
 										<div class="icon"><i class="ion ion-alert-circled"></i></div>
@@ -104,7 +104,7 @@
 									<!-- small box -->
 									<div class="small-box bg-light-blue">
 										<div class="inner">
-											<h3 class="widget-last-share"><i class="ion ion-loading-c"></i></h3>
+											<h3 class="widget-last-share"><i class="ion spin ion-load-c"></i></h3>
 											<p>Last Share</p>
 										</div>
 										<div class="icon"><i class="ion ion-ios-stopwatch-outline"></i></div>
@@ -120,7 +120,7 @@
 									<!-- small box -->
 									<div class="small-box bg-red">
 										<div class="inner">
-											<h3 class="widget-warning"><i class="ion ion-loading-c"></i></h3>
+											<h3 class="widget-warning"><i class="ion spin ion-load-c"></i></h3>
 											<p>Local miner</p>
 										</div>
 										<div class="icon"><i class="ion ion-alert"></i></div>
@@ -148,7 +148,7 @@
 									<!-- small box -->
 									<div class="small-box sys-temp-box bg-blue">
 										<div class="inner">
-											<h3 class="widget-sys-temp"><i class="ion ion-loading-c"></i></h3>
+											<h3 class="widget-sys-temp"><i class="ion spin ion-load-c"></i></h3>
 											<p>System temperature</p>
 										</div>
 										<div class="icon"><i class="ion ion-thermometer"></i></div>
@@ -161,7 +161,7 @@
 									<!-- small box -->
 									<div class="small-box bg-dark">
 										<div class="inner">
-											<h3 class="widget-main-pool"><i class="ion ion-loading-c"></i></h3>
+											<h3 class="widget-main-pool"><i class="ion spin ion-load-c"></i></h3>
 											<p>Checking...</p>
 										</div>
 										<div class="icon"><i class="ion ion-ios-cloud-upload-outline"></i></div>
@@ -174,7 +174,7 @@
 									<!-- small box -->
 									<div class="small-box bg-aqua">
 										<div class="inner">
-											<h3 class="widget-uptime"><i class="ion ion-loading-c"></i></h3>
+											<h3 class="widget-uptime"><i class="ion spin ion-load-c"></i></h3>
 											<p>Miner uptime</p>
 										</div>
 										<div class="icon"><i class="ion ion-ios-timer-outline"></i></div>
@@ -201,7 +201,7 @@
 									<!-- small box -->
 									<div class="small-box bg-dark-blue">
 										<div class="inner">
-											<h3 class="network-widget-total-hashrate"><i class="ion ion-loading-c"></i></h3>
+											<h3 class="network-widget-total-hashrate"><i class="ion spin ion-load-c"></i></h3>
 											<p>Network Pool Hashrate</p>
 										</div>
 										<div class="icon"><i class="ion ion-ios-speedometer"></i></div>
@@ -214,7 +214,7 @@
 									<!-- small box -->
 									<div class="small-box bg-light2">
 										<div class="inner">
-											<h3 class="network-widget-hwre-rates"><i class="ion ion-loading-c"></i></h3>
+											<h3 class="network-widget-hwre-rates"><i class="ion spin ion-load-c"></i></h3>
 											<p>Network Error/Rejected Rates</p>
 										</div>
 										<div class="icon"><i class="ion ion-alert-circled"></i></div>
@@ -227,7 +227,7 @@
 									<!-- small box -->
 									<div class="small-box bg-light-brown">
 										<div class="inner">
-											<h3 class="network-widget-last-share"><i class="ion ion-loading-c"></i></h3>
+											<h3 class="network-widget-last-share"><i class="ion spin ion-load-c"></i></h3>
 											<p>Last Network Share</p>
 										</div>
 										<div class="icon"><i class="ion ion-ios-stopwatch-outline"></i></div>
