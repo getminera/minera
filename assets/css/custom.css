@@ -44,6 +44,7 @@ body > .header { position: fixed !important; }
 .activeTree { background-color: rgb(107, 107, 107); color: #fff !important; }
 .skin-black .sidebar .sidebar-menu .treeview a:hover { color: #fff !important; }
 .skin-blue .sidebar .sidebar-menu .treeview a:hover { color: #555 !important; }
+.sidebar .sidebar-menu { margin-bottom: 60px !important;}
 .modal-footer { background-color: #F9F9F9; }
 
 .bg-dark-blue { background: #656F80 !important; color: white; }
