@@ -798,13 +798,16 @@ class Util_model extends CI_Model {
 	
 	function autoAddMineraPool()
 	{
-		$pools = json_decode($this->getPools());
+		$pools = json_decode($this->getPools()); $md5s = array();
+		$pools = (is_array($pools)) ? $pools : array();
 
-		foreach ($pools as $pool)
-		{
-			$md5s[] = md5(strtolower($pool->url).strtolower($pool->username).strtolower($pool->password));
+		if (count($pools) > 0) {
+			foreach ($pools as $pool)
+			{
+				$md5s[] = md5(strtolower($pool->url).strtolower($pool->username).strtolower($pool->password));
+			}
 		}
-
+		
 		$mineraMd5 = md5($this->config->item('minera_pool_url').$this->getMineraPoolUser().$this->config->item('minera_pool_password'));
 		$mineraSHA256Md5 = md5($this->config->item('minera_pool_url_sha256').$this->getMineraPoolUser().$this->config->item('minera_pool_password'));
 		
@@ -815,16 +818,20 @@ class Util_model extends CI_Model {
 		$keysSha = array_keys($md5s, $mineraSHA256Md5);		
 		$keysScrypt = array_keys($md5s, $mineraMd5);
 
-		foreach ($keysScrypt as $vScrypt)
-		{
-			unset($pools[$vScrypt]);
-			unset($md5s[$vScrypt]);
+		if (count($keysScrypt) > 0) {
+			foreach ($keysScrypt as $vScrypt)
+			{
+				unset($pools[$vScrypt]);
+				unset($md5s[$vScrypt]);
+			}
 		}
-		
-		foreach ($keysSha as $vSha)
-		{
-			unset($pools[$vSha]);
-			unset($md5s[$vSha]);
+
+		if (count($keysSha) > 0) {		
+			foreach ($keysSha as $vSha)
+			{
+				unset($pools[$vSha]);
+				unset($md5s[$vSha]);
+			}
 		}
 		
 		$pools = array_values($pools);
@@ -844,6 +851,7 @@ class Util_model extends CI_Model {
 		
 		$newPools = $this->getPools();
 		$conf = json_decode($this->redis->get("minerd_json_settings"));
+		if (empty($conf)) $conf = new stdClass();
 		$conf->pools = $this->parsePools($this->redis->get("minerd_software"), json_decode($newPools, true));
 
 		$jsonConfRedis = json_encode($conf);
