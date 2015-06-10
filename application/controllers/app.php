@@ -268,10 +268,9 @@ class App extends Main_Controller {
 			$this->util_model->switchMinerSoftware($minerSoftware);
 			$dataObj->minerd_software = $minerSoftware;
 			
-			$dashSettings = substr(trim($this->input->post('dashboard_refresh_time')), strpos(trim($this->input->post('dashboard_refresh_time')), ";") + 1);
-			
-			$mineraDonationTime = substr(trim($this->input->post('minera_donation_time')), strpos(trim($this->input->post('minera_donation_time')), ";") + 1);
-			
+			$dashSettings = $this->input->post('dashboard_refresh_time');
+			$mineraDonationTime = $this->input->post('minera_donation_time');
+
 			$coinRates = $this->input->post('dashboard_coin_rates');
 			$this->redis->set("altcoins_update", (time()-3600));
 			$dashboardTemp = $this->input->post('dashboard_temp');

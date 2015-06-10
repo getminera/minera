@@ -81,7 +81,7 @@
 											<h3 class="widget-total-hashrate"><i class="ion ion-loading-c"></i></h3>
 											<p>Pool Hashrate</p>
 										</div>
-										<div class="icon"><i class="ion ion-ios7-speedometer-outline"></i></div>
+										<div class="icon"><i class="ion ion-ios-speedometer-outline"></i></div>
 										<a href="#hashrate-history" class="small-box-footer">History <i class="fa fa-arrow-circle-right"></i></a>
 									</div>
 								</div>
@@ -107,7 +107,7 @@
 											<h3 class="widget-last-share"><i class="ion ion-loading-c"></i></h3>
 											<p>Last Share</p>
 										</div>
-										<div class="icon"><i class="ion ion-ios7-stopwatch-outline"></i></div>
+										<div class="icon"><i class="ion ion-ios-stopwatch-outline"></i></div>
 										<a href="#miner-details" class="small-box-footer">Miner details <i class="fa fa-arrow-circle-right"></i></a>
 									</div>
 								</div>
@@ -164,7 +164,7 @@
 											<h3 class="widget-main-pool"><i class="ion ion-loading-c"></i></h3>
 											<p>Checking...</p>
 										</div>
-										<div class="icon"><i class="ion ion-ios7-cloud-upload-outline"></i></div>
+										<div class="icon"><i class="ion ion-ios-cloud-upload-outline"></i></div>
 										<a href="#pools-details" class="small-box-footer">Pools details <i class="fa fa-arrow-circle-right"></i></a>
 									</div>
 								</div>
@@ -177,7 +177,7 @@
 											<h3 class="widget-uptime"><i class="ion ion-loading-c"></i></h3>
 											<p>Miner uptime</p>
 										</div>
-										<div class="icon"><i class="ion ion-ios7-timer-outline"></i></div>
+										<div class="icon"><i class="ion ion-ios-timer-outline"></i></div>
 										<a href="#miner-details" class="small-box-footer uptime-footer">... <i class="fa fa-arrow-circle-right"></i></a>
 									</div>
 								</div>
@@ -204,7 +204,7 @@
 											<h3 class="network-widget-total-hashrate"><i class="ion ion-loading-c"></i></h3>
 											<p>Network Pool Hashrate</p>
 										</div>
-										<div class="icon"><i class="ion ion-ios7-speedometer-outline"></i></div>
+										<div class="icon"><i class="ion ion-ios-speedometer"></i></div>
 										<a href="#network-pools-details" class="small-box-footer">Totals net devices <i class="fa fa-arrow-circle-right"></i></a>
 									</div>
 								</div>
@@ -230,7 +230,7 @@
 											<h3 class="network-widget-last-share"><i class="ion ion-loading-c"></i></h3>
 											<p>Last Network Share</p>
 										</div>
-										<div class="icon"><i class="ion ion-ios7-stopwatch-outline"></i></div>
+										<div class="icon"><i class="ion ion-ios-stopwatch-outline"></i></div>
 										<a href="#network-details" class="small-box-footer">Network details <i class="fa fa-arrow-circle-right"></i></a>
 									</div>
 								</div>

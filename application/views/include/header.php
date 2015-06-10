@@ -13,18 +13,16 @@
 	<title>Minera - <?php echo $pageTitle ?></title>
 	
 	<link href="<?php echo base_url('favicon.ico') ?>" rel="icon">
-	<link href="<?php echo base_url('assets/css/bootstrap.min.css') ?>" rel="stylesheet" />
-	<link href="<?php echo base_url('assets/css/bootstrap-switch.min.css?ver=20141225') ?>" rel="stylesheet">
-	<link href="<?php echo base_url('assets/css/font-awesome.css') ?>" rel="stylesheet" />
-	<link href="<?php echo base_url('assets/css/ionicons.min.css') ?>" rel="stylesheet" />
-	<link href="<?php echo base_url('assets/css/datatables/dataTables.bootstrap.css') ?>" rel="stylesheet" />
-	<link href="<?php echo base_url('assets/css/custom.css?ver=20141225') ?>" rel="stylesheet" />
-	<link href="<?php echo base_url('assets/css/morris.css') ?>" rel="stylesheet" />
-	<link href="<?php echo base_url('assets/css/jQueryUI/jquery-ui-1.10.3.custom.min.css') ?>" rel="stylesheet" />
+	<link href="<?php echo base_url('assets/vendor/font-awesome/css/font-awesome.css') ?>" rel="stylesheet" />
+	<link href="<?php echo base_url('assets/vendor/ionicons/css/ionicons.css') ?>" rel="stylesheet" />
+	<link href="<?php echo base_url('assets/vendor/bootstrap/dist/css/bootstrap.css') ?>" rel="stylesheet" />
+	<link href="<?php echo base_url('assets/vendor/bootstrap-switch/dist/css/bootstrap3/bootstrap-switch.min.css') ?>" rel="stylesheet">
+	<link href="<?php echo base_url('assets/vendor/datatables-bootstrap3-plugin/media/css/datatables-bootstrap3.css') ?>" rel="stylesheet" />
+	<link href="<?php echo base_url('assets/vendor/morrisjs/morris.css') ?>" rel="stylesheet" />
+	<link href="<?php echo base_url('assets/vendor/ion.rangeSlider/css/ion.rangeSlider.css') ?>" rel="stylesheet" />
+	<link href="<?php echo base_url('assets/vendor/ion.rangeSlider/css/ion.rangeSlider.skinFlat.css') ?>" rel="stylesheet" />	
+	<link href="<?php echo base_url('assets/vendor/blueimp-file-upload/css/jquery.fileupload.css') ?>" rel="stylesheet" />	
+	<link href="<?php echo base_url('assets/vendor/blueimp-file-upload/css/jquery.fileupload-ui.css') ?>" rel="stylesheet" />
 	<link href="<?php echo base_url('assets/css/AdminLTE.css') ?>" rel="stylesheet" />
-	<link href="<?php echo base_url('assets/css/ion.rangeSlider.css') ?>" rel="stylesheet" />
-	<link href="<?php echo base_url('assets/css/ion.rangeSlider.skinFlat.css') ?>" rel="stylesheet" />	
-	<link href="<?php echo base_url('assets/css/jquery.fileupload.css') ?>" rel="stylesheet" />	
-	<link href="<?php echo base_url('assets/css/jquery.fileupload-ui.css') ?>" rel="stylesheet" />
-	<link href="<?php echo base_url('assets/css/bootstro.min.css') ?>" rel="stylesheet" />
+	<link href="<?php echo base_url('assets/css/custom.css') ?>" rel="stylesheet" />
 </head>

@@ -169,6 +169,16 @@ $(function() {
 		$('#modal-terminal').modal('hide');
 	});
 	
+	if (thisSection === "dashboard") {
+		jQuery.ajax({
+			url: "https://www.coinbase.com/assets/button.js",
+			dataType: "script",
+			cache: true
+		}).done(function() {
+			console.log("Coinbase loaded");
+		});
+	}
+	
 	if (thisSection === "charts") {
 	    
 		// Chart Scripts
@@ -470,20 +480,20 @@ $(function() {
 	    $("#option-minera-donation-time").ionRangeSlider({
 			min: 0,
 			max: 360,
-			to: (saved_donation_time) ? saved_donation_time : 0,
-			type: 'double',
+			from: (saved_donation_time) ? saved_donation_time : 0,
+			type: 'single',
 			step: 10,
 			postfix: " Mins",
-			hasGrid: true,
-			onLoad: function (obj) {
-				changeDonationWorth(donation_profitability, obj.toNumber);
+			grid: true,
+			onStart: function (obj) {
+				changeDonationWorth(donation_profitability, obj.from);
 			},
 			onChange: function (obj) {
-				if (obj.fromNumber > 0)
+				if (obj.from > 0)
 				{
-					$("#option-minera-donation-time").ionRangeSlider('update', { from: 0 });
+					$("#option-minera-donation-time").ionRangeSlider('update', { to: 0 });
 				}
-				changeDonationWorth(donation_profitability, obj.toNumber);
+				changeDonationWorth(donation_profitability, obj.from);
 			}
 		});
 		
@@ -494,23 +504,23 @@ $(function() {
 			type: 'single',
 			step: 1,
 			postfix: " Mhz",
-			hasGrid: true,
+			grid: true,
 		});
 	
 	    $("#option-dashboard-refresh-time").ionRangeSlider({
 			min: 0,
 			max: 600,
-			to: $("#option-dashboard-refresh-time").data("saved-refresh-time"),
-			type: 'double',
+			from: $("#option-dashboard-refresh-time").data("saved-refresh-time"),
+			type: 'single',
 			step: 5,
 			postfix: " Secs",
-			hasGrid: true,
+			grid: true,
 			onChange: function (obj) {
-				if (obj.fromNumber > 0)
+				if (obj.from > 0)
 				{
 					$("#option-dashboard-refresh-time").ionRangeSlider('update', { from: 0 });
 				}
-				if (obj.toNumber < 5)
+				if (obj.to < 5)
 				{
 					$("#option-dashboard-refresh-time").ionRangeSlider('update', { to: 5 });
 				}
@@ -1065,9 +1075,9 @@ $(function() {
 			type: 'single',
 			step: 0.00001,
 			postfix: ' <i class="fa fa-btc"></i>',
-			hasGrid: true,
+			grid: true,
 			onChange: function (obj) {
-				changeEarnings(obj.fromNumber);
+				changeEarnings(obj.from);
 			}
 		});	
 	}
@@ -1079,6 +1089,28 @@ $(function() {
 // Various functions
 //
 *********************/
+
+function loadScript(url, callback){
+    var script = document.createElement("script")
+    script.type = "text/javascript";
+
+    if (script.readyState){  //IE
+        script.onreadystatechange = function(){
+            if (script.readyState == "loaded" ||
+                    script.readyState == "complete"){
+                script.onreadystatechange = null;
+                callback();
+            }
+        };
+    } else {  //Others
+        script.onload = function(){
+            callback();
+        };
+    }
+
+    script.src = url;
+    document.getElementsByTagName("head")[0].appendChild(script);
+}
 
 function saveSettings(hide, saveonly)
 {
