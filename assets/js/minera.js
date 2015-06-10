@@ -2903,7 +2903,7 @@ function getStats(refresh)
 								if (type === 'display')
 								{
 									if ( ($('.profit_algo').data('profit-algo') === 'sha256' && full[3].coin === 'btc') || ($('.profit_algo').data('profit-algo') === 'scrypt' && full[3].coin !== 'btc')) 
-										return '<i class="fa fa-btc"></i> '+data;
+										return '<i class="fa fa-btc"></i> <strong>'+data+'</strong>';
 									else
 										return '-';
 								}
@@ -3047,10 +3047,11 @@ function getStats(refresh)
 					currentProfitData.hash = (selHashrate > 0) ? selUnit*selHashrate*selPeriod : data.totals.hashrate/1000000;
 					updateProfitDataTable(data, currentProfitData);
 				});
+				$('.profit-table-details-error').html('');
 			}
 			else
 			{
-				$('#profit-table-details').html('<div class="alert alert-warning"><i class="fa fa-warning"></i><strong>No coins</strong> data available.</div>');
+				$('.profit-table-details-error').html('<div class="alert alert-warning"><i class="fa fa-warning"></i><strong>No coins</strong> data available, please wait and try to refresh.</div>');
 			}
 						
 			// Add Miner Uptime widget

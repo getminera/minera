@@ -291,6 +291,7 @@
 									</div>
 									<div class="row">
 										<div class="col-sm-12">
+											<div class="profit-table-details-error"></div>
 											<div class="table-responsive">
 												  <table id="profit-table-details" class="table table-striped datatable">
 													  <thead>
@@ -317,7 +318,7 @@
 									</div><!-- /.row - inside box -->
 								</div><!-- /.box-body -->
 								<div class="box-footer">
-							 		<h6>Exchange rates taken by <a href="https://www.cryptsy.com/users/register?refid=243592">Cryptsy</a> are updated every 10 minutes, everything else are in real time. Profit formula is: <i>( time / (difficulty * 2^32) / hashrate ) * reward</i></h6>
+							 		<h6>Exchange rates taken by <a href="https://www.cryptsy.com/users/register?refid=243592">Cryptsy</a> are updated every 10 minutes, everything else are (almost) in real time. Profit formula is: <i>( time / (difficulty * 2^32) / hashrate ) * reward</i></h6>
 								</div>
 							</div><!-- /.profit box -->
 						
