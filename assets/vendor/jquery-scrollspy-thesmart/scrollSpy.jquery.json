@@ -1,0 +1,35 @@
+{
+    "name": "scrollSpy",
+    "title": "jQuery ScrollSpy",
+    "description": "jQuery plugin for detecting enter/exit of elements in the viewport when the user scrolls",
+    "keywords": [
+        "scrollspy",
+        "scroll",
+        "viewport"
+    ],
+    "version": "0.1.3",
+    "author": {
+        "name": "John Smart",
+        "url": "https://github.com/thesmart"
+    },
+    "maintainers": [
+        {
+            "name": "John Smart",
+            "email": "smartj@gmail.com",
+            "url": "https://github.com/thesmart"
+        }
+    ],
+    "licenses": [
+        {
+            "type": "MIT",
+            "url": "https://raw.github.com/thesmart/jquery-scrollspy/master/LICENSE"
+        }
+    ],
+    "bugs": "https://github.com/thesmart/jquery-scrollspy/issues",
+    "homepage": "https://github.com/thesmart/jquery-scrollspy",
+    "docs": "https://github.com/thesmart/jquery-scrollspy",
+    "download": "https://github.com/thesmart/jquery-scrollspy/archive/0.1.3.zip",
+    "dependencies": {
+        "jquery": ">=1.7"
+    }
+}

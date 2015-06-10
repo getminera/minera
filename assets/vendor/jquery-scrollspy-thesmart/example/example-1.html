@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Example</title>
+	<script src="http://code.jquery.com/jquery-1.9.1.js"></script>
+	<script src="../scrollspy.js"></script>
+</head>
+<body>
+<script>
+	var body = $('body');
+	for (var i = 0; i < 100; ++i) {
+		var element = $('<div id="tile-' + i + '" class="tile"><h2>Tile #' + i + '</h2></div>');
+		body.append(element);
+	}
+</script>
+<style>
+	.tile {
+		width: 290px;
+		height: 290px;
+		float: left;
+		border: 1px solid #999;
+		margin: 4px;
+	}
+</style>
+<script>
+	$('.tile').on('scrollSpy:enter', function() {
+		console.log('enter:', $(this).attr('id'));
+	});
+
+	$('.tile').on('scrollSpy:exit', function() {
+		console.log('exit:', $(this).attr('id'));
+	});
+
+	$('.tile').scrollSpy();
+</script>
+</body>
+</html>
