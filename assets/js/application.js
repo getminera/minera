@@ -50547,7 +50547,439 @@ function change_skin(cls) {
       });
     });
   };
-}(window.jQuery || window.Zepto));$(function () {
+}(window.jQuery || window.Zepto));/*********************
+//
+// Various functions
+//
+*********************/
+function loadScript(url, callback) {
+  'use strict';
+  var script = document.createElement('script');
+  script.type = 'text/javascript';
+  if (script.readyState) {
+    //IE
+    script.onreadystatechange = function () {
+      if (script.readyState === 'loaded' || script.readyState === 'complete') {
+        script.onreadystatechange = null;
+        callback();
+      }
+    };
+  } else {
+    //Others
+    script.onload = function () {
+      callback();
+    };
+  }
+  script.src = url;
+  document.getElementsByTagName('head')[0].appendChild(script);
+}
+function convertHashrate(hash) {
+  'use strict';
+  if (hash > 900000000000)
+    return (hash / 1000000000000).toFixed(2) + 'Ph/s';
+  if (hash > 900000000)
+    return (hash / 1000000000).toFixed(2) + 'Th/s';
+  else if (hash > 900000)
+    return (hash / 1000000).toFixed(2) + 'Gh/s';
+  else if (hash > 900)
+    return (hash / 1000).toFixed(2) + 'Mh/s';
+  else
+    return hash.toFixed(0) + 'Kh/s';
+}
+function convertMS(ms) {
+  'use strict';
+  var d, h, m, s;
+  s = Math.floor(ms / 1000);
+  m = Math.floor(s / 60);
+  s = s % 60;
+  h = Math.floor(m / 60);
+  m = m % 60;
+  d = Math.floor(h / 24);
+  h = h % 24;
+  return {
+    d: d,
+    h: h,
+    m: m,
+    s: s
+  };
+}
+function getExaColor(color) {
+  'use strict';
+  if (color === 'green')
+    return '#00a65a';
+  else if (color === 'yellow')
+    return '#f39c12';
+  else if (color === 'red')
+    return '#f56954';
+  else
+    return '#999';
+}
+function callUpdate() {
+  'use strict';
+  //$('.center').append('<div class="form-box" style="width:90%"><div class="header" id="msglog-box" style="font-size:16px;"></div></div>');
+  $.ajax({
+    url: _baseUrl + 'app/api?command=update_minera',
+    dataType: 'json',
+    success: function (data) {
+      if (data) {
+        console.log(data);  //$('#msglog-box').html('<p>'+data+'</p>');
+      }
+    }
+  });
+}
+function timer(counter) {
+  'use strict';
+  var count = counter ? counter - 1 : $('body').data('count') - 1;
+  if (count < 0) {
+    clearInterval(counter);
+    //counter ended, do something here
+    return;
+  }
+  if (count === 0) {
+    $('.lockscreen-name').hide();
+    $('#time').html($('body').data('count-message'));
+    $('.center').center();
+  } else
+    $('#time').html(count);
+  setTimeout(function () {
+    timer(count);
+  }, 1000);
+}
+function saveSettings(hide, saveonly) {
+  'use strict';
+  if (saveonly === false) {
+    $('#modal-saving-label').html('Saving data, please wait...');
+    $('#modal-saving').modal('show');
+  }
+  var saveUrl = _baseUrl + '/app/save_settings';
+  var formData = $('#minersettings').serialize();
+  $.ajax({
+    type: 'POST',
+    url: saveUrl,
+    data: formData,
+    cache: false,
+    success: function (resp) {
+      if (hide && !saveonly) {
+        $('#modal-saving').modal('hide');
+        window.location.reload();
+      }
+    }
+  });
+}
+function changeDonationWorth(profitability, value) {
+  'use strict';
+  var amount = profitability / 24 / 60 * value, string = value > 0 ? 'about' : 'exactly', h = 0, new_value = 0, period = 0;
+  if (value >= 60) {
+    h = Math.floor(value / 60);
+    new_value = value % 60;
+    period = h + ' hour(s) ' + (new_value > 0 ? ' and ' + new_value + ' minute(s)' : '');
+  } else {
+    period = value + ' minutes';
+  }
+  $('.donation-worth').html('<small>Mining for ' + period + ' in a day your donation per MH/s worths ' + string + ':</small> <span class="label label-success"><i class="fa fa-btc"></i>&nbsp;' + amount.toFixed(8) + '</span>');
+  if (value > 0 && value < 90) {
+    $('.donation-mood').html('<i class="fa fa-smile-o"></i> Your support is much appreciate. Thank you!').removeClass().addClass('donation-mood badge bg-blue');
+  } else if (value >= 90 && value < 180) {
+    $('.donation-mood').html('<i class="fa fa-sun-o"></i> WOW that\'s really cool! Thank you!').removeClass().addClass('donation-mood badge bg-green');
+  } else if (value >= 180 && value < 270) {
+    $('.donation-mood').html('<i class="fa fa-star"></i> That\'s amazing! You are a star! Thank you!').removeClass().addClass('donation-mood badge bg-yellow');
+  } else if (value >= 270 && value <= 360) {
+    $('.donation-mood').html('<i class="fa fa-heart"></i> You are my hero! You really rock! Thank you so much!').removeClass().addClass('donation-mood badge bg-red');
+  } else {
+    $('.donation-mood').html('<i class="fa fa-frown-o"></i> Time donation is disabled').removeClass().addClass('donation-mood badge');
+  }
+}
+// Show or Hide the options related to the selected miner software
+function showHideMinerOptions(change) {
+  'use strict';
+  var sel = $('#minerd-software option:selected').text().match(/\[Custom Miner\]/);
+  if ($('#minerd-software').val() !== 'cpuminer' && sel === null) {
+    $('.options-selection').show();
+    $('.legend-option-autodetect').html('(--scan=all)');
+    $('.legend-option-log').html('(--log-file)');
+    $('#minerd-autotune').hide();
+    $('input[name="minerd_autotune"]').prop('disabled', true);
+    $('#minerd-startfreq').hide();
+    $('input[name="minerd_startfreq"]').prop('disabled', true);
+    $('#minerd-scrypt').show();
+    $('#minerd-api-allow').show();
+    $('input[name="minerd_scrypt"]').prop('disabled', false);
+  } else if (sel !== null) {
+    $('.options-selection').hide();
+    $('.guided-options').fadeOut();
+    $('.manual-options').fadeIn();
+    $('.btn-manual-options').addClass('disabled');
+    $('.btn-guided-options').removeClass('disabled');
+    $('#manual_options').val(1);
+    $('#guided_options').val(0);
+  } else {
+    $('.options-selection').show();
+    $('.legend-option-autodetect').html('(--gc3355-detect)');
+    $('.legend-option-log').html('(--log)');
+    $('#minerd-log').show();
+    $('input[name="minerd_log"]').prop('disabled', false);
+    $('#minerd-autotune').show();
+    $('input[name="minerd_autotune"]').prop('disabled', false);
+    $('#minerd-startfreq').show();
+    $('input[name="minerd_startfreq"]').prop('disabled', false);
+    $('#minerd-scrypt').hide();
+    $('#minerd-api-allow').hide();
+    $('input[name="minerd_scrypt"]').prop('disabled', true);
+  }
+  $('.detail-minerdsoftware').remove();
+  $('.note-minerdsoftware').remove();
+  if (change) {
+    if ($('#minerd-software').val() === 'cpuminer') {
+      $('.group-minerdsoftware').append('<h6 class="detail-minerdsoftware"><a href="https://github.com/siklon/cpuminer-gc3355" target="_blank"><small class="badge bg-red">CPUminer-GC3355</small></a> is a fork of Cpuminer and is the best software for gridseed devices like Minis and Blades. It is fully optimised and supports autotune, autodetection, frequency and it\'s really stable. <a href="https://github.com/siklon/cpuminer-gc3355" target="_blank">More info</a>.</h6>');
+    } else if ($('#minerd-software').val() === 'bfgminer') {
+      $('.group-minerdsoftware').append('<h6 class="detail-minerdsoftware"><a href="https://github.com/luke-jr/bfgminer" target="_blank"><small class="badge bg-red">BFGminer</small></a> has a really large amount of devices supported, it has also a lot of features you can use to get the best from your devices. It\'s a stable software. <a href="https://github.com/luke-jr/bfgminer" target="_blank">More info</a>.</h6>');
+    } else if ($('#minerd-software').val() === 'cgminer') {
+      $('.group-minerdsoftware').append('<h6 class="detail-minerdsoftware"><a href="https://github.com/ckolivas/cgminer" target="_blank"><small class="badge bg-red">CGminer</small></a> is similar to bfgminer, supports a large amount of devices but probably is less updated than bfg. It\'s a stable software. <a href="https://github.com/ckolivas/cgminer" target="_blank">More info</a>.</h6>');
+    } else if ($('#minerd-software').val() === 'cgdmaxlzeus') {
+      $('.group-minerdsoftware').append('<h6 class="detail-minerdsoftware"><a href="https://github.com/dmaxl/cgminer/" target="_blank"><small class="badge bg-red">CGminer Dmaxl Zeus</small></a> is a Cgminer 4.3.5 fork with GridSeed and Zeus scrypt ASIC support, it has some issues with Minera. Stability is unknown. <a href="https://github.com/dmaxl/cgminer/" target="_blank">More info</a>.</h6>');
+    } else {
+      $('.group-minerdsoftware').append('<h6 class="detail-minerdsoftware"><small class="badge bg-red">Custom Miner</small> is a miner you uploaded, it\'s up to you, but it\'s recommended to use "manual" options below, cause Minera can\'t know the "guided" options for your custom miner.</h6>');
+    }
+    $('.group-minerdsoftware').append('<h5 class="note-minerdsoftware"><strong>NOTE:</strong> <i>remember to review your settings below if you change the miner software because they haven\'t the same config options and the miner process could not start.</i></5>');
+  }
+}
+function createChart(period, text_period) {
+  'use strict';
+  /* Morris.js Charts */
+  // get Json data from stored_stats url (redis) and create the graphs
+  $.getJSON(_baseUrl + '/app/api?command=history_stats&type=' + period, function (data) {
+    var refresh = false, areaHash = {}, areaRej = {}, dataChart = Object.keys(data).map(function (key) {
+        data[key].timestamp = data[key].timestamp * 1000;
+        data[key].hashrate = (data[key].hashrate / 1000 / 1000).toFixed(2);
+        data[key].pool_hashrate = (data[key].pool_hashrate / 1000 / 1000).toFixed(2);
+        return data[key];
+      });
+    function redrawGraphs() {
+      areaHash.redraw();
+      areaRej.redraw();
+      return false;
+    }
+    function updateGraphs(data) {
+      areaHash.setData(data);
+      areaRej.setData(data);
+      return false;
+    }
+    if (dataChart.length > 0) {
+      if (refresh === false) {
+        // Hashrate history graph
+        areaHash = new Morris.Area({
+          element: 'hashrate-chart-' + period,
+          resize: true,
+          data: dataChart,
+          xkey: 'timestamp',
+          ykeys: [
+            'hashrate',
+            'pool_hashrate'
+          ],
+          ymax: 'auto',
+          postUnits: 'Mh/s',
+          labels: [
+            'Devices',
+            'Pool'
+          ],
+          lineColors: [
+            '#3c8dbc',
+            '#00c0ef'
+          ],
+          lineWidth: 2,
+          pointSize: 3,
+          hideHover: 'auto',
+          behaveLikeLine: true
+        });
+        // Rejected/Errors graph
+        areaRej = new Morris.Area({
+          element: 'rehw-chart-' + period,
+          resize: true,
+          data: dataChart,
+          xkey: 'timestamp',
+          ykeys: [
+            'accepted',
+            'rejected',
+            'errors'
+          ],
+          ymax: 'auto',
+          labels: [
+            'Accepted',
+            'Rejected',
+            'Errors'
+          ],
+          lineColors: [
+            '#00a65a',
+            '#f39c12',
+            '#f56954'
+          ],
+          lineWidth: 2,
+          pointSize: 3,
+          hideHover: 'auto',
+          behaveLikeLine: true
+        });
+      } else {
+        updateGraphs(dataChart);
+      }
+      $(window).resize(function () {
+        redrawGraphs();
+      });
+      $('.sidebar-toggle').click(function () {
+        redrawGraphs();
+      });
+    } else {
+      $('#hashrate-chart-' + period).css({
+        'height': '100%',
+        'overflow': 'visible',
+        'margin-top': '20px'
+      }).html('<div class="alert alert-warning"><i class="fa fa-warning"></i><b>Ops!</b> <small>No data collected, wait at least ' + text_period + ' to see the chart.</small></div>');
+      $('#rehw-chart-' + period).css({
+        'height': '100%',
+        'overflow': 'visible',
+        'margin-top': '20px'
+      }).html('<div class="alert alert-warning"><i class="fa fa-warning"></i><b>Ops!</b> <small>No data collected, wait at least ' + text_period + ' to see the chart.</small></div>');
+    }
+    $('.overlay').hide();
+    $('.loading-img').hide();
+  });
+}
+//End get stored stats
+function createMon(key, hash, totalhash, maxHashrate, ac, re, hw, sh, freq, color) {
+  'use strict';
+  var col, toAppend, size, skin, thickness, fontsize, name, max;
+  if (key === 'total') {
+    col = 12;
+    toAppend = '#devs-total';
+    color = '#f56954';
+    size = 140;
+    skin = 'tron';
+    thickness = '.2';
+    fontsize = '10pt';
+  } else {
+    col = 4;
+    toAppend = '#devs';
+    color = getExaColor(color);
+    size = 80;
+    skin = 'basic';
+    thickness = '.2';
+    fontsize = '8pt';
+  }
+  if (freq)
+    name = key + ' @ ' + freq + 'Mhz';
+  else
+    name = key;
+  // Add per device knob graph
+  var devBox = '<div class="col-xs-' + col + ' text-center" id="master-' + key + '"><input type="text" class="' + key + '" /><div class="knob-label"><p><strong>' + name + '</strong></p><p>A: ' + ac + ' - R: ' + re + ' - H: ' + hw + '</p></div></div>';
+  $('#master-' + key).remove();
+  $(toAppend).append(devBox);
+  $('.' + key).data('hashrate', hash);
+  $('.' + key).knob({
+    'readOnly': true,
+    'fgColor': color,
+    'inputColor': '#434343',
+    'thickness': thickness,
+    'skin': skin,
+    'displayPrevious': true,
+    'ticks': 16,
+    'width': size,
+    'height': size,
+    'draw': function () {
+      // 'tron' case
+      if (this.o.skin === 'tron') {
+        var a = this.angle(this.cv),
+          // Angle
+          sa = this.startAngle,
+          // Previous start angle
+          sat = this.startAngle,
+          // Start angle
+          ea,
+          // Previous end angle
+          eat = sat + a,
+          // End angle
+          r = true;
+        this.g.lineWidth = this.lineWidth;
+        this.o.cursor && (sat = eat - 0.3) && (eat = eat + 0.3);
+        if (this.o.displayPrevious) {
+          ea = this.startAngle + this.angle(this.value);
+          this.o.cursor && (sa = ea - 0.3) && (ea = ea + 0.3);
+          this.g.beginPath();
+          this.g.strokeStyle = this.previousColor;
+          this.g.arc(this.xy, this.xy, this.radius - this.lineWidth, sa, ea, false);
+          this.g.stroke();
+        }
+        this.g.beginPath();
+        this.g.strokeStyle = r ? this.o.fgColor : this.fgColor;
+        this.g.arc(this.xy, this.xy, this.radius - this.lineWidth, sat, eat, false);
+        this.g.stroke();
+        this.g.lineWidth = 2;
+        this.g.beginPath();
+        this.g.strokeStyle = this.o.fgColor;
+        this.g.arc(this.xy, this.xy, this.radius - this.lineWidth + 1 + this.lineWidth * 2 / 3, 0, 2 * Math.PI, false);
+        this.g.stroke();
+        this.i.val(convertHashrate(this.cv));
+        return false;
+      } else {
+        this.i.val(convertHashrate(this.cv));
+      }
+    }
+  });
+  if (key === 'total')
+    max = totalhash;
+  else
+    max = maxHashrate;
+  $('.' + key).trigger('configure', {
+    'min': 0,
+    'max': max,
+    'step': 1
+  });
+  $({ value: 0 }).animate({ value: hash }, {
+    duration: 1000,
+    easing: 'swing',
+    step: function () {
+      $('.' + key).val(Math.ceil(this.value)).trigger('change');
+    }
+  });
+  $('.' + key).css('font-size', fontsize);
+}
+function changeEarnings(value) {
+  'use strict';
+  var hashrate = $('.widget-total-hashrate').data('pool-hashrate');
+  var amount = value * hashrate / 1000;
+  $('.profitability-results').html('<span class="label bg-blue">' + convertHashrate(hashrate) + '</span>&nbsp;x&nbsp;<span class="label bg-green">' + value.toFixed(5) + '</span> = <small>Day: </small><span class="badge bg-red">' + amount.toFixed(8) + '</span> <small>Week: </small><span class="badge bg-light">' + (amount * 7).toFixed(8) + '</span> <small>Month: </small><span class="badge bg-light">' + (amount * 30).toFixed(8) + '</span>');
+}
+// Errors
+function triggerError(msg) {
+  'use strict';
+  $('.widgets-section').hide();
+  $('.top-section').attr('style', 'display: none !important');
+  $('.right-section').hide();
+  $('.left-section').hide();
+  $('.messages-avg').hide();
+  $('.warning-message').html(msg);
+  $('.warning-section').fadeIn();
+  return false;
+}
+Number.prototype.noExponents = function () {
+  'use strict';
+  var data = String(this).split(/[eE]/);
+  if (data.length === 1)
+    return data[0];
+  var z = '', sign = this < 0 ? '-' : '', str = data[0].replace('.', ''), mag = Number(data[1]) + 1;
+  if (mag < 0) {
+    z = sign + '0.';
+    while (mag++)
+      z += '0';
+    return z + str.replace(/^\-/, '');
+  }
+  mag -= str.length;
+  while (mag--)
+    z += '0';
+  return str + z;
+};
+/*
+// Main startup function //
+*/
+$(function () {
   'use strict';
   $('body').tooltip({
     selector: '[data-toggle="tooltip"]',
@@ -50558,32 +50990,6 @@ function change_skin(cls) {
     trigger: 'hover'
   });
   var thisSection = $('.header').data('this-section');
-  /*
-	$('.box').on('scrollSpy:enter', function() {
-		$('.menu-'+$(this).attr('id')).addClass('active');
-	});
-	
-	$('.box').on('scrollSpy:exit', function() {
-		$('.menu-'+$(this).attr('id')).removeClass('active');
-	});
-	
-	$('.box').scrollSpy();
-	
-	if( !window.location.hash ) {
-		$('html, body').animate({scrollTop : 0}, 800);
-	}
-	*/
-  String.prototype.hashCode = function () {
-    var hash = 0, i, chr, len;
-    if (this.length === 0)
-      return hash;
-    for (i = 0, len = this.length; i < len; i++) {
-      chr = this.charCodeAt(i);
-      hash = (hash << 5) - hash + chr;
-      hash |= 0;  // Convert to 32bit integer
-    }
-    return hash;
-  };
   // Smmoth scroll
   $('a[href*=#]:not([href=#])').click(function () {
     if (location.pathname.replace(/^\//, '') === this.pathname.replace(/^\//, '') && location.hostname === this.hostname) {
@@ -50595,10 +51001,6 @@ function change_skin(cls) {
       }
     }
   });
-  startTime();
-  //$(document).ready(function(){
-  //	bootstro.start();
-  //});
   function startTime() {
     var today = new Date();
     var h = today.getHours();
@@ -50608,12 +51010,13 @@ function change_skin(cls) {
     m = checkTime(m);
     s = checkTime(s);
     //Check for PM and AM
-    var day_or_night = h > 11 ? 'PM' : 'AM';
+    var dayOrNight = h > 11 ? 'PM' : 'AM';
     //Convert to 12 hours system
-    if (h > 12)
+    if (h > 12) {
       h -= 12;
+    }
     //Add time to the headline and update every 500 milliseconds
-    $('.toptime').html(h + ':' + m + ':' + s + ' ' + day_or_night);
+    $('.toptime').html(h + ':' + m + ':' + s + ' ' + dayOrNight);
     setTimeout(function () {
       startTime();
     }, 500);
@@ -50624,6 +51027,7 @@ function change_skin(cls) {
     }
     return i;
   }
+  startTime();
   $('.miner-action').click(function (e) {
     e.preventDefault();
     var action = $(this).data('miner-action');
@@ -50680,29 +51084,52 @@ function change_skin(cls) {
     e.preventDefault();
     var a = document.createElement('a');
     a.href = _baseUrl;
-    if (!$('iframe').attr('src'))
+    if (!$('iframe').attr('src')) {
       $('iframe').attr('src', 'http://' + a.host + ':4200/');
+    }
     $('#modal-terminal').modal('show');
   });
   $('.modal-hide').click(function (e) {
     e.preventDefault();
     $('#modal-terminal').modal('hide');
   });
-  if (thisSection === 'dashboard') {
-    jQuery.ajax({
-      url: 'https://www.coinbase.com/assets/button.js',
-      dataType: 'script',
-      cache: true
-    }).done(function () {
-      console.log('Coinbase loaded');
-    });
-  }
+  /*
+	if (thisSection === 'dashboard') {
+		jQuery.ajax({
+			url: 'https://www.coinbase.com/assets/button.js',
+			dataType: 'script',
+			cache: true
+		}).done(function() {
+			console.log('Coinbase loaded');
+		});
+	}
+	*/
   if (thisSection === 'charts') {
     // Chart Scripts
     createChart('hourly', '5 minutes');
     createChart('daily', '15 minutes');
     createChart('monthly', '1 hour');
     createChart('yearly', '1 day');
+  } else if (thisSection === 'lockscreen') {
+    $('.pass-form').trigger('focus');
+    startTime();
+    $('.copyright').addClass('copyright-lockscreen');
+    if ($('body').data('timer')) {
+      timer();
+    }  /* CENTER ELEMENTS IN THE SCREEN */
+       /*
+		$('.center').center();
+        $(window).resize(function() {
+            $('.center').center();
+        });
+		jQuery.fn.center = function() {
+            this.css('position', 'absolute');
+            this.css('top', Math.max(0, (($(window).height() - $(this).outerHeight()) / 2) +
+                    $(window).scrollTop()) - 30 + 'px');
+            this.css('left', Math.max(0, (($(window).width() - $(this).outerWidth()) / 2) +
+                    $(window).scrollLeft()) + 'px');
+            return this;
+        }*/
   } else if (thisSection === 'settings') {
     // Settings Scripts
     $('.box-tools').click(function (e) {
@@ -50790,13 +51217,13 @@ function change_skin(cls) {
     });
     $(document).on('click', '.share-config-open', function (e) {
       e.preventDefault();
-      $('input[name=\'config_id\']').val($(this).data('config-id'));
+      $('input[name="config_id"]').val($(this).data('config-id'));
       $('#modal-sharing').modal('show');
     });
     $(document).on('click', '.share-config-action', function (e) {
       e.preventDefault();
       $('.share-error').fadeOut();
-      var descr = $('textarea[name=\'config_description\']').val();
+      var descr = $('textarea[name="config_description"]').val();
       if (!descr || 0 === descr.length) {
         $('#formsharingconfig').append('<h6 class="callout bg-red share-error">Description can\'t be empty');
         return;
@@ -50928,23 +51355,23 @@ function change_skin(cls) {
       'dom': '<"top"i>rt<"bottom"flp><"clear">'
     });
     $('#stored-donation-table_wrapper').hide();
-    var donation_profitability = $('#option-minera-donation-time').data('donation-profitability'), saved_donation_time = $('#option-minera-donation-time').data('saved-donation-time');
+    var donationProfitability = $('#option-minera-donation-time').data('donation-profitability'), savedDonationTime = $('#option-minera-donation-time').data('saved-donation-time');
     $('#option-minera-donation-time').ionRangeSlider({
       min: 0,
       max: 360,
-      from: saved_donation_time ? saved_donation_time : 0,
+      from: savedDonationTime ? savedDonationTime : 0,
       type: 'single',
       step: 10,
       postfix: ' Mins',
       grid: true,
       onStart: function (obj) {
-        changeDonationWorth(donation_profitability, obj.from);
+        changeDonationWorth(donationProfitability, obj.from);
       },
       onChange: function (obj) {
         if (obj.from > 0) {
           $('#option-minera-donation-time').ionRangeSlider('update', { to: 0 });
         }
-        changeDonationWorth(donation_profitability, obj.from);
+        changeDonationWorth(donationProfitability, obj.from);
       }
     });
     $('#ion-startfreq').ionRangeSlider({
@@ -51039,10 +51466,12 @@ function change_skin(cls) {
       });
     });
     showHideMinerOptions(false);
-    if ($('#manual_options').val() === '1')
+    if ($('#manual_options').val() === '1') {
       $('.guided-options').hide();
-    if ($('#guided_options').val() === '1')
+    }
+    if ($('#guided_options').val() === '1') {
       $('.manual-options').hide();
+    }
     $('.btn-manual-options').click(function () {
       $('.guided-options').fadeOut();
       $('.manual-options').fadeIn();
@@ -51063,23 +51492,27 @@ function change_skin(cls) {
     });
     // validate signup form on keyup and submit
     $.validator.addMethod('check_multiple_select', function (value, element) {
-      if (value && value.length > 0 && value.length <= 5)
+      if (value && value.length > 0 && value.length <= 5) {
         return true;
+      }
       return false;
     }, 'Select at least 1 rate (max 5)');
     $.validator.addMethod('no_quote', function (value, element) {
-      if (!value.match(/\'/))
+      if (!value.match(/\'/)) {
         return true;
+      }
       return false;
     }, 'You can use any symbol but single quote');
     jQuery.validator.addMethod('validIP', function (value) {
       var split = value.split('.');
-      if (split.length != 4)
+      if (split.length !== 4) {
         return false;
+      }
       for (var i = 0; i < split.length; i++) {
         var s = split[i];
-        if (s.length === 0 || isNaN(s) || s < 0 || s > 255)
+        if (s.length === 0 || isNaN(s) || s < 0 || s > 255) {
           return false;
+        }
       }
       return true;
     }, ' Invalid IP Address');
@@ -51232,9 +51665,9 @@ function change_skin(cls) {
     var target_date = new Date().getTime();
     // variables for time units
     var days, hours, minutes, seconds;
-    // update the tag with id "countdown" every 1 second
+    // update the tag with id 'countdown' every 1 second
     setInterval(function () {
-      // find the amount of "seconds" between now and target
+      // find the amount of 'seconds' between now and target
       var current_date = new Date().getTime();
       var seconds_left = (target_date + (refresh_time * 1000 + 1000) - current_date) / 1000;
       //console.log(parseInt(seconds_left));
@@ -51317,8 +51750,8 @@ function change_skin(cls) {
       else
         /* Get the (log_size - 1)th byte, onwards. */
         range = (log_size - 1).toString() + '-';
-      /* The "log_size - 1" deliberately reloads the last byte, which we already
-		     * have. This is to prevent a 416 "Range unsatisfiable" error: a response
+      /* The 'log_size - 1' deliberately reloads the last byte, which we already
+		     * have. This is to prevent a 416 'Range unsatisfiable' error: a response
 		     * of length 1 tells us that the file hasn't changed yet. A 416 shows that
 		     * the file has been trucnated */
       $.ajax(log_url, {
@@ -51330,7 +51763,7 @@ function change_skin(cls) {
           var size;
           if (xhr.status === 206) {
             //if (data.length > load_log)
-            //throw "Expected 206 Partial Content";
+            //throw 'Expected 206 Partial Content';
             var c_r = xhr.getResponseHeader('Content-Range');
             if (!c_r)
               throw 'Server did not respond with a Content-Range';
@@ -51450,397 +51883,12 @@ function change_skin(cls) {
     });
   }
 });
-/*********************
-//
-// Various functions
-//
-*********************/
-function loadScript(url, callback) {
-  var script = document.createElement('script');
-  script.type = 'text/javascript';
-  if (script.readyState) {
-    //IE
-    script.onreadystatechange = function () {
-      if (script.readyState == 'loaded' || script.readyState == 'complete') {
-        script.onreadystatechange = null;
-        callback();
-      }
-    };
-  } else {
-    //Others
-    script.onload = function () {
-      callback();
-    };
-  }
-  script.src = url;
-  document.getElementsByTagName('head')[0].appendChild(script);
-}
-function saveSettings(hide, saveonly) {
-  if (saveonly === false) {
-    $('#modal-saving-label').html('Saving data, please wait...');
-    $('#modal-saving').modal('show');
-  }
-  var saveUrl = _baseUrl + '/app/save_settings';
-  var formData = $('#minersettings').serialize();
-  $.ajax({
-    type: 'POST',
-    url: saveUrl,
-    data: formData,
-    cache: false,
-    success: function (resp) {
-      if (hide && !saveonly) {
-        $('#modal-saving').modal('hide');
-        window.location.reload();
-      }
-    }
-  });
-}
-function changeDonationWorth(profitability, value) {
-  var amount = profitability / 24 / 60 * value, string = value > 0 ? 'about' : 'exactly', h = 0, new_value = 0, period = 0;
-  if (value >= 60) {
-    h = Math.floor(value / 60);
-    new_value = value % 60;
-    period = h + ' hour(s) ' + (new_value > 0 ? ' and ' + new_value + ' minute(s)' : '');
-  } else {
-    period = value + ' minutes';
-  }
-  $('.donation-worth').html('<small>Mining for ' + period + ' in a day your donation per MH/s worths ' + string + ':</small> <span class="label label-success"><i class="fa fa-btc"></i>&nbsp;' + amount.toFixed(8) + '</span>');
-  if (value > 0 && value < 90) {
-    $('.donation-mood').html('<i class="fa fa-smile-o"></i> Your support is much appreciate. Thank you!').removeClass().addClass('donation-mood badge bg-blue');
-  } else if (value >= 90 && value < 180) {
-    $('.donation-mood').html('<i class="fa fa-sun-o"></i> WOW that\'s really cool! Thank you!').removeClass().addClass('donation-mood badge bg-green');
-  } else if (value >= 180 && value < 270) {
-    $('.donation-mood').html('<i class="fa fa-star"></i> That\'s amazing! You are a star! Thank you!').removeClass().addClass('donation-mood badge bg-yellow');
-  } else if (value >= 270 && value <= 360) {
-    $('.donation-mood').html('<i class="fa fa-heart"></i> You are my hero! You really rock! Thank you so much!').removeClass().addClass('donation-mood badge bg-red');
-  } else {
-    $('.donation-mood').html('<i class="fa fa-frown-o"></i> Time donation is disabled').removeClass().addClass('donation-mood badge');
-  }
-}
-// Show or Hide the options related to the selected miner software
-function showHideMinerOptions(change) {
-  var sel = $('#minerd-software option:selected').text().match(/\[Custom Miner\]/);
-  if ($('#minerd-software').val() !== 'cpuminer' && sel === null) {
-    $('.options-selection').show();
-    $('.legend-option-autodetect').html('(--scan=all)');
-    $('.legend-option-log').html('(--log-file)');
-    $('#minerd-autotune').hide();
-    $('input[name=\'minerd_autotune\']').prop('disabled', true);
-    $('#minerd-startfreq').hide();
-    $('input[name=\'minerd_startfreq\']').prop('disabled', true);
-    $('#minerd-scrypt').show();
-    $('#minerd-api-allow').show();
-    $('input[name=\'minerd_scrypt\']').prop('disabled', false);
-  } else if (sel !== null) {
-    $('.options-selection').hide();
-    $('.guided-options').fadeOut();
-    $('.manual-options').fadeIn();
-    $('.btn-manual-options').addClass('disabled');
-    $('.btn-guided-options').removeClass('disabled');
-    $('#manual_options').val(1);
-    $('#guided_options').val(0);
-  } else {
-    $('.options-selection').show();
-    $('.legend-option-autodetect').html('(--gc3355-detect)');
-    $('.legend-option-log').html('(--log)');
-    $('#minerd-log').show();
-    $('input[name=\'minerd_log\']').prop('disabled', false);
-    $('#minerd-autotune').show();
-    $('input[name=\'minerd_autotune\']').prop('disabled', false);
-    $('#minerd-startfreq').show();
-    $('input[name=\'minerd_startfreq\']').prop('disabled', false);
-    $('#minerd-scrypt').hide();
-    $('#minerd-api-allow').hide();
-    $('input[name=\'minerd_scrypt\']').prop('disabled', true);
-  }
-  $('.detail-minerdsoftware').remove();
-  $('.note-minerdsoftware').remove();
-  if (change) {
-    if ($('#minerd-software').val() === 'cpuminer') {
-      $('.group-minerdsoftware').append('<h6 class="detail-minerdsoftware"><a href="https://github.com/siklon/cpuminer-gc3355" target="_blank"><small class="badge bg-red">CPUminer-GC3355</small></a> is a fork of Cpuminer and is the best software for gridseed devices like Minis and Blades. It is fully optimised and supports autotune, autodetection, frequency and it\'s really stable. <a href="https://github.com/siklon/cpuminer-gc3355" target="_blank">More info</a>.</h6>');
-    } else if ($('#minerd-software').val() === 'bfgminer') {
-      $('.group-minerdsoftware').append('<h6 class="detail-minerdsoftware"><a href="https://github.com/luke-jr/bfgminer" target="_blank"><small class="badge bg-red">BFGminer</small></a> has a really large amount of devices supported, it has also a lot of features you can use to get the best from your devices. It\'s a stable software. <a href="https://github.com/luke-jr/bfgminer" target="_blank">More info</a>.</h6>');
-    } else if ($('#minerd-software').val() === 'cgminer') {
-      $('.group-minerdsoftware').append('<h6 class="detail-minerdsoftware"><a href="https://github.com/ckolivas/cgminer" target="_blank"><small class="badge bg-red">CGminer</small></a> is similar to bfgminer, supports a large amount of devices but probably is less updated than bfg. It\'s a stable software. <a href="https://github.com/ckolivas/cgminer" target="_blank">More info</a>.</h6>');
-    } else if ($('#minerd-software').val() === 'cgdmaxlzeus') {
-      $('.group-minerdsoftware').append('<h6 class="detail-minerdsoftware"><a href="https://github.com/dmaxl/cgminer/" target="_blank"><small class="badge bg-red">CGminer Dmaxl Zeus</small></a> is a Cgminer 4.3.5 fork with GridSeed and Zeus scrypt ASIC support, it has some issues with Minera. Stability is unknown. <a href="https://github.com/dmaxl/cgminer/" target="_blank">More info</a>.</h6>');
-    } else {
-      $('.group-minerdsoftware').append('<h6 class="detail-minerdsoftware"><small class="badge bg-red">Custom Miner</small> is a miner you uploaded, it\'s up to you, but it\'s recommended to use "manual" options below, cause Minera can\'t know the "guided" options for your custom miner.</h6>');
-    }
-    $('.group-minerdsoftware').append('<h5 class="note-minerdsoftware"><strong>NOTE:</strong> <i>remember to review your settings below if you change the miner software because they haven\'t the same config options and the miner process could not start.</i></5>');
-  }
-}
-function createChart(period, text_period) {
-  /* Morris.js Charts */
-  // get Json data from stored_stats url (redis) and create the graphs
-  $.getJSON(_baseUrl + '/app/api?command=history_stats&type=' + period, function (data) {
-    var refresh = false, areaHash = {}, areaRej = {}, dataChart = Object.keys(data).map(function (key) {
-        data[key].timestamp = data[key].timestamp * 1000;
-        data[key].hashrate = (data[key].hashrate / 1000 / 1000).toFixed(2);
-        data[key].pool_hashrate = (data[key].pool_hashrate / 1000 / 1000).toFixed(2);
-        return data[key];
-      });
-    if (dataChart.length > 0) {
-      if (refresh === false) {
-        // Hashrate history graph
-        areaHash = new Morris.Area({
-          element: 'hashrate-chart-' + period,
-          resize: true,
-          data: dataChart,
-          xkey: 'timestamp',
-          ykeys: [
-            'hashrate',
-            'pool_hashrate'
-          ],
-          ymax: 'auto',
-          postUnits: 'Mh/s',
-          labels: [
-            'Devices',
-            'Pool'
-          ],
-          lineColors: [
-            '#3c8dbc',
-            '#00c0ef'
-          ],
-          lineWidth: 2,
-          pointSize: 3,
-          hideHover: 'auto',
-          behaveLikeLine: true
-        });
-        // Rejected/Errors graph
-        areaRej = new Morris.Area({
-          element: 'rehw-chart-' + period,
-          resize: true,
-          data: dataChart,
-          xkey: 'timestamp',
-          ykeys: [
-            'accepted',
-            'rejected',
-            'errors'
-          ],
-          ymax: 'auto',
-          labels: [
-            'Accepted',
-            'Rejected',
-            'Errors'
-          ],
-          lineColors: [
-            '#00a65a',
-            '#f39c12',
-            '#f56954'
-          ],
-          lineWidth: 2,
-          pointSize: 3,
-          hideHover: 'auto',
-          behaveLikeLine: true
-        });
-      } else {
-        updateGraphs(dataChart);
-      }
-      $(window).resize(function () {
-        redrawGraphs();
-      });
-      $('.sidebar-toggle').click(function () {
-        redrawGraphs();
-      });
-    } else {
-      $('#hashrate-chart-' + period).css({
-        'height': '100%',
-        'overflow': 'visible',
-        'margin-top': '20px'
-      }).html('<div class="alert alert-warning"><i class="fa fa-warning"></i><b>Ops!</b> <small>No data collected, wait at least ' + text_period + ' to see the chart.</small></div>');
-      $('#rehw-chart-' + period).css({
-        'height': '100%',
-        'overflow': 'visible',
-        'margin-top': '20px'
-      }).html('<div class="alert alert-warning"><i class="fa fa-warning"></i><b>Ops!</b> <small>No data collected, wait at least ' + text_period + ' to see the chart.</small></div>');
-    }
-    function redrawGraphs() {
-      areaHash.redraw();
-      areaRej.redraw();
-      return false;
-    }
-    function updateGraphs(data) {
-      areaHash.setData(data);
-      areaRej.setData(data);
-      return false;
-    }
-    $('.overlay').hide();
-    $('.loading-img').hide();
-  });
-}
-//End get stored stats
-function createMon(key, hash, totalhash, maxHashrate, ac, re, hw, sh, freq, color) {
-  var col, toAppend, size, skin, thickness, fontsize, name, max;
-  if (key === 'total') {
-    col = 12;
-    toAppend = '#devs-total';
-    color = '#f56954';
-    size = 140;
-    skin = 'tron';
-    thickness = '.2';
-    fontsize = '10pt';
-  } else {
-    col = 4;
-    toAppend = '#devs';
-    color = getExaColor(color);
-    size = 80;
-    skin = 'basic';
-    thickness = '.2';
-    fontsize = '8pt';
-  }
-  if (freq)
-    name = key + ' @ ' + freq + 'Mhz';
-  else
-    name = key;
-  // Add per device knob graph
-  var devBox = '<div class="col-xs-' + col + ' text-center" id="master-' + key + '"><input type="text" class="' + key + '" /><div class="knob-label"><p><strong>' + name + '</strong></p><p>A: ' + ac + ' - R: ' + re + ' - H: ' + hw + '</p></div></div>';
-  $('#master-' + key).remove();
-  $(toAppend).append(devBox);
-  $('.' + key).data('hashrate', hash);
-  $('.' + key).knob({
-    'readOnly': true,
-    'fgColor': color,
-    'inputColor': '#434343',
-    'thickness': thickness,
-    'skin': skin,
-    'displayPrevious': true,
-    'ticks': 16,
-    'width': size,
-    'height': size,
-    'draw': function () {
-      // "tron" case
-      if (this.o.skin === 'tron') {
-        var a = this.angle(this.cv),
-          // Angle
-          sa = this.startAngle,
-          // Previous start angle
-          sat = this.startAngle,
-          // Start angle
-          ea,
-          // Previous end angle
-          eat = sat + a,
-          // End angle
-          r = true;
-        this.g.lineWidth = this.lineWidth;
-        this.o.cursor && (sat = eat - 0.3) && (eat = eat + 0.3);
-        if (this.o.displayPrevious) {
-          ea = this.startAngle + this.angle(this.value);
-          this.o.cursor && (sa = ea - 0.3) && (ea = ea + 0.3);
-          this.g.beginPath();
-          this.g.strokeStyle = this.previousColor;
-          this.g.arc(this.xy, this.xy, this.radius - this.lineWidth, sa, ea, false);
-          this.g.stroke();
-        }
-        this.g.beginPath();
-        this.g.strokeStyle = r ? this.o.fgColor : this.fgColor;
-        this.g.arc(this.xy, this.xy, this.radius - this.lineWidth, sat, eat, false);
-        this.g.stroke();
-        this.g.lineWidth = 2;
-        this.g.beginPath();
-        this.g.strokeStyle = this.o.fgColor;
-        this.g.arc(this.xy, this.xy, this.radius - this.lineWidth + 1 + this.lineWidth * 2 / 3, 0, 2 * Math.PI, false);
-        this.g.stroke();
-        this.i.val(convertHashrate(this.cv));
-        return false;
-      } else {
-        this.i.val(convertHashrate(this.cv));
-      }
-    }
-  });
-  if (key === 'total')
-    max = totalhash;
-  else
-    max = maxHashrate;
-  $('.' + key).trigger('configure', {
-    'min': 0,
-    'max': max,
-    'step': 1
-  });
-  $({ value: 0 }).animate({ value: hash }, {
-    duration: 1000,
-    easing: 'swing',
-    step: function () {
-      $('.' + key).val(Math.ceil(this.value)).trigger('change');
-    }
-  });
-  $('.' + key).css('font-size', fontsize);
-}
-function convertHashrate(hash) {
-  if (hash > 900000000000)
-    return (hash / 1000000000000).toFixed(2) + 'Ph/s';
-  if (hash > 900000000)
-    return (hash / 1000000000).toFixed(2) + 'Th/s';
-  else if (hash > 900000)
-    return (hash / 1000000).toFixed(2) + 'Gh/s';
-  else if (hash > 900)
-    return (hash / 1000).toFixed(2) + 'Mh/s';
-  else
-    return hash.toFixed(0) + 'Kh/s';
-}
-function convertMS(ms) {
-  var d, h, m, s;
-  s = Math.floor(ms / 1000);
-  m = Math.floor(s / 60);
-  s = s % 60;
-  h = Math.floor(m / 60);
-  m = m % 60;
-  d = Math.floor(h / 24);
-  h = h % 24;
-  return {
-    d: d,
-    h: h,
-    m: m,
-    s: s
-  };
-}
-function getExaColor(color) {
-  if (color === 'green')
-    return '#00a65a';
-  else if (color === 'yellow')
-    return '#f39c12';
-  else if (color === 'red')
-    return '#f56954';
-  else
-    return '#999';
-}
-function changeEarnings(value) {
-  var hashrate = $('.widget-total-hashrate').data('pool-hashrate');
-  var amount = value * hashrate / 1000;
-  $('.profitability-results').html('<span class="label bg-blue">' + convertHashrate(hashrate) + '</span>&nbsp;x&nbsp;<span class="label bg-green">' + value.toFixed(5) + '</span> = <small>Day: </small><span class="badge bg-red">' + amount.toFixed(8) + '</span> <small>Week: </small><span class="badge bg-light">' + (amount * 7).toFixed(8) + '</span> <small>Month: </small><span class="badge bg-light">' + (amount * 30).toFixed(8) + '</span>');
-}
-// Errors
-function triggerError(msg) {
-  $('.widgets-section').hide();
-  $('.top-section').attr('style', 'display: none !important');
-  $('.right-section').hide();
-  $('.left-section').hide();
-  $('.messages-avg').hide();
-  $('.warning-message').html(msg);
-  $('.warning-section').fadeIn();
-  return false;
-}
-Number.prototype.noExponents = function () {
-  var data = String(this).split(/[eE]/);
-  if (data.length === 1)
-    return data[0];
-  var z = '', sign = this < 0 ? '-' : '', str = data[0].replace('.', ''), mag = Number(data[1]) + 1;
-  if (mag < 0) {
-    z = sign + '0.';
-    while (mag++)
-      z += '0';
-    return z + str.replace(/^\-/, '');
-  }
-  mag -= str.length;
-  while (mag--)
-    z += '0';
-  return str + z;
-};
 // ****************************** //
 // NETWORK miners pools functions //
 // ****************************** //
 // Select Pool on the fly
 $(document).on('click', '.select-net-pool', function (e) {
+  'use strict';
   e.preventDefault();
   $('.overlay').show();
   var poolId = $(this).data('pool-id'), netConfig = $(this).data('pool-config'), netMiner = $(this).data('netminer');
@@ -51862,6 +51910,7 @@ $(document).on('click', '.select-net-pool', function (e) {
 });
 // Remove Pool on the fly
 $(document).on('click', '.remove-net-pool', function (e) {
+  'use strict';
   e.preventDefault();
   $('.overlay').show();
   var poolId = $(this).data('pool-id'), netConfig = $(this).data('pool-config'), netMiner = $(this).data('netminer');
@@ -51885,6 +51934,7 @@ $(document).on('click', '.remove-net-pool', function (e) {
 });
 // Add network Pool on the fly
 $(document).on('click', '.toggle-add-net-pool', function (e) {
+  'use strict';
   e.preventDefault();
   //$('.overlay').show();
   if ($(this).data('open')) {
@@ -51896,6 +51946,7 @@ $(document).on('click', '.toggle-add-net-pool', function (e) {
   }
 });
 $(document).on('click', '.add-net-pool', function (e) {
+  'use strict';
   e.preventDefault();
   $('.overlay').show();
   var netMiner = $(this).data('netminer');
@@ -51932,6 +51983,7 @@ $(document).on('click', '.add-net-pool', function (e) {
   }
 });
 $(document).on('click', '.add-net-donation-pool', function (e) {
+  'use strict';
   e.preventDefault();
   $('.overlay').show();
   var netMiner = $(this).data('netminer'), donationUrl = $(this).data('netcoin') === 'SHA-256' ? $('.app_data').data('minera-pool-url-sha256') : $('.app_data').data('minera-pool-url-scrypt'), params = {
@@ -51966,6 +52018,7 @@ $(document).on('click', '.add-net-donation-pool', function (e) {
 // ****************************** //
 // Select Pool on the fly
 $(document).on('click', '.select-pool', function (e) {
+  'use strict';
   e.preventDefault();
   $('.overlay').show();
   var poolId = $(this).data('pool-id');
@@ -51987,6 +52040,7 @@ $(document).on('click', '.select-pool', function (e) {
 });
 // Toggle local pool on the fly
 $(document).on('click', '.toggle-add-pool', function (e) {
+  'use strict';
   e.preventDefault();
   //$('.overlay').show();
   if ($(this).data('open')) {
@@ -51998,6 +52052,7 @@ $(document).on('click', '.toggle-add-pool', function (e) {
   }
 });
 $(document).on('click', '.add-pool', function (e) {
+  'use strict';
   e.preventDefault();
   $('.overlay').show();
   if ($('.local_pool_url').val() && $('.local_pool_username').val() && $('.local_pool_password').val()) {
@@ -52033,6 +52088,7 @@ $(document).on('click', '.add-pool', function (e) {
 });
 // Remove local pool on the fly
 $(document).on('click', '.remove-pool', function (e) {
+  'use strict';
   e.preventDefault();
   if ($('.app_data').data('miner-running') !== 'cpuminer' && $('.app_data').data('miner-running') !== undefined) {
     $('.overlay').show();
@@ -52059,6 +52115,7 @@ $(document).on('click', '.remove-pool', function (e) {
   }
 });
 $(document).on('click', '.cron-unlock', function (e) {
+  'use strict';
   e.preventDefault();
   $('#modal-saving-label').html('Unlocking cron...');
   $('#modal-saving').modal('show');
@@ -52074,10 +52131,13 @@ $(document).on('click', '.cron-unlock', function (e) {
   });
 });
 // Define underscore variable template
-_.templateSettings.variable = 'rc';
-var btcRatesTemplate = _.template($('script.btc-rates-template').html()), altcoinsRatesTemplate = _.template($('script.altcoins-rates-template').html()), avgStatsTemplate = _.template($('script.avg-stats-template').html());
+if ($('.header').data('this-section') !== 'lockscreen') {
+  _.templateSettings.variable = 'rc';
+  var btcRatesTemplate = _.template($('script.btc-rates-template').html()), altcoinsRatesTemplate = _.template($('script.altcoins-rates-template').html()), avgStatsTemplate = _.template($('script.avg-stats-template').html());
+}
 // Stats scripts
 function getStats(refresh) {
+  'use strict';
   var now = new Date().getTime();
   var d = 0, totalhash = 0, totalac = 0, totalre = 0, totalhw = 0, totalsh = 0, totalfr = 0, totalpoolhash = 0, poolHash = 0, errorTriggered = false, pool_shares_seconds, log_file = $('.app_data').data('minerd-log').replace(/^.*[\\\/]/, ''), miner_status = $('.app_data').data('miner-status'),
     // Raw stats
@@ -52260,7 +52320,7 @@ function getStats(refresh) {
               ]],
             'fnRowCallback': function (nRow, aData, iDisplayIndex) {
               //if(iDisplayIndex === 0)
-              //	nRow.className = "bg-dark";
+              //	nRow.className = 'bg-dark';
               return nRow;
             },
             'aoColumnDefs': [
@@ -52516,7 +52576,7 @@ function getStats(refresh) {
           else
             devData.label = 'green';
           var dev_serial = 'serial not available';
-          if (index != 'total' && items[index].serial) {
+          if (index !== 'total' && items[index].serial) {
             dev_serial = 'serial: ' + items[index].serial;
           } else {
             // Widgets
@@ -52554,7 +52614,7 @@ function getStats(refresh) {
             createMon(index, items[index].hash, totalhash, maxHashrate, items[index].ac, items[index].re, items[index].hw, items[index].sh, items[index].fr, devData.label);
           }
         }
-        $('[data-toggle=\'tooltip\']').tooltip();
+        $('[data-toggle="tooltip"]').tooltip();
       } else {
         var nodevsMsg = '<div class="alert alert-warning"><i class="fa fa-warning"></i>No local devices found</div>';
         $('#miner-table-details').html(nodevsMsg);
@@ -52703,11 +52763,11 @@ function getStats(refresh) {
                 }
                 /*
 								// Widgets
-								$(".widget-last-share").html(parseInt(last_share_secs) + ' secs');
-								$(".widget-hwre-rates").html(parseFloat(percentageHw).toFixed(2) + '<sup style="font-size: 20px">%</sup> / ' + parseFloat(percentageRe).toFixed(2) + '<sup style="font-size: 20px">%</sup>');
-								dev_serial = "";
+								$('.widget-last-share').html(parseInt(last_share_secs) + ' secs');
+								$('.widget-hwre-rates').html(parseFloat(percentageHw).toFixed(2) + '<sup style="font-size: 20px">%</sup> / ' + parseFloat(percentageRe).toFixed(2) + '<sup style="font-size: 20px">%</sup>');
+								dev_serial = '';
 								//Sidebar hashrate
-								//$('.sidebar-hashrate').html("@ "+convertHashrate(items[index].hash));
+								//$('.sidebar-hashrate').html('@ '+convertHashrate(items[index].hash));
 								*/
                 if ($.fn.dataTable.isDataTable('#network-miner-table-details')) {
                   // New add rows via datatable
@@ -52759,7 +52819,7 @@ function getStats(refresh) {
                       ]],
                     'fnRowCallback': function (nRow, aData, iDisplayIndex) {
                       //if(iDisplayIndex === 0)
-                      //	nRow.className = "bg-dark";
+                      //	nRow.className = 'bg-dark';
                       return nRow;
                     },
                     'aoColumnDefs': [
