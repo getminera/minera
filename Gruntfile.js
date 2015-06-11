@@ -85,7 +85,8 @@ module.exports = function(grunt) {
 						src: ['*.*'],
 						dest: 'assets/fonts/'
 					},
-					{
+					// Moved to CDN in header file
+					/*{
 					//for font-awesome font
 						expand: true,
 						cwd: 'assets/vendor/font-awesome/fonts',
@@ -98,25 +99,25 @@ module.exports = function(grunt) {
 						cwd: 'assets/vendor/ionicons/fonts',
 						src: ['*.*'],
 						dest: 'assets/fonts/'
-					}
+					}*/
 				]
 			},
 		},
 		clean: {
 			options: { force: true },
-			stuff: ['public/dist/application.js', 'public/dist/braintree.js', '/tmp/streetlib_deployed']
+			stuff: ['assets/fonts/*']
 		},
 		bump: {
     		options: {
-				files: ['bower.json'],
+				files: ['package.json'],
 				updateConfigs: ['pkg'],
-				commit: true,
+				commit: false,
 				commitMessage: 'Release v%VERSION%',
-				commitFiles: ['bower.json'],
-				createTag: true,
+				commitFiles: ['package.json'],
+				createTag: false,
 				tagName: 'v%VERSION%',
 				tagMessage: 'Version %VERSION%',
-				push: true,
+				push: false,
 				pushTo: 'origin',
 				gitDescribeOptions: '--always --abbrev=1',
 				globalReplace: false,
@@ -159,6 +160,5 @@ module.exports = function(grunt) {
 	grunt.registerTask('lint', ['jshint']);
 
 	// Build task(s).
-	grunt.registerTask('build:production', ['lint', 'ngmin:production', 'uglify:production', 'cssmin', 'copy']);
+	grunt.registerTask('build:production', ['lint', 'ngmin:production', 'uglify:production', 'cssmin', 'clean', 'copy']);
 };
-

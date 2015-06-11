@@ -37,6 +37,8 @@
     "momentjs": "~2.10.3",
     "morrisjs": "~0.5.1",
     "raphael": "~2.1.4",
-    "underscore": "~1.8.3"
+    "underscore": "~1.8.3",
+    "font-awesome": "~4.3.0",
+    "datatables": "~1.10.7"
   }
 }

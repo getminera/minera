@@ -24,8 +24,6 @@
 		"assets/js/minera.js"
 	],
 	"css": [
-		"assets/vendor/font-awesome/css/font-awesome.css",
-		"assets/vendor/ionicons/css/ionicons.css",
 		"assets/vendor/bootstrap/dist/css/bootstrap.css",
 		"assets/vendor/bootstrap-switch/dist/css/bootstrap3/bootstrap-switch.min.css",
 		"assets/vendor/datatables-bootstrap3-plugin/media/css/datatables-bootstrap3.css",
