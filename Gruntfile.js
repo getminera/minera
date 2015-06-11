@@ -81,22 +81,22 @@ module.exports = function(grunt) {
 					{
 					//for glyphicon fonts
 						expand: true,
-						cwd: 'assets/vendor/bootstrap',
-						src: ['fonts/*.*'],
+						cwd: 'assets/vendor/bootstrap/fonts',
+						src: ['*.*'],
 						dest: 'assets/fonts/'
 					},
 					{
 					//for font-awesome font
 						expand: true,
-						cwd: 'assets/vendor/font-awesome',
-						src: ['fonts/*.*'],
+						cwd: 'assets/vendor/font-awesome/fonts',
+						src: ['*.*'],
 						dest: 'assets/fonts/'
 					},
 					{
 					//for ionicons font
 						expand: true,
-						cwd: 'assets/vendor/ionicons',
-						src: ['fonts/**'],
+						cwd: 'assets/vendor/ionicons/fonts',
+						src: ['*.*'],
 						dest: 'assets/fonts/'
 					}
 				]
@@ -161,3 +161,4 @@ module.exports = function(grunt) {
 	// Build task(s).
 	grunt.registerTask('build:production', ['lint', 'ngmin:production', 'uglify:production', 'cssmin', 'copy']);
 };
+
