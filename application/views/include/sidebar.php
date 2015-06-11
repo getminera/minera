@@ -14,7 +14,7 @@
 
 		<!-- Modal -->
 		<div id="modal-saving" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="SavingData" aria-hidden="true" data-backdrop="static" data-keyboard="false" >
-			<div class="modal-dialog modal-dialog-center modal-sm">
+			<div class="modal-dialog modal-dialog-center modal-md">
 				<div class="modal-content">
 					<div class="modal-header bg-red">
 						<h4 class="modal-title" id="modal-saving-label"></h4>
@@ -30,7 +30,7 @@
 		</div>
 		
 		<div id="modal-log" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="Logs" aria-hidden="true" data-backdrop="static" data-keyboard="false" >
-			<div class="modal-dialog modal-dialog-center modal-sm">
+			<div class="modal-dialog modal-dialog-center modal-md">
 				<div class="modal-content">
 					<div class="modal-header bg-red">
 						<h4 class="modal-title" id="modal-log-label"></h4>
@@ -48,7 +48,7 @@
 		</div>
 		
 		<div id="modal-sharing" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="SharingData" aria-hidden="true" data-backdrop="static" data-keyboard="false" >
-			<div class="modal-dialog modal-sm">
+			<div class="modal-dialog modal-md">
 				<div class="modal-content">
 					<div class="modal-header bg-blue">
 						<h4 class="modal-title" id="modal-sharing-label"><i class="fa fa-share-square-o"></i> Share your config</h4>

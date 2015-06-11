@@ -169,6 +169,7 @@ $(function() {
 		$('#modal-terminal').modal('hide');
 	});
 	
+	/*
 	if (thisSection === "dashboard") {
 		jQuery.ajax({
 			url: "https://www.coinbase.com/assets/button.js",
@@ -178,6 +179,7 @@ $(function() {
 			console.log("Coinbase loaded");
 		});
 	}
+	*/
 	
 	if (thisSection === "charts") {
 	    
@@ -187,6 +189,29 @@ $(function() {
 		createChart('monthly', '1 hour');
 		createChart('yearly', '1 day');
 
+	} else if (thisSection === "lockscreen") {
+		
+    	$(".pass-form").trigger("focus");
+        startTime();
+        $('.copyright').addClass('copyright-lockscreen');
+        
+        if ($('body').data('timer')) timer();
+
+        /* CENTER ELEMENTS IN THE SCREEN */
+        /*
+		$(".center").center();
+        $(window).resize(function() {
+            $(".center").center();
+        });
+		jQuery.fn.center = function() {
+            this.css("position", "absolute");
+            this.css("top", Math.max(0, (($(window).height() - $(this).outerHeight()) / 2) +
+                    $(window).scrollTop()) - 30 + "px");
+            this.css("left", Math.max(0, (($(window).width() - $(this).outerWidth()) / 2) +
+                    $(window).scrollLeft()) + "px");
+            return this;
+        }*/
+		
 	} else if (thisSection === "settings") {
 
 		// Settings Scripts
@@ -1112,6 +1137,47 @@ function loadScript(url, callback){
     document.getElementsByTagName("head")[0].appendChild(script);
 }
 
+function callUpdate()
+{
+	//$(".center").append('<div class="form-box" style="width:90%"><div class="header" id="msglog-box" style="font-size:16px;"></div></div>');
+    $.ajax({
+	    url: _baseUrl + 'app/api?command=update_minera',
+        dataType: "json",
+        success: function (data) {
+        	if (data)
+        	{
+        		console.log(data);
+        		//$('#msglog-box').html('<p>'+data+'</p>');
+    		}
+        }
+    });
+}
+
+function timer(counter)
+{
+	var count = (counter) ? counter-1 : $('body').data('count')-1;
+
+	if (count < 0)
+	{
+		clearInterval(counter);
+		//counter ended, do something here
+		return;
+	}
+	
+	if (count === 0)
+	{
+		$(".lockscreen-name").hide();
+		$("#time").html($('body').data('count-message'));
+		$(".center").center();
+	}
+	else
+		$("#time").html(count);
+	
+	setTimeout(function() {
+		timer(count)
+	}, 1000);
+}
+
 function saveSettings(hide, saveonly)
 {
     if (saveonly === false)
@@ -1822,20 +1888,20 @@ $(document).on('click', '.cron-unlock', function(e) {
 	});
 });
 
-
-
 // Define underscore variable template
-_.templateSettings.variable = "rc";
+if ($(".header").data("this-section") !== 'lockscreen') {
+	_.templateSettings.variable = "rc";
 
-var btcRatesTemplate = _.template(
-		$( "script.btc-rates-template" ).html()
-	),
-	altcoinsRatesTemplate = _.template(
-		$( "script.altcoins-rates-template" ).html()
-	),
-	avgStatsTemplate = _.template(
-		$( "script.avg-stats-template" ).html()
-	);
+	var btcRatesTemplate = _.template(
+			$( "script.btc-rates-template" ).html()
+		),
+		altcoinsRatesTemplate = _.template(
+			$( "script.altcoins-rates-template" ).html()
+		),
+		avgStatsTemplate = _.template(
+			$( "script.avg-stats-template" ).html()
+		);
+}
 	
 // Stats scripts
 function getStats(refresh)

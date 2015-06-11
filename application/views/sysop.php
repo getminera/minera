@@ -1,4 +1,5 @@
-    <body<?php if ($onloadFunction) : ?> onload="<?php echo $onloadFunction ?>;"<?php endif; ?>>
+    <body<?php if ($onloadFunction) : ?> onload="<?php echo $onloadFunction ?>;"<?php endif; ?> data-count="<?php echo $seconds ?>" data-timer="<?php echo $timer ?>" data-count-message="<?php echo $messageEnd ?>">
+	    <header class="header noheader" data-this-section="<?php echo $sectionPage ?>"></header>
         <!-- Automatic element centering using js -->
         <div class="center">            
             <div class="headline text-center" id="time">
@@ -10,71 +11,3 @@
             <div class="lockscreen-name"><?php echo $message ?></div>
             
         </div><!-- /.center -->
-
-		<script src="<?php echo base_url('assets/js/extra/jquery-2.1.3.min.js') ?>"></script>
-		<script src="<?php echo base_url('assets/js/extra/bootstrap.min.js') ?>"></script>
-
-        <!-- page script -->
-        <script type="text/javascript">
-            $(function() {
-				<?php if ($timer) : ?>timer();<?php endif; ?>
-                $(".center").center();
-                $(window).resize(function() {
-                    $(".center").center();
-                });
-            });
-
-			function callUpdate()
-			{
-        		//$(".center").append('<div class="form-box" style="width:90%"><div class="header" id="msglog-box" style="font-size:16px;"></div></div>');
-			    $.ajax("<?php echo site_url("app/api?command=update_minera"); ?>", {
-			        dataType: "json",
-			        success: function (data) {
-			        	if (data)
-			        	{
-			        		console.log(data);
-			        		//$('#msglog-box').html('<p>'+data+'</p>');
-			    		}
-			        }
-			    });
-			}
-					
-			var count=<?php echo $seconds ?>;
-
-			function timer()
-			{
-			  count=count-1;
-			  if (count < 0)
-			  {
-			     clearInterval(counter);
-			     //counter ended, do something here
-			     return;
-			  }
-			
-			  if (count == 0)
-			  {
-			  	  $(".lockscreen-name").hide();
-				  $("#time").html("<?php echo $messageEnd ?>");
-				  $(".center").center();
-				  $(".center").center();				  
-			  }
-			  else
-				  $("#time").html(count);
-
-			  setTimeout(function() {
-                    timer()
-                }, 1000);
-			}
-
-            /* CENTER ELEMENTS IN THE SCREEN */
-            jQuery.fn.center = function() {
-                this.css("position", "absolute");
-                this.css("top", Math.max(0, (($(window).height() - $(this).outerHeight()) / 2) +
-                        $(window).scrollTop()) - 30 + "px");
-                this.css("left", Math.max(0, (($(window).width() - $(this).outerWidth()) / 2) +
-                        $(window).scrollLeft()) + "px");
-                return this;
-            }
-        </script>
-    </body>
-</html>

@@ -28,11 +28,13 @@ class App extends Main_Controller {
 			return false;	
 		}
 		
+		$data['sectionPage'] = 'lockscreen';
 		$data['htmlTag'] = "lockscreen";
 		$data['pageTitle'] = "Welcome to Minera";
 		$data['isOnline'] = $this->util_model->isOnline();
 		$this->load->view('include/header', $data);
 		$this->load->view('lockscreen');
+		$this->load->view('include/footer', $data);
 	}
 	
 	/*
@@ -721,15 +723,16 @@ class App extends Main_Controller {
 		{
 			$data['message'] = "Please wait to unplug me.";
 			$data['timer'] = true;
-			$this->util_model->shutdown();
+			//$this->util_model->shutdown();
 		}
 		else
 		{
 			$data['title'] = "Are you sure?";
-			$data['message'] = '<a href="'.site_url("app/shutdown").'?confirm=1"><button class="btn btn-default btn-lg"><i class="fa fa-check"></i> Yes, shutdown now</button></a>&nbsp;&nbsp;&nbsp;<a href="'.site_url("app/dashboard").'"><button class="btn btn-default btn-lg"><i class="fa fa-times"></i> No, thanks</button></a>';
+			$data['message'] = '<a href="'.site_url("app/shutdown").'?confirm=1" class="btn btn-danger btn-lg"><i class="fa fa-check"></i> Yes, shutdown now</a>&nbsp;&nbsp;&nbsp;<a href="'.site_url("app/dashboard").'" class="btn btn-primary btn-lg"><i class="fa fa-times"></i> No, thanks</a>';
 			$data['timer'] = false;
 		}
 		
+		$data['sectionPage'] = 'lockscreen';
 		$data['onloadFunction'] = false;
 		$data['pageTitle'] = "Shutdown Minera";
 		$data['messageEnd'] = "you can unplug me now.";
@@ -738,6 +741,7 @@ class App extends Main_Controller {
 		$data['refreshUrl'] = false;
 		$this->load->view('include/header', $data);
 		$this->load->view('sysop', $data);
+		$this->load->view('include/footer', $data);
 	}
 
 	/*
@@ -749,6 +753,7 @@ class App extends Main_Controller {
 			
 		if ($this->input->get('confirm'))
 		{
+			$data['refreshUrl'] = site_url("app/index");
 			$data['message'] = "Please wait while I'm rebooting...";
 			$data['timer'] = true;
 			$this->util_model->reboot();
@@ -756,18 +761,19 @@ class App extends Main_Controller {
 		else
 		{
 			$data['title'] = "Are you sure?";
-			$data['message'] = '<a href="'.site_url("app/reboot").'?confirm=1"><button class="btn btn-default btn-lg"><i class="fa fa-check"></i> Yes, reboot now</button></a>&nbsp;&nbsp;&nbsp;<a href="'.site_url("app/dashboard").'"><button class="btn btn-default btn-lg"><i class="fa fa-times"></i> No, thanks</button></a>';
+			$data['message'] = '<a href="'.site_url("app/reboot").'?confirm=1" class="btn btn-danger btn-lg"><i class="fa fa-check"></i> Yes, reboot now</a>&nbsp;&nbsp;&nbsp;<a href="'.site_url("app/dashboard").'" class="btn btn-primary btn-lg"><i class="fa fa-times"></i> No, thanks</a>';
 			$data['timer'] = false;
 		}
 		
+		$data['sectionPage'] = 'lockscreen';
 		$data['onloadFunction'] = false;
 		$data['pageTitle'] = "Reboot Minera";
 		$data['messageEnd'] = "here we go!";
 		$data['htmlTag'] = "lockscreen";
 		$data['seconds'] = 50;
-		$data['refreshUrl'] = site_url("app/index");
 		$this->load->view('include/header', $data);
 		$this->load->view('sysop', $data);
+		$this->load->view('include/footer', $data);
 	}
 
 	/*
@@ -837,12 +843,14 @@ class App extends Main_Controller {
 				$data['refreshUrl'] = false;
 			}
 			
+			$data['sectionPage'] = 'lockscreen';
 			$data['pageTitle'] = "Updating Minera";
 			$data['messageEnd'] = "System updated!";
 			$data['htmlTag'] = "lockscreen";
 			$data['seconds'] = 180;
 			$this->load->view('include/header', $data);
 			$this->load->view('sysop', $data);
+			$this->load->view('include/footer', $data);
 		}
 		else
 		{
