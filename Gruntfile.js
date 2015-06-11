@@ -79,25 +79,25 @@ module.exports = function(grunt) {
 			dist: {
 				files: [
 					{
-					//for bootstrap fonts
+					//for glyphicon fonts
 						expand: true,
-						cwd: 'public/lib/bootstrap/dist',
+						cwd: 'assets/vendor/bootstrap',
 						src: ['fonts/*.*'],
-						dest: 'public/assets/'
+						dest: 'assets/fonts/'
 					},
 					{
-					//for font-awesome
+					//for font-awesome font
 						expand: true,
-						cwd: 'public/lib/fontawesome',
+						cwd: 'assets/vendor/font-awesome',
 						src: ['fonts/*.*'],
-						dest: 'public/assets/'
+						dest: 'assets/fonts/'
 					},
 					{
-					//for the flags icons
+					//for ionicons font
 						expand: true,
-						cwd: 'public/lib/flag-icon-css',
-						src: ['flags/**'],
-						dest: 'public/assets/'
+						cwd: 'assets/vendor/ionicons',
+						src: ['fonts/**'],
+						dest: 'assets/fonts/'
 					}
 				]
 			},
@@ -159,5 +159,5 @@ module.exports = function(grunt) {
 	grunt.registerTask('lint', ['jshint']);
 
 	// Build task(s).
-	grunt.registerTask('build:production', ['lint', 'ngmin:production', 'uglify:production', 'cssmin']);
+	grunt.registerTask('build:production', ['lint', 'ngmin:production', 'uglify:production', 'cssmin', 'copy']);
 };
