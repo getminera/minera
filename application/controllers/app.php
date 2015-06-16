@@ -723,7 +723,7 @@ class App extends Main_Controller {
 		{
 			$data['message'] = "Please wait to unplug me.";
 			$data['timer'] = true;
-			//$this->util_model->shutdown();
+			$this->util_model->shutdown();
 		}
 		else
 		{

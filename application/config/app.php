@@ -1,7 +1,8 @@
 <?php  if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
 // App specific configs
-$config['ENV'] = 'production';
+$config['ENV'] = 'development';
+//$config['ENV'] = 'production';
 $config['live_stats_url'] =  'app/stats';
 $config['stored_stats_url'] =  'app/api?command=history_stats&type=hourly';
 $config['screen_command'] = '/usr/bin/screen -dmS cpuminer';

@@ -104,7 +104,8 @@ function timer(counter)
 	{
 		$('.lockscreen-name').hide();
 		$('#time').html($('body').data('count-message'));
-		$('.center').center();
+		$('body').data('count', 0);
+		return true;
 	}
 	else
 		$('#time').html(count);
@@ -258,6 +259,22 @@ function showHideMinerOptions(change)
 function createChart(period, text_period)
 {
 	'use strict';
+	
+	function redrawGraphs()
+	{
+	    areaHash.redraw();
+	    areaRej.redraw();
+		    
+	    return false;
+	}
+	
+	function updateGraphs(data)
+	{
+	    areaHash.setData(data);
+	    areaRej.setData(data);
+		    
+	    return false;
+	}
 		
 	/* Morris.js Charts */
 	// get Json data from stored_stats url (redis) and create the graphs
@@ -272,22 +289,6 @@ function createChart(period, text_period)
 					data[key].pool_hashrate = (data[key].pool_hashrate/1000/1000).toFixed(2);									
 					return data[key];
 			});
-			
-		function redrawGraphs()
-		{
-		    areaHash.redraw();
-		    areaRej.redraw();
-			    
-		    return false;
-		}
-		
-		function updateGraphs(data)
-		{
-		    areaHash.setData(data);
-		    areaRej.setData(data);
-			    
-		    return false;
-		}
 	
 		if (dataChart.length > 0)
 		{
