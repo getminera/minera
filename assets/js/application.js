@@ -50638,7 +50638,8 @@ function timer(counter) {
   if (count === 0) {
     $('.lockscreen-name').hide();
     $('#time').html($('body').data('count-message'));
-    $('.center').center();
+    $('body').data('count', 0);
+    return true;
   } else
     $('#time').html(count);
   setTimeout(function () {
@@ -50745,6 +50746,16 @@ function showHideMinerOptions(change) {
 }
 function createChart(period, text_period) {
   'use strict';
+  function redrawGraphs() {
+    areaHash.redraw();
+    areaRej.redraw();
+    return false;
+  }
+  function updateGraphs(data) {
+    areaHash.setData(data);
+    areaRej.setData(data);
+    return false;
+  }
   /* Morris.js Charts */
   // get Json data from stored_stats url (redis) and create the graphs
   $.getJSON(_baseUrl + '/app/api?command=history_stats&type=' + period, function (data) {
@@ -50754,16 +50765,6 @@ function createChart(period, text_period) {
         data[key].pool_hashrate = (data[key].pool_hashrate / 1000 / 1000).toFixed(2);
         return data[key];
       });
-    function redrawGraphs() {
-      areaHash.redraw();
-      areaRej.redraw();
-      return false;
-    }
-    function updateGraphs(data) {
-      areaHash.setData(data);
-      areaRej.setData(data);
-      return false;
-    }
     if (dataChart.length > 0) {
       if (refresh === false) {
         // Hashrate history graph
@@ -53201,7 +53202,7 @@ function getStats(refresh) {
         ltc = ltc[0] ? ltc[0] : 0;
         var maxProfit = _.max(data.profits, function (v) {
             return v.btc_profitability * 100 / ltc.btc_profitability;
-          }), currentProfitData = {};
+          }), totalHash = data.totals && data.totals.hashrate ? data.totals.hashrate : 0, currentProfitData = {};
         currentProfitData.hash = data.totals && data.totals.hashrate ? data.totals.hashrate / 1000000 : 0;
         updateProfitDataTable(data, currentProfitData);
         if (!refresh) {
@@ -53215,12 +53216,12 @@ function getStats(refresh) {
         // Recalculate value when user change input elements
         $('.profit_data').change(function (e) {
           var selHashrate = $('.profit_hashrate').val() > 0 ? $('.profit_hashrate').val() : 0, selUnit = $('.profit_unit').val(), selPeriod = $('.profit_period').val();
-          currentProfitData.hash = selHashrate > 0 ? selUnit * selHashrate * selPeriod : data.totals.hashrate / 1000000;
+          currentProfitData.hash = selHashrate > 0 ? selUnit * selHashrate * selPeriod : totalHash / 1000000;
           updateProfitDataTable(data, currentProfitData);
         });
         $('.profit_hashrate').keyup(function (e) {
           var selHashrate = $('.profit_hashrate').val() > 0 ? $('.profit_hashrate').val() : 0, selUnit = $('.profit_unit').val(), selPeriod = $('.profit_period').val();
-          currentProfitData.hash = selHashrate > 0 ? selUnit * selHashrate * selPeriod : data.totals.hashrate / 1000000;
+          currentProfitData.hash = selHashrate > 0 ? selUnit * selHashrate * selPeriod : totalHash / 1000000;
           updateProfitDataTable(data, currentProfitData);
         });
         var algoButtons = $('.profit_algo_scrypt,.profit_algo_sha256').click(function (e) {
@@ -53228,7 +53229,7 @@ function getStats(refresh) {
             $this.addClass('active');
             $('.profit_algo').data('profit-algo', selAlgo);
             el.removeClass('active');
-            currentProfitData.hash = selHashrate > 0 ? selUnit * selHashrate * selPeriod : data.totals.hashrate / 1000000;
+            currentProfitData.hash = selHashrate > 0 ? selUnit * selHashrate * selPeriod : totalHash / 1000000;
             updateProfitDataTable(data, currentProfitData);
           });
         $('.profit-table-details-error').html('');
