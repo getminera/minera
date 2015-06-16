@@ -3098,7 +3098,7 @@ function getStats(refresh)
 				ltc = (ltc[0]) ? ltc[0] : 0;
 				
 				var maxProfit = _.max(data.profits, function (v) { return (v.btc_profitability*100/ltc.btc_profitability); }),
-					totalHash = (data.totals.hashrate) ? data.totals.hashrate : 0,
+					totalHash = (data.totals && data.totals.hashrate) ? data.totals.hashrate : 0,
 					currentProfitData = {};
 					
 				currentProfitData.hash = (data.totals && data.totals.hashrate) ? data.totals.hashrate/1000000 : 0;
