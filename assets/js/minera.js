@@ -3098,6 +3098,7 @@ function getStats(refresh)
 				ltc = (ltc[0]) ? ltc[0] : 0;
 				
 				var maxProfit = _.max(data.profits, function (v) { return (v.btc_profitability*100/ltc.btc_profitability); }),
+					totalHash = (data.totals.hashrate) ? data.totals.hashrate : 0,
 					currentProfitData = {};
 					
 				currentProfitData.hash = (data.totals && data.totals.hashrate) ? data.totals.hashrate/1000000 : 0;
@@ -3120,7 +3121,7 @@ function getStats(refresh)
 						selUnit = $('.profit_unit').val(),
 						selPeriod = $('.profit_period').val();
 					
-					currentProfitData.hash = (selHashrate > 0) ? selUnit*selHashrate*selPeriod : data.totals.hashrate/1000000;
+					currentProfitData.hash = (selHashrate > 0) ? selUnit*selHashrate*selPeriod : totalHash/1000000;
 					updateProfitDataTable(data, currentProfitData);
 				});
 				
@@ -3129,7 +3130,7 @@ function getStats(refresh)
 						selUnit = $('.profit_unit').val(),
 						selPeriod = $('.profit_period').val();
 
-					currentProfitData.hash = (selHashrate > 0) ? selUnit*selHashrate*selPeriod : data.totals.hashrate/1000000;
+					currentProfitData.hash = (selHashrate > 0) ? selUnit*selHashrate*selPeriod : totalHash/1000000;
 					updateProfitDataTable(data, currentProfitData);
 				});
 				
@@ -3145,7 +3146,7 @@ function getStats(refresh)
 					$('.profit_algo').data('profit-algo', selAlgo);
 					el.removeClass('active');
 					
-					currentProfitData.hash = (selHashrate > 0) ? selUnit*selHashrate*selPeriod : data.totals.hashrate/1000000;
+					currentProfitData.hash = (selHashrate > 0) ? selUnit*selHashrate*selPeriod : totalHash/1000000;
 					updateProfitDataTable(data, currentProfitData);
 				});
 				$('.profit-table-details-error').html('');

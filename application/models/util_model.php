@@ -1736,6 +1736,10 @@ class Util_model extends CI_Model {
 	// Call update cmd
 	public function update()
 	{
+		$this->minerStop();
+		$this->resetCounters();
+		sleep(3);
+		
 		$lines = array();
 		// Pull the latest code from github
 		exec("cd ".FCPATH." && sudo -u " . $this->config->item("system_user") . " sudo git fetch --all && sudo git reset --hard origin/master", $out);
@@ -1764,6 +1768,9 @@ class Util_model extends CI_Model {
 		$logmsg = "End Update";
 		$lines[] = $logmsg;
 		log_message('error', $logmsg);
+		
+		sleep(5);
+		$this->minerStart();
 		
 		return json_encode($lines);
 	}
