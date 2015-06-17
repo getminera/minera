@@ -19,6 +19,8 @@ class App extends Main_Controller {
 	{	
 		// Always try to assign the mineraId if not present
 		$mineraSystemId = $this->util_model->generateMineraId();
+		$this->redis->del("minera_update");
+		$this->util_model->checkUpdate();
 		
 		// Remove old Minera pool
 		$this->util_model->removeOldMineraPool();
@@ -837,7 +839,7 @@ class App extends Main_Controller {
 			else
 			{
 				$data['title'] = "System update detected";
-				$data['message'] = '<a href="'.site_url("app/update").'?confirm=1"><button class="btn btn-default btn-lg"><i class="fa fa-check"></i> Let me install the updates</button></a>&nbsp;&nbsp;&nbsp;<a href="'.site_url("app/dashboard").'"><button class="btn btn-default btn-lg"><i class="fa fa-times"></i> No, thanks</button></a>';
+				$data['message'] = '<a href="'.site_url("app/update").'?confirm=1"><button class="btn btn-danger btn-lg"><i class="fa fa-check"></i> Let me install the updates</button></a>&nbsp;&nbsp;&nbsp;<a href="'.site_url("app/dashboard").'"><button class="btn btn-primary btn-lg"><i class="fa fa-times"></i> No, thanks</button></a><p><br /><small>Your local miner will be stopped during the update process. Minera will try to restart it after the update is complete.</small></p>';
 				$data['timer'] = false;
 				$data['onloadFunction'] = false;
 				$data['refreshUrl'] = false;
@@ -847,7 +849,7 @@ class App extends Main_Controller {
 			$data['pageTitle'] = "Updating Minera";
 			$data['messageEnd'] = "System updated!";
 			$data['htmlTag'] = "lockscreen";
-			$data['seconds'] = 180;
+			$data['seconds'] = 200;
 			$this->load->view('include/header', $data);
 			$this->load->view('sysop', $data);
 			$this->load->view('include/footer', $data);

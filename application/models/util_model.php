@@ -1736,6 +1736,7 @@ class Util_model extends CI_Model {
 	// Call update cmd
 	public function update()
 	{
+		$this->session->unset_userdata("loggedin");
 		$this->minerStop();
 		$this->resetCounters();
 		sleep(3);
