@@ -1188,7 +1188,7 @@ class App extends Main_Controller {
 				}
 	
 				$minerdRunning = $this->redis->get("minerd_running_software");
-	
+
 				$anonStats = array("id" => $mineraSystemId, "algo" => $this->util_model->checkAlgo(), "hashrate" => $totalHashrate, "devices" => $totalDevices, "miner" => $minerdRunning, "version" => $this->util_model->currentVersion(true), "timestamp" => time());
 			}
 			

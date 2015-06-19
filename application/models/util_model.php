@@ -706,13 +706,15 @@ class Util_model extends CI_Model {
 		if ($stats)
 		{
 			$poolDonationId = false;
-			
+				
 			// Add pool donation ID to the stats
 			if ($stats->pools && count($stats->pools) > 0)
 			{
 				foreach ($stats->pools as $pool)
-				{
-					$poolDonationId = ($pool->url == $this->config->item('minera_pool_url') && $pool->user == $this->getMineraPoolUser() && $pool->pass == $this->config->item('minera_pool_password')) ? $pool->priority : false;
+				{					
+					$mineraPoolUrl = ($this->checkAlgo(true) === "Scrypt") ? $this->config->item('minera_pool_url') : $this->config->item('minera_pool_url_sha256');					
+					// Don't check for the pool pass because Cgminer removes it from the stats showing "false" instead the real one and check fails
+					$poolDonationId = ($pool->url == $mineraPoolUrl && $pool->user == $this->getMineraPoolUser()) ? $pool->priority : false;
 				}			
 			}
 			
