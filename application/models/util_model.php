@@ -1940,6 +1940,11 @@ class Util_model extends CI_Model {
 		}
 	}
 	
+	// Set the dashboard box status
+	public function setBoxStatus($boxId, $status) {
+		
+	}
+	
 	// Generate a uniq hash ID for Minera System ID
 	public function generateMineraId()
 	{

@@ -953,6 +953,9 @@ class App extends Main_Controller {
 			case "call_mobileminer":
 				$o = json_encode($this->util_model->callMobileminer());
 			break;
+			case "box_status":
+				$o = json_encode($this->util_model->setBoxStatus($this->input->get('boxId'), $this->input->get('status')));
+			break;
 			case "miner_action":
 				$action = ($this->input->get('action')) ? $this->input->get('action') : false;
 				switch($action)
