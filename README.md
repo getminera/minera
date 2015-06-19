@@ -30,7 +30,7 @@ Thanks.
 
 **[Download from official server (UK) minera-latest.img.zip](http://getminera.com/download/latest)**
 
-**[Download from mirror (MEGA) minera-latest.img.zip](https://mega.co.nz/#!iZUTQYDD!x1iHxWfr3jYW1BVAx0kXO6Nx0hq8pdPgP7z6hyafyEM)**
+**[Download from mirror (MEGA) minera-latest.img.zip](https://mega.nz/#!TR0WUC7L!mRT8r2gNnnYiP4p9HRgxTG5yIkulEXGCSHrOqOi7XS0)**
 
 Look below for how to install / how to use it.
 _______
