@@ -58,9 +58,26 @@ $(function() {
         if (!box.hasClass("collapsed-box")) {
             box.addClass("collapsed-box");
             bf.slideUp();
+			$.ajax({
+			    url: _baseUrl + '/app/api?command=box_status&status=0&id='+box.attr('id'),
+		        dataType: 'json'
+		    });
         } else {
             box.removeClass("collapsed-box");
             bf.slideDown();
+			$.ajax({
+			    url: _baseUrl + '/app/api?command=box_status&status=1&id='+box.attr('id'),
+		        dataType: 'json'
+		    });
+        }
+    });
+    
+    $(".box").each(function () {
+	    var box = $(this);
+        //Find the body and the footer
+        var bf = box.find(".box-body, .box-footer");
+		if (box.hasClass("collapsed-box")) {
+            bf.slideUp();
         }
     });
 

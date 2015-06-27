@@ -1942,7 +1942,20 @@ class Util_model extends CI_Model {
 	
 	// Set the dashboard box status
 	public function setBoxStatus($boxId, $status) {
-		
+		if ($boxId) {
+			$boxStatuses = json_decode($this->redis->get('box_status'), true);
+			
+			if (is_array($boxStatuses)) {
+				$boxStatuses[$boxId] = $status;
+			} else {
+				$boxStatuses = array();
+				$boxStatuses[$boxId] = $status;
+			}
+			
+			$this->redis->set('box_status', json_encode($boxStatuses));
+
+			return array("success" => true, $boxId => $status);
+		}
 	}
 	
 	// Generate a uniq hash ID for Minera System ID

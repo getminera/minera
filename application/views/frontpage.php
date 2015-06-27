@@ -242,7 +242,7 @@
 						<section class="hidden-xs col-md-12 connectedSortable ui-sortable top-section">
 							
 							<!-- Profit box -->
-							<div class="box box-light" id="box-profit">
+							<div class="box box-light <?php if (isset($boxStatuses['box-profit']) && !$boxStatuses['box-profit']) :?>collapsed-box<?php endif; ?>" id="box-profit">
 							   	<div class="overlay"></div>
 							   	<div class="loading-img"></div>
 								<div class="box-header" style="cursor: move;">
@@ -323,7 +323,7 @@
 							</div><!-- /.profit box -->
 						
 							<!-- Local Miner box -->
-							<div class="box box-light" id="box-local-miner">
+							<div class="box box-light <?php if (isset($boxStatuses['box-local-miner']) && !$boxStatuses['box-local-miner']) :?>collapsed-box<?php endif; ?>" id="box-local-miner">
 							   	<div class="overlay"></div>
 							   	<div class="loading-img"></div>
 								<div class="box-header" style="cursor: move;">
@@ -384,7 +384,7 @@
 							</div><!-- /.miner box -->
 							
 							<!-- Local Pools box -->
-							<div class="box box-light" id="box-local-pools">
+							<div class="box box-light <?php if (isset($boxStatuses['box-local-pools']) && !$boxStatuses['box-local-pools']) :?>collapsed-box<?php endif; ?>" id="box-local-pools">
 							   	<div class="overlay"></div>
 							   	<div class="loading-img"></div>
 								<div class="box-header" style="cursor: move;">
@@ -469,7 +469,7 @@
 							
 							<!-- Network Miners box -->
 							<?php if (count($netMiners) > 0) : ?>
-							<div id="network-details" class="box box-light network-miner-details" style="display:none;">
+							<div id="box-network-details" class="box box-light network-miner-details <?php if (isset($boxStatuses['box-network-details']) && !$boxStatuses['box-network-details']) :?>collapsed-box<?php endif; ?>" style="display:none;">
 							   	<div class="overlay"></div>
 							   	<div class="loading-img"></div>
 								<div class="box-header" style="cursor: move;">
@@ -521,7 +521,7 @@
 							</div><!-- /.network miner box -->
 							
 							<!-- Network pools box -->
-							<div id="network-pools-details" class="box box-light">
+							<div id="box-network-pools-details" class="box box-light <?php if (isset($boxStatuses['box-network-pools-details']) && !$boxStatuses['box-network-pools-details']) :?>collapsed-box<?php endif; ?>">
 							   	<div class="overlay"></div>
 							   	<div class="loading-img"></div>
 								<div class="box-header" style="cursor: move;">
@@ -615,7 +615,7 @@
 						<section class="col-md-6 col-xs-12 connectedSortable ui-sortable right-section" id="box-charts">
 							
 							<!-- A/R/H chart -->
-							<div class="box box-primary">
+							<div class="box box-primary <?php if (isset($boxStatuses['box-chart-shares']) && !$boxStatuses['box-chart-shares']) :?>collapsed-box<?php endif; ?>" id="box-chart-shares">
 							   	<div class="overlay"></div>
 							   	<div class="loading-img"></div>
 								<div class="box-header">
@@ -633,7 +633,7 @@
 							</div><!-- /.A/R/H chart -->
 							
 							<!-- System box -->
-							<div class="box box-light">
+							<div class="box box-light <?php if (isset($boxStatuses['box-chart-system-load']) && !$boxStatuses['box-chart-system-load']) :?>collapsed-box<?php endif; ?>" id="box-chart-system-load">
 							   	<div class="overlay"></div>
 							   	<div class="loading-img"></div>
 								<div class="box-header" style="cursor: move;">
@@ -659,7 +659,7 @@
 						<section class="col-md-6 col-xs-12 connectedSortable ui-sortable left-section">
 							
 							<!-- Hashrate box chart -->
-							<div class="box box-primary">
+							<div class="box box-primary <?php if (isset($boxStatuses['box-chart-hashrates']) && !$boxStatuses['box-chart-hashrates']) :?>collapsed-box<?php endif; ?>" id="box-chart-hashrates">
 							   	<div class="overlay"></div>
 							   	<div class="loading-img"></div>
 								<div class="box-header">
@@ -677,7 +677,7 @@
 							</div><!-- /.hashrate box -->
 							
 							<!-- Profitability box -->
-							<div class="box box-dark">
+							<div class="box box-dark <?php if (isset($boxStatuses['box-scrypt-earnings']) && !$boxStatuses['box-scrypt-earnings']) :?>collapsed-box<?php endif; ?>" id="box-scrypt-earnings">
 								<div class="box-header" style="cursor: move;">
 									<!-- tools box -->
 									<div class="pull-right box-tools">
@@ -714,7 +714,7 @@
 														
 							<?php if ($dashboardDevicetree) : ?>
 							<!-- Tree box -->
-							<div class="box box-dark">
+							<div class="box box-dark <?php if (isset($boxStatuses['box-device-tree']) && !$boxStatuses['box-device-tree']) :?>collapsed-box<?php endif; ?>" id="box-device-tree">
 							   	<div class="overlay"></div>
 							   	<div class="loading-img"></div>
 								<div class="box-header" style="cursor: move;">
@@ -734,7 +734,7 @@
 							<?php endif; ?>
 						
 							<!-- Real time log box -->
-							<div class="box box-light" id="box-log">
+							<div class="box box-light <?php if (isset($boxStatuses['box-log']) && !$boxStatuses['box-log']) :?>collapsed-box<?php endif; ?>" id="box-log">
 								<div class="box-header" style="cursor: move;">
 									<!-- tools box -->
 									<div class="pull-right box-tools">
@@ -763,9 +763,6 @@
 							<div class="box bg-light box-danger" id="box-donation">
 								<div class="box-header">
 									<!-- tools box -->
-									<div class="pull-right box-tools">
-										<button class="btn btn-default btn-xs" data-widget="collapse" data-toggle="tooltip" title="" data-original-title="Collapse"><i class="fa fa-minus"></i></button>
-									</div><!-- /. tools -->
 									<i class="fa fa-gift"></i>
 
 									<h3 class="box-title">Donations</h3>

@@ -74,6 +74,14 @@ class App extends Main_Controller {
 	{
 		$this->util_model->isLoggedIn();
 		
+		//var_export($this->redis->command("HGETALL box_status"));
+		$boxStatuses = json_decode($this->redis->get("box_status"), true);
+
+		$data['boxStatuses'] = array();
+		if (count($boxStatuses > 0)) {
+			$data['boxStatuses'] = $boxStatuses;
+		}
+		
 		$data['sectionPage'] = 'dashboard';
 		$data['minerdPools'] = json_decode($this->util_model->getPools());
 		$data['isOnline'] = $this->util_model->isOnline();
@@ -954,7 +962,7 @@ class App extends Main_Controller {
 				$o = json_encode($this->util_model->callMobileminer());
 			break;
 			case "box_status":
-				$o = json_encode($this->util_model->setBoxStatus($this->input->get('boxId'), $this->input->get('status')));
+				$o = json_encode($this->util_model->setBoxStatus($this->input->get('id'), $this->input->get('status')));
 			break;
 			case "miner_action":
 				$action = ($this->input->get('action')) ? $this->input->get('action') : false;
