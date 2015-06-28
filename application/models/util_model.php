@@ -426,13 +426,14 @@ class Util_model extends CI_Model {
 					$return['devices'][$name]['hw_errors'] = $device->{'Hardware Errors'};
 					if ($this->_minerdSoftware == "cgdmaxlzeus")
 					{
-						$return['devices'][$name]['shares'] = ($device->{'Diff1 Work'}) ? round(($device->{'Diff1 Work'}*71582788/1000/1000),0) : 0;	
+						$return['devices'][$name]['shares'] = ($device->{'Diff1 Work'}) ? round(($device->{'Diff1 Work'}*71582788/1000/1000),0) : 0;
+						$return['devices'][$name]['hashrate'] = ($device->{'KHS 1m'}*1000);
 					}
 					else
 					{
 						$return['devices'][$name]['shares'] = ($device->{'Diff1 Work'}) ? round(($device->{'Diff1 Work'}*71582788/1000),0) : 0;	
+						$return['devices'][$name]['hashrate'] = ($device->{'MHS av'}*1000*1000);
 					}
-					$return['devices'][$name]['hashrate'] = ($device->{'MHS av'}*1000*1000);
 					$return['devices'][$name]['last_share'] = $device->{'Last Share Time'};
 					$return['devices'][$name]['serial'] = (isset($device->Serial)) ? $device->Serial : false;;
 
@@ -463,10 +464,9 @@ class Util_model extends CI_Model {
 				
 				//log_message("error", var_export($stats->summary[0]->STATUS[0]->Description, true));
 				
-				if ($this->_minerdSoftware == "cgdmaxlzeus" || 
-					$this->_minerdSoftware == "cgminer" || 
-					(isset($stats->summary[0]->STATUS[0]->Description) && preg_match("/cgminer/", $stats->summary[0]->STATUS[0]->Description
-				))) {
+				if ($this->_minerdSoftware == "cgdmaxlzeus") {
+					$cgbfgminerPoolHashrate = round(65536.0 * ($totals->{'Difficulty Accepted'} / $totals->Elapsed), 0);
+				} elseif ($this->_minerdSoftware == "cgminer" || (isset($stats->summary[0]->STATUS[0]->Description) && preg_match("/cgminer/", $stats->summary[0]->STATUS[0]->Description))) {
 					$cgbfgminerPoolHashrate = round($totals->{'Total MH'} / $totals->Elapsed * 1000000); //round(65536.0 * ($totals->{'Difficulty Accepted'} / $totals->Elapsed), 0); //round(($totals->{'Network Blocks'}*71582788/1000), 0);
 				} else {
 					$cgbfgminerPoolHashrate = round(($totals->{'Work Utility'}*71582788), 0);

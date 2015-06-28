@@ -222,6 +222,8 @@ class App extends Main_Controller {
 		$data['dashboardTemp'] = ($this->redis->get("dashboard_temp")) ? $this->redis->get("dashboard_temp") : "c";
 		$data['dashboardSkin'] = ($this->redis->get("dashboard_skin")) ? $this->redis->get("dashboard_skin") : "black";
 		$data['dashboardDevicetree'] = ($this->redis->get("dashboard_devicetree")) ? $this->redis->get("dashboard_devicetree") : false;
+		$data['dashboardBoxProfit'] = ($this->redis->get("dashboard_box_profit")) ? $this->redis->get("dashboard_box_profit") : false;
+		$data['dashboardBoxLocalMiner'] = ($this->redis->get("dashboard_box_local_miner")) ? $this->redis->get("dashboard_box_local_miner") : false;
 		$data['dashboardTableRecords'] = ($this->redis->get("dashboard_table_records")) ? $this->redis->get("dashboard_table_records") : 5;
 		$data['algo'] = $this->util_model->checkAlgo(false);
 
@@ -289,6 +291,8 @@ class App extends Main_Controller {
 			$dashboardSkin = $this->input->post('dashboard_skin');
 			$dashboardTableRecords = $this->input->post('dashboard_table_records');
 			$dashboardDevicetree = $this->input->post('dashboard_devicetree');
+			$dashboardBoxProfit = $this->input->post('dashboard_box_profit');
+			$dashboardBoxLocalMiner = $this->input->post('dashboard_box_local_miner');
 			
 			// Pools
 			$poolUrls = $this->input->post('pool_url');
@@ -530,6 +534,10 @@ class App extends Main_Controller {
 			$dataObj->dashboard_table_records = $dashboardTableRecords;
 			$this->redis->set("dashboard_devicetree", $dashboardDevicetree);
 			$dataObj->dashboard_devicetree = $dashboardDevicetree;
+			$this->redis->set("dashboard_box_profit", $dashboardBoxProfit);
+			$dataObj->dashboard_box_profit = $dashboardBoxProfit;
+			$this->redis->set("dashboard_box_local_miner", $dashboardBoxLocalMiner);
+			$dataObj->dashboard_box_local_miner = $dashboardBoxLocalMiner;
 			if ($this->redis->get("dashboard_coin_rates") !== json_encode($coinRates)) {
 				$this->redis->set("dashboard_coin_rates", json_encode($coinRates));
 				$dataObj->dashboard_coin_rates = json_encode($coinRates);

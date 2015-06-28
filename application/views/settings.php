@@ -185,15 +185,6 @@
 											</select>
 										</div>
 										
-										<!-- Local device tree -->
-										<div class="form-group">
-											<div class="checkbox">
-												<label>
-													<input type="checkbox" name="dashboard_devicetree" value="1" <?php if ($dashboardDevicetree) : ?>checked=""<?php endif; ?> /> Enable device tree panel
-												</label>                                                
-											</div>
-										</div>
-										
 										<!-- Records per page -->
 										<div class="form-group">
 											<label>Data tables</label>
@@ -204,6 +195,30 @@
 												<option value="25" <?php if ($dashboardTableRecords == "25") : ?>selected<?php endif; ?>>25</option>
 												<option value="50" <?php if ($dashboardTableRecords == "50") : ?>selected<?php endif; ?>>50</option>
 											</select>
+										</div>
+										
+										<!-- Local device tree -->
+										<div class="form-group">
+											<label>Section panels</label>
+											<p>Select what section you want enable/disable in the dashboard.</p>
+											<div class="checkbox">
+												<div class="row">
+													<div class="col-md-6 col-sm-12">
+														<label><input type="checkbox" name="dashboard_devicetree" value="1" <?php if ($dashboardDevicetree) : ?>checked=""<?php endif; ?> /> Device tree panel</label>
+													</div>
+													<div class="col-md-6 col-sm-12">
+														<label><input type="checkbox" name="dashboard_box_local_miner" value="1" <?php if ($dashboardBoxLocalMiner) : ?>checked=""<?php endif; ?> /> Local miner panel</label>
+													</div>
+												</div>
+												<div class="row mt10">
+													<div class="col-md-6 col-sm-12">
+														<label><input type="checkbox" name="dashboard_box_profit" value="1" <?php if ($dashboardBoxProfit) : ?>checked=""<?php endif; ?> /> Mining profitability panel</label>
+													</div>
+													<div class="col-md-6 col-sm-12">
+
+													</div>
+												</div>
+											</div>
 										</div>
 	                                </div>
 									<div class="box-footer">
