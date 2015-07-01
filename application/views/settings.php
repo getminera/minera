@@ -129,7 +129,7 @@
 								    	</div>										
 								    </div>
 								    <div class="box-footer" style="clear:both">
-								    	<button type="submit" class="btn btn-danger save-minera-settings-restart" name="save_restart" value="1">Save & Restart Miner</button>
+								    	<button type="submit" class="btn btn-danger save-minera-settings-restart" name="save_restart" value="1">Save & Restart Miner</button> <a href="https://www.coinbase.com/checkouts/2800f107a4d64c0b0ea4753031fd8d89" target="_blank" class="btn btn-primary"><i class="fa fa-gift"></i> Donate Bitcoins</a>
 								    </div>
 								</div>
                         
@@ -137,19 +137,65 @@
 							
 							<section class="right-section col-xs-12 col-md-6">			
 													
-	                            <!-- Dashboard box -->
-								<div class="box box-primary" id="dashboard-box">
-									<div class="box-header">
-										<!-- tools box -->
-	                                    <div class="pull-right box-tools">
-	                                        <button class="btn btn-default btn-xs" data-widget="collapse" data-toggle="tooltip" title="" data-original-title="Collapse"><i class="fa fa-minus"></i></button>
-	                                    </div><!-- /. tools -->
-	                                    <i class="fa fa-dashboard"></i>
-	                                    
-	                                    <h3 class="box-title">Dashboard Settings</h3>
-	                                </div>
-									
-	                                <div class="box-body">
+								<!-- Topbar box -->
+								<div class="box box-primary" id="top-bar-box">
+								    <div class="box-header">
+								    	<!-- tools box -->
+			                            <div class="pull-right box-tools">
+			                                <button class="btn btn-default btn-xs" data-widget="collapse" data-toggle="tooltip" title="" data-original-title="Collapse"><i class="fa fa-minus"></i></button>
+			                            </div><!-- /. tools -->
+			                            <i class="fa fa-money"></i>
+			                            
+			                            <h3 class="box-title">Top bar Settings</h3>
+			                        </div>
+								    
+			                        <div class="box-body">								    		
+							    		<!-- Altcoins rates -->
+							    		<div class="form-group">
+							    			<label>Altcoins prices</label>
+							    			<?php $altdata = json_decode($cryptsy_data); ?>
+							    			<?php if (is_object($altdata) && is_array($dashboard_coin_rates)) : ?>
+							    				<p><small>Currently selected: </small><?php foreach ($dashboard_coin_rates as $altcoin) : ?><small class="badge bg-blue"><?php echo $altdata->$altcoin->codes ?></small>&nbsp;<?php endforeach; ?></p>
+							    				<div class="input-group">
+							    					<div class="input-group-addon">
+							    						<i class="fa fa-btc"></i>
+							    					</div>
+							    					<select multiple class="form-control dashboard-coin-rates" name="dashboard_coin_rates[]" size="9">
+							    					<?php foreach ($altdata as $id => $values) : ?>
+							    						<option value="<?php echo $id ?>" <?php echo (in_array($id, $dashboard_coin_rates)) ? "selected" : ""; ?>><?php echo $values->names . " - " . $values->codes ?></option>
+							    					<?php endforeach; ?>
+							    					</select>
+							    				</div><!-- /.input group -->
+							    				<small>Select max 5 rates to be displayed on the top bar</small>
+											<?php else: ?>
+							    				<p><small class="badge bg-red">Updating altcoins data. Please wait some minutes and try refreshing the page.</small></p>
+											<?php endif; ?>
+										</div>
+			                        </div>
+								    <div class="box-footer">
+								    	<button type="submit" class="btn btn-primary save-minera-settings" name="save" value="1">Save</button>
+								    </div>
+			                    </div>
+                            
+							</section><!-- End right section -->
+
+						</div><!-- End row -->
+						
+						<!-- Dashboard box -->
+						<div class="box box-primary" id="dashboard-box">
+							<div class="box-header">
+								<!-- tools box -->
+                                <div class="pull-right box-tools">
+                                    <button class="btn btn-default btn-xs" data-widget="collapse" data-toggle="tooltip" title="" data-original-title="Collapse"><i class="fa fa-minus"></i></button>
+                                </div><!-- /. tools -->
+                                <i class="fa fa-dashboard"></i>
+                                
+                                <h3 class="box-title">Dashboard Settings</h3>
+                            </div>
+							
+                            <div class="box-body">
+	                            <div class="row">
+		                            <div class="col-lg-6 col-md-12">
 										<!-- Temperatures scale F°/C°-->
 										<div class="form-group">
 											<label>Temperature units</label>
@@ -165,7 +211,7 @@
 												</label>                                                
 											</div>
 										</div>
-
+		
 										<!-- Refresh time -->
 										<div class="form-group">
 											<label>Refresh time</label>
@@ -196,39 +242,46 @@
 												<option value="50" <?php if ($dashboardTableRecords == "50") : ?>selected<?php endif; ?>>50</option>
 											</select>
 										</div>
-										
-										<!-- Local device tree -->
+		                            </div>
+		                            <div class="col-lg-6 col-md-12">
+			                            <!-- Local device tree -->
 										<div class="form-group">
 											<label>Section panels</label>
 											<p>Select what section you want enable/disable in the dashboard.</p>
-											<div class="checkbox">
-												<div class="row">
-													<div class="col-md-6 col-sm-12">
-														<label><input type="checkbox" name="dashboard_devicetree" value="1" <?php if ($dashboardDevicetree) : ?>checked=""<?php endif; ?> /> Device tree panel</label>
-													</div>
-													<div class="col-md-6 col-sm-12">
-														<label><input type="checkbox" name="dashboard_box_local_miner" value="1" <?php if ($dashboardBoxLocalMiner) : ?>checked=""<?php endif; ?> /> Local miner panel</label>
-													</div>
-												</div>
-												<div class="row mt10">
-													<div class="col-md-6 col-sm-12">
-														<label><input type="checkbox" name="dashboard_box_profit" value="1" <?php if ($dashboardBoxProfit) : ?>checked=""<?php endif; ?> /> Mining profitability panel</label>
-													</div>
-													<div class="col-md-6 col-sm-12">
-
-													</div>
-												</div>
-											</div>
+											<table class="box-panels">
+												<tr>
+													<td><input type="checkbox" name="dashboard_box_profit" value="1" <?php if ($dashboardBoxProfit) : ?>checked=""<?php endif; ?> /> Mining profitability</td>
+													<td><input type="checkbox" name="dashboard_box_local_miner" value="1" <?php if ($dashboardBoxLocalMiner) : ?>checked=""<?php endif; ?> /> Local miner</td>
+												</tr>
+												<tr>
+													<td><input type="checkbox" name="dashboard_box_local_pools" value="1" <?php if ($dashboardBoxLocalPools) : ?>checked=""<?php endif; ?> /> Local pools</td>
+													<td><input type="checkbox" name="dashboard_box_network_details" value="1" <?php if ($dashboardBoxNetworkDetails) : ?>checked=""<?php endif; ?> /> Network miners</td>
+												</tr>
+												<tr>
+													<td><input type="checkbox" name="dashboard_box_network_pools_details" value="1" <?php if ($dashboardBoxNetworkPoolsDetails) : ?>checked=""<?php endif; ?> /> Network pools</td>
+													<td><input type="checkbox" name="dashboard_box_chart_shares" value="1" <?php if ($dashboardBoxChartShares) : ?>checked=""<?php endif; ?> /> Shares chart</td>
+												</tr>
+												<tr>
+													<td><input type="checkbox" name="dashboard_box_chart_system_load" value="1" <?php if ($dashboardBoxChartSystemLoad) : ?>checked=""<?php endif; ?> /> System load</td>
+													<td><input type="checkbox" name="dashboard_box_chart_hashrates" value="1" <?php if ($dashboardBoxChartHashrates) : ?>checked=""<?php endif; ?> /> Hashrates chart</td>
+												</tr>
+												<tr>
+													<td><input type="checkbox" name="dashboard_box_scrypt_earnings" value="1" <?php if ($dashboardBoxScryptEarnings) : ?>checked=""<?php endif; ?> /> Scrypt earnings</td>
+													<td><input type="checkbox" name="dashboard_box_log" value="1" <?php if ($dashboardBoxLog) : ?>checked=""<?php endif; ?> /> Miner log</td>
+												</tr>
+												<tr>
+													<td><input type="checkbox" name="dashboard_devicetree" value="1" <?php if ($dashboardDevicetree) : ?>checked=""<?php endif; ?> /> Device tree</td>
+													<td></td>
+												</tr>
+											</table>
 										</div>
-	                                </div>
-									<div class="box-footer">
-										<button type="submit" class="btn btn-primary save-minera-settings" name="save" value="1">Save</button>
-									</div>
+		                            </div>
 	                            </div>
-                            
-							</section><!-- End right section -->
-
-						</div><!-- End row -->
+                            </div>
+							<div class="box-footer">
+								<button type="submit" class="btn btn-primary save-minera-settings" name="save" value="1">Save</button>
+							</div>
+                        </div>
 							                            	                          
 						<!-- Pools box -->
                         <div class="box box-primary" id="pools-box">
@@ -915,50 +968,7 @@
 						    	<p class="pull-right small">Pools for network devices can be handle from the dashboard</p>
 						    </div>
 	                    </div>
-	                    
-						<!-- Topbar box -->
-						<div class="box box-primary" id="top-bar-box">
-						    <div class="box-header">
-						    	<!-- tools box -->
-	                            <div class="pull-right box-tools">
-	                                <button class="btn btn-default btn-xs" data-widget="collapse" data-toggle="tooltip" title="" data-original-title="Collapse"><i class="fa fa-minus"></i></button>
-	                            </div><!-- /. tools -->
-	                            <i class="fa fa-money"></i>
-	                            
-	                            <h3 class="box-title">Top bar Settings</h3>
-	                        </div>
-						    
-	                        <div class="box-body">
-						    	<p>Setup the top bar options</p>
-						    		
-					    		<!-- Altcoins rates -->
-					    		<div class="form-group">
-					    			<label>Altcoins rates</label>
-					    			<?php $altdata = json_decode($cryptsy_data); ?>
-					    			<?php if (is_object($altdata) && is_array($dashboard_coin_rates)) : ?>
-					    				<p><small>Currently selected: </small><?php foreach ($dashboard_coin_rates as $altcoin) : ?><small class="badge bg-blue"><?php echo $altdata->$altcoin->codes ?></small>&nbsp;<?php endforeach; ?></p>
-
-					    				<div class="input-group">
-					    					<div class="input-group-addon">
-					    						<i class="fa fa-btc"></i>
-					    					</div>
-					    					<select multiple class="form-control dashboard-coin-rates" name="dashboard_coin_rates[]" style="width:50%" size="10">
-					    					<?php foreach ($altdata as $id => $values) : ?>
-					    						<option value="<?php echo $id ?>" <?php echo (in_array($id, $dashboard_coin_rates)) ? "selected" : ""; ?>><?php echo $values->names . " - " . $values->codes ?></option>
-					    					<?php endforeach; ?>
-					    					</select>
-					    				</div><!-- /.input group -->
-					    				<small>Select max 5 rates to be displayed on the top bar</small>
-									<?php else: ?>
-					    				<p><small class="badge bg-red">Updating altcoins data. Please wait some minutes and try refreshing the page.</small></p>
-									<?php endif; ?>
-								</div>
-	                        </div>
-						    <div class="box-footer">
-						    	<button type="submit" class="btn btn-primary save-minera-settings" name="save" value="1">Save</button>
-						    </div>
-	                    </div>
-                        
+	                                            
                         <!-- System box -->
 						<div class="box box-primary" id="system-box">
 							<div class="box-header">
@@ -1072,32 +1082,7 @@
                             </div>
 							
                             <div class="box-body">
-								<p>If you cannot (or don't want) to completely expose to internet your Minera system you can choose to connect it to the awesome <a href="http://www.mobileminerapp.com/" target="_blank">Mobileminer app</a> to check your stats from everywhere you are.<br />Please follow the instruction on the <a href="http://www.mobileminerapp.com/#gettingStarted" target="_blank">Mobileminer website</a>. To get started you only need to signup with your email address to retrieve your application key.</p>
-
-								<!-- mobileminer options -->
-								<div class="form-group">
-									<div class="checkbox">
-										<label>
-											<input type="checkbox" class="mobileminer-checkbox" name="mobileminer_enabled" value="1" <?php if ($mobileminerEnabled) : ?>checked=""<?php endif; ?> />
-											Enable Mobileminer
-										</label>                                                
-									</div>
-									<label class="mt10" for="mobileminer_system_name">System Name</label>
-									<div class="input-group">
-										<span class="input-group-addon"><i class="fa fa-tag"></i></span>
-										<input type="text" class="form-control" name="mobileminer_system_name" placeholder="Give a name to this Minera system to identify it" value="<?php echo $mobileminerSystemName ?>">
-									</div>
-									<label class="mt10" for="mobileminer_email">Email</label>
-									<div class="input-group">
-										<span class="input-group-addon"><i class="fa fa-at"></i></span>
-										<input type="text" class="form-control" name="mobileminer_email" placeholder="Email you used to signup Mobileminer" value="<?php echo $mobileminerEmail ?>">
-									</div>
-									<label class="mt10" for="mobileminer_appkey">Application Key</label>
-									<div class="input-group">
-										<span class="input-group-addon"><i class="fa fa-key"></i></span>
-										<input type="password" class="form-control" name="mobileminer_appkey" placeholder="Your Mobileminer Application Key" value="<?php echo $mobileminerAppkey ?>">
-									</div>
-								</div>
+								<p>Where is MobileMiner? Unfortunately the service has been closed by his author, so we cannot use it anymore. If you want more info please <a href="https://bitcointalk.org/index.php?topic=596620.msg11717045#msg11717045" target="_blank">read here</a>.</p>
                             </div>
 							<div class="box-footer">
 								<button type="submit" class="btn btn-primary save-minera-settings" name="save" value="1">Save</button>
@@ -1265,8 +1250,26 @@
 						<div class="box-footer">
 							<h6>Clicking the reset buttons resets data immediately, there isn't any confirmation to do. Reset actions aren't recoverable, data will be lost.</h6>
 						</div>
-						
                     </div>
+                    
+                    <?php if (!$this->redis->get("minera_donation_time")) : ?>					
+					<!-- Donations box -->
+					<div class="box bg-light box-danger" id="box-donation">
+						<div class="box-header">
+							<!-- tools box -->
+							<i class="fa fa-gift"></i>
+
+							<h3 class="box-title">Donations</h3>
+						</div>
+						<div class="box-body text-center">
+                        	<div class="coinbase-donate-button">
+                            	<!-- a class="coinbase-button" data-code="01ce206aaaf1a8659b07233d9705b9e8" data-button-style="custom_small" href="https://www.coinbase.com/checkouts/01ce206aaaf1a8659b07233d9705b9e8">Donate Bitcoins</a -->
+                            	<a href="https://www.coinbase.com/checkouts/2800f107a4d64c0b0ea4753031fd8d89" target="_blank" class="btn btn-primary mb20"><i class="fa fa-gift"></i> Donate Bitcoins</a>
+							</div>
+							<p class="more-line-height">If you like Minera, please consider a donation to support it. <strong>Bitcoin</strong>: <code><a href="bitcoin:1AmREReHNLec9EaW7gLRdW31LNSDA9SGR1" target="_blank">1AmREReHNLec9EaW7gLRdW31LNSDA9SGR1</a></code> <strong>Litecoin</strong>: <code><a href="litecoin:LLPmAT9gDwmiSdqwWEZu6mpUDmrNAnYBdC" target="_blank">LLPmAT9gDwmiSdqwWEZu6mpUDmrNAnYBdC</a></code> <strong>Dogecoin</strong>: <code><a href="dogecoin:DLAHwNxfUTUcePewbkvwvAouny19mcosA7" target="_blank">DLAHwNxfUTUcePewbkvwvAouny19mcosA7</a></code></p>
+						</div><!-- /.box-body -->
+					</div>
+					<?php endif; ?>
                 
                 </section><!-- /.left col -->
                 

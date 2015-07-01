@@ -1662,6 +1662,8 @@ class Util_model extends CI_Model {
 			shell_exec("sudo -u " . $this->config->item("system_user") . " sudo chmod 666 " . $this->config->item('minerd_log_file'));
 		}
 		
+		/*
+		// DISABLED as the service shuts down
 		if ($this->isEnableMobileminer())
 		{
 			$pools = json_decode($this->getPools());
@@ -1679,6 +1681,7 @@ class Util_model extends CI_Model {
 				log_message("error", "Sent MobileMiner pools: ".json_encode($mmPools));
 			}			
 		}
+		*/
 		
 		$this->redis->command("BGSAVE");
 		

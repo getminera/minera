@@ -240,7 +240,7 @@
 						
 						<!-- Top section -->
 						<section class="hidden-xs col-md-12 connectedSortable ui-sortable top-section">
-							
+							<?php if ($dashboardBoxProfit) : ?>
 							<!-- Profit box -->
 							<div class="box box-light <?php if (isset($boxStatuses['box-profit']) && !$boxStatuses['box-profit']) :?>collapsed-box<?php endif; ?>" id="box-profit">
 							   	<div class="overlay"></div>
@@ -321,7 +321,9 @@
 							 		<h6>Exchange rates taken by <a href="https://www.cryptsy.com/users/register?refid=243592">Cryptsy</a> are updated every 10 minutes, everything else are (almost) in real time. Profit formula is: <i>( time / (difficulty * 2^32) / hashrate ) * reward</i></h6>
 								</div>
 							</div><!-- /.profit box -->
+							<?php endif; ?>
 						
+							<?php if ($dashboardBoxLocalMiner) : ?>
 							<!-- Local Miner box -->
 							<div class="box box-light <?php if (isset($boxStatuses['box-local-miner']) && !$boxStatuses['box-local-miner']) :?>collapsed-box<?php endif; ?>" id="box-local-miner">
 							   	<div class="overlay"></div>
@@ -382,7 +384,9 @@
 								 	</div>
 								</div>
 							</div><!-- /.miner box -->
+							<?php endif; ?>
 							
+							<?php if ($dashboardBoxLocalPools) : ?>
 							<!-- Local Pools box -->
 							<div class="box box-light <?php if (isset($boxStatuses['box-local-pools']) && !$boxStatuses['box-local-pools']) :?>collapsed-box<?php endif; ?>" id="box-local-pools">
 							   	<div class="overlay"></div>
@@ -466,154 +470,158 @@
 									<h6><strong>Current</strong> is the current or last session, <strong>Previous</strong> is the total of all previous sessions. Pool HashRate is based on shares over the time per session.</h6>
 								</div>
 							</div><!-- /.local pools box -->
-							
-							<!-- Network Miners box -->
-							<?php if (count($netMiners) > 0) : ?>
-							<div id="box-network-details" class="box box-light network-miner-details <?php if (isset($boxStatuses['box-network-details']) && !$boxStatuses['box-network-details']) :?>collapsed-box<?php endif; ?>" style="display:none;">
-							   	<div class="overlay"></div>
-							   	<div class="loading-img"></div>
-								<div class="box-header" style="cursor: move;">
-									<!-- tools box -->
-									<div class="pull-right box-tools">
-										<button class="btn btn-default btn-xs" data-widget="collapse" data-toggle="tooltip" title="" data-original-title="Collapse"><i class="fa fa-minus"></i></button>
-									</div><!-- /. tools -->
-									<i class="fa fa-server"></i>
-
-									<h3 class="box-title" id="miner-details">Network Miners details</h3>
-								</div>
-								<div class="box-body">
-									<div class="row">
-										<div class="col-sm-12">
-											<div class="table-responsive">
-												  <table id="network-miner-table-details" class="table table-striped datatable">
-													  <thead>
-													  <tr>
-														  <th>DEV</th>
-														  <th>Temp</th>
-														  <th>Frequency</th>
-														  <th>Dev HR</th>
-														  <th>Shares</th>
-														  <th>AC</th>
-														  <th>% AC</th>
-														  <th>RE</th>
-														  <th>% RE</th>
-														  <th>HW</th>
-														  <th>% HW</th>
-														  <th>Last share</th>
-														  <th>Last share time</th>
-													  </tr>
-													  </thead>
-													  <tbody class="network_devs_table">
-													</tbody>
-													  <tfoot class="network_devs_table_foot">
-													</tfoot>
-												</table><!-- /.table -->
-											  </div>
-										</div>
-									</div><!-- /.row - inside box -->
-								</div><!-- /.box-body -->
-								<div class="box-footer">
-									<div class="legend pull-right">
-								 		<h6>Colors based on last share time: <i class="fa fa-circle text-success"></i> Good&nbsp;&nbsp;&nbsp;<i class="fa fa-circle text-warning"></i> Warning&nbsp;&nbsp;&nbsp;<i class="fa fa-circle text-danger"></i> Critical&nbsp;&nbsp;&nbsp;<i class="fa fa-circle text-muted"></i> Possibly dead</h6>
-									</div>
-									<div>&nbsp;</div>
-								</div>
-							</div><!-- /.network miner box -->
-							
-							<!-- Network pools box -->
-							<div id="box-network-pools-details" class="box box-light <?php if (isset($boxStatuses['box-network-pools-details']) && !$boxStatuses['box-network-pools-details']) :?>collapsed-box<?php endif; ?>">
-							   	<div class="overlay"></div>
-							   	<div class="loading-img"></div>
-								<div class="box-header" style="cursor: move;">
-									<!-- tools box -->
-									<div class="pull-right box-tools">
-										<button class="btn btn-default btn-xs" data-widget="collapse" data-toggle="tooltip" title="" data-original-title="Collapse"><i class="fa fa-minus"></i></button>
-									</div><!-- /. tools -->
-									<i class="fa fa-cloud"></i>
-
-									<h3 class="box-title" id="pools-details" >Network Pools details</h3>
-								</div>
-								<div class="box-body">
-									<div class="row">
-										<div class="col-sm-12">
-											<?php $npi = 1; $netCounts = count($netMiners); foreach ($netMiners as $netMiner) : ?>
-												<hr />
-												<div id="net-<?php echo md5($netMiner->name) ?>">
-													<div class="mb20 net-pools-label-<?php echo md5($netMiner->name) ?>"></div>
-													<div class="table-responsive">
-														  <!-- .table - Uses sparkline charts-->
-														  <table id="net-pools-table-details-<?php echo md5($netMiner->name) ?>" class="net-pools-table table table-striped datatable">
-															  <thead>
-															  <tr>
-																  <th>&nbsp;</th>
-																  <th>Pool</th>
-																  <th>Url</th>
-																  <th>Type</th>
-																  <th>Status</th>
-																  <th>Pool HR</th>
-																  <th>CS</th>
-																  <th>PS</th>
-																  <th>CA</th>
-																  <th>PA</th>
-																  <th>CR</th>
-																  <th>PR</th>
-																  <th>Username</th>
-															  </tr>
-															  </thead>
-															  <tbody class="net_pools_table">
-															</tbody>
-														</table><!-- /.table -->
-														<p class="net-pool-alert-<?php echo md5($netMiner->name) ?>"></p>
-													</div>
-													<div class="net-pools-addbox-<?php echo md5($netMiner->name) ?>">
-														<button class="btn btn-xs btn-primary toggle-add-net-pool" data-open="0"><i class="fa fa-plus"></i> Add pool</button> <button class="btn btn-xs btn-danger add-net-donation-pool" data-netminer="<?php echo md5($netMiner->name) ?>" data-network="<?php echo $netMiner->ip.':'.$netMiner->port ?>" data-netcoin="<?php echo $netMiner->algo ?>"><i class="fa fa-gift"></i> Add donation pool</button>
-														<div class="form-group mt10" style="display:none;">
-															<div class="row sort-attach">
-														    	<div class="col-xs-5">
-														    		<div class="input-group">
-														    			<span class="input-group-addon"><i class="fa fa-cloud-download"></i></span>
-														    			<input type="text" class="form-control pool_url_<?php echo md5($netMiner->name) ?>" placeholder="Pool url" name="pool_url" value="" />
-														    		</div>
-														    	</div>
-														    	<div class="col-xs-3">
-														    		<div class="input-group">
-														    			<span class="input-group-addon"><i class="fa fa-user"></i></span>
-														    			<input type="text" class="form-control pool_username_<?php echo md5($netMiner->name) ?>" placeholder="username" name="pool_username" value=""  />
-														    		</div>
-														    	</div>
-														    	<div class="col-xs-3">
-														    		<div class="input-group">
-														    			<span class="input-group-addon"><i class="fa fa-lock"></i></span>
-														    			<input type="text" class="form-control pool_password_<?php echo md5($netMiner->name) ?>" placeholder="password" name="pool_password" value=""  />
-														    		</div>
-														    	</div>
-														    	<div class="col-xs-1">
-														    		<div class="input-group">
-														    			<button class="btn btn-sm btn-success add-net-pool" data-netminer="<?php echo md5($netMiner->name) ?>" data-network="<?php echo $netMiner->ip.':'.$netMiner->port ?>"><i class="fa fa-plus"></i> Add</button>
-														    		</div>
-														    	</div>
-														    </div>
-														</div>
-													</div>
-													<div class="net-pool-error-<?php echo md5($netMiner->name) ?> mt10 text-red"></div>
-												</div>
-											<?php $npi++; endforeach; ?>
-										</div>
-									</div><!-- /.row - inside box -->
-								</div><!-- /.box-body -->
-								<div class="box-footer">
-									<h6>Every changes here will be lost if you stop/restart your network miner</h6>
-									<h6>Legend: <strong>CS</strong> = Current Shares, <strong>PS</strong> = Previous shares, <strong>CA</strong> = Current Accepted, <strong>PA</strong> = Previous Accepted, <strong>CR</strong> = Current Rejected, <strong>PR</strong> = Previous Rejected</h6>
-									<h6><strong>Current</strong> is the current or last session, <strong>Previous</strong> is the total of all previous sessions. Pool HashRate is based on shares over the time per session.</h6>
-								</div>
-							</div><!-- /.network pools box -->
 							<?php endif; ?>
 							
+							<?php if ($dashboardBoxNetworkDetails) : ?>
+								<!-- Network Miners box -->
+								<?php if (count($netMiners) > 0) : ?>
+								<div id="box-network-details" class="box box-light network-miner-details <?php if (isset($boxStatuses['box-network-details']) && !$boxStatuses['box-network-details']) :?>collapsed-box<?php endif; ?>" style="display:none;">
+								   	<div class="overlay"></div>
+								   	<div class="loading-img"></div>
+									<div class="box-header" style="cursor: move;">
+										<!-- tools box -->
+										<div class="pull-right box-tools">
+											<button class="btn btn-default btn-xs" data-widget="collapse" data-toggle="tooltip" title="" data-original-title="Collapse"><i class="fa fa-minus"></i></button>
+										</div><!-- /. tools -->
+										<i class="fa fa-server"></i>
+	
+										<h3 class="box-title" id="miner-details">Network Miners details</h3>
+									</div>
+									<div class="box-body">
+										<div class="row">
+											<div class="col-sm-12">
+												<div class="table-responsive">
+													  <table id="network-miner-table-details" class="table table-striped datatable">
+														  <thead>
+														  <tr>
+															  <th>DEV</th>
+															  <th>Temp</th>
+															  <th>Frequency</th>
+															  <th>Dev HR</th>
+															  <th>Shares</th>
+															  <th>AC</th>
+															  <th>% AC</th>
+															  <th>RE</th>
+															  <th>% RE</th>
+															  <th>HW</th>
+															  <th>% HW</th>
+															  <th>Last share</th>
+															  <th>Last share time</th>
+														  </tr>
+														  </thead>
+														  <tbody class="network_devs_table">
+														</tbody>
+														  <tfoot class="network_devs_table_foot">
+														</tfoot>
+													</table><!-- /.table -->
+												  </div>
+											</div>
+										</div><!-- /.row - inside box -->
+									</div><!-- /.box-body -->
+									<div class="box-footer">
+										<div class="legend pull-right">
+									 		<h6>Colors based on last share time: <i class="fa fa-circle text-success"></i> Good&nbsp;&nbsp;&nbsp;<i class="fa fa-circle text-warning"></i> Warning&nbsp;&nbsp;&nbsp;<i class="fa fa-circle text-danger"></i> Critical&nbsp;&nbsp;&nbsp;<i class="fa fa-circle text-muted"></i> Possibly dead</h6>
+										</div>
+										<div>&nbsp;</div>
+									</div>
+								</div><!-- /.network miner box -->
+								<?php endif; ?>
+								
+								<?php if ($dashboardBoxNetworkPoolsDetails) : ?>
+								<!-- Network pools box -->
+								<div id="box-network-pools-details" class="box box-light <?php if (isset($boxStatuses['box-network-pools-details']) && !$boxStatuses['box-network-pools-details']) :?>collapsed-box<?php endif; ?>">
+								   	<div class="overlay"></div>
+								   	<div class="loading-img"></div>
+									<div class="box-header" style="cursor: move;">
+										<!-- tools box -->
+										<div class="pull-right box-tools">
+											<button class="btn btn-default btn-xs" data-widget="collapse" data-toggle="tooltip" title="" data-original-title="Collapse"><i class="fa fa-minus"></i></button>
+										</div><!-- /. tools -->
+										<i class="fa fa-cloud"></i>
+	
+										<h3 class="box-title" id="pools-details" >Network Pools details</h3>
+									</div>
+									<div class="box-body">
+										<div class="row">
+											<div class="col-sm-12">
+												<?php $npi = 1; $netCounts = count($netMiners); foreach ($netMiners as $netMiner) : ?>
+													<hr />
+													<div id="net-<?php echo md5($netMiner->name) ?>">
+														<div class="mb20 net-pools-label-<?php echo md5($netMiner->name) ?>"></div>
+														<div class="table-responsive">
+															  <!-- .table - Uses sparkline charts-->
+															  <table id="net-pools-table-details-<?php echo md5($netMiner->name) ?>" class="net-pools-table table table-striped datatable">
+																  <thead>
+																  <tr>
+																	  <th>&nbsp;</th>
+																	  <th>Pool</th>
+																	  <th>Url</th>
+																	  <th>Type</th>
+																	  <th>Status</th>
+																	  <th>Pool HR</th>
+																	  <th>CS</th>
+																	  <th>PS</th>
+																	  <th>CA</th>
+																	  <th>PA</th>
+																	  <th>CR</th>
+																	  <th>PR</th>
+																	  <th>Username</th>
+																  </tr>
+																  </thead>
+																  <tbody class="net_pools_table">
+																</tbody>
+															</table><!-- /.table -->
+															<p class="net-pool-alert-<?php echo md5($netMiner->name) ?>"></p>
+														</div>
+														<div class="net-pools-addbox-<?php echo md5($netMiner->name) ?>">
+															<button class="btn btn-xs btn-primary toggle-add-net-pool" data-open="0"><i class="fa fa-plus"></i> Add pool</button> <button class="btn btn-xs btn-danger add-net-donation-pool" data-netminer="<?php echo md5($netMiner->name) ?>" data-network="<?php echo $netMiner->ip.':'.$netMiner->port ?>" data-netcoin="<?php echo $netMiner->algo ?>"><i class="fa fa-gift"></i> Add donation pool</button>
+															<div class="form-group mt10" style="display:none;">
+																<div class="row sort-attach">
+															    	<div class="col-xs-5">
+															    		<div class="input-group">
+															    			<span class="input-group-addon"><i class="fa fa-cloud-download"></i></span>
+															    			<input type="text" class="form-control pool_url_<?php echo md5($netMiner->name) ?>" placeholder="Pool url" name="pool_url" value="" />
+															    		</div>
+															    	</div>
+															    	<div class="col-xs-3">
+															    		<div class="input-group">
+															    			<span class="input-group-addon"><i class="fa fa-user"></i></span>
+															    			<input type="text" class="form-control pool_username_<?php echo md5($netMiner->name) ?>" placeholder="username" name="pool_username" value=""  />
+															    		</div>
+															    	</div>
+															    	<div class="col-xs-3">
+															    		<div class="input-group">
+															    			<span class="input-group-addon"><i class="fa fa-lock"></i></span>
+															    			<input type="text" class="form-control pool_password_<?php echo md5($netMiner->name) ?>" placeholder="password" name="pool_password" value=""  />
+															    		</div>
+															    	</div>
+															    	<div class="col-xs-1">
+															    		<div class="input-group">
+															    			<button class="btn btn-sm btn-success add-net-pool" data-netminer="<?php echo md5($netMiner->name) ?>" data-network="<?php echo $netMiner->ip.':'.$netMiner->port ?>"><i class="fa fa-plus"></i> Add</button>
+															    		</div>
+															    	</div>
+															    </div>
+															</div>
+														</div>
+														<div class="net-pool-error-<?php echo md5($netMiner->name) ?> mt10 text-red"></div>
+													</div>
+												<?php $npi++; endforeach; ?>
+											</div>
+										</div><!-- /.row - inside box -->
+									</div><!-- /.box-body -->
+									<div class="box-footer">
+										<h6>Every changes here will be lost if you stop/restart your network miner</h6>
+										<h6>Legend: <strong>CS</strong> = Current Shares, <strong>PS</strong> = Previous shares, <strong>CA</strong> = Current Accepted, <strong>PA</strong> = Previous Accepted, <strong>CR</strong> = Current Rejected, <strong>PR</strong> = Previous Rejected</h6>
+										<h6><strong>Current</strong> is the current or last session, <strong>Previous</strong> is the total of all previous sessions. Pool HashRate is based on shares over the time per session.</h6>
+									</div>
+								</div><!-- /.network pools box -->
+								<?php endif; ?>
+							<?php endif; ?>
 						</section>
 						
 						<!-- Right col -->
 						<section class="col-md-6 col-xs-12 connectedSortable ui-sortable right-section" id="box-charts">
-							
+							<?php if ($dashboardBoxChartShares) : ?>
 							<!-- A/R/H chart -->
 							<div class="box box-primary <?php if (isset($boxStatuses['box-chart-shares']) && !$boxStatuses['box-chart-shares']) :?>collapsed-box<?php endif; ?>" id="box-chart-shares">
 							   	<div class="overlay"></div>
@@ -631,7 +639,9 @@
 									<div class="chart" id="rehw-chart" style="height:160px;"></div>
 								</div>
 							</div><!-- /.A/R/H chart -->
+							<?php endif; ?>
 							
+							<?php if ($dashboardBoxChartSystemLoad) : ?>
 							<!-- System box -->
 							<div class="box box-light <?php if (isset($boxStatuses['box-chart-system-load']) && !$boxStatuses['box-chart-system-load']) :?>collapsed-box<?php endif; ?>" id="box-chart-system-load">
 							   	<div class="overlay"></div>
@@ -652,12 +662,14 @@
 									<h6 class="sysuptime"></h6>
 							   </div>
 							</div><!-- /.system box -->
+							<?php endif; ?>
 												 
 						</section><!-- Right col -->
 						
 						<!-- Left col -->
 						<section class="col-md-6 col-xs-12 connectedSortable ui-sortable left-section">
 							
+							<?php if ($dashboardBoxChartHashrates) : ?>
 							<!-- Hashrate box chart -->
 							<div class="box box-primary <?php if (isset($boxStatuses['box-chart-hashrates']) && !$boxStatuses['box-chart-hashrates']) :?>collapsed-box<?php endif; ?>" id="box-chart-hashrates">
 							   	<div class="overlay"></div>
@@ -675,7 +687,9 @@
 									<div class="chart" id="hashrate-chart" style="height:160px;"></div>
 								</div>
 							</div><!-- /.hashrate box -->
+							<?php endif; ?>
 							
+							<?php if ($dashboardBoxScryptEarnings) : ?>
 							<!-- Profitability box -->
 							<div class="box box-dark <?php if (isset($boxStatuses['box-scrypt-earnings']) && !$boxStatuses['box-scrypt-earnings']) :?>collapsed-box<?php endif; ?>" id="box-scrypt-earnings">
 								<div class="box-header" style="cursor: move;">
@@ -702,6 +716,7 @@
 									<div class="profitability-results"><small>Drag and slide the bar above to set your pool profitability and calculate your current possible earnings.</small></div>
 								</div>
 							</div><!-- /.tree box -->
+							<?php endif; ?>
 						
 						</section><!-- /.left col -->
 						
@@ -733,6 +748,7 @@
 							</div><!-- /.tree box -->
 							<?php endif; ?>
 						
+							<?php if ($dashboardBoxLog) : ?>
 							<!-- Real time log box -->
 							<div class="box box-light <?php if (isset($boxStatuses['box-log']) && !$boxStatuses['box-log']) :?>collapsed-box<?php endif; ?>" id="box-log">
 								<div class="box-header" style="cursor: move;">
@@ -756,7 +772,8 @@
 								<div class="box-footer">
 									<h6>To download the full <a href="<?php echo base_url($this->config->item("minerd_log_url")); ?>" target="_blank">raw log please click this link</a>.</h6>
 								</div>
-							</div><!-- /.miner box -->							   
+							</div><!-- /.miner box -->
+							<?php endif; ?>
 							
 							<?php if (!$this->redis->get("minera_donation_time")) : ?>					
 							<!-- Donations box -->

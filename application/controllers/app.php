@@ -94,6 +94,16 @@ class App extends Main_Controller {
 		$data['dashboard_refresh_time'] = $this->redis->get("dashboard_refresh_time");
 		$data['dashboardTableRecords'] = $this->redis->get("dashboard_table_records");
 		$data['dashboardDevicetree'] = ($this->redis->get("dashboard_devicetree")) ? $this->redis->get("dashboard_devicetree") : false;
+		$data['dashboardBoxProfit'] = ($this->redis->get("dashboard_box_profit")) ? $this->redis->get("dashboard_box_profit") : false;
+		$data['dashboardBoxLocalMiner'] = ($this->redis->get("dashboard_box_local_miner")) ? $this->redis->get("dashboard_box_local_miner") : false;
+		$data['dashboardBoxLocalPools'] = ($this->redis->get("dashboard_box_local_pools")) ? $this->redis->get("dashboard_box_local_pools") : false;
+		$data['dashboardBoxNetworkDetails'] = ($this->redis->get("dashboard_box_network_details")) ? $this->redis->get("dashboard_box_network_details") : false;
+		$data['dashboardBoxNetworkPoolsDetails'] = ($this->redis->get("dashboard_box_network_pools_details")) ? $this->redis->get("dashboard_box_network_pools_details") : false;
+		$data['dashboardBoxChartShares'] = ($this->redis->get("dashboard_box_chart_shares")) ? $this->redis->get("dashboard_box_chart_shares") : false;
+		$data['dashboardBoxChartSystemLoad'] = ($this->redis->get("dashboard_box_chart_system_load")) ? $this->redis->get("dashboard_box_chart_system_load") : false;
+		$data['dashboardBoxChartHashrates'] = ($this->redis->get("dashboard_box_chart_hashrates")) ? $this->redis->get("dashboard_box_chart_hashrates") : false;
+		$data['dashboardBoxScryptEarnings'] = ($this->redis->get("dashboard_box_scrypt_earnings")) ? $this->redis->get("dashboard_box_scrypt_earnings") : false;
+		$data['dashboardBoxLog'] = ($this->redis->get("dashboard_box_log")) ? $this->redis->get("dashboard_box_log") : false;
 		$data['pageTitle'] = ($this->redis->get("mobileminer_system_name")) ? $this->redis->get("mobileminer_system_name")." > Minera - Dashboard" : "Minera - Dashboard";
 		$data['dashboardSkin'] = ($this->redis->get("dashboard_skin")) ? $this->redis->get("dashboard_skin") : "black";
 		$data['minerdRunning'] = $this->redis->get("minerd_running_software");
@@ -224,6 +234,15 @@ class App extends Main_Controller {
 		$data['dashboardDevicetree'] = ($this->redis->get("dashboard_devicetree")) ? $this->redis->get("dashboard_devicetree") : false;
 		$data['dashboardBoxProfit'] = ($this->redis->get("dashboard_box_profit")) ? $this->redis->get("dashboard_box_profit") : false;
 		$data['dashboardBoxLocalMiner'] = ($this->redis->get("dashboard_box_local_miner")) ? $this->redis->get("dashboard_box_local_miner") : false;
+		$data['dashboardBoxLocalPools'] = ($this->redis->get("dashboard_box_local_pools")) ? $this->redis->get("dashboard_box_local_pools") : false;
+		$data['dashboardBoxNetworkDetails'] = ($this->redis->get("dashboard_box_network_details")) ? $this->redis->get("dashboard_box_network_details") : false;
+		$data['dashboardBoxNetworkPoolsDetails'] = ($this->redis->get("dashboard_box_network_pools_details")) ? $this->redis->get("dashboard_box_network_pools_details") : false;
+		$data['dashboardBoxChartShares'] = ($this->redis->get("dashboard_box_chart_shares")) ? $this->redis->get("dashboard_box_chart_shares") : false;
+		$data['dashboardBoxChartSystemLoad'] = ($this->redis->get("dashboard_box_chart_system_load")) ? $this->redis->get("dashboard_box_chart_system_load") : false;
+		$data['dashboardBoxChartHashrates'] = ($this->redis->get("dashboard_box_chart_hashrates")) ? $this->redis->get("dashboard_box_chart_hashrates") : false;
+		$data['dashboardBoxScryptEarnings'] = ($this->redis->get("dashboard_box_scrypt_earnings")) ? $this->redis->get("dashboard_box_scrypt_earnings") : false;
+		$data['dashboardBoxLog'] = ($this->redis->get("dashboard_box_log")) ? $this->redis->get("dashboard_box_log") : false;
+		
 		$data['dashboardTableRecords'] = ($this->redis->get("dashboard_table_records")) ? $this->redis->get("dashboard_table_records") : 5;
 		$data['algo'] = $this->util_model->checkAlgo(false);
 
@@ -293,6 +312,14 @@ class App extends Main_Controller {
 			$dashboardDevicetree = $this->input->post('dashboard_devicetree');
 			$dashboardBoxProfit = $this->input->post('dashboard_box_profit');
 			$dashboardBoxLocalMiner = $this->input->post('dashboard_box_local_miner');
+			$dashboardBoxLocalPools = $this->input->post("dashboard_box_local_pools");
+			$dashboardBoxNetworkDetails = $this->input->post("dashboard_box_network_details");
+			$dashboardBoxNetworkPoolsDetails = $this->input->post("dashboard_box_network_pools_details");
+			$dashboardBoxChartShares = $this->input->post("dashboard_box_chart_shares");
+			$dashboardBoxChartSystemLoad = $this->input->post("dashboard_box_chart_system_load");
+			$dashboardBoxChartHashrates = $this->input->post("dashboard_box_chart_hashrates");
+			$dashboardBoxScryptEarnings = $this->input->post("dashboard_box_scrypt_earnings");
+			$dashboardBoxLog = $this->input->post("dashboard_box_log");
 			
 			// Pools
 			$poolUrls = $this->input->post('pool_url');
@@ -532,12 +559,30 @@ class App extends Main_Controller {
 			$dataObj->dashboard_skin = $dashboardSkin;
 			$this->redis->set("dashboard_table_records", $dashboardTableRecords);
 			$dataObj->dashboard_table_records = $dashboardTableRecords;
+			
 			$this->redis->set("dashboard_devicetree", $dashboardDevicetree);
 			$dataObj->dashboard_devicetree = $dashboardDevicetree;
 			$this->redis->set("dashboard_box_profit", $dashboardBoxProfit);
 			$dataObj->dashboard_box_profit = $dashboardBoxProfit;
 			$this->redis->set("dashboard_box_local_miner", $dashboardBoxLocalMiner);
 			$dataObj->dashboard_box_local_miner = $dashboardBoxLocalMiner;
+			$this->redis->set("dashboard_box_local_pools", $dashboardBoxLocalPools);
+			$dataObj->dashboard_box_local_pools = $dashboardBoxLocalPools;
+			$this->redis->set("dashboard_box_network_details", $dashboardBoxNetworkDetails);
+			$dataObj->dashboard_box_network_details = $dashboardBoxNetworkDetails;
+			$this->redis->set("dashboard_box_network_pools_details", $dashboardBoxNetworkPoolsDetails);
+			$dataObj->dashboard_box_network_pools_details = $dashboardBoxNetworkPoolsDetails;
+			$this->redis->set("dashboard_box_chart_shares", $dashboardBoxChartShares);
+			$dataObj->dashboard_box_chart_shares = $dashboardBoxChartShares;
+			$this->redis->set("dashboard_box_chart_system_load", $dashboardBoxChartSystemLoad);
+			$dataObj->dashboard_box_chart_system_load = $dashboardBoxChartSystemLoad;
+			$this->redis->set("dashboard_box_chart_hashrates", $dashboardBoxChartHashrates);
+			$dataObj->dashboard_box_chart_hashrates = $dashboardBoxChartHashrates;
+			$this->redis->set("dashboard_box_scrypt_earnings", $dashboardBoxScryptEarnings);
+			$dataObj->dashboard_box_scrypt_earnings = $dashboardBoxScryptEarnings;
+			$this->redis->set("dashboard_box_log", $dashboardBoxLog);
+			$dataObj->dashboard_box_log = $dashboardBoxLog;
+			
 			if ($this->redis->get("dashboard_coin_rates") !== json_encode($coinRates)) {
 				$this->redis->set("dashboard_coin_rates", json_encode($coinRates));
 				$dataObj->dashboard_coin_rates = json_encode($coinRates);
@@ -1270,7 +1315,8 @@ class App extends Main_Controller {
 		}
 		
 		// Call Mobileminer if enabled
-		$this->util_model->callMobileminer();
+		// DISABLED as the service shuts down
+		//$this->util_model->callMobileminer();
 
 		$this->redis->del("cron_lock");
 

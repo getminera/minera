@@ -47,6 +47,7 @@ body > .header { position: fixed !important; }
 .sidebar .sidebar-menu { margin-bottom: 60px !important;}
 .modal-footer { background-color: #F9F9F9; }
 .checkbox label { padding-left: 0; }
+.box-panels td { padding: 10px; }
 
 .bg-dark-blue { background: #656F80 !important; color: white; }
 .bg-light2 { background: #E4EBEF !important; color: #434343; }

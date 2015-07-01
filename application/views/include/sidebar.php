@@ -103,10 +103,6 @@
                     <span class="icon-bar"></span>
                 </a>
                 
-				<?php if ($sectionPage === "settings" && !$this->redis->get("minera_donation_time")) : ?>
-	                <div class="tip-button changetip_tipme_button" data-bid="gQGgJrG52qXazz5HqPX5sD" data-uid="b3JpMBt2XgQw5EVrz5QV86"></div><script>(function(document,script,id){var js,r=document.getElementsByTagName(script)[0],protocol=/^http:/.test(document.location)?'http':'https';if(!document.getElementById(id)){js=document.createElement(script);js.id=id;js.src=protocol+'://widgets.changetip.com/public/js/widgets.js';r.parentNode.insertBefore(js,r)}}(document,'script','changetip_w_0'));</script>
-				<?php endif; ?>
-                
 				<div class="navbar-right">
 					<ul class="nav navbar-nav">
 						<!-- Cron status -->
@@ -439,6 +435,11 @@
                                 	</a>
                                 </li>
                                 <li>
+                                	<a href="<?php echo site_url("app/settings#top-bar-box") ?>" class="menu-top-bar-box ml10">
+                                		<i class="fa fa-money"></i> Top Bar
+                                	</a>
+                                </li>
+                                <li>
                                 	<a href="<?php echo site_url("app/settings#dashboard-box") ?>" class="menu-dashboard-box ml10">
                                 		<i class="fa fa-dashboard"></i> Dashboard
                                 	</a>
@@ -461,11 +462,6 @@
                                 <li>
                                 	<a href="<?php echo site_url("app/settings#network-miners-box") ?>" class="menu-network-miners-box ml10">
                                 		<i class="fa fa-server"></i> Network Miners
-                                	</a>
-                                </li>
-                                <li>
-                                	<a href="<?php echo site_url("app/settings#top-bar-box") ?>" class="menu-top-bar-box ml10">
-                                		<i class="fa fa-money"></i> Top Bar
                                 	</a>
                                 </li>
                                 <li>
