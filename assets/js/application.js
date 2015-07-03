@@ -50026,9 +50026,25 @@ $(function () {
     if (!box.hasClass('collapsed-box')) {
       box.addClass('collapsed-box');
       bf.slideUp();
+      $.ajax({
+        url: _baseUrl + '/app/api?command=box_status&status=0&id=' + box.attr('id'),
+        dataType: 'json'
+      });
     } else {
       box.removeClass('collapsed-box');
       bf.slideDown();
+      $.ajax({
+        url: _baseUrl + '/app/api?command=box_status&status=1&id=' + box.attr('id'),
+        dataType: 'json'
+      });
+    }
+  });
+  $('.box').each(function () {
+    var box = $(this);
+    //Find the body and the footer
+    var bf = box.find('.box-body, .box-footer');
+    if (box.hasClass('collapsed-box')) {
+      bf.slideUp();
     }
   });
   /*
@@ -53049,6 +53065,7 @@ function getStats(refresh) {
       }
       // Get profitability stats
       if (data.profits) {
+        var btcPrice = data.btc_rates && data.btc_rates.last ? data.btc_rates.last : 0, btcEurPrice = data.btc_rates && data.btc_rates.last_eur ? data.btc_rates.last_eur : 0;
         if (!$.fn.dataTable.isDataTable('#profit-table-details')) {
           // Initialize the profit datatable	
           $('#profit-table-details').dataTable({
@@ -53094,9 +53111,9 @@ function getStats(refresh) {
                 'aTargets': [5],
                 'mRender': function (data, type, full) {
                   if (type === 'display') {
-                    if (full[3].coin === 'btc')
-                      return '<i class="fa fa-dollar"></i> ' + data;
-                    else
+                    if (full[3].coin === 'btc') {
+                      return btcPrice && btcEurPrice ? btcPrice + ' <i class="fa fa-dollar"></i> <span class="small">(' + btcEurPrice + ' <i class="fa fa-eur"></i>)' : data;
+                    } else
                       return '<i class="fa fa-btc"></i> ' + data;
                   }
                   return data;
