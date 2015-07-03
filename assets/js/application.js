@@ -50634,7 +50634,7 @@ function callUpdate() {
   'use strict';
   //$('.center').append('<div class="form-box" style="width:90%"><div class="header" id="msglog-box" style="font-size:16px;"></div></div>');
   $.ajax({
-    url: _baseUrl + 'app/api?command=update_minera',
+    url: _baseUrl + '/app/api?command=update_minera',
     dataType: 'json',
     success: function (data) {
       if (data) {
