@@ -8,7 +8,7 @@
 						<li><a href="<?php echo site_url("app/settings") ?>"><i class="fa fa-gear"></i> Settings</a></li>
 					</ol>
 				</section>
-					
+
 				<!-- Main content -->
 				<section class="content">
 

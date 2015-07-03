@@ -27,8 +27,20 @@ class App extends Main_Controller {
 
 		if ($this->session->userdata("loggedin")) {
 			redirect('app/dashboard');
-			return false;	
+			return false;
 		}
+		
+		if (!$this->redis->command("EXISTS dashboard_devicetree")) $this->redis->set("dashboard_devicetree", 1);
+		if (!$this->redis->command("EXISTS dashboard_box_profit")) $this->redis->set("dashboard_box_profit", 1);
+		if (!$this->redis->command("EXISTS dashboard_box_local_miner")) $this->redis->set("dashboard_box_local_miner", 1);
+		if (!$this->redis->command("EXISTS dashboard_box_local_pools")) $this->redis->set("dashboard_box_local_pools", 1);
+		if (!$this->redis->command("EXISTS dashboard_box_network_details")) $this->redis->set("dashboard_box_network_details", 1);
+		if (!$this->redis->command("EXISTS dashboard_box_network_pools_details")) $this->redis->set("dashboard_box_network_pools_details", 1);
+		if (!$this->redis->command("EXISTS dashboard_box_chart_shares")) $this->redis->set("dashboard_box_chart_shares", 1);
+		if (!$this->redis->command("EXISTS dashboard_box_chart_system_load")) $this->redis->set("dashboard_box_chart_system_load", 1);
+		if (!$this->redis->command("EXISTS dashboard_box_chart_hashrates")) $this->redis->set("dashboard_box_chart_hashrates", 1);
+		if (!$this->redis->command("EXISTS dashboard_box_scrypt_earnings")) $this->redis->set("dashboard_box_scrypt_earnings", 1);
+		if (!$this->redis->command("EXISTS dashboard_box_log")) $this->redis->set("dashboard_box_log", 1);
 		
 		$data['sectionPage'] = 'lockscreen';
 		$data['htmlTag'] = "lockscreen";
