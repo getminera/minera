@@ -2947,6 +2947,9 @@ function getStats(refresh)
 			// Get profitability stats
 			if (data.profits)
 			{
+				var btcPrice = (data.btc_rates && data.btc_rates.last) ? data.btc_rates.last : 0,
+					btcEurPrice = (data.btc_rates && data.btc_rates.last_eur) ? data.btc_rates.last_eur : 0;
+
 				if ( !$.fn.dataTable.isDataTable('#profit-table-details') )
 				{
 					// Initialize the profit datatable	
@@ -2991,9 +2994,9 @@ function getStats(refresh)
 							'mRender': function ( data, type, full ) {
 								if (type === 'display')
 								{
-									if ( full[3].coin === 'btc')
-										return '<i class="fa fa-dollar"></i> '+data;
-									else
+									if ( full[3].coin === 'btc') {
+										return (btcPrice && btcEurPrice) ? btcPrice + ' <i class="fa fa-dollar"></i> <span class="small">(' + btcEurPrice + ' <i class="fa fa-eur"></i>)' : data;
+									} else
 										return '<i class="fa fa-btc"></i> '+data;
 								}
 								return data;
