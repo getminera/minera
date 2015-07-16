@@ -1114,7 +1114,7 @@ class Util_model extends CI_Model {
 		    }
     
 			foreach ($profits as $profit) {
-				if (isset($v->btc_profitability) && $profit->symbol !== "btc" && $profit->symbol !== "ltc" && $profit->btc_profitability >= $ltc) {
+				if (isset($v->btc_profitability) && isset($profit->symbol) && $profit->symbol !== "btc" && $profit->symbol !== "ltc" && $profit->btc_profitability >= $ltc) {
 					$sum += $profit->btc_profitability;
 					$i++;
 				}
