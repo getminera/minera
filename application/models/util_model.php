@@ -2042,10 +2042,81 @@ class Util_model extends CI_Model {
 	}
 	
 	/*
+	// Call the MobileMinera API to send device stats
+	*/
+	public function callMobileMinera()
+	{
+		if ($this->isEnableMobileminer()) {
+			$stats = json_decode($this->getParsedStats($this->getMinerStats()));
+			$networkStats = $this->getNetworkMinerStats(true);
+			
+			// Local Pool data
+			$poolUrl = (isset($stats->pool->url)) ? $stats->pool->url : "no pool configured";
+			$poolStatus = (isset($stats->pool->alive) && $stats->pool->alive) ? "Alive" : "Dead";
+			
+			// Local Algo data
+			$algo = $this->checkAlgo();
+			
+			// Params		
+			$params = array(
+				"email" => $this->redis->get("mobileminer_email"), 
+				"token" => $this->redis->get("mobileminer_appkey"), 
+				"apiKey" => $this->config->item('mobileminer_apikey'),
+				"systemName" => $this->redis->get("mobileminer_system_name"),
+				"algorithm" => $algo,
+				"minerSoftware" => "cgminer"
+			);
+			
+			// Local data				
+			$i = 0; $data = array();
+			if (isset($stats->devices) && count($stats->devices) > 0)
+			{
+				foreach ($stats->devices as $devName => $device)
+				{
+					$data[] = array(
+						"name" => $devName,
+						"poolIndex" => 0,
+						"poolUrl" => $poolUrl,
+						"poolStatus" => $poolStatus,
+						"deviceId" => $i,                                            
+						"status" => $this->isOnline(),
+						"temperature" => false,
+						"averageHashrate" => ($device->hashrate > 0) ? round(($device->hashrate/1000), 0) : 0,
+						"currentHashrate" => ($device->hashrate > 0) ? round(($device->hashrate/1000), 0) : 0,
+						"acceptedShares" => $device->accepted,
+						"rejectedShares" => $device->rejected,
+						"hardwareErrors" => $device->hw_errors,
+						"utility" => false,
+						"rejectedSharesPercent" => (($device->accepted+$device->rejected+$device->hw_errors) > 0) ? round(($device->rejected*100/($device->accepted+$device->rejected+$device->hw_errors)), 3) : 0,
+						"hardwareErrorsPercent" => (($device->accepted+$device->rejected+$device->hw_errors) > 0) ? round(($device->hw_errors*100/($device->accepted+$device->rejected+$device->hw_errors)), 3) : 0
+					);
+					$i++;
+				}
+			}
+			
+			if (count($data) > 0)
+			{
+				$data_string = json_encode($data);
+
+				if (strlen($data_string) > 0)
+				{
+					// Sending data to Mobile Miner
+					log_message('error', "Sending data to Mobileminer");
+		
+					$resultGetActions = $this->useCurl($this->config->item('mobileminera_url_stats'), $params, "POST", $data_string);
+					echo $resultGetActions;
+				}
+			}
+		}
+	}
+	
+	/*
 	// Call the Mobileminer API to send device stats
 	*/
 	public function callMobileminer()
 	{
+		return true;
+		
 		if ($this->isEnableMobileminer())
 		{
 			$stats = json_decode($this->getParsedStats($this->getMinerStats()));
