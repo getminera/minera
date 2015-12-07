@@ -1082,7 +1082,32 @@
                             </div>
 							
                             <div class="box-body">
-								<p>Where is MobileMiner? Unfortunately the service has been closed by his author, so we cannot use it anymore. If you want more info please <a href="https://bitcointalk.org/index.php?topic=596620.msg11717045#msg11717045" target="_blank">read here</a>.</p>
+								<p>If you cannot (or don't want) to completely expose to internet your Minera system you can choose to connect it to the awesome <a href="http://www.mobileminerapp.com/" target="_blank">Mobileminer app</a> to check your stats from everywhere you are.<br />Please follow the instruction on the <a href="http://www.mobileminerapp.com/#gettingStarted" target="_blank">Mobileminer website</a>. To get started you only need to signup with your email address to retrieve your application key.</p>
+								
+								<!-- mobileminer options -->
+								<div class="form-group">
+									<div class="checkbox">
+										<label>
+											<input type="checkbox" class="mobileminer-checkbox" name="mobileminer_enabled" value="1" <?php if ($mobileminerEnabled) : ?>checked=""<?php endif; ?> />
+											Enable Mobileminer
+										</label>                                                
+									</div>
+									<label class="mt10" for="mobileminer_system_name">System Name</label>
+									<div class="input-group">
+										<span class="input-group-addon"><i class="fa fa-tag"></i></span>
+										<input type="text" class="form-control" name="mobileminer_system_name" placeholder="Give a name to this Minera system to identify it" value="<?php echo $mobileminerSystemName ?>">
+									</div>
+									<label class="mt10" for="mobileminer_email">Email</label>
+									<div class="input-group">
+										<span class="input-group-addon"><i class="fa fa-at"></i></span>
+										<input type="text" class="form-control" name="mobileminer_email" placeholder="Email you used to signup Mobileminer" value="<?php echo $mobileminerEmail ?>">
+									</div>
+									<label class="mt10" for="mobileminer_appkey">Application Key</label>
+									<div class="input-group">
+										<span class="input-group-addon"><i class="fa fa-key"></i></span>
+										<input type="password" class="form-control" name="mobileminer_appkey" placeholder="Your Mobileminer Application Key" value="<?php echo $mobileminerAppkey ?>">
+									</div>
+								</div>
                             </div>
 							<div class="box-footer">
 								<button type="submit" class="btn btn-primary save-minera-settings" name="save" value="1">Save</button>
