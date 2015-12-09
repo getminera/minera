@@ -48,6 +48,7 @@ function buildMiner {
 			echo "Pulling repo $BUILD_REPO"
 			git fetch --all
 			git reset --hard
+			git pull
 		else
 			echo "Cloning repo $BUILD_REPO into $BUILD_PATH"
 			git clone $BUILD_REPO $BUILD_PATH 
