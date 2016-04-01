@@ -1,15 +1,39 @@
     <!-- Right side column. Contains the navbar and content of the page -->
-    <aside class="right-side ">                
+    <aside class="right-side ">                	
         <!-- Content Header (Page header) -->
         <section class="content-header">
             <h1>
                 Mining
                 <small>Settings</small>
             </h1>
+            <ul class="mini-save-toolbox">
+				<li>
+					<button type="submit" class="btn btn-sm btn-primary save-minera-settings" name="save" value="1"><i class="fa fa-floppy-o"></i> Save</button>
+				</li>
+				<li>
+					<button type="submit" class="btn btn-sm btn-danger save-minera-settings-restart" name="save_restart" value="1"><i class="fa fa-repeat"></i> Save & Restart Miner</button>
+				</li>
+	    	</ul>
             <ol class="breadcrumb">
                 <li><a href="<?php echo site_url("app/dashboard") ?>"><i class="fa fa-dashboard"></i> Dashboard</a></li>
             </ol>
         </section>
+
+		<!-- Save toolbox -->
+    	<div class="save-toolbox">
+	    	<ul>
+		    	<li><a href="#" class="toggle-save-toolbox"><i class="fa fa-close"></i></a></li>
+				<li>
+					<button type="submit" class="btn btn-lg btn-primary save-minera-settings" name="save" value="1"><i class="fa fa-floppy-o"></i> Save</button>
+				</li>
+				<li>
+					<button type="submit" class="btn btn-lg btn-danger save-minera-settings-restart" name="save_restart" value="1"><i class="fa fa-repeat"></i> Save & Restart Miner</button>
+				</li>
+	    	</ul>
+	    	<div class="text-center mt15">
+		    	<iframe scrolling="no" style="border: 0; width: 234px; height: 60px;" src="//coinurl.com/get.php?id=49615"></iframe>
+	    	</div>
+		</div>
 
         <!-- Main content -->
         <section class="content">
@@ -39,6 +63,7 @@
                 <section class="col-md-12">
 						
 					<form action="#" method="post" role="form" id="minersettings" enctype="multipart/form-data">
+												
 						<input type="hidden" name="save_settings" value="1" />                                                    
 
 						<div class="row">
@@ -128,129 +153,132 @@
 								    		<?php endif; ?>
 								    	</div>										
 								    </div>
-								    <div class="box-footer" style="clear:both">
-								    	<button type="submit" class="btn btn-danger save-minera-settings-restart" name="save_restart" value="1">Save & Restart Miner</button> <a href="https://www.coinbase.com/checkouts/2800f107a4d64c0b0ea4753031fd8d89" target="_blank" class="btn btn-primary"><i class="fa fa-gift"></i> Donate Bitcoins</a>
-								    </div>
 								</div>
                         
 							</section><!-- End left section -->
 							
 							<section class="right-section col-xs-12 col-md-6">			
 													
-								<!-- Topbar box -->
+								<!-- Donations box -->
+								<div class="box bg-light box-danger" id="box-donation">
+									<div class="box-header">
+										<!-- tools box -->
+										<i class="fa fa-gift"></i>
+			
+										<h3 class="box-title">Donations</h3>
+									</div>
+									<div class="box-body text-center">
+			                        	<div class="coinbase-donate-button">
+			                            	<!-- a class="coinbase-button" data-code="01ce206aaaf1a8659b07233d9705b9e8" data-button-style="custom_small" href="https://www.coinbase.com/checkouts/01ce206aaaf1a8659b07233d9705b9e8">Donate Bitcoins</a -->
+			                            	<a href="https://www.coinbase.com/checkouts/2800f107a4d64c0b0ea4753031fd8d89" target="_blank" class="btn btn-lg btn-primary mb20"><i class="fa fa-gift"></i> Donate Bitcoins</a>
+										</div>
+										<p class="more-line-height">If you like Minera, please consider a donation to support it.</p>
+										<p><strong>Bitcoin</strong>: <code><a href="bitcoin:1AmREReHNLec9EaW7gLRdW31LNSDA9SGR1" target="_blank">1AmREReHNLec9EaW7gLRdW31LNSDA9SGR1</a></code></p>
+										<p><strong>Litecoin</strong>: <code><a href="litecoin:LLPmAT9gDwmiSdqwWEZu6mpUDmrNAnYBdC" target="_blank">LLPmAT9gDwmiSdqwWEZu6mpUDmrNAnYBdC</a></code></p>
+										<p><strong>Dogecoin</strong>: <code><a href="dogecoin:DLAHwNxfUTUcePewbkvwvAouny19mcosA7" target="_blank">DLAHwNxfUTUcePewbkvwvAouny19mcosA7</a></code></p>
+									</div><!-- /.box-body -->
+									 <div class="box-footer text-center" style="clear:both">
+								    	<iframe scrolling="no" style="border: 0; width: 234px; height: 60px;" src="//coinurl.com/get.php?id=49615"></iframe>
+								    </div>
+								</div>
+
+                            
+							</section><!-- End right section -->
+
+						</div><!-- End row -->
+						
+						<div class="row">
+							<section class="left-section col-xs-12 col-md-6">
+						
+								<!-- Dashboard box -->
+								<div class="box box-primary" id="dashboard-box">
+									<div class="box-header">
+										<!-- tools box -->
+		                                <div class="pull-right box-tools">
+		                                    <button class="btn btn-default btn-xs" data-widget="collapse" data-toggle="tooltip" title="" data-original-title="Collapse"><i class="fa fa-minus"></i></button>
+		                                </div><!-- /. tools -->
+		                                <i class="fa fa-dashboard"></i>
+		                                
+		                                <h3 class="box-title">Dashboard Settings</h3>
+		                            </div>
+									
+		                            <div class="box-body">
+			                            <div class="row">
+				                            <div class="col-md-12">
+												<!-- Temperatures scale F°/C°-->
+												<div class="form-group">
+													<label>Temperature units</label>
+													<p>Select your preferred units to display temperature.</p>
+													<div class="radio">
+														<label>
+															<input type="radio" name="dashboard_temp" value="c" <?php if ($dashboardTemp == "c") : ?>checked=""<?php endif; ?> />
+															Celsius (C°)
+														</label>                                                
+														<label>
+															<input type="radio" name="dashboard_temp" value="f" <?php if ($dashboardTemp == "f") : ?>checked=""<?php endif; ?> />
+															Fahrenheit (F°)
+														</label>                                                
+													</div>
+												</div>
+				
+												<!-- Refresh time -->
+												<div class="form-group">
+													<label>Refresh time</label>
+													<p>Select automatic refresh time interval.</p>
+													<div class="margin-bottom">
+														<input type="text" name="dashboard_refresh_time" id="option-dashboard-refresh-time" class="refresh-time" value="" data-saved-refresh-time="<?php echo (isset($dashboard_refresh_time)) ? $dashboard_refresh_time : 60; ?>" />
+													</div>
+												</div>
+												
+												<!-- Skin colors -->
+												<div class="form-group">
+													<label>Skin</label>
+													<p>Select your favorite skin for your controller.</p>
+													<select name="dashboard_skin" id="dashboard-skin" class="form-control">
+														<option value="black" <?php if ($dashboardSkin == "black") : ?>selected<?php endif; ?>>Black</option>
+														<option value="blue" <?php if ($dashboardSkin == "blue") : ?>selected<?php endif; ?>>Blue</option>
+													</select>
+												</div>
+												
+												<!-- Records per page -->
+												<div class="form-group">
+													<label>Data tables</label>
+													<p>Default records per page</p>
+													<select name="dashboard_table_records" id="dashboard-table-records" class="form-control">
+														<option value="5" <?php if ($dashboardTableRecords == "5") : ?>selected<?php endif; ?>>5</option>
+														<option value="10" <?php if ($dashboardTableRecords == "10") : ?>selected<?php endif; ?>>10</option>
+														<option value="25" <?php if ($dashboardTableRecords == "25") : ?>selected<?php endif; ?>>25</option>
+														<option value="50" <?php if ($dashboardTableRecords == "50") : ?>selected<?php endif; ?>>50</option>
+													</select>
+												</div>
+				                            </div>
+			                            </div>
+		                            </div>
+		                        </div>
+							</section>
+						
+							<section class="right-section col-xs-12 col-md-6">			
+													
+								<!-- Panels box -->
 								<div class="box box-primary" id="top-bar-box">
 								    <div class="box-header">
 								    	<!-- tools box -->
 			                            <div class="pull-right box-tools">
 			                                <button class="btn btn-default btn-xs" data-widget="collapse" data-toggle="tooltip" title="" data-original-title="Collapse"><i class="fa fa-minus"></i></button>
 			                            </div><!-- /. tools -->
-			                            <i class="fa fa-money"></i>
+			                            <i class="fa fa-map-signs"></i>
 			                            
-			                            <h3 class="box-title">Top bar Settings</h3>
+			                            <h3 class="box-title">Dashboard panels</h3>
 			                        </div>
 								    
 			                        <div class="box-body">								    		
-							    		<!-- Altcoins rates -->
-							    		<div class="form-group">
-							    			<label>Altcoins prices</label>
-							    			<?php $altdata = json_decode($cryptsy_data); ?>
-							    			<?php if (is_object($altdata) && is_array($dashboard_coin_rates)) : ?>
-							    				<p><small>Currently selected: </small><?php foreach ($dashboard_coin_rates as $altcoin) : ?><small class="badge bg-blue"><?php echo $altdata->$altcoin->codes ?></small>&nbsp;<?php endforeach; ?></p>
-							    				<div class="input-group">
-							    					<div class="input-group-addon">
-							    						<i class="fa fa-btc"></i>
-							    					</div>
-							    					<select multiple class="form-control dashboard-coin-rates" name="dashboard_coin_rates[]" size="9">
-							    					<?php foreach ($altdata as $id => $values) : ?>
-							    						<option value="<?php echo $id ?>" <?php echo (in_array($id, $dashboard_coin_rates)) ? "selected" : ""; ?>><?php echo $values->names . " - " . $values->codes ?></option>
-							    					<?php endforeach; ?>
-							    					</select>
-							    				</div><!-- /.input group -->
-							    				<small>Select max 5 rates to be displayed on the top bar</small>
-											<?php else: ?>
-							    				<p><small class="badge bg-red">Updating altcoins data. Please wait some minutes and try refreshing the page.</small></p>
-											<?php endif; ?>
-										</div>
-			                        </div>
-								    <div class="box-footer">
-								    	<button type="submit" class="btn btn-primary save-minera-settings" name="save" value="1">Save</button>
-								    </div>
-			                    </div>
-                            
-							</section><!-- End right section -->
-
-						</div><!-- End row -->
-						
-						<!-- Dashboard box -->
-						<div class="box box-primary" id="dashboard-box">
-							<div class="box-header">
-								<!-- tools box -->
-                                <div class="pull-right box-tools">
-                                    <button class="btn btn-default btn-xs" data-widget="collapse" data-toggle="tooltip" title="" data-original-title="Collapse"><i class="fa fa-minus"></i></button>
-                                </div><!-- /. tools -->
-                                <i class="fa fa-dashboard"></i>
-                                
-                                <h3 class="box-title">Dashboard Settings</h3>
-                            </div>
-							
-                            <div class="box-body">
-	                            <div class="row">
-		                            <div class="col-lg-6 col-md-12">
-										<!-- Temperatures scale F°/C°-->
-										<div class="form-group">
-											<label>Temperature units</label>
-											<p>Select your preferred units to display temperature.</p>
-											<div class="radio">
-												<label>
-													<input type="radio" name="dashboard_temp" value="c" <?php if ($dashboardTemp == "c") : ?>checked=""<?php endif; ?> />
-													Celsius (C°)
-												</label>                                                
-												<label>
-													<input type="radio" name="dashboard_temp" value="f" <?php if ($dashboardTemp == "f") : ?>checked=""<?php endif; ?> />
-													Fahrenheit (F°)
-												</label>                                                
-											</div>
-										</div>
-		
-										<!-- Refresh time -->
-										<div class="form-group">
-											<label>Refresh time</label>
-											<p>Select automatic refresh time interval.</p>
-											<div class="margin-bottom">
-												<input type="text" name="dashboard_refresh_time" id="option-dashboard-refresh-time" class="refresh-time" value="" data-saved-refresh-time="<?php echo (isset($dashboard_refresh_time)) ? $dashboard_refresh_time : 60; ?>" />
-											</div>
-										</div>
-										
-										<!-- Skin colors -->
-										<div class="form-group">
-											<label>Skin</label>
-											<p>Select your favorite skin for your controller.</p>
-											<select name="dashboard_skin" id="dashboard-skin" class="form-control">
-												<option value="black" <?php if ($dashboardSkin == "black") : ?>selected<?php endif; ?>>Black</option>
-												<option value="blue" <?php if ($dashboardSkin == "blue") : ?>selected<?php endif; ?>>Blue</option>
-											</select>
-										</div>
-										
-										<!-- Records per page -->
-										<div class="form-group">
-											<label>Data tables</label>
-											<p>Default records per page</p>
-											<select name="dashboard_table_records" id="dashboard-table-records" class="form-control">
-												<option value="5" <?php if ($dashboardTableRecords == "5") : ?>selected<?php endif; ?>>5</option>
-												<option value="10" <?php if ($dashboardTableRecords == "10") : ?>selected<?php endif; ?>>10</option>
-												<option value="25" <?php if ($dashboardTableRecords == "25") : ?>selected<?php endif; ?>>25</option>
-												<option value="50" <?php if ($dashboardTableRecords == "50") : ?>selected<?php endif; ?>>50</option>
-											</select>
-										</div>
-		                            </div>
-		                            <div class="col-lg-6 col-md-12">
-			                            <!-- Local device tree -->
+							    		<!-- Local device tree -->
 										<div class="form-group">
 											<label>Section panels</label>
 											<p>Select what section you want enable/disable in the dashboard.</p>
 											<table class="box-panels">
 												<tr>
-													<td><input type="checkbox" name="dashboard_box_profit" value="1" <?php if ($dashboardBoxProfit) : ?>checked=""<?php endif; ?> /> Mining profitability</td>
+													<td><input type="checkbox" name="dashboard_devicetree" value="1" <?php if ($dashboardDevicetree) : ?>checked=""<?php endif; ?> /> Device tree</td>
 													<td><input type="checkbox" name="dashboard_box_local_miner" value="1" <?php if ($dashboardBoxLocalMiner) : ?>checked=""<?php endif; ?> /> Local miner</td>
 												</tr>
 												<tr>
@@ -269,20 +297,15 @@
 													<td><input type="checkbox" name="dashboard_box_scrypt_earnings" value="1" <?php if ($dashboardBoxScryptEarnings) : ?>checked=""<?php endif; ?> /> Scrypt earnings</td>
 													<td><input type="checkbox" name="dashboard_box_log" value="1" <?php if ($dashboardBoxLog) : ?>checked=""<?php endif; ?> /> Miner log</td>
 												</tr>
-												<tr>
-													<td><input type="checkbox" name="dashboard_devicetree" value="1" <?php if ($dashboardDevicetree) : ?>checked=""<?php endif; ?> /> Device tree</td>
-													<td></td>
-												</tr>
 											</table>
 										</div>
-		                            </div>
-	                            </div>
-                            </div>
-							<div class="box-footer">
-								<button type="submit" class="btn btn-primary save-minera-settings" name="save" value="1">Save</button>
-							</div>
-                        </div>
-							                            	                          
+			                        </div>
+			                    </div>
+                            
+							</section><!-- End right section -->
+
+						</div><!-- End row -->
+						                            	                          
 						<!-- Pools box -->
                         <div class="box box-primary" id="pools-box">
 							<div class="box-header">
@@ -502,9 +525,6 @@
 									<button class="btn btn-default btn-sm add-pool-row" name="add-row" value="1"><i class="fa fa-plus"></i> Add row</button><?php if (!$donationPool) : ?>&nbsp;<button class="btn btn-success btn-sm add-donation-pool-row" name="add-row" value="1"><i class="fa fa-gift"></i> Add donation pool</button><?php endif; ?>
 								</div>
                             </div>
-							<div class="box-footer">
-								<button type="submit" class="btn btn-primary save-minera-settings" name="save" value="1">Save</button> <button type="submit" class="btn btn-danger save-minera-settings-restart" name="save_restart" value="1">Save & Restart Miner</button>
-							</div>
                         </div>
                         
                         <!-- Custom miners box -->
@@ -575,9 +595,6 @@
 					    		</div>
 
 	                        </div>
-							<div class="box-footer">
-								<button type="submit" class="btn btn-primary save-minera-settings" name="save" value="1" data-toggle="tooltip" data-title="Remember to select it below after saved. This won't auto-select it, you need to do it manually and restart.">Save</button>
-							</div>
 	                    </div>
 	                    
 						<!-- Miner box -->
@@ -834,9 +851,6 @@
 									<?php endif; ?>
 										
                             </div>
-							<div class="box-footer">
-								<button type="submit" class="btn btn-primary save-minera-settings" name="save" value="1">Save</button> <button type="submit" class="btn btn-danger save-minera-settings-restart" name="save_restart" value="1">Save & Restart Miner</button>
-							</div>
                         </div>
 	                    
 	                    <!-- Network Miners box -->
@@ -964,7 +978,6 @@
 								</div>								
 	                        </div>
 						    <div class="box-footer">
-						    	<button type="submit" class="btn btn-primary save-minera-settings" name="save" value="1">Save</button>
 						    	<p class="pull-right small">Pools for network devices can be handle from the dashboard</p>
 						    </div>
 	                    </div>
@@ -1064,9 +1077,6 @@
 									</div>
 												
                             </div>
-							<div class="box-footer">
-								<button type="submit" class="btn btn-primary save-minera-settings" name="save" value="1">Save</button>
-							</div>
                         </div>
                         
 						<!-- Mobileminer box -->
@@ -1109,9 +1119,6 @@
 									</div>
 								</div>
                             </div>
-							<div class="box-footer">
-								<button type="submit" class="btn btn-primary save-minera-settings" name="save" value="1">Save</button>
-							</div>
                         </div>
 
 						<!-- Import/Export box -->
@@ -1276,25 +1283,6 @@
 							<h6>Clicking the reset buttons resets data immediately, there isn't any confirmation to do. Reset actions aren't recoverable, data will be lost.</h6>
 						</div>
                     </div>
-                    
-                    <?php if (!$this->redis->get("minera_donation_time")) : ?>					
-					<!-- Donations box -->
-					<div class="box bg-light box-danger" id="box-donation">
-						<div class="box-header">
-							<!-- tools box -->
-							<i class="fa fa-gift"></i>
-
-							<h3 class="box-title">Donations</h3>
-						</div>
-						<div class="box-body text-center">
-                        	<div class="coinbase-donate-button">
-                            	<!-- a class="coinbase-button" data-code="01ce206aaaf1a8659b07233d9705b9e8" data-button-style="custom_small" href="https://www.coinbase.com/checkouts/01ce206aaaf1a8659b07233d9705b9e8">Donate Bitcoins</a -->
-                            	<a href="https://www.coinbase.com/checkouts/2800f107a4d64c0b0ea4753031fd8d89" target="_blank" class="btn btn-primary mb20"><i class="fa fa-gift"></i> Donate Bitcoins</a>
-							</div>
-							<p class="more-line-height">If you like Minera, please consider a donation to support it. <strong>Bitcoin</strong>: <code><a href="bitcoin:1AmREReHNLec9EaW7gLRdW31LNSDA9SGR1" target="_blank">1AmREReHNLec9EaW7gLRdW31LNSDA9SGR1</a></code> <strong>Litecoin</strong>: <code><a href="litecoin:LLPmAT9gDwmiSdqwWEZu6mpUDmrNAnYBdC" target="_blank">LLPmAT9gDwmiSdqwWEZu6mpUDmrNAnYBdC</a></code> <strong>Dogecoin</strong>: <code><a href="dogecoin:DLAHwNxfUTUcePewbkvwvAouny19mcosA7" target="_blank">DLAHwNxfUTUcePewbkvwvAouny19mcosA7</a></code></p>
-						</div><!-- /.box-body -->
-					</div>
-					<?php endif; ?>
                 
                 </section><!-- /.left col -->
                 

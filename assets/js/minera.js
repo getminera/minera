@@ -711,6 +711,29 @@ $(function() {
 
 		// Settings Scripts
 		$('.box-tools').click( function(e) { e.preventDefault(); });
+		
+		$(document).scroll(function() {
+			var y = $(this).scrollTop();
+			if (y > 64) {
+				$('.save-toolbox').fadeIn();
+			} else {
+				$('.save-toolbox').fadeOut();
+			}
+		});
+		
+		$('.toggle-save-toolbox').click( function(e) { 
+			e.preventDefault(); 
+			var nextIcon = $(this).find('.fa');
+			if (nextIcon.hasClass('fa-close')) {
+				nextIcon.addClass('fa-arrow-left');
+				nextIcon.removeClass('fa-close');
+				$('.save-toolbox').css('right', '-324px');
+			} else {
+				nextIcon.addClass('fa-close');
+				nextIcon.removeClass('fa-arrow-left');
+				$('.save-toolbox').css('right', '0');
+			}
+		});
     
 	    if (window.location.href.match(/settings/g))
 	    {
@@ -720,6 +743,19 @@ $(function() {
 	    }
 	    
 	    $('#progress').hide();
+	    
+	    $('.save-minera-settings').click(function(e) {
+	       	e.preventDefault();
+	       	saveSettings(true, false);
+	    });
+	    $('.save-minera-settings-restart').click(function(e) {
+	       	e.preventDefault();
+		   	var input = $("<input>")
+               .attr("type", "hidden")
+               .attr("name", "save_restart").val(true);
+			$('#minersettings').append($(input));
+	       	saveSettings(true, false);
+	    });
 		
 		$('.import-file').fileupload({
 			url: _baseUrl+'/app/api?command=import_file',
@@ -1898,9 +1934,6 @@ if ($('.header').data('this-section') !== 'lockscreen') {
 
 	var btcRatesTemplate = _.template(
 			$( 'script.btc-rates-template' ).html()
-		),
-		altcoinsRatesTemplate = _.template(
-			$( 'script.altcoins-rates-template' ).html()
 		),
 		avgStatsTemplate = _.template(
 			$( 'script.avg-stats-template' ).html()

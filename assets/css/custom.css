@@ -31,7 +31,7 @@ body > .header .navbar .nav > li > a > .label { padding: 3px !important; }
 .log-box { font-size: 11px; min-height: 220px; overflow: hidden;}
 .sidebar { position: fixed; width: 220px; }
 body > .header { position: fixed !important; }
-.right-side { margin-top: 60px; }
+.right-side { margin-top: 52px; }
 .donation-pool { background: #E2EDF0; color: #99A5A8; }
 .callout.callout-grey { background-color: #F3F3F3; border-color: #ed5565; }
 .section-raw-stats { display: none;}
@@ -61,6 +61,7 @@ body > .header { position: fixed !important; }
 }
 
 .mt10 { margin-top: 10px; }
+.mt15 { margin-top: 15px; }
 .mt20 { margin-top: 20px; }
 .mt30 { margin-top: 30px; }
 .mt50 { margin-top: 50px; }
@@ -86,6 +87,49 @@ body > .header { position: fixed !important; }
 .github-btn { float: right; margin-left: 10px; margin-top: -3px; margin-right: 15px; }
 
 .bootstro-highlight { background-color: rgba(255, 255, 255, 0.2) !important; }
+
+.save-toolbox {
+	display: none;
+	position: fixed;
+    z-index: 10;
+	right: 0;
+    background: rgba(255, 255, 255, 0.72);
+    box-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
+    padding: 10px;
+    margin-top: -48px;
+}
+.save-toolbox ul {
+	margin: 0;
+	padding: 0;
+}
+.save-toolbox ul li {
+	list-style-type: none;
+	display: inline;
+	margin-right: 10px;
+}
+.save-toolbox ul li a {
+	color: #333;
+}
+.save-toolbox ul li:last-child {
+	margin-right: 0px;
+}
+.mini-save-toolbox {
+	position: absolute;
+    right: 92px;
+    top: 15px;
+}
+.mini-save-toolbox {
+	margin: 0;
+	padding: 0;
+}
+.mini-save-toolbox li {
+	list-style-type: none;
+	display: inline;
+	margin-right: 10px;
+}
+.mini-save-toolbox ul li:last-child {
+	margin-right: 0px;
+}
 
 .spin::before{
   -webkit-animation: spin 1s infinite linear;

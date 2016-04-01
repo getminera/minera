@@ -322,7 +322,7 @@ class App extends Main_Controller {
 			$dashboardSkin = $this->input->post('dashboard_skin');
 			$dashboardTableRecords = $this->input->post('dashboard_table_records');
 			$dashboardDevicetree = $this->input->post('dashboard_devicetree');
-			$dashboardBoxProfit = $this->input->post('dashboard_box_profit');
+			$dashboardBoxProfit = false; //$this->input->post('dashboard_box_profit');
 			$dashboardBoxLocalMiner = $this->input->post('dashboard_box_local_miner');
 			$dashboardBoxLocalPools = $this->input->post("dashboard_box_local_pools");
 			$dashboardBoxNetworkDetails = $this->input->post("dashboard_box_network_details");
@@ -1125,8 +1125,8 @@ class App extends Main_Controller {
 		$currentMinute = date("i", $now);
 		
 		// Refresh Cryptsydata if needed
-		$this->util_model->refreshcryptsyData();
-		$this->util_model->updateAltcoinsRates();
+		//$this->util_model->refreshcryptsyData();
+		//$this->util_model->updateAltcoinsRates();
 						
 		// Store the live stats
 		$stats = $this->util_model->storeStats();
@@ -1151,9 +1151,9 @@ class App extends Main_Controller {
 		}
 		
 		// Store coins profitability
-		if ($profit = $this->util_model->getProfitability()) {
+		/*if ($profit = $this->util_model->getProfitability()) {
 			$this->redis->set("coins_profitability", $profit);
-		}
+		}*/
 		
 		// Activate/Deactivate time donation pool if enable
 		if ($this->util_model->isOnline() && isset($stats->pool_donation_id))

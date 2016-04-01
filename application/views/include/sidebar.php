@@ -235,44 +235,6 @@
 						<!-- END: Underscore Template Definition. -->
 						</li>
                         
-                        <!-- Altcoins Rates -->
-						<li class="messages-menu mesages-altcoins-rates">
-                            <a href="#" class="dropdown-toggle" data-toggle="dropdown">
-                                <i class="fa fa-money"></i> Dividing changes...
-                            </a>
-						<!-- BEGIN: Underscore Template Definition. -->
-						<script type="text/template" class="altcoins-rates-template">
-                            <a href="#" class="dropdown-toggle" data-toggle="dropdown">
-                                <i class="fa fa-money"></i> Altcoin prices
-                            </a>
-                            <ul class="dropdown-menu">
-                                <li class="header">Data from Cryptsy</li>
-                                <li>
-                                    <!-- inner menu: contains the actual data -->
-                                    <ul class="menu altcoin-container" style="overflow: hidden; width: 100%; height: 300px;">
-                                    <% _.each( rc.altcoins_rates, function( valM, keyM ) { %>
-										<% if (keyM != "error") { %>
-											<% _.each(valM, function (val, key) { %>
-												<li>
-													<a href="#">
-														<div class="pull-left" style="padding-left:15px;"><i class="fa fa-stack-exchange"></i></div>
-														<h4 class="altcoin-price"><%- val.label %>: <span class="small"><%- val.price.noExponents() %></span><small><i class="fa fa-clock-o"></i> <%- moment(val.time, 'X').format('hh:mm:ss a') %></small></h4>
-														<p class="altcoin-label"><%- val.primarycode.toFixed(0)%> / <%- val.secondarycode %> <i class="fa fa-btc"></i></p></a></li>
-											<%	}); %>
-										<%	} else { %>
-											<li>
-												<a href="#"><div class="pull-left" style="padding-left:15px;"><i class="fa fa-warning"></i></div><h4>There was an error getting<br />the Cryptsy data.</h4></a>
-											</li>
-										<% } %>
-									<%	});	%>                                        
-                                    </ul>
-                                </li>
-                                <li class="footer"><a href="https://www.cryptsy.com/users/register?refid=243592">Register at Cryptsy</a></li>
-                            </ul>
-                        </script>
-						<!-- END: Underscore Template Definition. -->
-                        </li>
-                        
 					    <!-- Donate/Help dropdown -->
 					    <li class="dropdown user user-menu">
 					        <a href="#" class="dropdown-toggle" data-toggle="dropdown">
@@ -359,6 +321,10 @@
                         </div>
                     </div>
 
+					<div class="text-center">
+						<iframe scrolling="no" style="border: 0; width: 200px; height: 200px;" src="//coinurl.com/get.php?id=49630"></iframe>
+					</div>
+					
                     <!-- sidebar menu -->
                     <ul class="sidebar-menu">
                         <li class="treeview" data-toggle="tooltip" title="" data-original-title="Go to the dashboard page">
@@ -371,11 +337,6 @@
                                 <li>
                                 	<a href="<?php echo site_url("app/dashboard#box-widgets") ?>" class="menu-top-widgets-box ml10">
                                 		<i class="fa fa-th"></i> Widgets
-                                	</a>
-                                </li>
-                                <li>
-                                	<a href="<?php echo site_url("app/dashboard#box-profit") ?>" class="menu-profit-box ml10">
-                                		<i class="fa fa-line-chart"></i> Mining profitability
                                 	</a>
                                 </li>
                                 <li>
@@ -429,6 +390,11 @@
                                 <i class="treeview-menu-settings-icon fa pull-right fa-angle-left"></i>
                         	</a>
                         	<ul class="treeview-menu treeview-menu-settings" style="display: none;">
+	                        	<li>
+                                	<a href="<?php echo site_url("app/settings") ?>" class="menu-donation-box ml10">
+                                		<i class="fa fa-gear"></i> General
+                                	</a>
+                                </li>
                                 <li>
                                 	<a href="<?php echo site_url("app/settings#donation-box") ?>" class="menu-donation-box ml10">
                                 		<i class="fa fa-gift"></i> Donation
