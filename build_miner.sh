@@ -25,7 +25,7 @@ CPUMINER_MINERA_BINARY="minerd"
  
 BFGMINER_REPO="https://github.com/luke-jr/bfgminer.git"
 BFGMINER_PATH="$SOURCE_PATH/bfgminer"
-BFGMINER_CONFIG="--enable-scrypt --enable-broad-udevrules"
+BFGMINER_CONFIG="--enable-scrypt --enable-broad-udevrules --without-system-libbase58"
 BFGMINER_BINARY="bfgminer"
 BFGMINER_MINERA_BINARY="bfgminer"
  
@@ -54,6 +54,7 @@ function buildMiner {
 			git clone $BUILD_REPO $BUILD_PATH 
 			cd $BUILD_PATH
 		fi
+		make clean
 		./autogen.sh
 		echo "Running ./configure $BUILD_CONFIG"
 		./configure ${BUILD_CONFIG}

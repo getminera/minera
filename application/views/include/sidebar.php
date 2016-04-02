@@ -401,11 +401,6 @@
                                 	</a>
                                 </li>
                                 <li>
-                                	<a href="<?php echo site_url("app/settings#top-bar-box") ?>" class="menu-top-bar-box ml10">
-                                		<i class="fa fa-money"></i> Top Bar
-                                	</a>
-                                </li>
-                                <li>
                                 	<a href="<?php echo site_url("app/settings#dashboard-box") ?>" class="menu-dashboard-box ml10">
                                 		<i class="fa fa-dashboard"></i> Dashboard
                                 	</a>
