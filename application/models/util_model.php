@@ -1800,6 +1800,10 @@ class Util_model extends CI_Model {
 				$this->redis->set("manual_options", 0);
 				$o = json_encode(array("success" => true));
 		    break;
+		    case "logs":
+				array_map('unlink', glob("application/logs/*"));
+				$o = json_encode(array("success" => true));
+		    break;
 		    default:
 		    	$o = json_encode(array("err" => true));
 		}
@@ -2312,7 +2316,7 @@ class Util_model extends CI_Model {
 	}
 	
 	public function checkNetworkDevice($ip, $port=4028) 
-	{
+	{		
 		$connection = @fsockopen($ip, 4028, $errno, $errstr, 0.1);
 		
 	    if (is_resource($connection))

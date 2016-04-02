@@ -978,7 +978,7 @@
 								</div>								
 	                        </div>
 						    <div class="box-footer">
-						    	<p class="pull-right small">Pools for network devices can be handle from the dashboard</p>
+						    	<p class="small">Pools for network devices can be handle from the dashboard</p>
 						    </div>
 	                    </div>
 	                                            
@@ -1265,12 +1265,16 @@
 	                        <div class="col-md-10">
 								<p>If you are in trouble or you wanna start over, you can resets some of the stored data or reset everything to factory default.</p>
 								<div class="form-group">
-	                            	<button type="submit" class="btn btn-danger reset-action" data-reset-action="charts"><i class="fa fa-eraser"></i> Reset Charts data</button>
+	                            	<button type="submit" class="btn btn-warning reset-action" data-reset-action="charts"><i class="fa fa-eraser"></i> Reset Charts data</button>
 	                            	<h6>This resets all the stored stats needed by the charts, so charts will start from zero.</h6>
 								</div>
 								<div class="form-group">
-	                            	<button type="submit" class="btn btn-danger reset-action" data-reset-action="options"><i class="fa fa-eraser"></i> Reset Guided/manual settings</button>
+	                            	<button type="submit" class="btn btn-primary reset-action" data-reset-action="options"><i class="fa fa-eraser"></i> Reset Guided/manual settings</button>
 									<h6>If you have problem choosing between guided/manual options above you can reset them here.</h6>
+								</div>
+								<div class="form-group">
+	                            	<button type="submit" class="btn btn-warning reset-action" data-reset-action="logs"><i class="fa fa-eraser"></i> Clear the Minera logs</button>
+									<h6>This will delete everything inside application/logs. This includes all Minera application logs and also all the Miner logs.</h6>
 								</div>
 								<div class="form-group">
 	                            	<button type="submit" class="btn btn-danger reset-factory-action"><i class="fa fa-recycle"></i> Reset to factory default</button>
@@ -1280,7 +1284,7 @@
 	                        </div>
                         </div>
 						<div class="box-footer">
-							<h6>Clicking the reset buttons resets data immediately, there isn't any confirmation to do. Reset actions aren't recoverable, data will be lost.</h6>
+							<h6><strong>Clicking the reset buttons resets data immediately, there isn't any confirmation to do. Reset actions aren't recoverable, data will be lost.</strong></h6>
 						</div>
                     </div>
                 

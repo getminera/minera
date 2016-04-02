@@ -35,6 +35,10 @@
 			
 			<div class="lockscreen-link">
 				Welcome to Minera
+				<div class="mt20">
+			        <p class="terminal-font">System: <?php echo gethostname() ?></p>
+					<p class="terminal-font">Ip Address: <?php echo $_SERVER['SERVER_ADDR'] ?></p>
+				</div>
 			</div> 
 
 			<div class="lockscreen-link">

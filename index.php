@@ -28,6 +28,9 @@
  * By default development will show errors but testing and live will hide them.
  */
 
+// Added by Minera
+ini_set('max_input_vars', 10000);
+
 if (defined('ENVIRONMENT'))
 {
 	switch (ENVIRONMENT)
