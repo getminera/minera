@@ -786,14 +786,15 @@
 								</div>
 								<div class="box-body text-center">
 		                        	<div class="coinbase-donate-button">
-		                            	<!-- a class="coinbase-button" data-code="01ce206aaaf1a8659b07233d9705b9e8" data-button-style="custom_small" href="https://www.coinbase.com/checkouts/01ce206aaaf1a8659b07233d9705b9e8">Donate Bitcoins</a -->
-		                            	<a href="https://www.coinbase.com/checkouts/2800f107a4d64c0b0ea4753031fd8d89" target="_blank" class="btn btn-primary mb20"><i class="fa fa-gift"></i> Donate Bitcoins</a>
+		                            	<a class="coinbase-button" data-code="01ce206aaaf1a8659b07233d9705b9e8" data-button-style="custom_small" href="https://www.coinbase.com/checkouts/01ce206aaaf1a8659b07233d9705b9e8">Donate Bitcoins</a>
 									</div>
 									<p class="more-line-height">If you like Minera, please consider a donation to support it. <strong>Bitcoin</strong>: <code><a href="bitcoin:1AmREReHNLec9EaW7gLRdW31LNSDA9SGR1" target="_blank">1AmREReHNLec9EaW7gLRdW31LNSDA9SGR1</a></code> <strong>Litecoin</strong>: <code><a href="litecoin:LLPmAT9gDwmiSdqwWEZu6mpUDmrNAnYBdC" target="_blank">LLPmAT9gDwmiSdqwWEZu6mpUDmrNAnYBdC</a></code> <strong>Dogecoin</strong>: <code><a href="dogecoin:DLAHwNxfUTUcePewbkvwvAouny19mcosA7" target="_blank">DLAHwNxfUTUcePewbkvwvAouny19mcosA7</a></code></p>
 								</div><!-- /.box-body -->
+								<?php if (!$adsFree) : ?>
 								<div class="box-footer text-center" style="clear:both">
 							    	<iframe scrolling="no" style="border: 0; width: 728px; height: 90px;" src="//coinurl.com/get.php?id=49616"></iframe>
 							    </div>
+							    <?php endif; ?>
 							</div>
 							<?php endif; ?>
 						</section>

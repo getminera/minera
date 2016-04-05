@@ -19,6 +19,7 @@
 		"assets/vendor/jquery.iframe-transport/jquery.iframe-transport.js",
 		"assets/vendor/blueimp-file-upload/js/jquery.fileupload.js",
 		"assets/vendor/jquery-knob/js/jquery.knob.js",
+		"assets/vendor/js-cookie/src/js.cookie.js",
 		"assets/vendor/underscore/underscore.js",
 		"assets/js/app.js",
 		"assets/js/minera.js"

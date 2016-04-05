@@ -42,6 +42,8 @@ class App extends Main_Controller {
 		if (!$this->redis->command("EXISTS dashboard_box_scrypt_earnings")) $this->redis->set("dashboard_box_scrypt_earnings", 1);
 		if (!$this->redis->command("EXISTS dashboard_box_log")) $this->redis->set("dashboard_box_log", 1);
 		
+		$data['adsFree'] = $this->redis->get('is_ads_free');
+		$data['env'] = $this->config->item('ENV');
 		$data['sectionPage'] = 'lockscreen';
 		$data['htmlTag'] = "lockscreen";
 		$data['pageTitle'] = "Welcome to Minera";
@@ -123,6 +125,8 @@ class App extends Main_Controller {
 		$data['minerdSoftware'] = $this->redis->get("minerd_software");
 		$data['netMiners'] = $this->util_model->getNetworkMiners();
 		$data['localAlgo'] = $this->util_model->checkAlgo($this->util_model->isOnline());
+		$data['adsFree'] = $this->redis->get('is_ads_free');
+		$data['env'] = $this->config->item('ENV');
 		
 		$this->load->view('include/header', $data);
 		$this->load->view('include/sidebar', $data);
@@ -154,6 +158,8 @@ class App extends Main_Controller {
 		$data['minerdRunningUser'] = $this->redis->get("minerd_running_user");		
 		$data['minerdSoftware'] = $this->redis->get("minerd_software");
 		$data['netMiners'] = $this->util_model->getNetworkMiners();
+		$data['adsFree'] = $this->redis->get('is_ads_free');
+		$data['env'] = $this->config->item('ENV');
 		
 		$this->load->view('include/header', $data);
 		$this->load->view('include/sidebar', $data);
@@ -230,6 +236,8 @@ class App extends Main_Controller {
 		$data['minerdDelaytime'] = $this->redis->get("minerd_delaytime");
 		$data['minerApiAllowExtra'] = $this->redis->get("minerd_api_allow_extra");
 		$data['globalPoolProxy'] = $this->redis->get("pool_global_proxy");
+		$data['adsFree'] = $this->redis->get('is_ads_free');
+		$data['env'] = $this->config->item('ENV');
 		
 		$data['networkMiners'] = json_decode($this->redis->get('network_miners'));
 		$data['netMiners'] = $this->util_model->getNetworkMiners();
@@ -814,6 +822,7 @@ class App extends Main_Controller {
 		$data['htmlTag'] = "lockscreen";
 		$data['seconds'] = 30;
 		$data['refreshUrl'] = false;
+		$data['env'] = $this->config->item('ENV');
 		$this->load->view('include/header', $data);
 		$this->load->view('sysop', $data);
 		$this->load->view('include/footer', $data);
@@ -846,6 +855,7 @@ class App extends Main_Controller {
 		$data['messageEnd'] = "here we go!";
 		$data['htmlTag'] = "lockscreen";
 		$data['seconds'] = 50;
+		$data['env'] = $this->config->item('ENV');
 		$this->load->view('include/header', $data);
 		$this->load->view('sysop', $data);
 		$this->load->view('include/footer', $data);
@@ -923,6 +933,7 @@ class App extends Main_Controller {
 			$data['messageEnd'] = "System updated!";
 			$data['htmlTag'] = "lockscreen";
 			$data['seconds'] = 200;
+			$data['env'] = $this->config->item('ENV');
 			$this->load->view('include/header', $data);
 			$this->load->view('sysop', $data);
 			$this->load->view('include/footer', $data);
@@ -1049,10 +1060,10 @@ class App extends Main_Controller {
 			case "test":
 				//$a = file_get_contents("api.json");
 				//$o = $this->redis->command("BGSAVE"); //$this->util_model->checkCronIsRunning(); //$this->util_model->sendAnonymousStats(123, "hello world!");
-				$o = $this->util_model->insertNetMiners(); //$this->util_model->updateAltcoinsRates(); //$this->util_model->refreshMinerConf(); //$o = json_encode($this->util_model->callMinerd()); //$this->util_model->getParsedStats($this->util_model->getMinerStats());
+				$o = $this->util_model->checkAdsFree(); //$this->util_model->updateAltcoinsRates(); //$this->util_model->refreshMinerConf(); //$o = json_encode($this->util_model->callMinerd()); //$this->util_model->getParsedStats($this->util_model->getMinerStats());
 			break;
 		}
-		
+
 		$this->output
 			->set_content_type('application/json')
 			->set_output($o);
@@ -1127,6 +1138,9 @@ class App extends Main_Controller {
 		// Refresh Cryptsydata if needed
 		//$this->util_model->refreshcryptsyData();
 		//$this->util_model->updateAltcoinsRates();
+		
+		// Check if it's adds-free
+		$this->util_model->checkAdsFree();
 						
 		// Store the live stats
 		$stats = $this->util_model->storeStats();
@@ -1151,9 +1165,9 @@ class App extends Main_Controller {
 		}
 		
 		// Store coins profitability
-		/*if ($profit = $this->util_model->getProfitability()) {
+		if ($profit = $this->util_model->getProfitability()) {
 			$this->redis->set("coins_profitability", $profit);
-		}*/
+		}
 		
 		// Activate/Deactivate time donation pool if enable
 		if ($this->util_model->isOnline() && isset($stats->pool_donation_id))

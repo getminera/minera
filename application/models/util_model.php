@@ -1314,6 +1314,22 @@ class Util_model extends CI_Model {
 	{
 		return ($this->redis->get("altcoins_data")) ? json_decode($this->redis->get("altcoins_data")) : array("error" => "true");
 	}
+	
+	// Check Minera ads-free
+	public function checkAdsFree() {		
+		$check = @file_get_contents('http://getminera.com/api/checkAds/'.$this->generateMineraId());
+		$checkE = json_decode($check);
+		
+		if ($checkE->success) {
+			//log_message("error", "[Ads Free] TRUE");
+			$this->redis->set('is_ads_free', true);
+		} else {
+			//log_message("error", "[Ads Free] FALSE");
+			$this->redis->set('is_ads_free', false);
+		}
+		
+		return $check;
+	}
 		
 	/*
 	//

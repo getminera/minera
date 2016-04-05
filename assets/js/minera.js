@@ -527,10 +527,84 @@ Number.prototype.noExponents= function()
 $(function() {
 	'use strict';
 	
+	var thisSection = $('.header').data('this-section');
+	
+	/*
+	if (thisSection === 'settings') {
+		jQuery.ajax({
+			url: 'https://www.coinbase.com/assets/button.js',
+			dataType: 'script',
+			cache: true
+		}).done(function() {
+			console.log('Coinbase loaded');
+		});
+	}
+	*/
+	
 	$('body').tooltip({ selector: '[data-toggle="tooltip"]', trigger: 'hover' });
 	$('body').popover({ selector: '[data-toggle="popover"]', trigger: 'hover' });
+	
+	var timeNow = new Date().getTime(), promoInterval = 3600000, theInterval = null, adsFree = $('.app_data').data('ads-free');
+	
+	if (!adsFree) {			
+		var setPromoInterval = function () {
+			if (theInterval) {
+				//console.log('Clear');
+				clearInterval(theInterval);
+			}
+			Cookies.remove('promoClicked');
+			if (!Cookies.get('timestamp') || new Date().getTime() >= parseInt(Cookies.get('timestamp')) && !Cookies.get('promoModal')) {
+				//console.log('Set');
+				Cookies.set('timestamp', new Date().getTime()+promoInterval);
+			}
+			
+			if (!Cookies.get('promoModal')) {
+				theInterval = setInterval(function () {
+					//console.log('Start');
+					$('#modal-promo').modal('show');
+					Cookies.set('promoModal', true);
+					setPromoInterval();
+				}, Cookies.get('timestamp')-new Date().getTime());
+			}
+		};
 
-	var thisSection = $('.header').data('this-section');
+		// Promo ads
+		if (new Date().getTime() >= parseInt(Cookies.get('timestamp')) && !Cookies.get('promoClicked')) {
+			//console.log('Go');
+			$('#modal-promo').modal('show');
+		} else {
+			setPromoInterval();
+		}
+				
+		$('#modal-promo a').each(function () {
+			$(this).on('click', function () {
+				$('#modal-promo').modal('hide');
+				Cookies.set('promoClicked', true);
+				Cookies.remove('promoModal');
+				setPromoInterval();
+			});
+		});
+		
+		var overiFrame = -1;
+	    $('.promo-iframe').hover( function() {
+	        overiFrame = $(this).closest('.banner').attr('bannerid');
+	    }, function() {
+	        overiFrame = -1;
+	    });
+
+	    $(window).blur( function() {
+	        if( overiFrame != -1 ) {
+				$('#modal-promo').modal('hide');
+				Cookies.set('promoClicked', true);
+				Cookies.remove('promoModal');
+		  		setPromoInterval();
+			}
+	    });
+	} else {
+		Cookies.remove('promoModal');
+		Cookies.remove('promoClicked');
+		Cookies.remove('timestamp');
+	}
 	
 	// Smmoth scroll
 	$('a[href*=#]:not([href=#])').click(function() {
@@ -664,18 +738,6 @@ $(function() {
 		$('#modal-terminal').modal('hide');
 	});
 	
-	/*
-	if (thisSection === 'dashboard') {
-		jQuery.ajax({
-			url: 'https://www.coinbase.com/assets/button.js',
-			dataType: 'script',
-			cache: true
-		}).done(function() {
-			console.log('Coinbase loaded');
-		});
-	}
-	*/
-	
 	if (thisSection === 'charts') {
 	    
 		// Chart Scripts
@@ -750,9 +812,9 @@ $(function() {
 	    });
 	    $('.save-minera-settings-restart').click(function(e) {
 	       	e.preventDefault();
-		   	var input = $("<input>")
-               .attr("type", "hidden")
-               .attr("name", "save_restart").val(true);
+		   	var input = $('<input>')
+               .attr('type', 'hidden')
+               .attr('name', 'save_restart').val(true);
 			$('#minersettings').append($(input));
 	       	saveSettings(true, false);
 	    });

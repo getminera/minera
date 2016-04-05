@@ -30,9 +30,11 @@
 					<button type="submit" class="btn btn-lg btn-danger save-minera-settings-restart" name="save_restart" value="1"><i class="fa fa-repeat"></i> Save & Restart Miner</button>
 				</li>
 	    	</ul>
+	    	<?php if (!$adsFree) : ?>
 	    	<div class="text-center mt15">
 		    	<iframe scrolling="no" style="border: 0; width: 234px; height: 60px;" src="//coinurl.com/get.php?id=49615"></iframe>
 	    	</div>
+	    	<?php endif; ?>
 		</div>
 
         <!-- Main content -->
@@ -168,21 +170,27 @@
 										<h3 class="box-title">Donations</h3>
 									</div>
 									<div class="box-body text-center">
-			                        	<div class="coinbase-donate-button">
-			                            	<!-- a class="coinbase-button" data-code="01ce206aaaf1a8659b07233d9705b9e8" data-button-style="custom_small" href="https://www.coinbase.com/checkouts/01ce206aaaf1a8659b07233d9705b9e8">Donate Bitcoins</a -->
-			                            	<a href="https://www.coinbase.com/checkouts/2800f107a4d64c0b0ea4753031fd8d89" target="_blank" class="btn btn-lg btn-primary mb20"><i class="fa fa-gift"></i> Donate Bitcoins</a>
-										</div>
-										<p class="more-line-height">If you like Minera, please consider a donation to support it.</p>
+										<?php if (!$adsFree) : ?>
+											<p>If you like Minera, please consider a donation to support it. To remove all the ads forever (for this system) please click the button below and complete the donation (cost: 0.001 <i class="fa fa-btc"></i> for one system for life).</p>
+											<?php if ($env === 'development') : ?>
+												<p><a class="coinbase-button" data-env="sandbox" data-code="470a760cd47bdd1a2c256a75d3d2729a" data-button-style="custom_large" data-button-text="Remove Ads" data-width="185" data-heigth="60" href="https://sandbox.coinbase.com/checkouts/470a760cd47bdd1a2c256a75d3d2729a" data-custom="<?php echo $mineraSystemId.'||removeads||'.site_url('app/dashboard') ?>">Remove Ads</a></p>
+											<?php else : ?>
+												<p><a class="coinbase-button" data-code="85db36d59b9a3d12b25c97ddc692ccef" data-button-style="custom_large" data-button-text="Remove Ads" data-width="185" data-heigth="60" href="https://sandbox.coinbase.com/checkouts/85db36d59b9a3d12b25c97ddc692ccef" data-custom="<?php echo $mineraSystemId.'||removeads||'.site_url('app/dashboard') ?>">Remove Ads</a></p>
+											<?php endif; ?>
+										<?php else : ?>
+											<p>You are ads-free, Thanks!</p>
+			                            	<a class="coinbase-button" data-code="01ce206aaaf1a8659b07233d9705b9e8" data-button-style="custom_large" data-width="210" data-heigth="60" href="https://www.coinbase.com/checkouts/01ce206aaaf1a8659b07233d9705b9e8">Donate Bitcoins</a>
+										<?php endif; ?>
 										<p><strong>Bitcoin</strong>: <code><a href="bitcoin:1AmREReHNLec9EaW7gLRdW31LNSDA9SGR1" target="_blank">1AmREReHNLec9EaW7gLRdW31LNSDA9SGR1</a></code></p>
 										<p><strong>Litecoin</strong>: <code><a href="litecoin:LLPmAT9gDwmiSdqwWEZu6mpUDmrNAnYBdC" target="_blank">LLPmAT9gDwmiSdqwWEZu6mpUDmrNAnYBdC</a></code></p>
 										<p><strong>Dogecoin</strong>: <code><a href="dogecoin:DLAHwNxfUTUcePewbkvwvAouny19mcosA7" target="_blank">DLAHwNxfUTUcePewbkvwvAouny19mcosA7</a></code></p>
 									</div><!-- /.box-body -->
-									 <div class="box-footer text-center" style="clear:both">
+									<?php if (!$adsFree) : ?>
+									<div class="box-footer text-center" style="clear:both">
 								    	<iframe scrolling="no" style="border: 0; width: 234px; height: 60px;" src="//coinurl.com/get.php?id=49615"></iframe>
 								    </div>
-								</div>
-
-                            
+								    <?php endif; ?>
+								</div>                            
 							</section><!-- End right section -->
 
 						</div><!-- End row -->
@@ -1079,48 +1087,6 @@
                             </div>
                         </div>
                         
-						<!-- Mobileminer box -->
-						<div class="box box-primary" id="mobileminer-box">
-							<div class="box-header">
-								<!-- tools box -->
-                                <div class="pull-right box-tools">
-                                    <button class="btn btn-default btn-xs" data-widget="collapse" data-toggle="tooltip" title="" data-original-title="Collapse"><i class="fa fa-minus"></i></button>
-                                </div><!-- /. tools -->
-                                <i class="fa fa-mobile-phone"></i>
-                                
-                                <h3 class="box-title">Mobileminer Settings</h3>
-                            </div>
-							
-                            <div class="box-body">
-								<p>If you cannot (or don't want) to completely expose to internet your Minera system you can choose to connect it to the awesome <a href="http://www.mobileminerapp.com/" target="_blank">Mobileminer app</a> to check your stats from everywhere you are.<br />Please follow the instruction on the <a href="http://www.mobileminerapp.com/#gettingStarted" target="_blank">Mobileminer website</a>. To get started you only need to signup with your email address to retrieve your application key.</p>
-								
-								<!-- mobileminer options -->
-								<div class="form-group">
-									<div class="checkbox">
-										<label>
-											<input type="checkbox" class="mobileminer-checkbox" name="mobileminer_enabled" value="1" <?php if ($mobileminerEnabled) : ?>checked=""<?php endif; ?> />
-											Enable Mobileminer
-										</label>                                                
-									</div>
-									<label class="mt10" for="mobileminer_system_name">System Name</label>
-									<div class="input-group">
-										<span class="input-group-addon"><i class="fa fa-tag"></i></span>
-										<input type="text" class="form-control" name="mobileminer_system_name" placeholder="Give a name to this Minera system to identify it" value="<?php echo $mobileminerSystemName ?>">
-									</div>
-									<label class="mt10" for="mobileminer_email">Email</label>
-									<div class="input-group">
-										<span class="input-group-addon"><i class="fa fa-at"></i></span>
-										<input type="text" class="form-control" name="mobileminer_email" placeholder="Email you used to signup Mobileminer" value="<?php echo $mobileminerEmail ?>">
-									</div>
-									<label class="mt10" for="mobileminer_appkey">Application Key</label>
-									<div class="input-group">
-										<span class="input-group-addon"><i class="fa fa-key"></i></span>
-										<input type="password" class="form-control" name="mobileminer_appkey" placeholder="Your Mobileminer Application Key" value="<?php echo $mobileminerAppkey ?>">
-									</div>
-								</div>
-                            </div>
-                        </div>
-
 						<!-- Import/Export box -->
 						<div class="box box-primary" id="importexport-box">
 						    <div class="box-header">

@@ -48493,6 +48493,124 @@ Licensed under the BSD-2-Clause License.
       d.run();
     }).parent();
   };
+}));/*!
+ * JavaScript Cookie v2.1.0
+ * https://github.com/js-cookie/js-cookie
+ *
+ * Copyright 2006, 2015 Klaus Hartl & Fagner Brack
+ * Released under the MIT license
+ */
+(function (factory) {
+  if (typeof define === 'function' && define.amd) {
+    define(factory);
+  } else if (typeof exports === 'object') {
+    module.exports = factory();
+  } else {
+    var _OldCookies = window.Cookies;
+    var api = window.Cookies = factory();
+    api.noConflict = function () {
+      window.Cookies = _OldCookies;
+      return api;
+    };
+  }
+}(function () {
+  function extend() {
+    var i = 0;
+    var result = {};
+    for (; i < arguments.length; i++) {
+      var attributes = arguments[i];
+      for (var key in attributes) {
+        result[key] = attributes[key];
+      }
+    }
+    return result;
+  }
+  function init(converter) {
+    function api(key, value, attributes) {
+      var result;
+      // Write
+      if (arguments.length > 1) {
+        attributes = extend({ path: '/' }, api.defaults, attributes);
+        if (typeof attributes.expires === 'number') {
+          var expires = new Date();
+          expires.setMilliseconds(expires.getMilliseconds() + attributes.expires * 86400000);
+          attributes.expires = expires;
+        }
+        try {
+          result = JSON.stringify(value);
+          if (/^[\{\[]/.test(result)) {
+            value = result;
+          }
+        } catch (e) {
+        }
+        if (!converter.write) {
+          value = encodeURIComponent(String(value)).replace(/%(23|24|26|2B|3A|3C|3E|3D|2F|3F|40|5B|5D|5E|60|7B|7D|7C)/g, decodeURIComponent);
+        } else {
+          value = converter.write(value, key);
+        }
+        key = encodeURIComponent(String(key));
+        key = key.replace(/%(23|24|26|2B|5E|60|7C)/g, decodeURIComponent);
+        key = key.replace(/[\(\)]/g, escape);
+        return document.cookie = [
+          key,
+          '=',
+          value,
+          attributes.expires && '; expires=' + attributes.expires.toUTCString(),
+          attributes.path && '; path=' + attributes.path,
+          attributes.domain && '; domain=' + attributes.domain,
+          attributes.secure ? '; secure' : ''
+        ].join('');
+      }
+      // Read
+      if (!key) {
+        result = {};
+      }
+      // To prevent the for loop in the first place assign an empty array
+      // in case there are no cookies at all. Also prevents odd result when
+      // calling "get()"
+      var cookies = document.cookie ? document.cookie.split('; ') : [];
+      var rdecode = /(%[0-9A-Z]{2})+/g;
+      var i = 0;
+      for (; i < cookies.length; i++) {
+        var parts = cookies[i].split('=');
+        var name = parts[0].replace(rdecode, decodeURIComponent);
+        var cookie = parts.slice(1).join('=');
+        if (cookie.charAt(0) === '"') {
+          cookie = cookie.slice(1, -1);
+        }
+        try {
+          cookie = converter.read ? converter.read(cookie, name) : converter(cookie, name) || cookie.replace(rdecode, decodeURIComponent);
+          if (this.json) {
+            try {
+              cookie = JSON.parse(cookie);
+            } catch (e) {
+            }
+          }
+          if (key === name) {
+            result = cookie;
+            break;
+          }
+          if (!key) {
+            result[name] = cookie;
+          }
+        } catch (e) {
+        }
+      }
+      return result;
+    }
+    api.get = api.set = api;
+    api.getJSON = function () {
+      return api.apply({ json: true }, [].slice.call(arguments));
+    };
+    api.defaults = {};
+    api.remove = function (key, attributes) {
+      api(key, '', extend(attributes, { expires: -1 }));
+    };
+    api.withConverter = init;
+    return api;
+  }
+  return init(function () {
+  });
 }));//     Underscore.js 1.8.3
 //     http://underscorejs.org
 //     (c) 2009-2015 Jeremy Ashkenas, DocumentCloud and Investigative Reporters & Editors
@@ -50998,6 +51116,18 @@ Number.prototype.noExponents = function () {
 */
 $(function () {
   'use strict';
+  var thisSection = $('.header').data('this-section');
+  /*
+	if (thisSection === 'settings') {
+		jQuery.ajax({
+			url: 'https://www.coinbase.com/assets/button.js',
+			dataType: 'script',
+			cache: true
+		}).done(function() {
+			console.log('Coinbase loaded');
+		});
+	}
+	*/
   $('body').tooltip({
     selector: '[data-toggle="tooltip"]',
     trigger: 'hover'
@@ -51006,7 +51136,61 @@ $(function () {
     selector: '[data-toggle="popover"]',
     trigger: 'hover'
   });
-  var thisSection = $('.header').data('this-section');
+  var timeNow = new Date().getTime(), promoInterval = 3600000, theInterval = null, adsFree = $('.app_data').data('ads-free');
+  if (!adsFree) {
+    var setPromoInterval = function () {
+      if (theInterval) {
+        //console.log('Clear');
+        clearInterval(theInterval);
+      }
+      Cookies.remove('promoClicked');
+      if (!Cookies.get('timestamp') || new Date().getTime() >= parseInt(Cookies.get('timestamp')) && !Cookies.get('promoModal')) {
+        //console.log('Set');
+        Cookies.set('timestamp', new Date().getTime() + promoInterval);
+      }
+      if (!Cookies.get('promoModal')) {
+        theInterval = setInterval(function () {
+          //console.log('Start');
+          $('#modal-promo').modal('show');
+          Cookies.set('promoModal', true);
+          setPromoInterval();
+        }, Cookies.get('timestamp') - new Date().getTime());
+      }
+    };
+    // Promo ads
+    if (new Date().getTime() >= parseInt(Cookies.get('timestamp')) && !Cookies.get('promoClicked')) {
+      //console.log('Go');
+      $('#modal-promo').modal('show');
+    } else {
+      setPromoInterval();
+    }
+    $('#modal-promo a').each(function () {
+      $(this).on('click', function () {
+        $('#modal-promo').modal('hide');
+        Cookies.set('promoClicked', true);
+        Cookies.remove('promoModal');
+        setPromoInterval();
+      });
+    });
+    var overiFrame = -1;
+    $('.promo-iframe').hover(function () {
+      overiFrame = $(this).closest('.banner').attr('bannerid');
+    }, function () {
+      overiFrame = -1;
+    });
+    $(window).blur(function () {
+      if (overiFrame != -1) {
+        $('#modal-promo').modal('hide');
+        Cookies.set('promoClicked', true);
+        Cookies.remove('promoModal');
+        setPromoInterval();
+      }
+    });
+  } else {
+    Cookies.remove('promoModal');
+    Cookies.remove('promoClicked');
+    Cookies.remove('timestamp');
+  }
   // Smmoth scroll
   $('a[href*=#]:not([href=#])').click(function () {
     if (location.pathname.replace(/^\//, '') === this.pathname.replace(/^\//, '') && location.hostname === this.hostname) {
@@ -51110,17 +51294,6 @@ $(function () {
     e.preventDefault();
     $('#modal-terminal').modal('hide');
   });
-  /*
-	if (thisSection === 'dashboard') {
-		jQuery.ajax({
-			url: 'https://www.coinbase.com/assets/button.js',
-			dataType: 'script',
-			cache: true
-		}).done(function() {
-			console.log('Coinbase loaded');
-		});
-	}
-	*/
   if (thisSection === 'charts') {
     // Chart Scripts
     createChart('hourly', '5 minutes');
@@ -51152,12 +51325,43 @@ $(function () {
     $('.box-tools').click(function (e) {
       e.preventDefault();
     });
+    $(document).scroll(function () {
+      var y = $(this).scrollTop();
+      if (y > 64) {
+        $('.save-toolbox').fadeIn();
+      } else {
+        $('.save-toolbox').fadeOut();
+      }
+    });
+    $('.toggle-save-toolbox').click(function (e) {
+      e.preventDefault();
+      var nextIcon = $(this).find('.fa');
+      if (nextIcon.hasClass('fa-close')) {
+        nextIcon.addClass('fa-arrow-left');
+        nextIcon.removeClass('fa-close');
+        $('.save-toolbox').css('right', '-324px');
+      } else {
+        nextIcon.addClass('fa-close');
+        nextIcon.removeClass('fa-arrow-left');
+        $('.save-toolbox').css('right', '0');
+      }
+    });
     if (window.location.href.match(/settings/g)) {
       $('.treeview-menu-settings-icon').removeClass('fa-angle-left').addClass('fa-angle-down');
       $('.treeview-menu-settings-icon').parent('a').first().addClass('activeTree');
       $('.treeview-menu-settings').fadeIn();
     }
     $('#progress').hide();
+    $('.save-minera-settings').click(function (e) {
+      e.preventDefault();
+      saveSettings(true, false);
+    });
+    $('.save-minera-settings-restart').click(function (e) {
+      e.preventDefault();
+      var input = $('<input>').attr('type', 'hidden').attr('name', 'save_restart').val(true);
+      $('#minersettings').append($(input));
+      saveSettings(true, false);
+    });
     $('.import-file').fileupload({
       url: _baseUrl + '/app/api?command=import_file',
       dataType: 'json',
@@ -52150,7 +52354,7 @@ $(document).on('click', '.cron-unlock', function (e) {
 // Define underscore variable template
 if ($('.header').data('this-section') !== 'lockscreen') {
   _.templateSettings.variable = 'rc';
-  var btcRatesTemplate = _.template($('script.btc-rates-template').html()), altcoinsRatesTemplate = _.template($('script.altcoins-rates-template').html()), avgStatsTemplate = _.template($('script.avg-stats-template').html());
+  var btcRatesTemplate = _.template($('script.btc-rates-template').html()), avgStatsTemplate = _.template($('script.avg-stats-template').html());
 }
 // Stats scripts
 function getStats(refresh) {
