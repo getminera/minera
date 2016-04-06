@@ -1073,7 +1073,7 @@ class Util_model extends CI_Model {
 			{
 				$data = array('timestamp' => $obj->timestamp, 'description' => $post['config_description'], 'miner' => $obj->software, 'settings' => $obj->settings);
 				
-				$result = $this->useCurl($this->config->item('minera_share_configs_url'), false, "POST", json_encode($data));
+				$result = $this->useCurl($this->config->item('minera_api_url').'/sendMinerConfig', false, "POST", json_encode($data));
 				
 				log_message("error", "Config sent to Minera: ".json_encode($data));
 		
@@ -1096,7 +1096,7 @@ class Util_model extends CI_Model {
 		$ctx = stream_context_create(array('http' => array('timeout' => 10)));
 		$profit = json_encode(array());
 		
-		$profit = @file_get_contents('http://getminera.com/api/profit', 0, $ctx);
+		$profit = @file_get_contents($this->config->item('minera_api_url').'/profit', 0, $ctx);
 		
 		return $profit;
 	}
@@ -1317,7 +1317,7 @@ class Util_model extends CI_Model {
 	
 	// Check Minera ads-free
 	public function checkAdsFree() {		
-		$check = @file_get_contents('http://getminera.com/api/checkAds/'.$this->generateMineraId());
+		$check = @file_get_contents($this->config->item('minera_api_url').'/checkAds/'.$this->generateMineraId());
 		$checkE = json_decode($check);
 		
 		if ($checkE->success) {
@@ -2013,7 +2013,7 @@ class Util_model extends CI_Model {
 
 		log_message("error", "Sending anonymous stats");
 		
-		$result = $this->useCurl($this->config->item('minera_anonymous_url')."/".$id, false, "POST", json_encode($stats));
+		$result = $this->useCurl($this->config->item('minera_api_url')."/sendMinerStats/".$id, false, "POST", json_encode($stats));
 
 		return $result;
 	}
