@@ -7,7 +7,7 @@ echo -e "-----\nSTART Minera Upgrade script\n-----\n"
 echo -e "-----\nInstall extra packages\n-----\n"
 #apt-get update
 #export DEBIAN_FRONTEND=noninteractive
-apt-get -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" install -y build-essential libtool libcurl4-openssl-dev libjansson-dev libudev-dev libncurses5-dev autoconf automake postfix redis-server git screen php5-cli php5-curl uthash-dev libmicrohttpd-dev libevent-dev libusb-1.0-0-dev libusb-dev shellinabox
+apt-get -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" install -y build-essential libtool libcurl4-openssl-dev libjansson-dev libudev-dev libncurses5-dev autoconf automake postfix redis-server git screen php5-cli php5-curl uthash-dev libmicrohttpd-dev libevent-dev libusb-1.0-0-dev libusb-dev shellinabox supervisor
 
 sudo dpkg --configure -a
 
@@ -72,12 +72,24 @@ echo -e "Updating encryption key\n-----\n"
 KEY=$(cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 32 | head -n 1)
 sed -i "s/\$config\['encryption_key'\].*/\$config\['encryption_key'\] = '$KEY';/" application/config/config.php
 
+
+echo -e "Installing/Updating NVM and Node requirements\n-----\n"
+curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.31.0/install.sh | bash
+source ~/.bashrc
+nvm install 4
+sudo cp conf/node-server.conf /etc/supervisor/conf.d/
+sudo service supervisor restart
+cd server
+npm install
+cd ..
+
 echo -e "Installing libblkmaker\n-----\n"
 LIBCOUNT=`strings -n5 /etc/ld.so.cache|grep -i libblkmaker|wc -l`
 if [ $LIBCOUNT -lt 2 ];
 then
 	cd minera-bin/src/libblkmaker
 	sudo make install
+	cd ../../..
 fi
 
 echo -e "Installing libusb\n-----\n"

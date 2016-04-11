@@ -330,7 +330,7 @@ class App extends Main_Controller {
 			$dashboardSkin = $this->input->post('dashboard_skin');
 			$dashboardTableRecords = $this->input->post('dashboard_table_records');
 			$dashboardDevicetree = $this->input->post('dashboard_devicetree');
-			$dashboardBoxProfit = false; //$this->input->post('dashboard_box_profit');
+			$dashboardBoxProfit = $this->input->post('dashboard_box_profit');
 			$dashboardBoxLocalMiner = $this->input->post('dashboard_box_local_miner');
 			$dashboardBoxLocalPools = $this->input->post("dashboard_box_local_pools");
 			$dashboardBoxNetworkDetails = $this->input->post("dashboard_box_network_details");
@@ -677,10 +677,10 @@ class App extends Main_Controller {
 			
 			// Anonymous stats
 			$anonymousStats = false;
+			$mineraSystemId = $this->util_model->generateMineraId();
 			if ($this->input->post('anonymous_stats'))
 			{
 				$anonymousStats = $this->input->post('anonymous_stats');
-				$mineraSystemId = $this->util_model->generateMineraId();
 			}
 			$this->redis->set("anonymous_stats", $anonymousStats);
 			$dataObj->anonymous_stats = $anonymousStats;
@@ -751,6 +751,10 @@ class App extends Main_Controller {
 		
 		// Save export
 		$this->redis->set("export_settings", json_encode($dataObj));
+
+		// Publish stats to Redis
+		$dataObj->minera_id = $mineraSystemId;
+		$this->redis->publish("minera-channel", json_encode($dataObj));
 		
 		// Save current miner settings
 		if ($this->input->get("save_config"))
@@ -1060,7 +1064,7 @@ class App extends Main_Controller {
 			case "test":
 				//$a = file_get_contents("api.json");
 				//$o = $this->redis->command("BGSAVE"); //$this->util_model->checkCronIsRunning(); //$this->util_model->sendAnonymousStats(123, "hello world!");
-				$o = $this->util_model->checkAdsFree(); //$this->util_model->updateAltcoinsRates(); //$this->util_model->refreshMinerConf(); //$o = json_encode($this->util_model->callMinerd()); //$this->util_model->getParsedStats($this->util_model->getMinerStats());
+				$o = $this->util_model->sendAnonymousStats(123, array("test" => 1)); //$this->util_model->updateAltcoinsRates(); //$this->util_model->refreshMinerConf(); //$o = json_encode($this->util_model->callMinerd()); //$this->util_model->getParsedStats($this->util_model->getMinerStats());
 			break;
 		}
 
@@ -1144,6 +1148,10 @@ class App extends Main_Controller {
 						
 		// Store the live stats
 		$stats = $this->util_model->storeStats();
+		
+		// Publish stats to Redis
+		$redisStats = $this->util_model->getStats();
+		$this->redis->publish("minera-channel", $redisStats);
 
 		/*
 		// Store the avg stats

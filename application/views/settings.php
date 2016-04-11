@@ -171,11 +171,11 @@
 									</div>
 									<div class="box-body text-center">
 										<?php if (!$adsFree) : ?>
-											<p>If you like Minera, please consider a donation to support it. To remove all the ads forever (for this system) please click the button below and complete the donation (cost: 0.001 <i class="fa fa-btc"></i> for one system for life).</p>
+											<p>If you like Minera, please consider a donation to support it. To remove all the ads forever (for this system) please click the button below and complete the donation (cost: 0.01 <i class="fa fa-btc"></i> for one system for life).</p>
 											<?php if ($env === 'development') : ?>
-												<p><a class="coinbase-button" data-env="sandbox" data-code="470a760cd47bdd1a2c256a75d3d2729a" data-button-style="custom_large" data-button-text="Remove Ads" data-width="185" data-heigth="60" href="https://sandbox.coinbase.com/checkouts/470a760cd47bdd1a2c256a75d3d2729a" data-custom="<?php echo $mineraSystemId.'||removeads||'.site_url('app/dashboard') ?>">Remove Ads</a></p>
+												<p><a class="coinbase-button" data-env="sandbox" data-code="0897e9510eba42b39d4a4a3e6a4742df" data-button-style="custom_large" data-button-text="Remove Ads" data-width="185" data-heigth="60" href="https://sandbox.coinbase.com/checkouts/0897e9510eba42b39d4a4a3e6a4742df" data-custom="<?php echo $mineraSystemId.'||removeads||'.site_url('app/dashboard') ?>">Remove Ads</a></p>
 											<?php else : ?>
-												<p><a class="coinbase-button" data-code="85db36d59b9a3d12b25c97ddc692ccef" data-button-style="custom_large" data-button-text="Remove Ads" data-width="185" data-heigth="60" href="https://sandbox.coinbase.com/checkouts/85db36d59b9a3d12b25c97ddc692ccef" data-custom="<?php echo $mineraSystemId.'||removeads||'.site_url('app/dashboard') ?>">Remove Ads</a></p>
+												<p><a class="coinbase-button" data-code="0b50d8265bfbf0f0c3097d752b1a4ed1" data-button-style="custom_large" data-button-text="Remove Ads" data-width="185" data-heigth="60" href="https://sandbox.coinbase.com/checkouts/0b50d8265bfbf0f0c3097d752b1a4ed1" data-custom="<?php echo $mineraSystemId.'||removeads||'.site_url('app/dashboard') ?>">Remove Ads</a></p>
 											<?php endif; ?>
 										<?php else : ?>
 											<p>You are ads-free, Thanks!</p>
@@ -286,7 +286,7 @@
 											<p>Select what section you want enable/disable in the dashboard.</p>
 											<table class="box-panels">
 												<tr>
-													<td><input type="checkbox" name="dashboard_devicetree" value="1" <?php if ($dashboardDevicetree) : ?>checked=""<?php endif; ?> /> Device tree</td>
+													<td><input type="checkbox" name="dashboard_box_profit" value="1" <?php if ($dashboardBoxProfit) : ?>checked=""<?php endif; ?> /> Mining profitability</td>
 													<td><input type="checkbox" name="dashboard_box_local_miner" value="1" <?php if ($dashboardBoxLocalMiner) : ?>checked=""<?php endif; ?> /> Local miner</td>
 												</tr>
 												<tr>
@@ -304,6 +304,10 @@
 												<tr>
 													<td><input type="checkbox" name="dashboard_box_scrypt_earnings" value="1" <?php if ($dashboardBoxScryptEarnings) : ?>checked=""<?php endif; ?> /> Scrypt earnings</td>
 													<td><input type="checkbox" name="dashboard_box_log" value="1" <?php if ($dashboardBoxLog) : ?>checked=""<?php endif; ?> /> Miner log</td>
+												</tr>
+												<tr>
+													<td><input type="checkbox" name="dashboard_devicetree" value="1" <?php if ($dashboardDevicetree) : ?>checked=""<?php endif; ?> /> Device tree</td>
+													<td></td>
 												</tr>
 											</table>
 										</div>

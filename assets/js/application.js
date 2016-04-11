@@ -50686,6 +50686,7 @@ function change_skin(cls) {
 // Various functions
 //
 *********************/
+var _baseUrl = window._baseUrl;
 function loadScript(url, callback) {
   'use strict';
   var script = document.createElement('script');
@@ -51164,14 +51165,6 @@ $(function () {
     } else {
       setPromoInterval();
     }
-    $('#modal-promo a').each(function () {
-      $(this).on('click', function () {
-        $('#modal-promo').modal('hide');
-        Cookies.set('promoClicked', true);
-        Cookies.remove('promoModal');
-        setPromoInterval();
-      });
-    });
     var overiFrame = -1;
     $('.promo-iframe').hover(function () {
       overiFrame = $(this).closest('.banner').attr('bannerid');
@@ -51179,7 +51172,7 @@ $(function () {
       overiFrame = -1;
     });
     $(window).blur(function () {
-      if (overiFrame != -1) {
+      if (overiFrame !== -1) {
         $('#modal-promo').modal('hide');
         Cookies.set('promoClicked', true);
         Cookies.remove('promoModal');
@@ -53408,7 +53401,7 @@ function getStats(refresh) {
                   coin: profit.symbol
                 },
                 profit.networkhashps ? profit.networkhashps / 1000 : 0,
-                profit.price.toFixed(8),
+                profit.price ? profit.price.toFixed(8) : 0,
                 (currentProfitData.hash * profit.btc_profitability).toFixed(8),
                 profit.btc_profitability.toFixed(8),
                 (profit.btc_profitability * 100 / ltc.btc_profitability).toFixed(2),

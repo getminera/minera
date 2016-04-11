@@ -157,6 +157,12 @@ class Util_model extends CI_Model {
 		
 		$a->network_miners = $this->getNetworkMinerStats(true);
 		
+		// Add Minera ID
+		$a->minera_id = $this->generateMineraId();
+		
+		// Add miner software used
+		$a->miner = $this->_minerdSoftware;
+		
 		// Add local algo used
 		$a->algo = $this->checkAlgo(true);
 		
@@ -185,6 +191,11 @@ class Util_model extends CI_Model {
 		
 		// Add coins profitability
 		$a->profits = json_decode($this->redis->get('coins_profitability'));
+		
+		$a->livestat = true;
+		
+		// Publish stats to Redis
+		$this->redis->publish("minera-channel", json_encode($a));
 
 		return json_encode($a);		
 	}
@@ -719,7 +730,7 @@ class Util_model extends CI_Model {
 			}
 			
 			$data = json_decode($this->getParsedStats($stats));
-			
+
 			$data->pool_donation_id = $poolDonationId;
 	
 			$ph = (isset($data->pool->hashrate)) ? $data->pool->hashrate : 0;
@@ -2457,17 +2468,40 @@ class Util_model extends CI_Model {
 		}
 	}
 	
+	function get_furl($url) {
+	    $furl = false;
+	   
+	    // First check response headers
+	    $headers = get_headers($url);
+	   
+	    // Test for 301 or 302
+	    if(preg_match('/^HTTP\/\d\.\d\s+(301|302)/',$headers[0]))
+	    {
+	        foreach($headers as $value)
+	        {
+	            if(substr(strtolower($value), 0, 9) == "location:")
+	            {
+	                $furl = trim(substr($value, 9, strlen($value)));
+	            }
+	        }
+	    }
+	    // Set final URL
+	    $furl = ($furl) ? $furl : $url;
+	
+	    return $furl;
+	}
+	
 	public function useCurl($url, $params, $method, $post = false)
 	{
 		if ($params)
-			$ch = curl_init($url."?".http_build_query($params));
+			$ch = curl_init($this->get_furl($url)."?".http_build_query($params));
 		else
-			$ch = curl_init($url);
+			$ch = curl_init($this->get_furl($url));
 
 		curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
-		curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-		curl_setopt($ch, CURLOPT_CONNECTTIMEOUT ,3); 
+		curl_setopt($ch, CURLOPT_CONNECTTIMEOUT ,3);
 		curl_setopt($ch, CURLOPT_TIMEOUT, 10);
+		curl_setopt($ch, CURLOPT_RETURNTRANSFER, TRUE);
 		if ($post)
 		{
 			curl_setopt($ch, CURLOPT_POSTFIELDS, $post);

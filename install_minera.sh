@@ -5,7 +5,7 @@
 echo -e "-----\nSTART Minera Install script\n-----\n"
 
 echo -e "-----\nInstall extra packages\n-----\n"
-apt-get -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" install -y build-essential libtool libcurl4-openssl-dev libjansson-dev libudev-dev libncurses5-dev autoconf automake postfix redis-server git screen php5-cli php5-curl wicd-curses uthash-dev libmicrohttpd-dev libevent-dev libusb-1.0-0-dev libusb-dev shellinabox
+apt-get -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" install -y build-essential libtool libcurl4-openssl-dev libjansson-dev libudev-dev libncurses5-dev autoconf automake postfix redis-server git screen php5-cli php5-curl wicd-curses uthash-dev libmicrohttpd-dev libevent-dev libusb-1.0-0-dev libusb-dev shellinabox supervisor
 
 echo -e "Adding Minera user\n-----\n"
 adduser minera --gecos "" --disabled-password
@@ -69,6 +69,16 @@ echo -e "Copying cg/bfgminer udev rules\n-----\n"
 sudo cp conf/01-cgminer.rules /etc/udev/rules.d/
 sudo cp conf/70-bfgminer.rules /etc/udev/rules.d/
 sudo service udev restart
+
+echo -e "Installing NVM and Node requirements\n-----\n"
+curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.31.0/install.sh | bash
+source ~/.bashrc
+nvm install 4
+sudo cp conf/node-server.conf /etc/supervisor/conf.d/
+sudo service supervisor restart
+cd server
+npm install
+cd ..
 
 echo -e "Installing libblkmaker\n-----\n"
 LIBCOUNT=`strings -n5 /etc/ld.so.cache|grep -i libblkmaker|wc -l`
