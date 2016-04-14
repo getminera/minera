@@ -30,11 +30,6 @@
 					<button type="submit" class="btn btn-lg btn-danger save-minera-settings-restart" name="save_restart" value="1"><i class="fa fa-repeat"></i> Save & Restart Miner</button>
 				</li>
 	    	</ul>
-	    	<?php if (!$adsFree) : ?>
-	    	<div class="text-center mt15">
-		    	<iframe scrolling="no" style="border: 0; width: 234px; height: 60px;" src="//coinurl.com/get.php?id=49615"></iframe>
-	    	</div>
-	    	<?php endif; ?>
 		</div>
 
         <!-- Main content -->

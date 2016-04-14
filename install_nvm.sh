@@ -8,3 +8,4 @@ sudo cp conf/node-server.conf /etc/supervisor/conf.d/
 cd /var/www/minera/server
 npm install
 sudo service supervisor restart
+exit

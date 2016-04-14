@@ -1,6 +1,7 @@
 /**
  * All your custom CSS should go into this file
  */
+ .wrapper {padding-bottom: 85px;}
 .padding-vert { padding-bottom: 20px;}
 .margin-bottom { margin-bottom: 20px;}
 .knob-label { font-size: 10pt !important;}
@@ -84,11 +85,22 @@ body > .header { position: fixed !important; }
 .tip-button { float: left; margin-top: 14px; margin-right: 0; margin-left: 5px; }
 .coinbase-donate-button { }
 .copyright-lockscreen { font-size: small; position: absolute; bottom: 10px; right: 10px; color: rgb(195, 195, 195); }
-.copyright { text-align: right; font-size: small;}
+.copyright { text-align: right; font-size: small; margin-top: 6px;}
 .copyright a { color: #FF4D50; }
-.github-btn { float: right; margin-left: 10px; margin-top: -3px; margin-right: 15px; }
+.github-btn { float: right; margin-left: 10px; margin-top: -3px; }
 
 .bootstro-highlight { background-color: rgba(255, 255, 255, 0.2) !important; }
+
+.scroll-ad {
+	display: none;
+	position: fixed;
+	z-index: 10;
+	right: 0;
+	bottom: 0;
+    background: rgba(255, 255, 255, 0.72);
+    box-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
+    padding: 10px;
+}
 
 .save-toolbox {
 	display: none;

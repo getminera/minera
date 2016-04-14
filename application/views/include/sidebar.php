@@ -352,6 +352,13 @@
 					
                     <!-- sidebar menu -->
                     <ul class="sidebar-menu">
+	                    <?php if ($sectionPage === "dashboard" && (($isOnline && $appScript) || count($netMiners) > 0)) : ?>
+                        	<li data-toggle="tooltip" title="" data-original-title="Refresh Dashboard">
+                            	<a href="#" class="refresh-btn">
+                                	<i class="fa fa-refresh"></i> <span>Refresh</span><span class="badge bg-muted pull-right auto-refresh-time">auto in</span>
+								</a>
+							</li>
+						<?php endif; ?>
                         <li class="treeview" data-toggle="tooltip" title="" data-original-title="Go to the dashboard page">
                         	<a href="<?php echo site_url("app/dashboard") ?>">
                         		<i class="fa fa-dashboard"></i> 
@@ -420,8 +427,15 @@
                                 		<i class="fa fa-gear"></i> General
                                 	</a>
                                 </li>
+                                <?php if (!$adsFree) : ?>
                                 <li>
-                                	<a href="<?php echo site_url("app/settings#donation-box") ?>" class="menu-donation-box ml10">
+                                	<a href="<?php echo site_url("app/settings") ?>" class="menu-donation-box ml10">
+                                		<i class="fa fa-ban"></i> Remove Ads
+                                	</a>
+                                </li>
+                                <?php endif; ?>
+                                <li>
+                                	<a href="<?php echo site_url("app/settings") ?>" class="menu-donation-box ml10">
                                 		<i class="fa fa-gift"></i> Donation
                                 	</a>
                                 </li>
@@ -521,13 +535,6 @@
                                 </li>
                             </ul>
                         </li>
-						<?php if ($sectionPage === "dashboard" && (($isOnline && $appScript) || count($netMiners) > 0)) : ?>
-                        	<li data-toggle="tooltip" title="" data-original-title="Refresh Dashboard">
-                            	<a href="#" class="refresh-btn">
-                                	<i class="fa fa-refresh"></i> <span>Refresh</span><span class="badge bg-muted pull-right auto-refresh-time">auto in</span>
-								</a>
-							</li>
-						<?php endif; ?>
                     </ul>
                 </section>
                 

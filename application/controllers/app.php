@@ -827,6 +827,7 @@ class App extends Main_Controller {
 		$data['seconds'] = 30;
 		$data['refreshUrl'] = false;
 		$data['env'] = $this->config->item('ENV');
+		$data['adsFree'] = $this->redis->get('is_ads_free');
 		$this->load->view('include/header', $data);
 		$this->load->view('sysop', $data);
 		$this->load->view('include/footer', $data);
@@ -860,6 +861,7 @@ class App extends Main_Controller {
 		$data['htmlTag'] = "lockscreen";
 		$data['seconds'] = 50;
 		$data['env'] = $this->config->item('ENV');
+		$data['adsFree'] = $this->redis->get('is_ads_free');
 		$this->load->view('include/header', $data);
 		$this->load->view('sysop', $data);
 		$this->load->view('include/footer', $data);
@@ -938,6 +940,7 @@ class App extends Main_Controller {
 			$data['htmlTag'] = "lockscreen";
 			$data['seconds'] = 200;
 			$data['env'] = $this->config->item('ENV');
+			$data['adsFree'] = $this->redis->get('is_ads_free');
 			$this->load->view('include/header', $data);
 			$this->load->view('sysop', $data);
 			$this->load->view('include/footer', $data);
