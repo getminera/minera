@@ -7,7 +7,7 @@
 var redis = require('redis'),
     client = redis.createClient(),
     request = require('request'),
-    apiUrl = 'http://192.168.1.11:3000/api';
+    apiUrl = 'https://getminera.com/api';
 
 client.subscribe('minera-channel');
 

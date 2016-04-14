@@ -175,7 +175,7 @@
 											<?php if ($env === 'development') : ?>
 												<p><a class="coinbase-button" data-env="sandbox" data-code="0897e9510eba42b39d4a4a3e6a4742df" data-button-style="custom_large" data-button-text="Remove Ads" data-width="185" data-heigth="60" href="https://sandbox.coinbase.com/checkouts/0897e9510eba42b39d4a4a3e6a4742df" data-custom="<?php echo $mineraSystemId.'||removeads||'.site_url('app/dashboard') ?>">Remove Ads</a></p>
 											<?php else : ?>
-												<p><a class="coinbase-button" data-code="0b50d8265bfbf0f0c3097d752b1a4ed1" data-button-style="custom_large" data-button-text="Remove Ads" data-width="185" data-heigth="60" href="https://sandbox.coinbase.com/checkouts/0b50d8265bfbf0f0c3097d752b1a4ed1" data-custom="<?php echo $mineraSystemId.'||removeads||'.site_url('app/dashboard') ?>">Remove Ads</a></p>
+												<p><a class="coinbase-button" data-code="ee38d16e2e37e5f148153a8817d5dc27" data-button-style="custom_large" data-button-text="Remove Ads" data-width="185" data-heigth="60" href="https://sandbox.coinbase.com/checkouts/ee38d16e2e37e5f148153a8817d5dc27" data-custom="<?php echo $mineraSystemId.'||removeads||'.site_url('app/dashboard') ?>">Remove Ads</a></p>
 											<?php endif; ?>
 										<?php else : ?>
 											<p>You are ads-free, Thanks!</p>

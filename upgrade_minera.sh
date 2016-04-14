@@ -72,14 +72,13 @@ echo -e "Updating encryption key\n-----\n"
 KEY=$(cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 32 | head -n 1)
 sed -i "s/\$config\['encryption_key'\].*/\$config\['encryption_key'\] = '$KEY';/" application/config/config.php
 
-
 echo -e "Installing/Updating NVM and Node requirements\n-----\n"
 curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.31.0/install.sh | bash
 source ~/.bashrc
 nvm install 4
 sudo cp conf/node-server.conf /etc/supervisor/conf.d/
 sudo service supervisor restart
-cd server
+cd /var/www/minera/server
 npm install
 cd ..
 
@@ -87,7 +86,7 @@ echo -e "Installing libblkmaker\n-----\n"
 LIBCOUNT=`strings -n5 /etc/ld.so.cache|grep -i libblkmaker|wc -l`
 if [ $LIBCOUNT -lt 2 ];
 then
-	cd minera-bin/src/libblkmaker
+	cd /var/www/minera/minera-bin/src/libblkmaker
 	sudo make install
 	cd ../../..
 fi
@@ -96,7 +95,7 @@ echo -e "Installing libusb\n-----\n"
 LIBUSBCOUNT=`strings -n5 /etc/ld.so.cache|grep -i libusb-1.0.so.2|wc -l`
 if [ $LIBUSBCOUNT -lt 2 ];
 then
-        cd minera-bin/src/libusb
+        cd /var/www/minera/minera-bin/src/libusb
         sudo make install
         cd ../libusb-fix
         cp libusb-1.0.so.2.0.0 /usr/local/lib

@@ -50091,7 +50091,73 @@ Licensed under the BSD-2-Clause License.
       return _;
     });
   }
-}.call(this));/*!
+}.call(this));'use strict';
+/*********************
+//
+// Various functions
+//
+*********************/
+/*jshint browser: true */
+/*globals jQuery */
+;
+(function (factory) {
+  if (typeof exports === 'object') {
+    factory(require('jquery'));
+  } else if (typeof define === 'function' && define.amd) {
+    define(['jquery'], factory);
+  } else {
+    factory(jQuery);
+  }
+}(function ($) {
+  /**
+     * Triggers the DOM changed event on the given element
+     *
+     * @private
+     * @param   {Object}    element     the jQuery element that has been modified
+     * @param   {String}    type        jQuery method used to trigger manipulation
+     */
+  function jQueryDOMChanged(element, type) {
+    return $(element).trigger('DOMChanged', type);
+  }
+  /**
+     * Wraps a given jQuery method and injects another function to be called
+     *
+     * @private
+     * @param   {String}    method
+     * @param   {Function}  caller
+     */
+  function jQueryHook(method, caller) {
+    var definition = $.fn[method];
+    if (definition) {
+      $.fn[method] = function () {
+        var args = Array.prototype.slice.apply(arguments);
+        var result = definition.apply(this, args);
+        caller.apply(this, args);
+        return result;
+      };
+    }
+  }
+  jQueryHook('prepend', function () {
+    return jQueryDOMChanged(this, 'prepend');
+  });
+  jQueryHook('append', function () {
+    return jQueryDOMChanged(this, 'append');
+  });
+  jQueryHook('before', function () {
+    return jQueryDOMChanged($(this).parent(), 'before');
+  });
+  jQueryHook('after', function () {
+    return jQueryDOMChanged($(this).parent(), 'after');
+  });
+  jQueryHook('html', function (value) {
+    // Internally jQuery will set strings using innerHTML
+    // otherwise will use append to insert new elements
+    // Only trigger on string types to avoid doubled events
+    if (typeof value === 'string') {
+      return jQueryDOMChanged(this, 'html');
+    }
+  });
+}));/*!
  * Author: Abdullah A Almsaeed
  * Date: 4 Jan 2014
  * Description:
@@ -50681,14 +50747,9 @@ function change_skin(cls) {
       });
     });
   };
-}(window.jQuery || window.Zepto));/*********************
-//
-// Various functions
-//
-*********************/
+}(window.jQuery || window.Zepto));'use strict';
 var _baseUrl = window._baseUrl;
 function loadScript(url, callback) {
-  'use strict';
   var script = document.createElement('script');
   script.type = 'text/javascript';
   if (script.readyState) {
@@ -50709,7 +50770,6 @@ function loadScript(url, callback) {
   document.getElementsByTagName('head')[0].appendChild(script);
 }
 function convertHashrate(hash) {
-  'use strict';
   if (hash > 900000000000)
     return (hash / 1000000000000).toFixed(2) + 'Ph/s';
   if (hash > 900000000)
@@ -50722,7 +50782,6 @@ function convertHashrate(hash) {
     return hash.toFixed(0) + 'Kh/s';
 }
 function convertMS(ms) {
-  'use strict';
   var d, h, m, s;
   s = Math.floor(ms / 1000);
   m = Math.floor(s / 60);
@@ -50739,7 +50798,6 @@ function convertMS(ms) {
   };
 }
 function getExaColor(color) {
-  'use strict';
   if (color === 'green')
     return '#00a65a';
   else if (color === 'yellow')
@@ -50750,7 +50808,6 @@ function getExaColor(color) {
     return '#999';
 }
 function callUpdate() {
-  'use strict';
   //$('.center').append('<div class="form-box" style="width:90%"><div class="header" id="msglog-box" style="font-size:16px;"></div></div>');
   $.ajax({
     url: _baseUrl + '/app/api?command=update_minera',
@@ -50763,7 +50820,6 @@ function callUpdate() {
   });
 }
 function timer(counter) {
-  'use strict';
   var count = counter ? counter - 1 : $('body').data('count') - 1;
   if (count < 0) {
     clearInterval(counter);
@@ -50782,7 +50838,6 @@ function timer(counter) {
   }, 1000);
 }
 function saveSettings(hide, saveonly) {
-  'use strict';
   if (saveonly === false) {
     $('#modal-saving-label').html('Saving data, please wait...');
     $('#modal-saving').modal('show');
@@ -50803,7 +50858,6 @@ function saveSettings(hide, saveonly) {
   });
 }
 function changeDonationWorth(profitability, value) {
-  'use strict';
   var amount = profitability / 24 / 60 * value, string = value > 0 ? 'about' : 'exactly', h = 0, new_value = 0, period = 0;
   if (value >= 60) {
     h = Math.floor(value / 60);
@@ -50827,7 +50881,6 @@ function changeDonationWorth(profitability, value) {
 }
 // Show or Hide the options related to the selected miner software
 function showHideMinerOptions(change) {
-  'use strict';
   var sel = $('#minerd-software option:selected').text().match(/\[Custom Miner\]/);
   if ($('#minerd-software').val() !== 'cpuminer' && sel === null) {
     $('.options-selection').show();
@@ -50880,7 +50933,6 @@ function showHideMinerOptions(change) {
   }
 }
 function createChart(period, text_period) {
-  'use strict';
   function redrawGraphs() {
     areaHash.redraw();
     areaRej.redraw();
@@ -50981,7 +51033,6 @@ function createChart(period, text_period) {
 }
 //End get stored stats
 function createMon(key, hash, totalhash, maxHashrate, ac, re, hw, sh, freq, color) {
-  'use strict';
   var col, toAppend, size, skin, thickness, fontsize, name, max;
   if (key === 'total') {
     col = 12;
@@ -51078,14 +51129,12 @@ function createMon(key, hash, totalhash, maxHashrate, ac, re, hw, sh, freq, colo
   $('.' + key).css('font-size', fontsize);
 }
 function changeEarnings(value) {
-  'use strict';
   var hashrate = $('.widget-total-hashrate').data('pool-hashrate');
   var amount = value * hashrate / 1000;
   $('.profitability-results').html('<span class="label bg-blue">' + convertHashrate(hashrate) + '</span>&nbsp;x&nbsp;<span class="label bg-green">' + value.toFixed(5) + '</span> = <small>Day: </small><span class="badge bg-red">' + amount.toFixed(8) + '</span> <small>Week: </small><span class="badge bg-light">' + (amount * 7).toFixed(8) + '</span> <small>Month: </small><span class="badge bg-light">' + (amount * 30).toFixed(8) + '</span>');
 }
 // Errors
 function triggerError(msg) {
-  'use strict';
   $('.widgets-section').hide();
   $('.top-section').attr('style', 'display: none !important');
   $('.right-section').hide();
@@ -51096,7 +51145,6 @@ function triggerError(msg) {
   return false;
 }
 Number.prototype.noExponents = function () {
-  'use strict';
   var data = String(this).split(/[eE]/);
   if (data.length === 1)
     return data[0];
@@ -51116,7 +51164,6 @@ Number.prototype.noExponents = function () {
 // Main startup function //
 */
 $(function () {
-  'use strict';
   var thisSection = $('.header').data('this-section');
   /*
 	if (thisSection === 'settings') {
@@ -51184,6 +51231,10 @@ $(function () {
     Cookies.remove('promoClicked');
     Cookies.remove('timestamp');
   }
+  // Add responsive class to datatables
+  $('.responsive-datatable-minera').on('DOMChanged', function () {
+    $(this).parent().addClass('table-responsive');
+  });
   // Smmoth scroll
   $('a[href*=#]:not([href=#])').click(function () {
     if (location.pathname.replace(/^\//, '') === this.pathname.replace(/^\//, '') && location.hostname === this.hostname) {
@@ -51278,8 +51329,8 @@ $(function () {
     e.preventDefault();
     var a = document.createElement('a');
     a.href = _baseUrl;
-    if (!$('iframe').attr('src')) {
-      $('iframe').attr('src', 'http://' + a.host + ':4200/');
+    if (!$('#terminal-iframe').attr('src')) {
+      $('#terminal-iframe').attr('src', 'http://' + a.host + ':4200/');
     }
     $('#modal-terminal').modal('show');
   });
@@ -52102,7 +52153,6 @@ $(function () {
 // ****************************** //
 // Select Pool on the fly
 $(document).on('click', '.select-net-pool', function (e) {
-  'use strict';
   e.preventDefault();
   $('.overlay').show();
   var poolId = $(this).data('pool-id'), netConfig = $(this).data('pool-config'), netMiner = $(this).data('netminer');
@@ -52124,7 +52174,6 @@ $(document).on('click', '.select-net-pool', function (e) {
 });
 // Remove Pool on the fly
 $(document).on('click', '.remove-net-pool', function (e) {
-  'use strict';
   e.preventDefault();
   $('.overlay').show();
   var poolId = $(this).data('pool-id'), netConfig = $(this).data('pool-config'), netMiner = $(this).data('netminer');
@@ -52148,7 +52197,6 @@ $(document).on('click', '.remove-net-pool', function (e) {
 });
 // Add network Pool on the fly
 $(document).on('click', '.toggle-add-net-pool', function (e) {
-  'use strict';
   e.preventDefault();
   //$('.overlay').show();
   if ($(this).data('open')) {
@@ -52160,7 +52208,6 @@ $(document).on('click', '.toggle-add-net-pool', function (e) {
   }
 });
 $(document).on('click', '.add-net-pool', function (e) {
-  'use strict';
   e.preventDefault();
   $('.overlay').show();
   var netMiner = $(this).data('netminer');
@@ -52197,7 +52244,6 @@ $(document).on('click', '.add-net-pool', function (e) {
   }
 });
 $(document).on('click', '.add-net-donation-pool', function (e) {
-  'use strict';
   e.preventDefault();
   $('.overlay').show();
   var netMiner = $(this).data('netminer'), donationUrl = $(this).data('netcoin') === 'SHA-256' ? $('.app_data').data('minera-pool-url-sha256') : $('.app_data').data('minera-pool-url-scrypt'), params = {
@@ -52232,7 +52278,6 @@ $(document).on('click', '.add-net-donation-pool', function (e) {
 // ****************************** //
 // Select Pool on the fly
 $(document).on('click', '.select-pool', function (e) {
-  'use strict';
   e.preventDefault();
   $('.overlay').show();
   var poolId = $(this).data('pool-id');
@@ -52254,7 +52299,6 @@ $(document).on('click', '.select-pool', function (e) {
 });
 // Toggle local pool on the fly
 $(document).on('click', '.toggle-add-pool', function (e) {
-  'use strict';
   e.preventDefault();
   //$('.overlay').show();
   if ($(this).data('open')) {
@@ -52266,7 +52310,6 @@ $(document).on('click', '.toggle-add-pool', function (e) {
   }
 });
 $(document).on('click', '.add-pool', function (e) {
-  'use strict';
   e.preventDefault();
   $('.overlay').show();
   if ($('.local_pool_url').val() && $('.local_pool_username').val() && $('.local_pool_password').val()) {
@@ -52302,7 +52345,6 @@ $(document).on('click', '.add-pool', function (e) {
 });
 // Remove local pool on the fly
 $(document).on('click', '.remove-pool', function (e) {
-  'use strict';
   e.preventDefault();
   if ($('.app_data').data('miner-running') !== 'cpuminer' && $('.app_data').data('miner-running') !== undefined) {
     $('.overlay').show();
@@ -52329,7 +52371,6 @@ $(document).on('click', '.remove-pool', function (e) {
   }
 });
 $(document).on('click', '.cron-unlock', function (e) {
-  'use strict';
   e.preventDefault();
   $('#modal-saving-label').html('Unlocking cron...');
   $('#modal-saving').modal('show');
@@ -52351,7 +52392,6 @@ if ($('.header').data('this-section') !== 'lockscreen') {
 }
 // Stats scripts
 function getStats(refresh) {
-  'use strict';
   var now = new Date().getTime();
   var d = 0, totalhash = 0, totalac = 0, totalre = 0, totalhw = 0, totalsh = 0, totalfr = 0, totalpoolhash = 0, poolHash = 0, errorTriggered = false, pool_shares_seconds, log_file = $('.app_data').data('minerd-log').replace(/^.*[\\\/]/, ''), miner_status = $('.app_data').data('miner-status'),
     // Raw stats
@@ -53290,7 +53330,7 @@ function getStats(refresh) {
                 'aTargets': [3],
                 'mRender': function (data, type, full) {
                   if (type === 'display') {
-                    return '<small class="text-muted">' + data.blocks + '</span>';
+                    return '<small>' + data.blocks + '</span>';
                   }
                   return data;
                 }
@@ -53360,7 +53400,7 @@ function getStats(refresh) {
                 'aTargets': [1],
                 'mRender': function (data, type, full) {
                   if (type === 'display') {
-                    return '<small class="text-muted">' + data + '</span>';
+                    return '<small>' + data + '</small>';
                   }
                   return data;
                 }
@@ -53372,7 +53412,7 @@ function getStats(refresh) {
                     if (full[3].coin === 'btc')
                       return '-';
                     else
-                      return '<small class="text-muted">' + data + '</span>';
+                      return '<small class="text-muted">' + data + '</small>';
                   }
                   return data;
                 }

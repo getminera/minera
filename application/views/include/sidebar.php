@@ -103,7 +103,7 @@
 						<h4 class="modal-title" id="modal-saving-label"><i class="fa fa-terminal"></i> Minera terminal window</h4>
 					</div>
 					<div class="modal-body bg-black" style="text-align:center;">
-						<iframe src="" style="" width="100%" height="450" frameborder="0"></iframe>
+						<iframe id="terminal-iframe" src="" style="" width="100%" height="450" frameborder="0"></iframe>
 					</div>
 					<div class="modal-footer modal-footer-center">
 						<h6>This is a full terminal window running on your Minera system, use any user you want to login, but remember Minera runs as user "minera" and you should use this for each operation you wanna do.</h6>
@@ -346,7 +346,7 @@
 					
 					<?php if (!$adsFree) : ?>
 					<div class="text-center">
-						<iframe scrolling="no" style="border: 0; width: 200px; height: 200px;" src="//coinurl.com/get.php?id=49630&SSL=1"></iframe>
+						<iframe scrolling="no" style="border: 0; width: 200px; height: 200px;" src="//coinurl.com/get.php?id=<?php echo ($dashboardSkin ==='black') ? '50071' : 49630; ?>&SSL=1"></iframe>
 					</div>
 					<?php endif; ?>
 					

@@ -28,7 +28,7 @@ If you like it, please consider a donation:
 
 Thanks.
 
-**[Download from official server (UK) minera-latest.img.zip](http://getminera.com/download/latest)**
+**[Download from official server (DE) minera-latest.img.zip](http://getminera.com/download/latest)**
 
 **[Download from mirror (MEGA) minera-latest.img.zip](https://mega.nz/#!aRMzkIQK!E0n7hV09QU-ba7vtrJBXBIGWzSwb8Fn8wjmzs3FC7Ws)**
 
@@ -111,15 +111,15 @@ Installing
 
 You can choose for a img file to put in your SD Card or for a manual install.
 
-**Image file (img) v0.6.1 (Recommended)**
+**Image file (img) v0.7.0 (Recommended)**
 
 This is the Minera image file for Raspberry PI, you have only to download it and put in your SD Card.
 
 You need at least a 4GB SD Card:
 
-Official United Kingdom server:
+Official Europe server:
 
-> [official-uk] **[Download minera-latest.img.zip](http://getminera.com/download/latest)**
+> **[Download minera-latest.img.zip](http://getminera.com/download/latest)**
 
 After boot up your controller, point your browser to:
 

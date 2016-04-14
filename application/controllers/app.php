@@ -1150,8 +1150,7 @@ class App extends Main_Controller {
 		$stats = $this->util_model->storeStats();
 		
 		// Publish stats to Redis
-		$redisStats = $this->util_model->getStats();
-		$this->redis->publish("minera-channel", $redisStats);
+		$this->util_model->getStats();
 
 		/*
 		// Store the avg stats

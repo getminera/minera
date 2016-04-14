@@ -72,6 +72,8 @@ body > .header { position: fixed !important; }
 .mb50 { margin-bottom: 50px; }
 
 .p10 { padding: 10px; }
+.pl10 { padding-left: 10px; }
+.pr10 { padding-rigth: 10px; }
 
 .ml10 { margin-left: 10px; }
 

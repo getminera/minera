@@ -1,14 +1,9 @@
-/*********************
-//
-// Various functions
-//
-*********************/
+'use strict';
 
 var _baseUrl = window._baseUrl;
 
 function loadScript(url, callback)
 {
-	'use strict';
     var script = document.createElement('script');
     script.type = 'text/javascript';
 
@@ -32,7 +27,7 @@ function loadScript(url, callback)
 
 function convertHashrate(hash)
 {
-	'use strict';
+
 	if (hash > 900000000000)
 		return (hash/1000000000000).toFixed(2) + 'Ph/s';
 	if (hash > 900000000)
@@ -47,7 +42,7 @@ function convertHashrate(hash)
 
 function convertMS(ms) 
 {
-	'use strict';
+
 	var d, h, m, s;
 	s = Math.floor(ms / 1000);
 	m = Math.floor(s / 60);
@@ -62,7 +57,7 @@ function convertMS(ms)
 
 function getExaColor(color)
 {
-	'use strict';
+
 	if (color === 'green')
 		return '#00a65a';
 	else if (color === 'yellow')
@@ -75,7 +70,7 @@ function getExaColor(color)
 
 function callUpdate()
 {
-	'use strict';
+
 	//$('.center').append('<div class="form-box" style="width:90%"><div class="header" id="msglog-box" style="font-size:16px;"></div></div>');
     $.ajax({
 	    url: _baseUrl + '/app/api?command=update_minera',
@@ -92,7 +87,7 @@ function callUpdate()
 
 function timer(counter)
 {
-	'use strict';
+
 	var count = (counter) ? counter-1 : $('body').data('count')-1;
 
 	if (count < 0)
@@ -119,7 +114,7 @@ function timer(counter)
 
 function saveSettings(hide, saveonly)
 {
-	'use strict';
+
     if (saveonly === false)
     {
     	$('#modal-saving-label').html('Saving data, please wait...');
@@ -145,7 +140,7 @@ function saveSettings(hide, saveonly)
 
 function changeDonationWorth(profitability, value) 
 {
-	'use strict';
+
 	var amount = (profitability / 24 / 60 * value), string = (value > 0) ? 'about' : 'exactly', h = 0, new_value = 0, period = 0;
 
 	if (value >= 60)
@@ -186,7 +181,7 @@ function changeDonationWorth(profitability, value)
 // Show or Hide the options related to the selected miner software
 function showHideMinerOptions(change)
 {	
-	'use strict';
+
     var sel = $('#minerd-software option:selected').text().match(/\[Custom Miner\]/);
     
     if ($('#minerd-software').val() !== 'cpuminer' && sel === null)
@@ -260,7 +255,7 @@ function showHideMinerOptions(change)
 
 function createChart(period, text_period)
 {
-	'use strict';
+
 	
 	function redrawGraphs()
 	{
@@ -357,7 +352,7 @@ function createChart(period, text_period)
 
 function createMon(key, hash, totalhash, maxHashrate, ac, re, hw, sh, freq, color)
 {
-	'use strict';
+
 	var col, toAppend, size, skin, thickness, fontsize, name, max;
 		
 	if (key === 'total')
@@ -479,7 +474,7 @@ function createMon(key, hash, totalhash, maxHashrate, ac, re, hw, sh, freq, colo
 
 function changeEarnings(value) 
 {
-	'use strict';
+
 	var hashrate = $('.widget-total-hashrate').data('pool-hashrate');
 
 	var amount = (value * hashrate / 1000);
@@ -491,7 +486,7 @@ function changeEarnings(value)
 // Errors
 function triggerError(msg)
 {
-	'use strict';
+
 	$('.widgets-section').hide();
 	$('.top-section').attr('style', 'display: none !important');
 	$('.right-section').hide();
@@ -505,7 +500,7 @@ function triggerError(msg)
 
 Number.prototype.noExponents= function()
 {
-	'use strict';
+
     var data= String(this).split(/[eE]/);
     if(data.length === 1) return data[0]; 
 
@@ -527,7 +522,7 @@ Number.prototype.noExponents= function()
 // Main startup function //
 */
 $(function() {
-	'use strict';
+
 	
 	var thisSection = $('.header').data('this-section');
 	
@@ -598,6 +593,11 @@ $(function() {
 		Cookies.remove('promoClicked');
 		Cookies.remove('timestamp');
 	}
+	
+	// Add responsive class to datatables
+	$('.responsive-datatable-minera').on('DOMChanged', function () {
+		$(this).parent().addClass('table-responsive');
+	});
 	
 	// Smmoth scroll
 	$('a[href*=#]:not([href=#])').click(function() {
@@ -719,8 +719,8 @@ $(function() {
        	var a = document.createElement('a');
        	a.href = _baseUrl;
 
-       	if (!$('iframe').attr('src')) {
-			$('iframe').attr('src', 'http://'+a.host+':4200/');
+       	if (!$('#terminal-iframe').attr('src')) {
+			$('#terminal-iframe').attr('src', 'http://'+a.host+':4200/');
 		}
 
 		$('#modal-terminal').modal('show');
@@ -1705,7 +1705,7 @@ $(function() {
 
 // Select Pool on the fly
 $(document).on('click', '.select-net-pool', function(e) {
-	'use strict';
+
 	e.preventDefault();
 	$('.overlay').show();
     var poolId = $(this).data('pool-id'),
@@ -1729,7 +1729,7 @@ $(document).on('click', '.select-net-pool', function(e) {
 
 // Remove Pool on the fly
 $(document).on('click', '.remove-net-pool', function(e) {
-	'use strict';
+
 	e.preventDefault();
 	$('.overlay').show();
     var poolId = $(this).data('pool-id'),
@@ -1756,7 +1756,7 @@ $(document).on('click', '.remove-net-pool', function(e) {
 
 // Add network Pool on the fly
 $(document).on('click', '.toggle-add-net-pool', function(e) {
-	'use strict';
+
 	e.preventDefault();
 	//$('.overlay').show();
 	if ($(this).data('open')) {
@@ -1769,7 +1769,7 @@ $(document).on('click', '.toggle-add-net-pool', function(e) {
 });
 
 $(document).on('click', '.add-net-pool', function(e) {
-	'use strict';
+
 	e.preventDefault();
 	$('.overlay').show();
 	var netMiner = $(this).data('netminer');
@@ -1811,7 +1811,7 @@ $(document).on('click', '.add-net-pool', function(e) {
 });
 
 $(document).on('click', '.add-net-donation-pool', function(e) {
-	'use strict';
+
 	e.preventDefault();
 	$('.overlay').show();
 	var netMiner = $(this).data('netminer'),
@@ -1854,7 +1854,7 @@ $(document).on('click', '.add-net-donation-pool', function(e) {
 
 // Select Pool on the fly
 $(document).on('click', '.select-pool', function(e) {
-	'use strict';
+
 	e.preventDefault();
 	$('.overlay').show();
     var poolId = $(this).data('pool-id');
@@ -1881,7 +1881,7 @@ $(document).on('click', '.select-pool', function(e) {
 
 // Toggle local pool on the fly
 $(document).on('click', '.toggle-add-pool', function(e) {
-	'use strict';
+
 	e.preventDefault();
 	//$('.overlay').show();
 	if ($(this).data('open')) {
@@ -1894,7 +1894,7 @@ $(document).on('click', '.toggle-add-pool', function(e) {
 });
 
 $(document).on('click', '.add-pool', function(e) {
-	'use strict';
+
 	e.preventDefault();
 	$('.overlay').show();
 	if ($('.local_pool_url').val() && $('.local_pool_username').val() && $('.local_pool_password').val()) {
@@ -1935,7 +1935,7 @@ $(document).on('click', '.add-pool', function(e) {
 
 // Remove local pool on the fly
 $(document).on('click', '.remove-pool', function(e) {
-	'use strict';
+
 	e.preventDefault();
 
 	if ($('.app_data').data('miner-running') !== 'cpuminer' && $('.app_data').data('miner-running') !== undefined) {
@@ -1964,7 +1964,7 @@ $(document).on('click', '.remove-pool', function(e) {
 });
 
 $(document).on('click', '.cron-unlock', function(e) {
-	'use strict';
+
    	e.preventDefault();
 	
    	$('#modal-saving-label').html('Unlocking cron...');
@@ -1998,7 +1998,7 @@ if ($('.header').data('this-section') !== 'lockscreen') {
 // Stats scripts
 function getStats(refresh)
 {
-	'use strict';
+
 	var now = new Date().getTime();
 	var d = 0, totalhash = 0, totalac = 0, totalre = 0, totalhw = 0, totalsh = 0, totalfr = 0, totalpoolhash = 0, poolHash = 0,
 		errorTriggered = false,
@@ -3064,7 +3064,7 @@ function getStats(refresh)
 							'mRender': function ( data, type, full ) {
 								if (type === 'display')
 								{
-									return '<small class="text-muted">'+data.blocks+'</span>';
+									return '<small>'+data.blocks+'</span>';
 								}
 								return data;
 							},
@@ -3134,7 +3134,7 @@ function getStats(refresh)
 							'mRender': function ( data, type, full ) {
 								if (type === 'display')
 								{
-									return '<small class="text-muted">'+data+'</span>';
+									return '<small>'+data+'</small>';
 								}
 								return data;
 							},
@@ -3146,7 +3146,7 @@ function getStats(refresh)
 									if ( full[3].coin === 'btc')
 										return '-';
 									else 
-										return '<small class="text-muted">'+data+'</span>';
+										return '<small class="text-muted">'+data+'</small>';
 								}
 								return data;
 							},

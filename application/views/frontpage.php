@@ -292,8 +292,8 @@
 									<div class="row">
 										<div class="col-sm-12">
 											<div class="profit-table-details-error"></div>
-											<div class="table-responsive">
-												  <table id="profit-table-details" class="table table-striped datatable">
+											<div class="">
+												  <table id="profit-table-details" class="responsive-datatable-minera table table-striped datatable">
 													  <thead>
 													  <tr>
 														  <th><i class="fa fa-money"></i> Coin</th>
@@ -318,7 +318,13 @@
 									</div><!-- /.row - inside box -->
 								</div><!-- /.box-body -->
 								<div class="box-footer">
-							 		<h6>Exchange rates taken by <a href="https://www.blockr.io">Blockr.io</a> are updated every 10 minutes, everything else are (almost) in real time. Profit formula is: <i>( time / (difficulty * 2^32) / hashrate ) * reward</i></h6>
+									<?php if (!$adsFree) : ?>
+									<div class="pull-right">
+										<iframe scrolling="no" style="border: 0; width: 234px; height: 60px;" src="//coinurl.com/get.php?id=49615&SSL=1"></iframe>
+									</div>
+									<?php endif; ?>
+							 		<h6>Exchange rates taken by <a href="https://www.blockr.io">Blockr.io</a> are updated every 10 minutes</h6>
+							 		<h6>Everything else are (almost) in real time. Profit formula is: <i>( time / (difficulty * 2^32) / hashrate ) * reward</i></h6>
 								</div>
 							</div><!-- /.profit box -->
 							<?php endif; ?>
@@ -341,8 +347,8 @@
 								<div class="box-body">
 									<div class="row">
 										<div class="col-sm-12">
-											<div class="table-responsive">
-												  <table id="miner-table-details" class="table table-striped datatable">
+											<div class="">
+												  <table id="miner-table-details" class="responsive-datatable-minera table table-striped datatable">
 													  <thead>
 													  <tr>
 														  <th>DEV</th>
@@ -403,9 +409,9 @@
 								<div class="box-body">
 									<div class="row">
 										<div class="col-sm-12">
-											<div class="table-responsive">
+											<div class="">
 												  <!-- .table - Uses sparkline charts-->
-												  <table id="pools-table-details" class="table table-striped datatable">
+												  <table id="pools-table-details" class="responsive-datatable-minera table table-striped datatable">
 													  <thead>
 													  <tr>
 														  <th>&nbsp;</th>
@@ -466,6 +472,11 @@
 									</div><!-- /.row - inside box -->
 								</div><!-- /.box-body -->
 								<div class="box-footer">
+									<?php if (!$adsFree) : ?>
+									<div class="pull-right">
+										<iframe scrolling="no" style="border: 0; width: 234px; height: 60px;" src="//coinurl.com/get.php?id=49615&SSL=1"></iframe>
+									</div>
+									<?php endif; ?>
 									<h6>Legend: <strong>CS</strong> = Current Shares, <strong>PS</strong> = Previous shares, <strong>CA</strong> = Current Accepted, <strong>PA</strong> = Previous Accepted, <strong>CR</strong> = Current Rejected, <strong>PR</strong> = Previous Rejected</h6>
 									<h6><strong>Current</strong> is the current or last session, <strong>Previous</strong> is the total of all previous sessions. Pool HashRate is based on shares over the time per session.</h6>
 								</div>
@@ -490,8 +501,8 @@
 									<div class="box-body">
 										<div class="row">
 											<div class="col-sm-12">
-												<div class="table-responsive">
-													  <table id="network-miner-table-details" class="table table-striped datatable">
+												<div class="">
+													  <table id="network-miner-table-details" class="responsive-datatable-minera table table-striped datatable">
 														  <thead>
 														  <tr>
 															  <th>DEV</th>
@@ -548,9 +559,9 @@
 													<hr />
 													<div id="net-<?php echo md5($netMiner->name) ?>">
 														<div class="mb20 net-pools-label-<?php echo md5($netMiner->name) ?>"></div>
-														<div class="table-responsive">
+														<div class="">
 															  <!-- .table - Uses sparkline charts-->
-															  <table id="net-pools-table-details-<?php echo md5($netMiner->name) ?>" class="net-pools-table table table-striped datatable">
+															  <table id="net-pools-table-details-<?php echo md5($netMiner->name) ?>" class="responsive-datatable-minera net-pools-table table table-striped datatable">
 																  <thead>
 																  <tr>
 																	  <th>&nbsp;</th>
