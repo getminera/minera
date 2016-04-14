@@ -71,14 +71,7 @@ sudo cp conf/70-bfgminer.rules /etc/udev/rules.d/
 sudo service udev restart
 
 echo -e "Installing NVM and Node requirements\n-----\n"
-curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.31.0/install.sh | bash
-source ~/.bashrc
-nvm install 4
-sudo cp conf/node-server.conf /etc/supervisor/conf.d/
-sudo service supervisor restart
-cd server
-npm install
-cd ..
+su - minera -c /var/www/minera/install_nvm.sh
 
 echo -e "Installing libblkmaker\n-----\n"
 LIBCOUNT=`strings -n5 /etc/ld.so.cache|grep -i libblkmaker|wc -l`

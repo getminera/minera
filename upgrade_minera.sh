@@ -73,14 +73,7 @@ KEY=$(cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 32 | head -n 1)
 sed -i "s/\$config\['encryption_key'\].*/\$config\['encryption_key'\] = '$KEY';/" application/config/config.php
 
 echo -e "Installing/Updating NVM and Node requirements\n-----\n"
-curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.31.0/install.sh | bash
-source ~/.bashrc
-nvm install 4
-sudo cp conf/node-server.conf /etc/supervisor/conf.d/
-sudo service supervisor restart
-cd /var/www/minera/server
-npm install
-cd ..
+su - minera -c /var/www/minera/install_nvm.sh
 
 echo -e "Installing libblkmaker\n-----\n"
 LIBCOUNT=`strings -n5 /etc/ld.so.cache|grep -i libblkmaker|wc -l`
