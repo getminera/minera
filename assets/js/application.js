@@ -51231,6 +51231,18 @@ $(function () {
     Cookies.remove('promoClicked');
     Cookies.remove('timestamp');
   }
+  // Scroll ad
+  if ($(document).scrollTop() > 64) {
+    $('.scroll-ad').fadeIn();
+  }
+  $(document).scroll(function () {
+    var y = $(this).scrollTop();
+    if (y > 64) {
+      $('.scroll-ad').fadeIn();
+    } else {
+      $('.scroll-ad').fadeOut();
+    }
+  });
   // Add responsive class to datatables
   $('.responsive-datatable-minera').on('DOMChanged', function () {
     $(this).parent().addClass('table-responsive');
@@ -51369,6 +51381,9 @@ $(function () {
     $('.box-tools').click(function (e) {
       e.preventDefault();
     });
+    if ($(document).scrollTop() > 64) {
+      $('.save-toolbox').fadeIn();
+    }
     $(document).scroll(function () {
       var y = $(this).scrollTop();
       if (y > 64) {

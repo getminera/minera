@@ -80,7 +80,7 @@ body > .header { position: fixed !important; }
 
 .lockscreen {background: url(../img/bg-dark.jpg) repeat center center fixed !important;}
 .lockscreen-link, .lockscreen-name { color: #fff;}
-.lockscreen .headline { color: #ccc !important; margin-top: 10%;}
+.lockscreen .headline { color: #ccc !important; margin-top: 10px;}
 
 .tip-button { float: left; margin-top: 14px; margin-right: 0; margin-left: 5px; }
 .coinbase-donate-button { }
@@ -90,6 +90,15 @@ body > .header { position: fixed !important; }
 .github-btn { float: right; margin-left: 10px; margin-top: -3px; }
 
 .bootstro-highlight { background-color: rgba(255, 255, 255, 0.2) !important; }
+
+.lockscreen-cover {
+	width: 100%;
+	height: 200px;
+	background: url('../img/cover_minera.jpg') no-repeat;
+	background-size: contain;
+	background-position: center center;
+    background-color: #ff4d51;
+}
 
 .scroll-ad {
 	display: none;

@@ -595,17 +595,19 @@ $(function() {
 	}
 	
 	// Scroll ad
-    if ($(document).scrollTop() > 64) {
-		$('.scroll-ad').fadeIn();
-	}
-	$(document).scroll(function() {
-		var y = $(this).scrollTop();
-		if (y > 64) {
+	if (thisSection !== 'lockscreen') {
+	    if ($(document).scrollTop() > 64) {
 			$('.scroll-ad').fadeIn();
-		} else {
-			$('.scroll-ad').fadeOut();
 		}
-	});
+		$(document).scroll(function() {
+			var y = $(this).scrollTop();
+			if (y > 64) {
+				$('.scroll-ad').fadeIn();
+			} else {
+				$('.scroll-ad').fadeOut();
+			}
+		});
+	}
 	
 	// Add responsive class to datatables
 	$('.responsive-datatable-minera').on('DOMChanged', function () {
