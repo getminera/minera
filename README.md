@@ -141,6 +141,10 @@ Simply download and put it in your SD card (there are tons of guide to do this, 
 
 When you have your system ready, ssh into it and **install Minera**
 
+You can use this script to install everything you need, (it's good for any kind of Debian system: Ubuntu, Raspbian, ecc...) or use the manual steps below:
+
+    curl -o- https://raw.githubusercontent.com/michelem09/minera/master/install_minera_ubuntu.sh | sudo bash
+
 Skip this step and continue below if you have a web server with PHP just installed.
 
 ```
