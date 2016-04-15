@@ -2158,12 +2158,6 @@ function getStats(refresh)
 		        $('.messages-btc-rates').html(btcRatesTemplate(btcRatesData));
 			}
 			
-			// Add Altcoins rates
-		    if (data.altcoins_rates) {
-			    var altcoinsRatesData = {}; altcoinsRatesData.altcoins_rates = data.altcoins_rates;
-		        $('.mesages-altcoins-rates').html(altcoinsRatesTemplate(altcoinsRatesData));
-			}
-			
 			if (data.avg)
 			{
 				var avgStats = [], avgStatsData = {};

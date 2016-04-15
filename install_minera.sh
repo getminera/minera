@@ -5,7 +5,7 @@
 echo -e "-----\nSTART Minera Install script\n-----\n"
 
 echo -e "-----\nInstall extra packages\n-----\n"
-apt-get -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" install -y build-essential libtool libcurl4-openssl-dev libjansson-dev libudev-dev libncurses5-dev autoconf automake postfix redis-server git screen php5-cli php5-curl wicd-curses uthash-dev libmicrohttpd-dev libevent-dev libusb-1.0-0-dev libusb-dev shellinabox supervisor
+apt-get -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" install -y build-essential libtool libcurl4-openssl-dev libjansson-dev libudev-dev libncurses5-dev autoconf automake postfix redis-server git screen php5-cli php5-curl php5-fpm php5-readline php5-json wicd-curses uthash-dev libmicrohttpd-dev libevent-dev libusb-1.0-0-dev libusb-dev shellinabox supervisor
 
 echo -e "Adding Minera user\n-----\n"
 adduser minera --gecos "" --disabled-password
@@ -22,6 +22,17 @@ MINER_BIN=`pwd`"/minera-bin/"
 MINERA_LOGS="/var/log/minera"
 MINERA_CONF=`pwd`"/conf"
 MINERA_OLD_LOGS=`pwd`"/application/logs"
+
+echo -e "Adding SSL certificate\n-----\n"
+cp $MINERA_CONF/lighttpd.pem /etc/lighttpd/certs/
+chmod 400 /etc/lighttpd/certs/lighttpd.pem
+
+echo -e "Copying Lighttpd conf\n-----\n"
+cp $MINERA_CONF/lighttpd.conf /etc/lighttpd/
+cp $MINERA_CONF/10-fastcgi.conf /etc/lighttpd/conf-available/10-fastcgi.conf
+cp $MINERA_CONF/15-php5-fpm.conf /etc/lighttpd/conf-available/15-php5-fpm.conf
+ln -s /etc/lighttpd/conf-available/10-fastcgi.conf /etc/lighttpd/conf-enabled/10-fastcgi.conf
+ln -s /etc/lighttpd/conf-available/15-php5-fpm.conf  /etc/lighttpd/conf-enabled/15-php5-fpm.conf 
 
 echo -e "Playing with minera dirs\n-----\n"
 chown -R minera.minera `pwd`
