@@ -537,9 +537,10 @@
 									</div>
 								</div><!-- /.network miner box -->
 								<?php endif; ?>
-								
-								<?php if ($dashboardBoxNetworkPoolsDetails) : ?>
+							<?php endif; ?>	
+							<?php if ($dashboardBoxNetworkPoolsDetails) : ?>
 								<!-- Network pools box -->
+								<?php if (count($netMiners) > 0) : ?>
 								<div id="box-network-pools-details" class="box box-light <?php if (isset($boxStatuses['box-network-pools-details']) && !$boxStatuses['box-network-pools-details']) :?>collapsed-box<?php endif; ?>">
 								   	<div class="overlay"></div>
 								   	<div class="loading-img"></div>
@@ -555,7 +556,8 @@
 									<div class="box-body">
 										<div class="row">
 											<div class="col-sm-12">
-												<?php $npi = 1; $netCounts = count($netMiners); foreach ($netMiners as $netMiner) : ?>
+												<?php $npi = 1; $netCounts = count($netMiners); ?>
+													<?php foreach ($netMiners as $netMiner) : ?>
 													<hr />
 													<div id="net-<?php echo md5($netMiner->name) ?>">
 														<div class="mb20 net-pools-label-<?php echo md5($netMiner->name) ?>"></div>

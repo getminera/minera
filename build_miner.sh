@@ -54,7 +54,6 @@ function buildMiner {
 			git clone $BUILD_REPO $BUILD_PATH 
 			cd $BUILD_PATH
 		fi
-		make clean
 		./autogen.sh
 		echo "Running ./configure $BUILD_CONFIG"
 		./configure ${BUILD_CONFIG}

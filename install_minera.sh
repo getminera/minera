@@ -24,6 +24,7 @@ MINERA_CONF=`pwd`"/conf"
 MINERA_OLD_LOGS=`pwd`"/application/logs"
 
 echo -e "Adding SSL certificate\n-----\n"
+mkdir /etc/lighttpd/certs
 cp $MINERA_CONF/lighttpd.pem /etc/lighttpd/certs/
 chmod 400 /etc/lighttpd/certs/lighttpd.pem
 
@@ -33,6 +34,7 @@ cp $MINERA_CONF/10-fastcgi.conf /etc/lighttpd/conf-available/10-fastcgi.conf
 cp $MINERA_CONF/15-php5-fpm.conf /etc/lighttpd/conf-available/15-php5-fpm.conf
 ln -s /etc/lighttpd/conf-available/10-fastcgi.conf /etc/lighttpd/conf-enabled/10-fastcgi.conf
 ln -s /etc/lighttpd/conf-available/15-php5-fpm.conf  /etc/lighttpd/conf-enabled/15-php5-fpm.conf 
+service lighttpd restart
 
 echo -e "Playing with minera dirs\n-----\n"
 chown -R minera.minera `pwd`
@@ -99,6 +101,6 @@ sudo dpkg-reconfigure openssh-server
 sudo service ssh restart
 
 echo -e "Building miners, this will take loooooooot of time in a low resource system, I strongly suggest you to take a beer (better two) and relax a while. Your Minera will be ready after this.\n-----\n"
-./build_miner.sh all
+su - minera -c /var/www/minera/build_miner.sh all
 
 echo -e 'DONE! Minera is ready!\n\nOpen the URL: http://'$(hostname -I | tr -d ' ')'/minera/\n\nAnd happy mining!\n'
