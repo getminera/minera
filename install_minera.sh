@@ -5,7 +5,7 @@
 echo -e "-----\nSTART Minera Install script\n-----\n"
 
 echo -e "-----\nInstall extra packages\n-----\n"
-apt-get -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" install -y build-essential libtool libcurl4-openssl-dev libjansson-dev libudev-dev libncurses5-dev autoconf automake postfix redis-server git screen php5-cli php5-curl php5-fpm php5-readline php5-json wicd-curses uthash-dev libmicrohttpd-dev libevent-dev libusb-1.0-0-dev libusb-dev shellinabox supervisor lighttpd screen
+apt-get -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" install -y build-essential libtool libcurl4-openssl-dev libjansson-dev libudev-dev libncurses5-dev autoconf automake postfix redis-server git screen php5-cli php5-curl php5-fpm php5-readline php5-json wicd-curses uthash-dev libmicrohttpd-dev libevent-dev libusb-1.0-0-dev libusb-dev shellinabox supervisor lighttpd
 
 echo -e "Adding Minera user\n-----\n"
 adduser minera --gecos "" --disabled-password
@@ -101,6 +101,6 @@ sudo dpkg-reconfigure openssh-server
 sudo service ssh restart
 
 echo -e "Building miners, this will take loooooooot of time in a low resource system, I strongly suggest you to take a beer (better two) and relax a while. Your Minera will be ready after this.\n-----\n"
-su - minera -c "/var/www/minera/build_miner.sh all"
+su - minera -c /var/www/minera/build_miner.sh all
 
 echo -e 'DONE! Minera is ready!\n\nOpen the URL: http://'$(hostname -I | tr -d ' ')'/minera/\n\nAnd happy mining!\n'

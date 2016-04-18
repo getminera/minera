@@ -103,12 +103,6 @@
 								    		    <h6><strong>How do you calculate the amount donated?</strong></h6>
 								    		    <p><small>It's just an approximate. I simply divide the time in minutes you donate per fixed average profitability of <?php echo $donationProfitability ?> <i class="fa fa-btc"></i>/Day, the function is: <i><?php echo $donationProfitability ?> / 24 / 60 x donation_minutes</i>.</small></p>
 								    		    
-								    		    <h6><strong>Is there a prize for who donate?</strong></h6>
-								    		    <p><small>Well, my appreciation first of all, then yes you'll get a tiny prize, donation boxes on dashboard and sidebar disappears if you have donations active.</small></p>
-								    		    
-								    		    <h6><strong>What do you do with the money received?</strong></h6>
-								    		    <p><small>Thanks to your kind donations I could buy some of the new hardware coming out and add its support to Minera. So next time there is a new cool hardware, Minera will be ready for it. I also need beer to do all this cool stuff :)</small></p>
-								    		    <h6><strong>Anyway, I wanna really thank you for all your support and appreciation!</strong></h6>
 								    		    <h6>- <a href="https://twitter.com/michelem" target="_blank"><strong>Michelem</strong></a></h6>
 								    		</div>
 								    		
