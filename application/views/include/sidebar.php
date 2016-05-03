@@ -34,10 +34,11 @@
 			<div class="modal-dialog modal-dialog-center modal-md">
 				<div class="modal-content">
 					<div class="modal-header bg-primary">
+						<button type="button" class="close modal-promo-hide"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
 						<h4 class="modal-title"><i class="fa fa-gift"></i> Support Minera</h4>
 					</div>
 					<div class="modal-body">
-						<p>Please support the Minera project. This message will appear each hour, to close it you have to click a sponsored link below. You can also <a href="<?php echo site_url("app/settings#donation-box") ?>">completely remove the Ads on your Minera system</a>.</p>
+						<p>Please support the Minera project. This message will appear each hour. You can <a href="<?php echo site_url("app/settings#donation-box") ?>">completely remove the Ads on your Minera system</a>.</p>
 						<div class="mt30 mb20 text-center">
 							<div class="row">
 								<div class="banner col-md-offset-1 col-md-5 promo-iframe" bannerid='promo1'><iframe scrolling="no" style="border: 0; width: 200px; height: 200px;" src="//coinurl.com/get.php?id=49630&SSL=1"></iframe></div>
@@ -46,7 +47,7 @@
 						</div>
 					</div>
 					<div class="modal-footer modal-footer-center">
-						<h6>Click one of the link above to close this dialog or <a href="<?php echo site_url("app/settings#donation-box") ?>">remove the ads</a>.</h6>
+						<h6><a href="<?php echo site_url("app/settings#donation-box") ?>">Remove the ads</a></h6>
 					</div>
 				</div>
 			</div>

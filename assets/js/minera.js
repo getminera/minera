@@ -573,6 +573,15 @@ $(function() {
 			setPromoInterval();
 		}
 		
+		$('.modal-promo-hide').click(function(e){
+	       	e.preventDefault();
+			$('#modal-promo').modal('hide');
+			Cookies.set('promoClicked', true);
+			Cookies.remove('promoModal');
+	  		setPromoInterval();
+		});
+		
+		/*
 		var overiFrame = -1;
 	    $('.promo-iframe').hover( function() {
 	        overiFrame = $(this).closest('.banner').attr('bannerid');
@@ -588,6 +597,7 @@ $(function() {
 		  		setPromoInterval();
 			}
 	    });
+	    */
 	} else {
 		Cookies.remove('promoModal');
 		Cookies.remove('promoClicked');
