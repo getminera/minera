@@ -1341,6 +1341,34 @@ class Util_model extends CI_Model {
 		
 		return $check;
 	}
+	
+	// Get ads url/tags from central server
+	public function getAds($force = false) {
+		if (time() > ($this->redis->get("ads_update")+3600) || $force) {
+			$ads = @file_get_contents($this->config->item('minera_api_url').'/ads');
+			if ($ads) {
+				$this->redis->set('ads', $ads);
+				$ads = json_decode($ads, true);
+				if (count($ads) > 0) {
+					$this->redis->set('ads_update', time());
+					return $ads;
+				} else {
+					return $this->config('ads');
+				}
+			} else {
+				return $this->config('ads');
+			}
+		} else {
+			$ads = $this->redis->get('ads');
+			$ads = json_decode($ads, true);
+			if (count($ads) > 0) {
+				return $ads;
+			} else {
+				return $this->config('ads');
+			}
+
+		}
+	}
 		
 	/*
 	//

@@ -25,11 +25,17 @@ $config['mobileminer_url_notifications'] = 'https://api.mobileminerapp.com/Notif
 $config['mobileminer_url_poolsinput'] = 'https://api.mobileminerapp.com/PoolsInput';
 $config['mobileminer_url_remotecommands'] = 'https://api.mobileminerapp.com/RemoteCommands';
 $config['mobileminera_apikey'] = 'Y8gl9PF6QR22Vv';
-$config['mobileminera_url_stats'] = 'http://192.168.1.11:3000/api/miners';
+$config['mobileminera_url_stats'] = 'https://getminera.com/api/miners';
 $config['minera_pool_url'] = 'stratum+tcp://ltc.ghash.io:3333';
 $config['minera_pool_url_sha256'] = 'stratum+tcp://us1.ghash.io:3333';
 $config['minera_pool_username'] = 'michelem.minera';
 $config['minera_pool_password'] = 'x';
 $config['minera_api_url'] = 'https://getminera.com/api';
+$config['ads'] = Array(
+	'200x200' => '<iframe scrolling="no" style="border: 0; width: 200px; height: 200px;" src="//coinurl.com/get.php?id=49630&SSL=1"></iframe>',
+	'200x200_black' => '<iframe scrolling="no" style="border: 0; width: 200px; height: 200px;" src="//coinurl.com/get.php?id=50071&SSL=1"></iframe>',
+	'234x60' => '<iframe scrolling="no" style="border: 0; width: 234px; height: 60px;" src="//coinurl.com/get.php?id=49615&SSL=1"></iframe>',
+	'468x60' => '<iframe scrolling="no" style="border: 0; width: 468px; height: 60px;" src="//coinurl.com/get.php?id=49701&SSL=1"></iframe>'
+);
 /* End of file autoload.php */
 /* Location: ./application/config/app.php */

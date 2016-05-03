@@ -1,7 +1,7 @@
 	<div class="scroll-ad">
 	    <?php if (!$adsFree) : ?>
 	    <div class="text-right">
-	    	<iframe scrolling="no" style="border: 0; width: 468px; height: 60px;" src="//coinurl.com/get.php?id=49701&SSL=1"></iframe>
+			<?php echo $ads['468x60'] ?>
     	</div>
     	<?php endif; ?>
 		<div class="copyright">
@@ -9,7 +9,7 @@
 				<a href="https://twitter.com/michelem" class="twitter-follow-button" data-show-count="false" data-show-screen-name="false">Follow @michelem</a>
 				<a class="github-button" href="https://github.com/michelem09/minera" data-count-href="/michelem09/minera/stargazers" data-count-api="/repos/michelem09/minera#stargazers_count" data-count-aria-label="# stargazers on GitHub" aria-label="Star michelem09/minera on GitHub">Star</a>
 			</div>
-	  		<a href="http://getminera.com" target="_blank"><i class="fa fa-asterisk"></i> Minera</a> your next mining dashboard - Need a wallet? Try <a href="https://www.coinbase.com/join/michelem" target="_blank">Coinbase</a><?php if (!$adsFree) : ?> - <a href="<?php echo site_url("app/settings") ?>"><i class="fa fa-ban"></i> <strong>REMOVE ADS</strong></a><?php endif; ?>
+	  		<?php if (!$adsFree) : ?><a href="http://getminera.com" target="_blank"><i class="fa fa-asterisk"></i> Minera</a> your next mining dashboard - Need a wallet? Try <a href="https://www.coinbase.com/join/michelem" target="_blank">Coinbase</a> - <a href="<?php echo site_url("app/settings") ?>"><i class="fa fa-ban"></i> <strong>REMOVE ADS</strong></a><?php endif; ?>
 	  	</div>
 	</div>
 	

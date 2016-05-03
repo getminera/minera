@@ -320,7 +320,7 @@
 								<div class="box-footer">
 									<?php if (!$adsFree) : ?>
 									<div class="pull-right">
-										<iframe scrolling="no" style="border: 0; width: 234px; height: 60px;" src="//coinurl.com/get.php?id=49615&SSL=1"></iframe>
+										<?php echo $ads['234x60'] ?>
 									</div>
 									<?php endif; ?>
 							 		<h6>Exchange rates taken by <a href="https://www.blockr.io">Blockr.io</a> are updated every 10 minutes</h6>
@@ -474,7 +474,7 @@
 								<div class="box-footer">
 									<?php if (!$adsFree) : ?>
 									<div class="pull-right">
-										<iframe scrolling="no" style="border: 0; width: 234px; height: 60px;" src="//coinurl.com/get.php?id=49615&SSL=1"></iframe>
+										<?php echo $ads['234x60'] ?>
 									</div>
 									<?php endif; ?>
 									<h6>Legend: <strong>CS</strong> = Current Shares, <strong>PS</strong> = Previous shares, <strong>CA</strong> = Current Accepted, <strong>PA</strong> = Previous Accepted, <strong>CR</strong> = Current Rejected, <strong>PR</strong> = Previous Rejected</h6>

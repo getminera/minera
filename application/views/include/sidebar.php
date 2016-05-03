@@ -41,8 +41,8 @@
 						<p>Please support the Minera project. This message will appear each hour. You can <a href="<?php echo site_url("app/settings#donation-box") ?>">completely remove the Ads on your Minera system</a>.</p>
 						<div class="mt30 mb20 text-center">
 							<div class="row">
-								<div class="banner col-md-offset-1 col-md-5 promo-iframe" bannerid='promo1'><iframe scrolling="no" style="border: 0; width: 200px; height: 200px;" src="//coinurl.com/get.php?id=49630&SSL=1"></iframe></div>
-								<div class="banner col-md-5 promo-iframe" bannerid='promo2'><iframe scrolling="no" style="border: 0; width: 200px; height: 200px;" src="//coinurl.com/get.php?id=49630&SSL=1"></iframe></div>
+								<div class="banner col-md-offset-1 col-md-5 promo-iframe" bannerid='promo1'><?php echo $ads['200x200'] ?></div>
+								<div class="banner col-md-5 promo-iframe" bannerid='promo2'><?php echo $ads['200x200'] ?></iframe></div>
 							</div>
 						</div>
 					</div>
@@ -347,7 +347,7 @@
 					
 					<?php if (!$adsFree) : ?>
 					<div class="text-center">
-						<iframe scrolling="no" style="border: 0; width: 200px; height: 200px;" src="//coinurl.com/get.php?id=<?php echo ($dashboardSkin ==='black') ? '50071' : 49630; ?>&SSL=1"></iframe>
+						<?php echo ($dashboardSkin ==='black') ? $ads['200x200_black'] : $ads['200x200']; ?>
 					</div>
 					<?php endif; ?>
 					

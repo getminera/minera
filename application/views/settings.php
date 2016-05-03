@@ -176,7 +176,7 @@
 									</div><!-- /.box-body -->
 									<?php if (!$adsFree) : ?>
 									<div class="box-footer text-center" style="clear:both">
-								    	<iframe scrolling="no" style="border: 0; width: 234px; height: 60px;" src="//coinurl.com/get.php?id=49615"></iframe>
+										<?php echo $ads['234x60'] ?>
 								    </div>
 								    <?php endif; ?>
 								</div>                            

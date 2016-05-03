@@ -49,6 +49,8 @@ class App extends Main_Controller {
 		$data['htmlTag'] = "lockscreen";
 		$data['pageTitle'] = "Welcome to Minera";
 		$data['isOnline'] = $this->util_model->isOnline();
+		$data['ads'] = $this->util_model->getAds();
+		
 		$this->load->view('include/header', $data);
 		$this->load->view('lockscreen');
 		$this->load->view('include/footer', $data);
@@ -87,6 +89,8 @@ class App extends Main_Controller {
 	*/
 	public function dashboard()
 	{
+		$this->util_model->getAds();
+		
 		$this->util_model->isLoggedIn();
 		
 		//var_export($this->redis->command("HGETALL box_status"));
@@ -128,6 +132,7 @@ class App extends Main_Controller {
 		$data['localAlgo'] = $this->util_model->checkAlgo($this->util_model->isOnline());
 		$data['adsFree'] = $this->redis->get('is_ads_free');
 		$data['env'] = $this->config->item('ENV');
+		$data['ads'] = $this->util_model->getAds();
 		
 		$this->load->view('include/header', $data);
 		$this->load->view('include/sidebar', $data);
@@ -161,6 +166,7 @@ class App extends Main_Controller {
 		$data['netMiners'] = $this->util_model->getNetworkMiners();
 		$data['adsFree'] = $this->redis->get('is_ads_free');
 		$data['env'] = $this->config->item('ENV');
+		$data['ads'] = $this->util_model->getAds();
 		
 		$this->load->view('include/header', $data);
 		$this->load->view('include/sidebar', $data);
@@ -298,6 +304,7 @@ class App extends Main_Controller {
 		
 		// Saved Configs
 		$data['savedConfigs'] = $this->redis->command("HVALS saved_miner_configs");
+		$data['ads'] = $this->util_model->getAds();
 		
 		$this->load->view('include/header', $data);
 		$this->load->view('include/sidebar', $data);
@@ -829,6 +836,8 @@ class App extends Main_Controller {
 		$data['refreshUrl'] = false;
 		$data['env'] = $this->config->item('ENV');
 		$data['adsFree'] = $this->redis->get('is_ads_free');
+		$data['ads'] = $this->util_model->getAds();
+		
 		$this->load->view('include/header', $data);
 		$this->load->view('sysop', $data);
 		$this->load->view('include/footer', $data);
@@ -863,6 +872,8 @@ class App extends Main_Controller {
 		$data['seconds'] = 50;
 		$data['env'] = $this->config->item('ENV');
 		$data['adsFree'] = $this->redis->get('is_ads_free');
+		$data['ads'] = $this->util_model->getAds();
+		
 		$this->load->view('include/header', $data);
 		$this->load->view('sysop', $data);
 		$this->load->view('include/footer', $data);
@@ -942,6 +953,8 @@ class App extends Main_Controller {
 			$data['seconds'] = 200;
 			$data['env'] = $this->config->item('ENV');
 			$data['adsFree'] = $this->redis->get('is_ads_free');
+			$data['ads'] = $this->util_model->getAds();
+		
 			$this->load->view('include/header', $data);
 			$this->load->view('sysop', $data);
 			$this->load->view('include/footer', $data);
@@ -1068,7 +1081,7 @@ class App extends Main_Controller {
 			case "test":
 				//$a = file_get_contents("api.json");
 				//$o = $this->redis->command("BGSAVE"); //$this->util_model->checkCronIsRunning(); //$this->util_model->sendAnonymousStats(123, "hello world!");
-				$o = $this->util_model->sendAnonymousStats(123, array("test" => 1)); //$this->util_model->updateAltcoinsRates(); //$this->util_model->refreshMinerConf(); //$o = json_encode($this->util_model->callMinerd()); //$this->util_model->getParsedStats($this->util_model->getMinerStats());
+				$o = $this->util_model->getAds(); //$this->util_model->updateAltcoinsRates(); //$this->util_model->refreshMinerConf(); //$o = json_encode($this->util_model->callMinerd()); //$this->util_model->getParsedStats($this->util_model->getMinerStats());
 			break;
 		}
 
