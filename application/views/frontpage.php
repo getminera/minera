@@ -788,7 +788,7 @@
 							</div><!-- /.miner box -->
 							<?php endif; ?>
 							
-							<?php if (!$this->redis->get("minera_donation_time")) : ?>					
+							<?php if (!$this->redis->get("minera_donation_time") || !$adsFree) : ?>					
 							<!-- Donations box -->
 							<div class="box bg-light box-danger" id="box-donation">
 								<div class="box-header">
@@ -798,6 +798,7 @@
 									<h3 class="box-title">Donations</h3>
 								</div>
 								<div class="box-body text-center">
+									<p>If you want to <strong>remove ads</strong> please <a href="<?php echo site_url("app/settings") ?>"><strong>USE THE BUTTON IN THE SETTINGS PAGE</strong></a>. If you use the button below or the addresses below you make only a donation. I will not remove ads if you don't use <a href="<?php echo site_url("app/settings") ?>"><strong>the right button</strong></a>.</p>
 		                        	<div class="coinbase-donate-button">
 		                            	<a class="coinbase-button" data-code="01ce206aaaf1a8659b07233d9705b9e8" data-button-style="custom_small" href="https://www.coinbase.com/checkouts/01ce206aaaf1a8659b07233d9705b9e8">Donate Bitcoins</a>
 									</div>

@@ -47,7 +47,7 @@
 						</div>
 					</div>
 					<div class="modal-footer modal-footer-center">
-						<h6><a href="<?php echo site_url("app/settings#donation-box") ?>">Remove the ads</a></h6>
+						<a href="<?php echo site_url("app/settings#donation-box") ?>" class="btn btn-sm btn-primary">Remove Ads</a>
 					</div>
 				</div>
 			</div>
