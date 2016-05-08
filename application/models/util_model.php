@@ -260,7 +260,8 @@ class Util_model extends CI_Model {
 						foreach ($a->devs[0]->DEVS as $device)
 						{			
 							// Check the real active pool
-							$devicePoolIndex[] = $device->{'Last Share Pool'};
+							if ($device->{'Last Share Pool'} > -1)
+								$devicePoolIndex[] = $device->{'Last Share Pool'};
 						}				
 						
 						$devicePoolActives = array_count_values($devicePoolIndex);					
@@ -287,9 +288,13 @@ class Util_model extends CI_Model {
 							$stats->shares = $getworks;
 							$stats->stop_time = false;
 							$stats->stats_id = 1;
-							
-							$poolActive = ($devicePoolActives && array_key_exists($poolIndex, $devicePoolActives)) ? true : false;
-							
+
+							if (!$devicePoolActives) {
+								$poolActive = $tmpPool->{'Stratum Active'};	
+							} else {
+								$poolActive = ($devicePoolActives && array_key_exists($poolIndex, $devicePoolActives)) ? true : false;
+							}
+														log_message("error", var_export($devicePoolActives, true));
 							$newpool = new stdClass();
 							$newpool->priority = $tmpPool->Priority;
 							$newpool->url = $tmpPool->URL;
@@ -438,7 +443,7 @@ class Util_model extends CI_Model {
 					if ($this->_minerdSoftware == "cgdmaxlzeus")
 					{
 						$return['devices'][$name]['shares'] = ($device->{'Diff1 Work'}) ? round(($device->{'Diff1 Work'}*71582788/1000/1000),0) : 0;
-						$return['devices'][$name]['hashrate'] = ($device->{'KHS 1m'}*1000);
+						$return['devices'][$name]['hashrate'] = ($device->{'KHS av'}*1000);
 					}
 					else
 					{
@@ -476,7 +481,8 @@ class Util_model extends CI_Model {
 				//log_message("error", var_export($stats->summary[0]->STATUS[0]->Description, true));
 				
 				if ($this->_minerdSoftware == "cgdmaxlzeus") {
-					$cgbfgminerPoolHashrate = round(65536.0 * ($totals->{'Difficulty Accepted'} / $totals->Elapsed), 0);
+					//$cgbfgminerPoolHashrate = round(65536.0 * ($totals->{'Difficulty Accepted'} / $totals->Elapsed), 0);
+					$cgbfgminerPoolHashrate = round($totals->{'Total MH'} / $totals->Elapsed * 1000000);
 				} elseif ($this->_minerdSoftware == "cgminer" || (isset($stats->summary[0]->STATUS[0]->Description) && preg_match("/cgminer/", $stats->summary[0]->STATUS[0]->Description))) {
 					$cgbfgminerPoolHashrate = round($totals->{'Total MH'} / $totals->Elapsed * 1000000); //round(65536.0 * ($totals->{'Difficulty Accepted'} / $totals->Elapsed), 0); //round(($totals->{'Network Blocks'}*71582788/1000), 0);
 				} else {
@@ -513,7 +519,7 @@ class Util_model extends CI_Model {
 				}
 				else
 				{
-					if (isset($pool->active) && $pool->active == 1)
+					if ((isset($pool->active) && $pool->active == 1) || (isset($pool->{'Stratum Active'}) && $pool->{'Stratum Active'} == 1) )
 					{
 						$return['pool']['url'] = $pool->url;
 						$return['pool']['alive'] = $pool->alive;

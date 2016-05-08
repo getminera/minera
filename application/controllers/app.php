@@ -1292,6 +1292,7 @@ class App extends Main_Controller {
 		if ($mineraSystemId)
 		{
 			if ($this->util_model->isOnline()) {
+				$totalDevices = 0; $totalHashrate = 0; 
 				if (isset($stats->totals->hashrate))
 					$totalHashrate = $stats->totals->hashrate;
 					
