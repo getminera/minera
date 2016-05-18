@@ -32,10 +32,10 @@ $config['minera_pool_username'] = 'michelem.minera';
 $config['minera_pool_password'] = 'x';
 $config['minera_api_url'] = 'https://getminera.com/api';
 $config['ads'] = Array(
-	'200x200' => '<iframe scrolling="no" style="border: 0; width: 200px; height: 200px;" src="//coinurl.com/get.php?id=49630&SSL=1"></iframe>',
-	'200x200_black' => '<iframe scrolling="no" style="border: 0; width: 200px; height: 200px;" src="//coinurl.com/get.php?id=50071&SSL=1"></iframe>',
-	'234x60' => '<iframe scrolling="no" style="border: 0; width: 234px; height: 60px;" src="//coinurl.com/get.php?id=49615&SSL=1"></iframe>',
-	'468x60' => '<iframe scrolling="no" style="border: 0; width: 468px; height: 60px;" src="//coinurl.com/get.php?id=49701&SSL=1"></iframe>'
+	'200x200' => '<iframe scrolling="no" style="border: 0; width: 200px; height: 200px;" src="//coinurl.com/get.php?id=51350&SSL=1"></iframe>',
+	'200x200_black' => '<iframe scrolling="no" style="border: 0; width: 200px; height: 200px;" src="//coinurl.com/get.php?id=51348&SSL=1"></iframe>',
+	'234x60' => '<iframe scrolling="no" style="border: 0; width: 234px; height: 60px;" src="//coinurl.com/get.php?id=51351&SSL=1"></iframe>',
+	'468x60' => '<iframe scrolling="no" style="border: 0; width: 468px; height: 60px;" src="//coinurl.com/get.php?id=51349&SSL=1"></iframe>'
 );
 /* End of file autoload.php */
 /* Location: ./application/config/app.php */

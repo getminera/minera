@@ -2025,11 +2025,32 @@ class Util_model extends CI_Model {
 			return array("success" => true, $boxId => $status);
 		}
 	}
+
+	function getMacLinux() {
+		exec('netstat -ie', $result);
+		if(is_array($result)) {
+			$iface = array();
+			foreach($result as $key => $line) {
+				if($key > 0) {
+					$tmp = str_replace(" ", "", substr($line, 0, 10));
+					if($tmp <> "") {
+						$macpos = strpos($line, "HWaddr");
+						if($macpos !== false) {
+							$iface[] = array('iface' => $tmp, 'mac' => strtolower(substr($line, $macpos+7, 17)));
+						}
+					}
+				}
+		    }
+			return $iface[0]['mac'];
+		} else {
+	    	return false;
+		}
+	}
 	
 	// Generate a uniq hash ID for Minera System ID
 	public function generateMineraId()
 	{
-		$mac = shell_exec('sudo cat /sys/class/net/eth0/address');
+		$mac = ($this->getMacLinux()) ? $this->getMacLinux() : substr(str_shuffle("0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"), 0, 12);
 		$id = substr(strtolower(preg_replace('/[0-9_\/]+/','',base64_encode(sha1(trim($mac))))),0,12);
 		$this->redis->set("minera_system_id", $id);
 		return $id;
