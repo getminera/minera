@@ -1081,7 +1081,7 @@ class App extends Main_Controller {
 			case "test":
 				//$a = file_get_contents("api.json");
 				//$o = $this->redis->command("BGSAVE"); //$this->util_model->checkCronIsRunning(); //$this->util_model->sendAnonymousStats(123, "hello world!");
-				$o = $this->util_model->getAds(); //$this->util_model->updateAltcoinsRates(); //$this->util_model->refreshMinerConf(); //$o = json_encode($this->util_model->callMinerd()); //$this->util_model->getParsedStats($this->util_model->getMinerStats());
+				$o = $this->util_model->checkAdsFree(); //$this->util_model->updateAltcoinsRates(); //$this->util_model->refreshMinerConf(); //$o = json_encode($this->util_model->callMinerd()); //$this->util_model->getParsedStats($this->util_model->getMinerStats());
 			break;
 		}
 
@@ -1128,6 +1128,9 @@ class App extends Main_Controller {
 	*/
 	public function cron()
 	{
+		// Check if it's adds-free
+		$this->util_model->checkAdsFree();
+		
 		if ($this->redis->get("cron_lock"))
 		{
 			log_message('error', "CRON locked waiting previous process to terminate...");			
@@ -1159,9 +1162,6 @@ class App extends Main_Controller {
 		// Refresh Cryptsydata if needed
 		//$this->util_model->refreshcryptsyData();
 		//$this->util_model->updateAltcoinsRates();
-		
-		// Check if it's adds-free
-		$this->util_model->checkAdsFree();
 						
 		// Store the live stats
 		$stats = $this->util_model->storeStats();

@@ -1336,7 +1336,7 @@ class Util_model extends CI_Model {
 	public function checkAdsFree() {		
 		$check = @file_get_contents($this->config->item('minera_api_url').'/checkAds/'.$this->generateMineraId());
 		$checkE = json_decode($check);
-		
+
 		if ($checkE->success) {
 			//log_message("error", "[Ads Free] TRUE");
 			$this->redis->set('is_ads_free', true);
