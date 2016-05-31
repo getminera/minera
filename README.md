@@ -28,7 +28,11 @@ If you like it, please consider a donation:
 
 Thanks.
 
-**[Download from official server (DE) minera-latest.img.zip](http://getminera.com/download/latest)**
+**[Download from official server (DE) minera-latest.img.zip](https://getminera.com/download/latest)**
+
+**[Download from Torrent minera-latest.img.zip](https://getminera.com/releases/minera-latest.img.zip.torrent)**
+
+**Magnet link: magnet:?xt=urn:btih:4c77cb95769cba095b31993303304a15637b0024&dn=minera-latest.img.zip**
 
 Look below for how to install / how to use it.
 _______
@@ -117,7 +121,11 @@ You need at least a 4GB SD Card:
 
 Official Europe server:
 
-> **[Download minera-latest.img.zip](http://getminera.com/download/latest)**
+**[Download minera-latest.img.zip](http://getminera.com/download/latest)**
+
+**[Download from Torrent minera-latest.img.zip](https://getminera.com/releases/minera-latest.img.zip.torrent)**
+
+**Magnet link: magnet:?xt=urn:btih:4c77cb95769cba095b31993303304a15637b0024&dn=minera-latest.img.zip**
 
 After boot up your controller, point your browser to:
 
