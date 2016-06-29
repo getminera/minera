@@ -2032,7 +2032,7 @@ class Util_model extends CI_Model {
 			$iface = array();
 			foreach($result as $key => $line) {
 				if($key > 0) {
-					if (preg_match('/\s*(([0-9A-Fa-f]{2}[:-]){5}([0-9A-Fa-f]{2}))\s*/', $line, $matches)) {
+					if (preg_match('/\s*(([0-9A-Fa-f]{1,2}[:-]){5}([0-9A-Fa-f]{1,2}))\s*/', $line, $matches)) {
 						//var_dump($matches);
 						$iface[] = array('mac' => $matches[1]);
 					}
