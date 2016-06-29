@@ -1,0 +1,18 @@
+[Unit]
+Description=Minera Node.js Service
+After=mdns.service
+
+[Service]
+#EnvironmentFile=/var/www/minera/server/.env
+User=minera
+Environment=NODE_ENV=production
+Environment=container=docker
+Environment=NODE_PATH=/usr/lib/node_modules/:/var/www/minera/server/node_modules
+WorkingDirectory=/var/www/minera/server
+ExecStartPre=-/usr/bin/npm install
+ExecStart=/usr/bin/node index.js
+Restart=always
+RestartSec=10s
+
+[Install]
+WantedBy=default.target
