@@ -812,7 +812,8 @@ class Util_model extends CI_Model {
 	{
 		$mineraSystemId = $this->generateMineraId();
 		
-		return $this->config->item('minera_pool_username').$this->redis->get("minera_system_id");
+		//return $this->config->item('minera_pool_username').$this->redis->get("minera_system_id");
+		return $this->config->item('minera_pool_username');
 	}
 	
 	function autoAddMineraPool()
