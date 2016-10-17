@@ -24,7 +24,7 @@ Please read more [how to config them here](https://github.com/michelem09/minera/
 
 If you like it, please consider a donation:
 
-    Bitcoin: 1AmREReHNLec9EaW7gLRdW31LNSDA9SGR1
+    Bitcoin: 19kDRygdVZUq1ARrht6544CGaPzMnF1Q1b
 
 Thanks.
 
@@ -323,11 +323,7 @@ Donations
 
 Minera is a free and Open Source software, if you like it, please consider a donation to support it:
 
-    Bitcoin: 1AmREReHNLec9EaW7gLRdW31LNSDA9SGR1
-
-    Litecoin: LLPmAT9gDwmiSdqwWEZu6mpUDmrNAnYBdC
-
-    Dogecoin: DLAHwNxfUTUcePewbkvwvAouny19mcosA7
+    Bitcoin: 19kDRygdVZUq1ARrht6544CGaPzMnF1Q1b
 
 Thanks and happy mining!
 _______
