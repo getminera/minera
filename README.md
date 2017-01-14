@@ -1,7 +1,7 @@
 Minera
 ==============
 
-**[Official Website](http://getminera.com/)**
+**[Minera Bitcoin mining dashboard](http://getminera.com/)**
 _______
 
 Minera is a complete system to manage and monitor your bitcoin mining hardware.
@@ -334,6 +334,9 @@ Minera is a free and Open Source software, if you like it, please consider a don
     Bitcoin: 19kDRygdVZUq1ARrht6544CGaPzMnF1Q1b
 
 Thanks and happy mining!
+
+If you liked Minera, please try [Betcoins](https://betcoins.co), my new project on [Bitcoin binary options](https://betcoins.co).
+
 _______
 
 Credits
