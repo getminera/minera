@@ -4,10 +4,23 @@
 //		To be served from getminera.com website
 /************************************************/
 
-var redis = require('redis'),
-    client = redis.createClient(),
-    request = require('request'),
-    apiUrl = 'https://getminera.com/api';
+ 
+// Detect if running in docker and use linked 'redis' container
+// TODO: Support ENV vars for configurability?
+switch(process.env.container) {
+  case 'docker':
+    var redis = require('redis'),
+        client = redis.createClient({"url": "redis://redis"}),
+        request = require('request'),
+        apiUrl = 'https://getminera.com/api';
+    break;
+  default:
+    var redis = require('redis'),
+        client = redis.createClient(),
+        request = require('request'),
+        apiUrl = 'https://getminera.com/api';
+    break;
+}
 
 client.subscribe('minera-channel');
 
