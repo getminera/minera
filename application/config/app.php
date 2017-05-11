@@ -32,10 +32,10 @@ $config['minera_pool_username'] = 'michelem.minera';
 $config['minera_pool_password'] = 'x';
 $config['minera_api_url'] = 'https://getminera.com/api';
 $config['ads'] = Array(
-	'200x200' => '<iframe scrolling="no" style="border: 0; width: 200px; height: 200px;" src="//coinurl.com/get.php?id=51350&SSL=1"></iframe>',
-	'200x200_black' => '<iframe scrolling="no" style="border: 0; width: 200px; height: 200px;" src="//coinurl.com/get.php?id=51348&SSL=1"></iframe>',
-	'234x60' => '<iframe scrolling="no" style="border: 0; width: 234px; height: 60px;" src="//coinurl.com/get.php?id=51351&SSL=1"></iframe>',
-	'468x60' => '<iframe scrolling="no" style="border: 0; width: 468px; height: 60px;" src="//coinurl.com/get.php?id=51349&SSL=1"></iframe>'
+	'200x200' => '<iframe data-aa="499535" src="//ad.a-ads.com/499535?size=200x200&title_color=ff4d50&title_hover_color=ff0000&text_color=333333&link_color=3C8DBC&link_hover_color=ff0000" scrolling="no" style="width:200px; height:200px; border:0px; padding:0;overflow:hidden" allowtransparency="true"></iframe>',
+	'200x200_black' => '<iframe data-aa="499556" src="//ad.a-ads.com/499556?size=200x200&title_color=ff4d50&title_hover_color=&link_color=3C8DBC&background_color=fff&text_color=cccccc&link_hover_color=ff0000" scrolling="no" style="width:200px; height:200px; border:0px; padding:0;overflow:hidden" allowtransparency="true"></iframe>',
+	'234x60' => '<iframe data-aa="499550" src="//ad.a-ads.com/499550?size=234x60&title_color=ff4d50&title_hover_color=ff0000&text_color=333333&link_color=3C8DBC&link_hover_color=ff0000" scrolling="no" style="width:234px; height:60px; border:0px; padding:0;overflow:hidden" allowtransparency="true"></iframe>',
+	'468x60' => '<iframe data-aa="499552" src="//ad.a-ads.com/499552?size=468x60&title_color=ff4d50&title_hover_color=ff0000&text_color=333333&link_color=3C8DBC&link_hover_color=ff0000" scrolling="no" style="width:468px; height:60px; border:0px; padding:0;overflow:hidden" allowtransparency="true"></iframe>'
 );
 /* End of file autoload.php */
 /* Location: ./application/config/app.php */
