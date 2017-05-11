@@ -9,7 +9,7 @@
 				<a href="https://twitter.com/michelem" class="twitter-follow-button" data-show-count="false" data-show-screen-name="false">Follow @michelem</a>
 				<a class="github-button" href="https://github.com/michelem09/minera" data-count-href="/michelem09/minera/stargazers" data-count-api="/repos/michelem09/minera#stargazers_count" data-count-aria-label="# stargazers on GitHub" aria-label="Star michelem09/minera on GitHub">Star</a>
 			</div>
-	  		<?php if (!$adsFree) : ?><a href="http://getminera.com" target="_blank"><i class="fa fa-asterisk"></i> Minera</a> your next mining dashboard - Need a wallet? Try <a href="https://www.coinbase.com/join/michelem" target="_blank">Coinbase</a> - <a href="<?php echo site_url("app/settings") ?>"><i class="fa fa-ban"></i> <strong>REMOVE ADS</strong></a><?php endif; ?>
+	  		<?php if (!$adsFree) : ?><a href="http://getminera.com" target="_blank"><i class="fa fa-asterisk"></i> Minera</a> your next mining dashboard - Need a wallet? Try <a href="https://www.coinbase.com/join/516bb1500c8efad3b1000022" target="_blank">Coinbase</a> - <a href="<?php echo site_url("app/settings") ?>"><i class="fa fa-ban"></i> <strong>REMOVE ADS</strong></a><?php endif; ?>
 	  	</div>
 	</div>
 	
