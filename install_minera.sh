@@ -5,8 +5,7 @@
 echo -e "-----\nSTART Minera Install script\n-----\n"
 
 echo -e "-----\nInstall extra packages\n-----\n"
-apt-get -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" install -y build-essential libtool libcurl4-openssl-dev libjansson-dev libudev-dev libncurses5-dev autoconf automake postfix redis-server git screen php5-cli php5-curl php5-fpm php5-readline php5-json wicd-curses uthash-dev libmicrohttpd-dev libevent-dev libusb-1.0-0-dev libusb-dev shellinabox supervisor lighttpd
-
+apt-get -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" install -y build-essential libblkmaker-0.1-dev libtool libcurl4-openssl-dev libjansson-dev libudev-dev libncurses5-dev autoconf automake postfix redis-server git screen php7.0-cli php7.0-curl php7.0-fpm php7.0-readline php7.0-json wicd-curses uthash-dev libmicrohttpd-dev libevent-dev libusb-1.0-0-dev libusb-dev shellinabox supervisor lighttpd
 echo -e "Adding Minera user\n-----\n"
 adduser minera --gecos "" --disabled-password
 echo "minera:minera" | chpasswd
@@ -31,9 +30,9 @@ chmod 400 /etc/lighttpd/certs/lighttpd.pem
 echo -e "Copying Lighttpd conf\n-----\n"
 cp $MINERA_CONF/lighttpd.conf /etc/lighttpd/
 cp $MINERA_CONF/10-fastcgi.conf /etc/lighttpd/conf-available/10-fastcgi.conf
-cp $MINERA_CONF/15-php5-fpm.conf /etc/lighttpd/conf-available/15-php5-fpm.conf
+cp $MINERA_CONF/15-php-fpm.conf /etc/lighttpd/conf-available/15-php-fpm.conf
 ln -s /etc/lighttpd/conf-available/10-fastcgi.conf /etc/lighttpd/conf-enabled/10-fastcgi.conf
-ln -s /etc/lighttpd/conf-available/15-php5-fpm.conf  /etc/lighttpd/conf-enabled/15-php5-fpm.conf 
+ln -s /etc/lighttpd/conf-available/15-php-fpm.conf  /etc/lighttpd/conf-enabled/15-php-fpm.conf 
 service lighttpd restart
 
 echo -e "Playing with minera dirs\n-----\n"
@@ -85,15 +84,6 @@ sudo service udev restart
 
 echo -e "Installing NVM and Node requirements\n-----\n"
 su - minera -c /var/www/minera/install_nvm.sh
-
-echo -e "Installing libblkmaker\n-----\n"
-LIBCOUNT=`strings -n5 /etc/ld.so.cache|grep -i libblkmaker|wc -l`
-if [ $LIBCOUNT -lt 2 ];
-then
-	cd minera-bin/src/libblkmaker
-	sudo make install
-	sudo ldconfig
-fi
 
 echo -e "Generating unique SSH keys\n-----\n"
 sudo rm /etc/ssh/ssh_host_*

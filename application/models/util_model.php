@@ -901,7 +901,9 @@ class Util_model extends CI_Model {
 		$this->setPools($newPools);
 		
 		$conf = json_decode($this->redis->get("minerd_json_settings"));
-		$conf->pools = $this->parsePools($this->redis->get("minerd_software"), json_decode(json_encode($newPools), true));
+		$conf->pools = [];
+		$currentPools = $this->parsePools($this->redis->get("minerd_software"), json_decode(json_encode($newPools), true));
+		if ($currentPools) $conf->pools = $currentPools;
 
 		$jsonConfRedis = json_encode($conf);
 		$jsonConfFile = json_encode($conf, JSON_PRETTY_PRINT);
@@ -2042,7 +2044,7 @@ class Util_model extends CI_Model {
 					}
 				}
 		    }
-			return $iface[0]['mac'];
+			if ($iface && $iface[0]) return $iface[0]['mac'];
 		} else {
 	    	return false;
 		}
