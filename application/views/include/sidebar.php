@@ -271,7 +271,7 @@
 					            <li class="user-header bg-dark-grey">
 					            	<p><i class="glyphicon glyphicon-heart"></i></p>
 					                <p>
-					                    <small>Made with heart</small>
+					                    <small>Made with love</small>
 					                    Minera is a free and open source software
 					                    <small>Please help Minera: spread it, share, donate</small>
 					                </p>

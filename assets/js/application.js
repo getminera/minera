@@ -48494,22 +48494,28 @@ Licensed under the BSD-2-Clause License.
     }).parent();
   };
 }));/*!
- * JavaScript Cookie v2.1.0
+ * JavaScript Cookie v2.1.4
  * https://github.com/js-cookie/js-cookie
  *
  * Copyright 2006, 2015 Klaus Hartl & Fagner Brack
  * Released under the MIT license
  */
+;
 (function (factory) {
+  var registeredInModuleLoader = false;
   if (typeof define === 'function' && define.amd) {
     define(factory);
-  } else if (typeof exports === 'object') {
+    registeredInModuleLoader = true;
+  }
+  if (typeof exports === 'object') {
     module.exports = factory();
-  } else {
-    var _OldCookies = window.Cookies;
+    registeredInModuleLoader = true;
+  }
+  if (!registeredInModuleLoader) {
+    var OldCookies = window.Cookies;
     var api = window.Cookies = factory();
     api.noConflict = function () {
-      window.Cookies = _OldCookies;
+      window.Cookies = OldCookies;
       return api;
     };
   }
@@ -48528,6 +48534,9 @@ Licensed under the BSD-2-Clause License.
   function init(converter) {
     function api(key, value, attributes) {
       var result;
+      if (typeof document === 'undefined') {
+        return;
+      }
       // Write
       if (arguments.length > 1) {
         attributes = extend({ path: '/' }, api.defaults, attributes);
@@ -48536,6 +48545,8 @@ Licensed under the BSD-2-Clause License.
           expires.setMilliseconds(expires.getMilliseconds() + attributes.expires * 86400000);
           attributes.expires = expires;
         }
+        // We're using "expires" because "max-age" is not supported by IE
+        attributes.expires = attributes.expires ? attributes.expires.toUTCString() : '';
         try {
           result = JSON.stringify(value);
           if (/^[\{\[]/.test(result)) {
@@ -48551,15 +48562,18 @@ Licensed under the BSD-2-Clause License.
         key = encodeURIComponent(String(key));
         key = key.replace(/%(23|24|26|2B|5E|60|7C)/g, decodeURIComponent);
         key = key.replace(/[\(\)]/g, escape);
-        return document.cookie = [
-          key,
-          '=',
-          value,
-          attributes.expires && '; expires=' + attributes.expires.toUTCString(),
-          attributes.path && '; path=' + attributes.path,
-          attributes.domain && '; domain=' + attributes.domain,
-          attributes.secure ? '; secure' : ''
-        ].join('');
+        var stringifiedAttributes = '';
+        for (var attributeName in attributes) {
+          if (!attributes[attributeName]) {
+            continue;
+          }
+          stringifiedAttributes += '; ' + attributeName;
+          if (attributes[attributeName] === true) {
+            continue;
+          }
+          stringifiedAttributes += '=' + attributes[attributeName];
+        }
+        return document.cookie = key + '=' + value + stringifiedAttributes;
       }
       // Read
       if (!key) {
@@ -48573,12 +48587,12 @@ Licensed under the BSD-2-Clause License.
       var i = 0;
       for (; i < cookies.length; i++) {
         var parts = cookies[i].split('=');
-        var name = parts[0].replace(rdecode, decodeURIComponent);
         var cookie = parts.slice(1).join('=');
         if (cookie.charAt(0) === '"') {
           cookie = cookie.slice(1, -1);
         }
         try {
+          var name = parts[0].replace(rdecode, decodeURIComponent);
           cookie = converter.read ? converter.read(cookie, name) : converter(cookie, name) || cookie.replace(rdecode, decodeURIComponent);
           if (this.json) {
             try {
@@ -48598,7 +48612,10 @@ Licensed under the BSD-2-Clause License.
       }
       return result;
     }
-    api.get = api.set = api;
+    api.set = api;
+    api.get = function (key) {
+      return api.call(api, key);
+    };
     api.getJSON = function () {
       return api.apply({ json: true }, [].slice.call(arguments));
     };

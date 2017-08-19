@@ -1415,11 +1415,8 @@ class Util_model extends CI_Model {
 		
 		if ($network) list($ip, $port) = explode(":", $network);	
 
-		if(!($fp = @fsockopen($ip, $port, $errno, $errstr, 1)))
-		{
-				return false;
-		}		
-		
+		if (!($fp = @fsockopen($ip, $port, $errno, $errstr, 1))) return false;
+
 		if (is_resource($fp)) fclose($fp);
 		
 		return true;

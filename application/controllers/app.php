@@ -42,6 +42,7 @@ class App extends Main_Controller {
 		if (!$this->redis->command("EXISTS dashboard_box_scrypt_earnings")) $this->redis->set("dashboard_box_scrypt_earnings", 1);
 		if (!$this->redis->command("EXISTS dashboard_box_log")) $this->redis->set("dashboard_box_log", 1);
 		
+		$data['minera_system_id'] = $mineraSystemId;
 		$data['minera_version'] = $this->util_model->currentVersion(true);
 		$data['adsFree'] = $this->redis->get('is_ads_free');
 		$data['env'] = $this->config->item('ENV');
