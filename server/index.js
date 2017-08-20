@@ -12,8 +12,19 @@ var redis = require('redis'),
 client.subscribe('minera-channel');
 
 client.on('message', function(channel, message){
-	var message = JSON.parse(message), url;
-	
+	var message = JSON.parse(message),
+		url,
+		timestamp = parseInt(message.timestamp),
+		limit = 0;
+
+	if (!global.prev) global.prev = Math.floor(Date.now() / 1000);
+
+	limit = (global.prev + 300);
+
+	// console.log(timestamp, limit);
+	// Do it every x seconds
+	if (timestamp < limit) return;
+
 	if (message.livestat) {
 		url = [apiUrl, 'minera/stats', message.minera_id].join('/');
 	} else {
@@ -27,6 +38,7 @@ client.on('message', function(channel, message){
 		body: {data: message}
 	}, function (err, response, body) {
 		if (err) console.log({error: err});
-		//console.log('Stats sent');
+		// console.log('Stats sent');
+		global.prev = message.timestamp;
 	});
 });

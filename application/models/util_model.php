@@ -119,6 +119,7 @@ class Util_model extends CI_Model {
 	// Get the live stats from miner
 	public function getStats()
 	{
+		$date = new DateTime();
 		$a = new stdClass();
 		$altcoinData = $this->getAltcoinsRates();
 		$btcData = $this->getBtcUsdRates();
@@ -193,6 +194,8 @@ class Util_model extends CI_Model {
 		$a->profits = json_decode($this->redis->get('coins_profitability'));
 		
 		$a->livestat = true;
+
+		$a->timestamp = $date->getTimestamp();
 		
 		// Publish stats to Redis
 		$this->redis->publish("minera-channel", json_encode($a));
