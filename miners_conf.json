@@ -13,8 +13,14 @@
 {
     "miner": "cgdmaxlzeus",
     "miner_name": "CGminer Dmaxl",
-    "miner_device": "Gridseed Mini",
+    "miner_device": "Gridseed Mini Scrypt",
     "miner_options": "--scrypt --scan-serial gridseed:auto --gridseed-options freq=838,chips=5"
+},
+{
+    "miner": "cgdmaxlzeus",
+    "miner_name": "CGminer Dmaxl",
+    "miner_device": "Gridseed Mini SHA256",
+    "miner_options": "--sha256 --scan-serial gridseed:auto --gridseed-options freq=838,chips=5"
 },
 {
     "miner": "cgdmaxlzeus",

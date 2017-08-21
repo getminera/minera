@@ -2394,7 +2394,7 @@ function getStats(refresh)
 			}
 			else
 			{
-				$('#pools-table-details').html('<div class="alert alert-warning"><i class="fa fa-warning"></i><strong>No pools</strong> data available.</div>');
+				$('#pools-table-details').html('<div class="alert alert-warning"><i class="fa fa-warning"></i><strong>No active pools</strong> data available.</div>');
 			}
 			
 			if (data.devices)
@@ -2501,10 +2501,14 @@ function getStats(refresh)
 					var last_share_secs = (items[index].ls > 0) ? (rightnow - share_date.getTime())/1000 : 0;
 					if (last_share_secs < 0) last_share_secs = 0;
 
-					var totalWorkedShares = (items[index].ac+items[index].re+items[index].hw);
-					var percentageAc = (100*items[index].ac/totalWorkedShares);
-					var percentageRe = (100*items[index].re/totalWorkedShares);
-					var percentageHw = (100*items[index].hw/totalWorkedShares);
+					var totalWorkedShares = (parseFloat(items[index].ac) + parseFloat(items[index].re) + parseFloat(items[index].hw));
+					var percentageAc = parseFloat(100*items[index].ac/totalWorkedShares);
+					var percentageRe = parseFloat(100*items[index].re/totalWorkedShares);
+					var percentageHw = parseFloat(100*items[index].hw/totalWorkedShares);
+
+					if (isNaN(percentageAc)) percentageAc = 0;
+					if (isNaN(percentageRe)) percentageRe = 0;
+					if (isNaN(percentageHw)) percentageHw = 0;
 
 					// Add colored hashrates
 					if (last_share_secs >= 120 && last_share_secs < 240)
@@ -2524,6 +2528,7 @@ function getStats(refresh)
 					else
 					{
 						// Widgets
+						console.log(percentageAc);
 						$('.widget-last-share').html(parseInt(last_share_secs) + ' secs');
 						$('.widget-hwre-rates').html(parseFloat(percentageHw).toFixed(2) + '<sup style="font-size: 20px">%</sup> / ' + parseFloat(percentageRe).toFixed(2) + '<sup style="font-size: 20px">%</sup>');
 						dev_serial = '';
@@ -2571,7 +2576,7 @@ function getStats(refresh)
 			}
 			else
 			{
-				var nodevsMsg = '<div class="alert alert-warning"><i class="fa fa-warning"></i>No local devices found</div>';
+				var nodevsMsg = '<div class="alert alert-warning"><i class="fa fa-warning"></i>No active local devices found</div>';
 				$('#miner-table-details').html(nodevsMsg);
 				$('#devs').html(nodevsMsg).removeClass('row');
 			}
@@ -2928,7 +2933,7 @@ function getStats(refresh)
 							}
 							else
 							{
-								$('#net-pools-table-details-'+md5(netKey)).html('<div class="alert alert-warning"><i class="fa fa-warning"></i><strong>No pools</strong> data available.</div>');
+								$('#net-pools-table-details-'+md5(netKey)).html('<div class="alert alert-warning"><i class="fa fa-warning"></i><strong>No active pools</strong> data available.</div>');
 							}
 						}
 						else
@@ -2955,7 +2960,7 @@ function getStats(refresh)
 							
 							// Add empty network pools table
 							$('.net-pools-label-'+md5(netKey)).html('<h4><span class="label label-danger" data-toggle="popover" data-title="'+netKey+'" data-content="'+[networkMinerData.config.ip, networkMinerData.config.port].join(':')+'">Offline</span> '+netKey+'</h4>');
-							$('#net-pools-table-details-'+md5(netKey)).html('<div class="alert alert-warning"><i class="fa fa-warning"></i><strong>No pools</strong> data available.</div>');
+							$('#net-pools-table-details-'+md5(netKey)).html('<div class="alert alert-warning"><i class="fa fa-warning"></i><strong>No active pools</strong> data available.</div>');
 							$('.net-pools-addbox-'+md5(netKey)).fadeOut();
 						}
 					});
@@ -3071,16 +3076,6 @@ function getStats(refresh)
 						'info': false,
 						'stateSave': true,
 						'order': [[ 6, 'desc' ]],
-						'fnRowCallback': function( row, data, index ) {
-							// Green the best one
-							if ( data[3] && data[3].max === data[3].coin ) {
-								$('td', row).addClass('bg-light-green');
-					    	}
-							
-							if ( data[3].coin === 'btc') {
-								$('td', row).addClass('bg-dark');
-							}
-						},
 						'aoColumnDefs': [{
 							'aTargets': [ 3 ],	
 							'mRender': function ( data, type, full ) {
@@ -3116,10 +3111,7 @@ function getStats(refresh)
 							'mRender': function ( data, type, full ) {
 								if (type === 'display')
 								{
-									if ( ($('.profit_algo').data('profit-algo') === 'sha256' && full[3].coin === 'btc') || ($('.profit_algo').data('profit-algo') === 'scrypt' && full[3].coin !== 'btc')) 
-										return '<i class="fa fa-btc"></i> <strong>'+data+'</strong>';
-									else
-										return '-';
+									return '<i class="fa fa-btc"></i> <strong>'+data+'</strong>';
 								}
 								return data;
 							},
@@ -3128,26 +3120,7 @@ function getStats(refresh)
 							'mRender': function ( data, type, full ) {
 								if (type === 'display')
 								{
-									if ($('.profit_algo').data('profit-algo') === 'scrypt' && full[3].coin !== 'btc')
-										return '<i class="fa fa-btc"></i> '+data;
-									else
-										return '-';
-								}
-								return data;
-							},
-						},{
-							'aTargets': [ 8 ],	
-							'mRender': function ( data, type, full ) {
-								if (type === 'display')
-								{
-									if ($('.profit_algo').data('profit-algo') === 'sha256' || full[3].coin === 'btc') {
-										return '-';
-									} else {
-										if (data >= 100)
-											return '<small class="label label-success">'+data+'%</span>';
-										else
-											return '<small class="label label-danger">'+data+'%</span>';
-									}
+									return '<i class="fa fa-btc"></i> '+data;
 								}
 								return data;
 							},
@@ -3161,14 +3134,20 @@ function getStats(refresh)
 								return data;
 							},
 						},{
+							'aTargets': [ 8 ],	
+							'mRender': function ( data, type, full ) {
+								if (type === 'display')
+								{
+									return '<small>'+data+'</small>';
+								}
+								return data;
+							},
+						},{
 							'aTargets': [ 9 ],	
 							'mRender': function ( data, type, full ) {
 								if (type === 'display')
 								{
-									if ( full[3].coin === 'btc')
-										return '-';
-									else 
-										return '<small class="text-muted">'+data+'</small>';
+									return '<small class="label label-primary">' + data.toUpperCase() + '</small>';
 								}
 								return data;
 							},
@@ -3179,6 +3158,7 @@ function getStats(refresh)
 				// Update datatable profit function
 				var updateProfitDataTable = function (data, currentProfitData) {
 					// Add profit data
+
 					$('#profit-table-details').dataTable().fnClearTable();
 					var thisHash = (data.totals && data.totals.hashrate) ? data.totals.hashrate/1000 : 0;
 					$('.profit_local_hashrate').html( ($('.profit_hashrate').val() > 0) ? $('.profit_hashrate').val()+$('.profit_unit').find('option:selected').data('profit-unit') : convertHashrate(thisHash));
@@ -3198,70 +3178,50 @@ function getStats(refresh)
 								(profit.networkhashps) ? profit.networkhashps/1000 : 0,
 								(profit.price) ? profit.price.toFixed(8) : 0,
 								(currentProfitData.hash*profit.btc_profitability).toFixed(8),
-								profit.btc_profitability.toFixed(8),
-								(profit.btc_profitability*100/ltc.btc_profitability).toFixed(2),
-								profit.coin_profitability.toFixed(8)
+								(profit.algo === 'scrypt') ? profit.btc_profitability.toFixed(8) : (profit.btc_profitability * 1000).toFixed(8),
+								(profit.algo === 'scrypt') ? profit.coin_profitability.toFixed(8) : (profit.coin_profitability * 1000).toFixed(8),
+								profit.algo
 							] );
 						}
 						
 					});
+
+					maxProfit = _.max(data.profits, function (v) { return (currentProfitData.hash*v.btc_profitability); });
 				};	
 
-				var ltc = _.filter(data.profits, function (v) { return v.symbol === 'ltc'; });
-				ltc = (ltc[0]) ? ltc[0] : 0;
+				var btc = _.filter(data.profits, function (v) { return v.symbol === 'btc'; });
+				btc = (btc[0]) ? btc[0] : 0;
 				
-				var maxProfit = _.max(data.profits, function (v) { return (v.btc_profitability*100/ltc.btc_profitability); }),
-					totalHash = (data.totals && data.totals.hashrate) ? data.totals.hashrate : 0,
-					currentProfitData = {};
-					
-				currentProfitData.hash = (data.totals && data.totals.hashrate) ? data.totals.hashrate/1000000 : 0;
-				
+				var totalHash = (data.totals && data.totals.hashrate) ? data.totals.hashrate : 0,
+					selHashrate = ($('.profit_hashrate').val() > 0) ? $('.profit_hashrate').val() : 0,
+					selUnit = $('.profit_unit').val(),
+					selPeriod = $('.profit_period').val(),
+					currentProfitData = { hash: (selHashrate > 0) ? selUnit*selHashrate*selPeriod : totalHash/1000000 },
+					maxProfit = _.max(data.profits, function (v) { return (currentProfitData.hash*v.btc_profitability); });
+
+				currentProfitData.hash = (data.totals && data.totals.hashrate) ? data.totals.hashrate/1000000 : currentProfitData.hash;
+				if (!selHashrate) selHashrate = 1000000;
 				updateProfitDataTable(data, currentProfitData);
 
-				if (!refresh) {
-					$('.profit_algo_scrypt').removeClass('active');
-					$('.profit_algo_sha256').addClass('active');
-										
-					if (data.algo === 'Scrypt') {
-						$('.profit_algo_scrypt').addClass('active');
-						$('.profit_algo_sha256').removeClass('active');
-					}
-				}
-				
 				// Recalculate value when user change input elements
 				$('.profit_data').change(function (e) {
-					var selHashrate = ($('.profit_hashrate').val() > 0) ? $('.profit_hashrate').val() : 0,
-						selUnit = $('.profit_unit').val(),
-						selPeriod = $('.profit_period').val();
+					selHashrate = ($('.profit_hashrate').val() > 0) ? $('.profit_hashrate').val() : 0;
+					selUnit = $('.profit_unit').val();
+					selPeriod = $('.profit_period').val();
 					
 					currentProfitData.hash = (selHashrate > 0) ? selUnit*selHashrate*selPeriod : totalHash/1000000;
 					updateProfitDataTable(data, currentProfitData);
 				});
 				
-				$('.profit_hashrate').keyup(function (e) {
-					var selHashrate = ($('.profit_hashrate').val() > 0) ? $('.profit_hashrate').val() : 0,
-						selUnit = $('.profit_unit').val(),
-						selPeriod = $('.profit_period').val();
+				$('.profit_hashrate').change(function (e) {
+					selHashrate = ($('.profit_hashrate').val() > 0) ? $('.profit_hashrate').val() : 0;
+					selUnit = $('.profit_unit').val();
+					selPeriod = $('.profit_period').val();
 
 					currentProfitData.hash = (selHashrate > 0) ? selUnit*selHashrate*selPeriod : totalHash/1000000;
 					updateProfitDataTable(data, currentProfitData);
 				});
 				
-				var algoButtons = $('.profit_algo_scrypt,.profit_algo_sha256').click(function (e) {
-					var selHashrate = ($('.profit_hashrate').val() > 0) ? $('.profit_hashrate').val() : 0,
-						selUnit = $('.profit_unit').val(),
-						selPeriod = $('.profit_period').val(),
-						$this = $(this),
-						el = algoButtons.not(this),
-						selAlgo = ($this.attr('class').match(/scrypt/i)) ? 'scrypt' : 'sha256';
-			
-					$this.addClass('active');					
-					$('.profit_algo').data('profit-algo', selAlgo);
-					el.removeClass('active');
-					
-					currentProfitData.hash = (selHashrate > 0) ? selUnit*selHashrate*selPeriod : totalHash/1000000;
-					updateProfitDataTable(data, currentProfitData);
-				});
 				$('.profit-table-details-error').html('');
 			}
 			else

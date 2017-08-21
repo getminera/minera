@@ -3,6 +3,7 @@
 // App specific configs
 //$config['ENV'] = 'development';
 $config['ENV'] = 'production';
+$config['minera_api_url'] = 'https://getminera.com/api';
 $config['live_stats_url'] =  'app/stats';
 $config['stored_stats_url'] =  'app/api?command=history_stats&type=hourly';
 $config['screen_command'] = '/usr/bin/screen -dmS cpuminer';
@@ -30,7 +31,6 @@ $config['minera_pool_url'] = 'stratum+tcp://us-east.multipool.us:7777';
 $config['minera_pool_url_sha256'] = 'stratum+tcp://us-east.multipool.us:8888';
 $config['minera_pool_username'] = 'michelem.minera';
 $config['minera_pool_password'] = 'x';
-$config['minera_api_url'] = 'https://getminera.com/api';
 $config['ads'] = Array(
 	'200x200' => '<iframe data-aa="499535" src="//ad.a-ads.com/499535?size=200x200&title_color=ff4d50&title_hover_color=ff0000&text_color=333333&link_color=3C8DBC&link_hover_color=ff0000" scrolling="no" style="width:200px; height:200px; border:0px; padding:0;overflow:hidden" allowtransparency="true"></iframe>',
 	'200x200_black' => '<iframe data-aa="499556" src="//ad.a-ads.com/499556?size=200x200&title_color=ff4d50&title_hover_color=&link_color=3C8DBC&background_color=fff&text_color=cccccc&link_hover_color=ff0000" scrolling="no" style="width:200px; height:200px; border:0px; padding:0;overflow:hidden" allowtransparency="true"></iframe>',

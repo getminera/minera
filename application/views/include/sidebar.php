@@ -336,7 +336,7 @@
                     <!-- Sidebar main panel -->
                     <div class="user-panel">
                         <div class="pull-left info">
-                            <p>Hello, your miner is</p>
+                            <p>Minera ID <strong><?php echo $mineraSystemId ?></strong></p>
 							<?php if ($isOnline) : ?>
 	                            <a href="<?php echo site_url("app/dashboard") ?>"><i class="fa fa-circle text-success"></i> Online <?php if ($minerdRunning) : ?><small class="pull-right badge bg-green"><?php echo $minerdRunning ?></small><?php endif; ?></a>
 	                        <?php else: ?>

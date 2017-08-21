@@ -446,12 +446,14 @@ class Util_model extends CI_Model {
 					if ($this->_minerdSoftware == "cgdmaxlzeus")
 					{
 						$return['devices'][$name]['shares'] = ($device->{'Diff1 Work'}) ? round(($device->{'Diff1 Work'}*71582788/1000/1000),0) : 0;
-						$return['devices'][$name]['hashrate'] = ($device->{'KHS av'}*1000);
+						if (isset($device->{'KHS av'}))	$return['devices'][$name]['hashrate'] = ($device->{'KHS av'}*1000);
+						else $return['devices'][$name]['hashrate'] = ($device->{'MHS av'}*1000*1000);
 					}
 					else
 					{
 						$return['devices'][$name]['shares'] = ($device->{'Diff1 Work'}) ? round(($device->{'Diff1 Work'}*71582788/1000),0) : 0;	
-						$return['devices'][$name]['hashrate'] = ($device->{'MHS av'}*1000*1000);
+						if (isset($device->{'KHS av'}))	$return['devices'][$name]['hashrate'] = ($device->{'KHS av'}*1000);
+						else $return['devices'][$name]['hashrate'] = ($device->{'MHS av'}*1000*1000);
 					}
 					$return['devices'][$name]['last_share'] = $device->{'Last Share Time'};
 					$return['devices'][$name]['serial'] = (isset($device->Serial)) ? $device->Serial : false;;

@@ -86,7 +86,7 @@ module.exports = function(grunt) {
 						dest: 'assets/fonts/'
 					},
 					// Moved to CDN in header file
-					/*{
+					{
 					//for font-awesome font
 						expand: true,
 						cwd: 'assets/vendor/font-awesome/fonts',
@@ -99,7 +99,7 @@ module.exports = function(grunt) {
 						cwd: 'assets/vendor/ionicons/fonts',
 						src: ['*.*'],
 						dest: 'assets/fonts/'
-					}*/
+					}
 				]
 			},
 		},
@@ -158,6 +158,8 @@ module.exports = function(grunt) {
 	// Lint task(s).
 	//grunt.registerTask('lint', ['jshint', 'csslint']);
 	grunt.registerTask('lint', ['jshint']);
+
+	grunt.registerTask('copy', ['copy']);
 
 	// Build task(s).
 	grunt.registerTask('build:production', ['lint', 'ngmin:production', 'uglify:production', 'cssmin', 'clean', 'copy']);

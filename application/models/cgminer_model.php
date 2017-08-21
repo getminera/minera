@@ -78,9 +78,10 @@ class Cgminer_model extends CI_Model {
 			}
 		
 			//print "$cmd returned '$line'\n";
-		
-			if (substr($line,0,1) == '{')
+			if (substr($line,0,1) == '{') {
+				// log_message("error", var_dump(json_decode($line)));
 				return json_decode($line);
+			}
 			
 			$data = array();
 			

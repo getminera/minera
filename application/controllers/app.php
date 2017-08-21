@@ -134,6 +134,7 @@ class App extends Main_Controller {
 		$data['adsFree'] = $this->redis->get('is_ads_free');
 		$data['env'] = $this->config->item('ENV');
 		$data['ads'] = $this->util_model->getAds();
+		$data['mineraSystemId'] = $this->redis->get("minera_system_id");
 		
 		$this->load->view('include/header', $data);
 		$this->load->view('include/sidebar', $data);
@@ -168,6 +169,7 @@ class App extends Main_Controller {
 		$data['adsFree'] = $this->redis->get('is_ads_free');
 		$data['env'] = $this->config->item('ENV');
 		$data['ads'] = $this->util_model->getAds();
+		$data['mineraSystemId'] = $this->redis->get("minera_system_id");
 		
 		$this->load->view('include/header', $data);
 		$this->load->view('include/sidebar', $data);
