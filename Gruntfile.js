@@ -159,7 +159,7 @@ module.exports = function(grunt) {
 	//grunt.registerTask('lint', ['jshint', 'csslint']);
 	grunt.registerTask('lint', ['jshint']);
 
-	grunt.registerTask('copy', ['copy']);
+	grunt.registerTask('copy:production', ['copy']);
 
 	// Build task(s).
 	grunt.registerTask('build:production', ['lint', 'ngmin:production', 'uglify:production', 'cssmin', 'clean', 'copy']);

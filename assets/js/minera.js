@@ -27,7 +27,8 @@ function loadScript(url, callback)
 
 function convertHashrate(hash)
 {
-
+	if (!hash) return;
+	hash = parseInt(hash);
 	if (hash > 900000000000)
 		return (hash/1000000000000).toFixed(2) + 'Ph/s';
 	if (hash > 900000000)
@@ -2528,7 +2529,6 @@ function getStats(refresh)
 					else
 					{
 						// Widgets
-						console.log(percentageAc);
 						$('.widget-last-share').html(parseInt(last_share_secs) + ' secs');
 						$('.widget-hwre-rates').html(parseFloat(percentageHw).toFixed(2) + '<sup style="font-size: 20px">%</sup> / ' + parseFloat(percentageRe).toFixed(2) + '<sup style="font-size: 20px">%</sup>');
 						dev_serial = '';
