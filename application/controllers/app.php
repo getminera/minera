@@ -324,6 +324,7 @@ class App extends Main_Controller {
 		
 		$extramessages = false;
 		$dataObj = new stdClass();
+		$mineraSystemId = $this->util_model->generateMineraId();
 		
 		if ($this->input->post('save_settings'))
 		{
@@ -688,7 +689,6 @@ class App extends Main_Controller {
 			
 			// Anonymous stats
 			$anonymousStats = false;
-			$mineraSystemId = $this->util_model->generateMineraId();
 			if ($this->input->post('anonymous_stats'))
 			{
 				$anonymousStats = $this->input->post('anonymous_stats');

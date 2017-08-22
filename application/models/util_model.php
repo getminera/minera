@@ -2031,32 +2031,30 @@ class Util_model extends CI_Model {
 		}
 	}
 
-	function getMacLinux() {
-		exec('netstat -ie', $result);
-		if(is_array($result)) {
-			$iface = array();
-			foreach($result as $key => $line) {
-				if($key > 0) {
-					$tmp = str_replace(" ", "", substr($line, 0, 10));
-					if($tmp <> "") {
-						$macpos = strpos($line, "HWaddr");
-						if($macpos !== false) {
-							$iface[] = array('iface' => $tmp, 'mac' => strtolower(substr($line, $macpos+7, 17)));
-						}
-					}
-				}
-		    }
-			if ($iface && $iface[0]) return $iface[0]['mac'];
-		} else {
-	    	return false;
-		}
+	public function getMacLinux() {
+		exec('cat /sys/class/net/eth0/address', $result);
+
+		if(!isset($result[0])) return false;
+
+		return $result[0];
 	}
 	
 	// Generate a uniq hash ID for Minera System ID
 	public function generateMineraId()
 	{
-		$mac = ($this->getMacLinux()) ? $this->getMacLinux() : substr(str_shuffle("0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"), 0, 12);
+		$mac = $this->getMacLinux();
+		if (!$mac) {
+			$mac = $this->redis->get("mac");
+			if (!$mac) {
+				$mac = substr(str_shuffle("0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"), 0, 12);
+				$this->redis->set("mac", $mac);
+			}
+		} else {
+			$this->redis->del("mac");
+		}
+
 		$id = substr(strtolower(preg_replace('/[0-9_\/]+/','',base64_encode(sha1(trim($mac))))),0,12);
+
 		$this->redis->set("minera_system_id", $id);
 		return $id;
 	}

@@ -59,6 +59,8 @@ echo -n "1" | redis-cli -x set anonymous_stats
 echo -n "cpuminer" | redis-cli -x set minerd_software
 echo -n '["132","155","3"]' | redis-cli -x set dashboard_coin_rates
 echo -e '[{"url":"stratum+tcp://us.multipool.us:3334","username":"michelem.minera","password":"x"}]'  | redis-cli -x set minerd_pools
+redis-cli del mac
+redis-cli del minera_system_id
 
 echo -e "Adding minera startup command to rc.local\n-----\n"
 chmod 777 /etc/rc.local
