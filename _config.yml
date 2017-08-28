@@ -1,0 +1,8 @@
+title: Minera
+description: A complete web system controller for your ASIC mining devices
+google_analytics: 
+show_downloads: true
+theme: jekyll-theme-cayman
+
+gems:
+  - jekyll-mentions
