@@ -16,6 +16,6 @@
 echo -e "-----\nInstalling Minera in /var/www\n-----\n"
 mkdir /var/www
 cd /var/www
-git clone https://github.com/michelem09/minera
+git clone https://github.com/getminera/minera
 cd minera
 ./install_minera.sh

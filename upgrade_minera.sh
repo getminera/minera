@@ -1,5 +1,5 @@
 #!/bin/bash
-# This is the upgrade script for Minera https://github.com/michelem09/minera
+# This is the upgrade script for Minera https://github.com/getminera/minera
 # This script, as Minera, is intended to be used on a Debian-like system
 
 echo -e "-----\nSTART Minera Upgrade script\n-----\n"

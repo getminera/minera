@@ -1,8 +1,8 @@
 <?php  if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
 // App specific configs
-$config['ENV'] = 'development';
-//$config['ENV'] = 'production';
+//$config['ENV'] = 'development';
+$config['ENV'] = 'production';
 $config['minera_api_url'] = 'https://getminera.com/api';
 $config['live_stats_url'] =  'app/stats';
 $config['stored_stats_url'] =  'app/api?command=history_stats&type=hourly';
@@ -15,7 +15,7 @@ $config['minerd_log_file'] = '/var/log/minera/cpuminer.log';
 $config['minerd_log_url'] = 'application/logs/cpuminer.log';
 $config['tmp_stats_file'] = '/tmp/cm_latest_stats';
 $config['system_user'] = 'minera';
-$config['remote_config_url'] = 'https://raw.githubusercontent.com/michelem09/minera/master/minera.json';
+$config['remote_config_url'] = 'https://raw.githubusercontent.com/getminera/minera/master/minera.json';
 $config['rpi_temp_file'] = '/sys/class/thermal/thermal_zone0/temp';
 $config['btc_address'] = '19kDRygdVZUq1ARrht6544CGaPzMnF1Q1b';
 $config['ltc_address'] = 'LLPmAT9gDwmiSdqwWEZu6mpUDmrNAnYBdC';

@@ -20,7 +20,7 @@ Since the 0.5.x version Minera supports also network miners as:
 * Any network miner with cgminer
 * Other Minera system
 
-Please read more [how to config them here](https://github.com/michelem09/minera/wiki/Network-mining-devices)
+Please read more [how to config them here](https://github.com/getminera/minera/wiki/Network-mining-devices)
 
 If you like it, please consider a donation:
 
@@ -40,10 +40,10 @@ _______
 Support
 -------------
 
-If you need support please try to look at the main [forum thread here](https://bitcointalk.org/index.php?topic=596620.0). If you found a bug, want to propose some changes, want a new feature, please [write down an issue here in Github](https://github.com/michelem09/minera/issues) so we can take everything organised.
+If you need support please try to look at the main [forum thread here](https://bitcointalk.org/index.php?topic=596620.0). If you found a bug, want to propose some changes, want a new feature, please [write down an issue here in Github](https://github.com/getminera/minera/issues) so we can take everything organised.
 
 * [General support/discussion forum](https://bitcointalk.org/index.php?topic=596620.0)
-* [Bugs, issues, requests](https://github.com/michelem09/minera/issues)
+* [Bugs, issues, requests](https://github.com/getminera/minera/issues)
 
 _______
 
@@ -149,7 +149,7 @@ When you have your system ready, ssh into it and **install Minera**
 
 You can use this script to install everything you need, (it's good for any kind of Debian system: Ubuntu, Raspbian, ecc...) or use the manual steps below:
 
-    curl -o- https://raw.githubusercontent.com/michelem09/minera/master/install_minera_ubuntu.sh | sudo bash
+    curl -o- https://raw.githubusercontent.com/getminera/minera/master/install_minera_ubuntu.sh | sudo bash
 
 Skip this step and continue below if you have a web server with PHP just installed.
 
@@ -165,7 +165,7 @@ When your web server is ready you can install Minera:
 ```
 sudo apt-get install -y redis-server git screen php5-cli php5-curl
 cd /var/www
-sudo git clone https://github.com/michelem09/minera
+sudo git clone https://github.com/getminera/minera
 cd minera
 sudo ./install_minera.sh
 ```
@@ -303,27 +303,27 @@ Click for hi-res images.
 
 Lockscreen:
 
-[![Dashboard](https://github.com/michelem09/minera/raw/master/assets/img/screen_minera_lock.png)](https://github.com/michelem09/minera/raw/master/assets/img/screen_minera_lock_hi.png)
+[![Dashboard](https://github.com/getminera/minera/raw/master/assets/img/screen_minera_lock.png)](https://github.com/getminera/minera/raw/master/assets/img/screen_minera_lock_hi.png)
 
 Dashboard:
 
-[![Dashboard](https://github.com/michelem09/minera/raw/master/assets/img/screen_minera_dashboard.png)](https://github.com/michelem09/minera/raw/master/assets/img/screen_minera_dashboard_hi.png)
+[![Dashboard](https://github.com/getminera/minera/raw/master/assets/img/screen_minera_dashboard.png)](https://github.com/getminera/minera/raw/master/assets/img/screen_minera_dashboard_hi.png)
 
 Charts:
 
-[![Charts](https://github.com/michelem09/minera/raw/master/assets/img/screen_minera_charts.png)](https://github.com/michelem09/minera/raw/master/assets/img/screen_minera_charts_hi.png)
+[![Charts](https://github.com/getminera/minera/raw/master/assets/img/screen_minera_charts.png)](https://github.com/getminera/minera/raw/master/assets/img/screen_minera_charts_hi.png)
 
 Settings:
 
-[![Settings](https://github.com/michelem09/minera/raw/master/assets/img/screen_minera_settings.png)](https://github.com/michelem09/minera/raw/master/assets/img/screen_minera_settings_hi.png)
+[![Settings](https://github.com/getminera/minera/raw/master/assets/img/screen_minera_settings.png)](https://github.com/getminera/minera/raw/master/assets/img/screen_minera_settings_hi.png)
 
 Web Terminal:
 
-[![Web terminal](https://github.com/michelem09/minera/raw/master/assets/img/screen_minera_terminal.png)](https://github.com/michelem09/minera/raw/master/assets/img/screen_minera_terminal_hi.png)
+[![Web terminal](https://github.com/getminera/minera/raw/master/assets/img/screen_minera_terminal.png)](https://github.com/getminera/minera/raw/master/assets/img/screen_minera_terminal_hi.png)
 
 Blue skin:
 
-[![Blue skin](https://github.com/michelem09/minera/raw/master/assets/img/screen_minera_dashboard_blue.png)](https://github.com/michelem09/minera/raw/master/assets/img/screen_minera_dashboard_blue_hi.png)
+[![Blue skin](https://github.com/getminera/minera/raw/master/assets/img/screen_minera_dashboard_blue.png)](https://github.com/getminera/minera/raw/master/assets/img/screen_minera_dashboard_blue_hi.png)
 _______
 
 Donations

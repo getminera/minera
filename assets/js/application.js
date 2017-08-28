@@ -52444,11 +52444,13 @@ function getStats(refresh) {
     boxStats = $('.section-raw-stats'), thisSection = $('.header').data('this-section');
   boxStats.hide();
   $('.overlay').show();
+  $('.refresh-icon').addClass('fa-spin');
   // Show loaders
   //$('.loading-img').show();
   /* Knob, Table, Sysload */
   // get Json data from minerd and create Knob, table and sysload
   $.getJSON(_baseUrl + '/app/stats', function (data) {
+    // console.log(data);
     if (data.notloggedin) {
       errorTriggered = true;
       triggerError('It seems your session expired.');
@@ -53568,6 +53570,7 @@ function getStats(refresh) {
     // End if error/notrunning
     $('.overlay').hide();
     $('.loading-img').hide();
+    $('.refresh-icon').removeClass('fa-spin');
   });
   // End get live stats
   /* Morris.js Charts */
