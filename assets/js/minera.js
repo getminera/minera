@@ -2041,6 +2041,7 @@ function getStats(refresh)
 	boxStats.hide();
 	
 	$('.overlay').show();
+	$('.refresh-icon').addClass('fa-spin');
 	// Show loaders
 	//$('.loading-img').show();
 	
@@ -2048,6 +2049,7 @@ function getStats(refresh)
 	// get Json data from minerd and create Knob, table and sysload
     $.getJSON( _baseUrl+'/app/stats', function( data ) 
     {
+    	// console.log(data);
 		if (data.notloggedin)
 		{
 			errorTriggered = true;
@@ -3305,6 +3307,7 @@ function getStats(refresh)
 		
 		$('.overlay').hide();
 		$('.loading-img').hide();
+		$('.refresh-icon').removeClass('fa-spin');
 	    
 	}); // End get live stats
 	

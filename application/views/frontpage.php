@@ -116,7 +116,7 @@
 							<div class="row">
 
 								<!-- Warning  widget -->
-								<div class="col-lg-4 col-sm-4 col-xs-12 enable-if-not-running local-widget disable-if-stopped" style="display: none;">
+								<div class="col-lg-4 col-sm-4 col-xs-12 local-widget disable-if-stopped" style="display: none;">
 									<!-- small box -->
 									<div class="small-box bg-red">
 										<div class="inner">

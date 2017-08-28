@@ -346,7 +346,7 @@
                     </div>
 					
 					<?php if (!$adsFree) : ?>
-					<div class="text-center">
+					<div class="mb10 text-center">
 						<?php echo ($dashboardSkin ==='black') ? $ads['200x200_black'] : $ads['200x200']; ?>
 					</div>
 					<?php endif; ?>
@@ -356,7 +356,7 @@
 	                    <?php if ($sectionPage === "dashboard" && (($isOnline && $appScript) || count($netMiners) > 0)) : ?>
                         	<li data-toggle="tooltip" title="" data-original-title="Refresh Dashboard">
                             	<a href="#" class="refresh-btn">
-                                	<i class="fa fa-refresh"></i> <span>Refresh</span><span class="badge bg-muted pull-right auto-refresh-time">auto in</span>
+                                	<i class="fa fa-refresh refresh-icon mr5" style="width: inherit;"></i> <span>Refresh</span><span class="badge bg-muted pull-right auto-refresh-time">auto in</span>
 								</a>
 							</li>
 						<?php endif; ?>
