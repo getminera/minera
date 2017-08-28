@@ -1,3 +1,5 @@
+[![Minera](https://github.com/getminera/minera/raw/master/assets/img/cover_minera.jpg)](https://getminera.com)
+
 Minera
 ==============
 
