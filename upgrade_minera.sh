@@ -1,5 +1,5 @@
 #!/bin/bash
-# This is the upgrade script for Minera https://github.com/michelem09/minera
+# This is the upgrade script for Minera https://github.com/getminera/minera
 # This script, as Minera, is intended to be used on a Debian-like system
 
 echo -e "-----\nSTART Minera Upgrade script\n-----\n"
@@ -7,7 +7,7 @@ echo -e "-----\nSTART Minera Upgrade script\n-----\n"
 echo -e "-----\nInstall extra packages\n-----\n"
 #apt-get update
 #export DEBIAN_FRONTEND=noninteractive
-apt-get -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" install -y build-essential libtool libcurl4-openssl-dev libjansson-dev libudev-dev libncurses5-dev autoconf automake postfix redis-server git screen php5-cli php5-curl uthash-dev libmicrohttpd-dev libevent-dev libusb-1.0-0-dev libusb-dev shellinabox supervisor
+apt-get -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" install -y build-essential libblkmaker-0.1-dev libtool libcurl4-openssl-dev libjansson-dev libudev-dev libncurses5-dev autoconf automake postfix redis-server git screen php7.0-cli php7.0-curl php7.0-fpm php7.0-readline php7.0-json wicd-curses uthash-dev libmicrohttpd-dev libevent-dev libusb-1.0-0-dev libusb-dev shellinabox supervisor lighttpd
 
 sudo dpkg --configure -a
 
@@ -74,15 +74,6 @@ sed -i "s/\$config\['encryption_key'\].*/\$config\['encryption_key'\] = '$KEY';/
 
 echo -e "Installing/Updating NVM and Node requirements\n-----\n"
 su - minera -c /var/www/minera/install_nvm.sh
-
-echo -e "Installing libblkmaker\n-----\n"
-LIBCOUNT=`strings -n5 /etc/ld.so.cache|grep -i libblkmaker|wc -l`
-if [ $LIBCOUNT -lt 2 ];
-then
-	cd /var/www/minera/minera-bin/src/libblkmaker
-	sudo make install
-	cd ../../..
-fi
 
 echo -e "Installing libusb\n-----\n"
 LIBUSBCOUNT=`strings -n5 /etc/ld.so.cache|grep -i libusb-1.0.so.2|wc -l`

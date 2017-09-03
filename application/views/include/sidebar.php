@@ -271,7 +271,7 @@
 					            <li class="user-header bg-dark-grey">
 					            	<p><i class="glyphicon glyphicon-heart"></i></p>
 					                <p>
-					                    <small>Made with heart</small>
+					                    <small>Made with love</small>
 					                    Minera is a free and open source software
 					                    <small>Please help Minera: spread it, share, donate</small>
 					                </p>
@@ -336,7 +336,7 @@
                     <!-- Sidebar main panel -->
                     <div class="user-panel">
                         <div class="pull-left info">
-                            <p>Hello, your miner is</p>
+                            <p>Minera ID <strong><?php echo $mineraSystemId ?></strong></p>
 							<?php if ($isOnline) : ?>
 	                            <a href="<?php echo site_url("app/dashboard") ?>"><i class="fa fa-circle text-success"></i> Online <?php if ($minerdRunning) : ?><small class="pull-right badge bg-green"><?php echo $minerdRunning ?></small><?php endif; ?></a>
 	                        <?php else: ?>
@@ -346,7 +346,7 @@
                     </div>
 					
 					<?php if (!$adsFree) : ?>
-					<div class="text-center">
+					<div class="mb10 text-center">
 						<?php echo ($dashboardSkin ==='black') ? $ads['200x200_black'] : $ads['200x200']; ?>
 					</div>
 					<?php endif; ?>
@@ -356,7 +356,7 @@
 	                    <?php if ($sectionPage === "dashboard" && (($isOnline && $appScript) || count($netMiners) > 0)) : ?>
                         	<li data-toggle="tooltip" title="" data-original-title="Refresh Dashboard">
                             	<a href="#" class="refresh-btn">
-                                	<i class="fa fa-refresh"></i> <span>Refresh</span><span class="badge bg-muted pull-right auto-refresh-time">auto in</span>
+                                	<i class="fa fa-refresh refresh-icon mr5" style="width: inherit;"></i> <span>Refresh</span><span class="badge bg-muted pull-right auto-refresh-time">auto in</span>
 								</a>
 							</li>
 						<?php endif; ?>

@@ -72,6 +72,9 @@ body > .header { position: fixed !important; }
 .mb30 { margin-bottom: 30px; }
 .mb50 { margin-bottom: 50px; }
 
+.mr5 { margin-right: 5px; }
+.mr10 { margin-right: 10px; }
+
 .p10 { padding: 10px; }
 .pl10 { padding-left: 10px; }
 .pr10 { padding-rigth: 10px; }

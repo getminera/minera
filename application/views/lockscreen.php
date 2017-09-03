@@ -42,7 +42,7 @@
 			</div> 
 
 			<div class="lockscreen-link">
-				<?php if ($isOnline) : ?><i class="fa fa-circle text-success"></i> Online<?php else: ?><i class="fa fa-circle text-muted"></i> Offline<?php endif; ?>
+				<?php if ($isOnline) : ?><i class="fa fa-circle text-success"></i> Online<?php else: ?><i class="fa fa-circle text-muted"></i> Offline<?php endif; ?> | Minera ID: <strong><?php echo $minera_system_id ?></strong>
 			</div> 
 						
         </div><!-- /.center -->

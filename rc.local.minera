@@ -11,10 +11,6 @@
 #
 # By default this script does nothing.
 
-# Print the IP address
-_IP=$(hostname -I | tr -d ' ') || true
-printf "Connect to http://%s/minera to manage Minera\n" "$_IP"
-printf "Happy mining!\n"
 # Tell Minera minerd is started
 redis-cli set minerd_status 1
 redis-cli del cron_lock

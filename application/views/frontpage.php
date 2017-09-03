@@ -116,7 +116,7 @@
 							<div class="row">
 
 								<!-- Warning  widget -->
-								<div class="col-lg-4 col-sm-4 col-xs-12 enable-if-not-running local-widget disable-if-stopped" style="display: none;">
+								<div class="col-lg-4 col-sm-4 col-xs-12 local-widget disable-if-stopped" style="display: none;">
 									<!-- small box -->
 									<div class="small-box bg-red">
 										<div class="inner">
@@ -259,7 +259,7 @@
 										<div class="col-sm-2">
 											<div class="input-group">
 								    			<span class="input-group-addon"><i class="fa fa-dashboard"></i></span>
-								    			<input type="text" class="form-control profit_hashrate" placeholder="Hashrate" name="profit_hashrate" value="" />
+								    			<input type="number" class="form-control profit_hashrate" placeholder="Hashrate" name="profit_hashrate" value="" />
 								    		</div>
 								    	</div>
 										<div class="col-sm-2">
@@ -279,14 +279,10 @@
 												<option value="30" data-profit-period="Month">Month</option>
 											</select>
 										</div>
-										<div class="col-sm-3 profit_algo" data-profit-algo="<?php echo strtolower(str_replace("-", "", $localAlgo)) ?>">
-											<button class="btn btn-default profit_algo_scrypt active" data-algo="Scrypt">Scrypt</button>&nbsp;
-											<button class="btn btn-default profit_algo_sha256" data-algo="SHA-256">SHA-256</button>
-										</div>
 									</div>
 									<div class="row">
 										<div class="col-sm-6">
-							    			<h6><i class="fa fa-btc"></i> Earnings column calculation data: <span class="label label-primary profit_local_hashrate"></span> <span class="label label-info profit_local_period">Day</span> <span class="label label-dark profit_local_algo"></span></h6>
+							    			<h6><i class="fa fa-btc"></i> Earnings column calculation data: <span class="label label-primary profit_local_hashrate"></span> <span class="label label-info profit_local_period">Day</span></h6>
 								    	</div>
 									</div>
 									<div class="row">
@@ -303,9 +299,9 @@
 														  <th><i class="fa fa-dashboard"></i> Hash Rate</th>
 														  <th><i class="fa fa-exchange"></i> Exchange Rate</th>
 														  <th><i class="fa fa-btc"></i> Earnings</th>
-														  <th>BTC / 1MH</th>
-														  <th>% / LTC</th>
-														  <th>Coins / 1MH</th>
+														  <th>BTC / Unit</th>
+														  <th>Coins / Unit</th>
+														  <th>Algorithm</th>
 													  </tr>
 													  </thead>
 													  <tbody class="profit_table">
@@ -323,8 +319,9 @@
 										<?php echo $ads['234x60'] ?>
 									</div>
 									<?php endif; ?>
-							 		<h6>Exchange rates taken by <a href="https://www.blockr.io">Blockr.io</a> are updated every 10 minutes</h6>
+							 		<h6>Exchange rates taken by Poloniex are updated every 10 minutes</h6>
 							 		<h6>Everything else are (almost) in real time. Profit formula is: <i>( time / (difficulty * 2^32) / hashrate ) * reward</i></h6>
+							 		<h6>Unit are 1MH/s for Scrypt and 1GH/s for SHA256</h6>
 								</div>
 							</div><!-- /.profit box -->
 							<?php endif; ?>

@@ -119,6 +119,7 @@ class Util_model extends CI_Model {
 	// Get the live stats from miner
 	public function getStats()
 	{
+		$date = new DateTime();
 		$a = new stdClass();
 		$altcoinData = $this->getAltcoinsRates();
 		$btcData = $this->getBtcUsdRates();
@@ -193,6 +194,8 @@ class Util_model extends CI_Model {
 		$a->profits = json_decode($this->redis->get('coins_profitability'));
 		
 		$a->livestat = true;
+
+		$a->timestamp = $date->getTimestamp();
 		
 		// Publish stats to Redis
 		$this->redis->publish("minera-channel", json_encode($a));
@@ -443,12 +446,14 @@ class Util_model extends CI_Model {
 					if ($this->_minerdSoftware == "cgdmaxlzeus")
 					{
 						$return['devices'][$name]['shares'] = ($device->{'Diff1 Work'}) ? round(($device->{'Diff1 Work'}*71582788/1000/1000),0) : 0;
-						$return['devices'][$name]['hashrate'] = ($device->{'KHS av'}*1000);
+						if (isset($device->{'KHS av'}))	$return['devices'][$name]['hashrate'] = ($device->{'KHS av'}*1000);
+						else $return['devices'][$name]['hashrate'] = ($device->{'MHS av'}*1000*1000);
 					}
 					else
 					{
 						$return['devices'][$name]['shares'] = ($device->{'Diff1 Work'}) ? round(($device->{'Diff1 Work'}*71582788/1000),0) : 0;	
-						$return['devices'][$name]['hashrate'] = ($device->{'MHS av'}*1000*1000);
+						if (isset($device->{'KHS av'}))	$return['devices'][$name]['hashrate'] = ($device->{'KHS av'}*1000);
+						else $return['devices'][$name]['hashrate'] = ($device->{'MHS av'}*1000*1000);
 					}
 					$return['devices'][$name]['last_share'] = $device->{'Last Share Time'};
 					$return['devices'][$name]['serial'] = (isset($device->Serial)) ? $device->Serial : false;;
@@ -901,7 +906,9 @@ class Util_model extends CI_Model {
 		$this->setPools($newPools);
 		
 		$conf = json_decode($this->redis->get("minerd_json_settings"));
-		$conf->pools = $this->parsePools($this->redis->get("minerd_software"), json_decode(json_encode($newPools), true));
+		$conf->pools = [];
+		$currentPools = $this->parsePools($this->redis->get("minerd_software"), json_decode(json_encode($newPools), true));
+		if ($currentPools) $conf->pools = $currentPools;
 
 		$jsonConfRedis = json_encode($conf);
 		$jsonConfFile = json_encode($conf, JSON_PRETTY_PRINT);
@@ -1413,11 +1420,8 @@ class Util_model extends CI_Model {
 		
 		if ($network) list($ip, $port) = explode(":", $network);	
 
-		if(!($fp = @fsockopen($ip, $port, $errno, $errstr, 1)))
-		{
-				return false;
-		}		
-		
+		if (!($fp = @fsockopen($ip, $port, $errno, $errstr, 1))) return false;
+
 		if (is_resource($fp)) fclose($fp);
 		
 		return true;
@@ -2027,29 +2031,30 @@ class Util_model extends CI_Model {
 		}
 	}
 
-	function getMacLinux() {
-		exec('netstat -ie', $result);
-		if(is_array($result)) {
-			$iface = array();
-			foreach($result as $key => $line) {
-				if($key > 0) {
-					if (preg_match('/\s*(([0-9A-Fa-f]{1,2}[:-]){5}([0-9A-Fa-f]{1,2}))\s*/', $line, $matches)) {
-						//var_dump($matches);
-						$iface[] = array('mac' => $matches[1]);
-					}
-				}
-		    }
-			return $iface[0]['mac'];
-		} else {
-	    	return false;
-		}
+	public function getMacLinux() {
+		exec('cat /sys/class/net/eth0/address', $result);
+
+		if(!isset($result[0])) return false;
+
+		return $result[0];
 	}
 	
 	// Generate a uniq hash ID for Minera System ID
 	public function generateMineraId()
 	{
-		$mac = ($this->getMacLinux()) ? $this->getMacLinux() : substr(str_shuffle("0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"), 0, 12);
+		$mac = $this->getMacLinux();
+		if (!$mac) {
+			$mac = $this->redis->get("mac");
+			if (!$mac) {
+				$mac = substr(str_shuffle("0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"), 0, 12);
+				$this->redis->set("mac", $mac);
+			}
+		} else {
+			$this->redis->del("mac");
+		}
+
 		$id = substr(strtolower(preg_replace('/[0-9_\/]+/','',base64_encode(sha1(trim($mac))))),0,12);
+
 		$this->redis->set("minera_system_id", $id);
 		return $id;
 	}
@@ -2450,7 +2455,7 @@ class Util_model extends CI_Model {
 	}
 	
 	public function getRandomStarName() {
-		$array = array("Andromeda", "Antlia", "Apus", "Aquarius", "Aquila", "Ara", "Aries", "Auriga", "Boötes", "Caelum", "Camelopardalis", "Cancer", "Canes Venatici", "Canis Major", "Canis Minor", "Capricornus", "Carina", "Cassiopeia", "Centaurus", "Cepheus", "Cetus", "Chamaeleon", "Circinus", "Columba", "Coma Berenices", "Corona Austrina", "Corona Borealis", "Corvus", "Crater", "Crux", "Cygnus", "Delphinus", "Dorado", "Draco", "Equuleus", "Eridanus", "Fornax", "Gemini", "Grus", "Hercules", "Horologium", "Hydra", "Hydrus", "Indus", "Lacerta", "Leo", "Leo Minor", "Lepus", "Libra", "Lupus", "Lynx", "Lyra", "Mensa", "Microscopium", "Monoceros", "Musca", "Norma", "Octans", "Ophiuchus", "Orion", "Pavo", "Pegasus", "Perseus", "Phoenix", "Pictor", "Pisces", "Piscis Austrinus", "Puppis", "Pyxis", "Reticulum", "Sagitta", "Sagittarius", "Scorpius", "Sculptor", "Scutum", "Serpens", "Sextans", "Taurus", "Telescopium", "Triangulum", "Triangulum Australe", "Tucana", "Ursa Major", "Ursa Minor", "Vela", "Virgo", "Volans", "Vulpecula");
+		$array = array("Andromeda", "Antlia", "Apus", "Aquarius", "Aquila", "Ara", "Aries", "Auriga", "Caelum", "Camelopardalis", "Cancer", "Canes Venatici", "Canis Major", "Canis Minor", "Capricornus", "Carina", "Cassiopeia", "Centaurus", "Cepheus", "Cetus", "Chamaeleon", "Circinus", "Columba", "Coma Berenices", "Corona Austrina", "Corona Borealis", "Corvus", "Crater", "Crux", "Cygnus", "Delphinus", "Dorado", "Draco", "Equuleus", "Eridanus", "Fornax", "Gemini", "Grus", "Hercules", "Horologium", "Hydra", "Hydrus", "Indus", "Lacerta", "Leo", "Leo Minor", "Lepus", "Libra", "Lupus", "Lynx", "Lyra", "Mensa", "Microscopium", "Monoceros", "Musca", "Norma", "Octans", "Ophiuchus", "Orion", "Pavo", "Pegasus", "Perseus", "Phoenix", "Pictor", "Pisces", "Piscis Austrinus", "Puppis", "Pyxis", "Reticulum", "Sagitta", "Sagittarius", "Scorpius", "Sculptor", "Scutum", "Serpens", "Sextans", "Taurus", "Telescopium", "Triangulum", "Triangulum Australe", "Tucana", "Ursa Major", "Ursa Minor", "Vela", "Virgo", "Volans", "Vulpecula");
 		
 		return $array[array_rand($array)];
 	}

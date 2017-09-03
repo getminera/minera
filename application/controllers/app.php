@@ -42,6 +42,7 @@ class App extends Main_Controller {
 		if (!$this->redis->command("EXISTS dashboard_box_scrypt_earnings")) $this->redis->set("dashboard_box_scrypt_earnings", 1);
 		if (!$this->redis->command("EXISTS dashboard_box_log")) $this->redis->set("dashboard_box_log", 1);
 		
+		$data['minera_system_id'] = $mineraSystemId;
 		$data['minera_version'] = $this->util_model->currentVersion(true);
 		$data['adsFree'] = $this->redis->get('is_ads_free');
 		$data['env'] = $this->config->item('ENV');
@@ -133,6 +134,7 @@ class App extends Main_Controller {
 		$data['adsFree'] = $this->redis->get('is_ads_free');
 		$data['env'] = $this->config->item('ENV');
 		$data['ads'] = $this->util_model->getAds();
+		$data['mineraSystemId'] = $this->redis->get("minera_system_id");
 		
 		$this->load->view('include/header', $data);
 		$this->load->view('include/sidebar', $data);
@@ -167,6 +169,7 @@ class App extends Main_Controller {
 		$data['adsFree'] = $this->redis->get('is_ads_free');
 		$data['env'] = $this->config->item('ENV');
 		$data['ads'] = $this->util_model->getAds();
+		$data['mineraSystemId'] = $this->redis->get("minera_system_id");
 		
 		$this->load->view('include/header', $data);
 		$this->load->view('include/sidebar', $data);
@@ -321,6 +324,7 @@ class App extends Main_Controller {
 		
 		$extramessages = false;
 		$dataObj = new stdClass();
+		$mineraSystemId = $this->util_model->generateMineraId();
 		
 		if ($this->input->post('save_settings'))
 		{
@@ -685,7 +689,6 @@ class App extends Main_Controller {
 			
 			// Anonymous stats
 			$anonymousStats = false;
-			$mineraSystemId = $this->util_model->generateMineraId();
 			if ($this->input->post('anonymous_stats'))
 			{
 				$anonymousStats = $this->input->post('anonymous_stats');

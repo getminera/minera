@@ -40,6 +40,12 @@ CGMINER_PATH="$SOURCE_PATH/cgminer"
 CGMINER_CONFIG="--enable-avalon2 --enable-bflsc --enable-bitforce --enable-bitfury --enable-drillbit --enable-hashfast --enable-icarus --enable-klondike --enable-modminer"
 CGMINER_BINARY="cgminer"
 CGMINER_MINERA_BINARY="cgminer"
+
+CCMINER_REPO="https://github.com/tpruvot/ccminer.git"
+CCMINER_PATH="$SOURCE_PATH/ccminer"
+CCMINER_CONFIG=""
+CCMINER_BINARY="ccminer"
+CCMINER_MINERA_BINARY="ccminer"
  
 function buildMiner {
 	if [[ $LINK_ONLY -eq 0 ]]; then
@@ -108,6 +114,14 @@ if [[ -d "$SOURCE_PATH" ]]; then
 			BUILD_BINARY=$CGMINER_BINARY
 			MINERA_BINARY=$CGMINER_MINERA_BINARY
 			BUILD_OK=1
+		elif [[ $OPT = "ccminer" ]]; then
+			echo "WARNING! You have to manually install CUDA libraries before you can build Ccminer"
+			BUILD_REPO=$CCMINER_REPO
+			BUILD_PATH=$CCMINER_PATH
+			BUILD_CONFIG=$CCMINER_CONFIG
+			BUILD_BINARY=$CCMINER_BINARY
+			MINERA_BINARY=$CCMINER_MINERA_BINARY
+			BUILD_OK=1
 		else
 			echo "Option not recognized = $OPT"
 			BUILD_OK=0
@@ -127,6 +141,7 @@ if [[ -d "$SOURCE_PATH" ]]; then
 			echo "  cpuminer          cpuminer GC3355 fork"
 			echo "  bfgminer          bfgminer official"
 			echo "  cgminer-dmaxl     cgminer dmaxl fork (gridseed and zeus support)"
+			echo "  ccminer           ccminer official"
 			echo "  all               build all the above"
 			echo ""
 	fi
