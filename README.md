@@ -156,7 +156,7 @@ You can use this script to install everything you need, (it's good for any kind 
 Skip this step and continue below if you have a web server with PHP just installed.
 
 ```
-sudo apt-get install -y lighttpd php5-cgi
+sudo apt-get install -y lighttpd php7.0-cgi
 sudo lighty-enable-mod fastcgi
 sudo lighty-enable-mod fastcgi-php
 sudo service lighttpd force-reload
@@ -165,7 +165,7 @@ sudo service lighttpd force-reload
 When your web server is ready you can install Minera:
 
 ```
-sudo apt-get install -y redis-server git screen php5-cli php5-curl
+sudo apt-get install -y redis-server git screen php7.0-cli php7.0-curl
 cd /var/www
 sudo git clone https://github.com/getminera/minera
 cd minera
