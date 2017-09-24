@@ -1128,7 +1128,7 @@ class Util_model extends CI_Model {
 	
 	public function getAvgProfitability()
 	{
-		$profits = json_decode($this->redis->get('coins_profitability'));
+		$profits = json_decode($this->redis->get('coins_profitability'), true, 512, JSON_BIGINT_AS_STRING);
 		$i = 1; $sum = 0; $ltc = 0;
 		
 		if (count($profits) > 0) {
