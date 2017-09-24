@@ -73,6 +73,9 @@ body > .header { position: fixed !important; }
 .mb50 { margin-bottom: 50px; }
 
 .mr5 { margin-right: 5px; }
+.ml5 { margin-left: 5px; }
+.mr10 { margin-right: 10px; }
+.ml10 { margin-left: 10px; }
 .mr10 { margin-right: 10px; }
 
 .p10 { padding: 10px; }
@@ -80,6 +83,10 @@ body > .header { position: fixed !important; }
 .pr10 { padding-rigth: 10px; }
 
 .ml10 { margin-left: 10px; }
+
+.fs10 { font-size: 10px; }
+.fs12 { font-size: 12px; }
+.fs72 { font-size: 72px; }
 
 .lockscreen {background: url(../img/bg-dark.jpg) repeat center center fixed !important;}
 .lockscreen-link, .lockscreen-name { color: #fff;}

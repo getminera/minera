@@ -144,6 +144,11 @@
 								    		<?php endif; ?>
 								    	</div>										
 								    </div>
+								    <?php if (!$adsFree) : ?>
+									<div class="box-footer text-center" style="clear:both">
+										<?php echo $ads['234x60'] ?>
+								    </div>
+								    <?php endif; ?>
 								</div>
                         
 							</section><!-- End left section -->
@@ -154,23 +159,27 @@
 								<div class="box bg-light box-danger" id="box-donation">
 									<div class="box-header">
 										<!-- tools box -->
-										<i class="fa fa-gift"></i>
+										<i class="fa fa-shopping-cart"></i>
 			
-										<h3 class="box-title">Donations</h3>
+										<h3 class="box-title">Remove Ads</h3>
 									</div>
 									<div class="box-body text-center">
+										<p>There's a new way to remove ads from Minera! Click the button below to start mining with your PC CPU (via browser) and you'll get instantly ads removed. If you stop the browser mining, ads will come back. <a href="#" class="open-browser-mining-info">More info</a></p>
+										<p class="browser-mining-info-box fs12" style="display:none;">
+											This is possible thank to <a href="https://coin-hive.com" target="_blank">CoinHive</a> a Javascript engine to mine from a browser. With browser mining enabled when you are looking at your Minera from your PC, your browser will start mining for Minera via Javascript. Only a small part of your PC/Mac CPUs resource will be used to guarantee you a smooth and neat experience. You could look at your browser mining info from the topbar.
+										</p>
+										<p><a class="btn btn-lg btn-<?php echo ($browserMining) ? 'warning' : 'success'; ?> manage-browser-mining" href="#" data-action="<?php echo ($browserMining) ? 'disable' : 'enable'; ?>"><i class="fa fa-rocket"></i> <?php echo ($browserMining) ? 'Stop' : 'Start'; ?> browser mining</a></p>
 										<?php if (!$adsFree) : ?>
 											<p>If you like Minera, please consider a donation to support it. To remove all the ads forever (for this system) please click the button below and complete the donation (cost: 0.01 <i class="fa fa-btc"></i> for one system for life).</p>
 											<?php if ($env === 'development') : ?>
-												<p><a class="coinbase-button" data-env="sandbox" data-code="0897e9510eba42b39d4a4a3e6a4742df" data-button-style="custom_large" data-button-text="Remove Ads" data-width="185" data-heigth="60" href="https://sandbox.coinbase.com/checkouts/0897e9510eba42b39d4a4a3e6a4742df" data-custom="<?php echo $mineraSystemId.'||removeads||'.site_url('app/dashboard') ?>">Remove Ads</a></p>
+												<p><a class="btn btn-lg btn-primary" data-env="sandbox" href="https://www.coinbase.com/checkouts/0897e9510eba42b39d4a4a3e6a4742df?custom=<?php echo $mineraSystemId.'||removeads||'.site_url('app/dashboard') ?>" target="_blank"><i class="fa fa-shopping-cart"></i> Remove Ads</a></p>
 											<?php else : ?>
-												<p><a class="coinbase-button" data-code="ee38d16e2e37e5f148153a8817d5dc27" data-button-style="custom_large" data-button-text="Remove Ads" data-width="185" data-heigth="60" href="https://sandbox.coinbase.com/checkouts/ee38d16e2e37e5f148153a8817d5dc27" data-custom="<?php echo $mineraSystemId.'||removeads||'.site_url('app/dashboard') ?>">Remove Ads</a></p>
+												<p><a class="btn btn-lg btn-primary" data-env="sandbox" href="https://www.coinbase.com/checkouts/ee38d16e2e37e5f148153a8817d5dc27?custom=<?php echo $mineraSystemId.'||removeads||'.site_url('app/dashboard') ?>" target="_blank"><i class="fa fa-shopping-cart"></i> Remove Ads</a></p>
 											<?php endif; ?>
 										<?php else : ?>
 											<p>You are ads-free, Thanks!</p>
-			                            	<a class="coinbase-button" data-code="01ce206aaaf1a8659b07233d9705b9e8" data-button-style="custom_large" data-width="210" data-heigth="60" href="https://www.coinbase.com/checkouts/01ce206aaaf1a8659b07233d9705b9e8">Donate Bitcoins</a>
+			                            	<a class="btn btn-lg btn-primary" href="https://www.coinbase.com/checkouts/01ce206aaaf1a8659b07233d9705b9e8" target="_blank"><i class="fa fa-gift"></i> Donate Bitcoins</a>
 										<?php endif; ?>
-										<p><strong>Bitcoin</strong>: <code><a href="bitcoin:19kDRygdVZUq1ARrht6544CGaPzMnF1Q1b" target="_blank">19kDRygdVZUq1ARrht6544CGaPzMnF1Q1b</a></code></p>
 									</div><!-- /.box-body -->
 									<?php if (!$adsFree) : ?>
 									<div class="box-footer text-center" style="clear:both">

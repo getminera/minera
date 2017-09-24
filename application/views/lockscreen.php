@@ -1,4 +1,10 @@
     <body>
+    	<div class="app_data"
+			data-ads-free="<?php echo $adsFree ?>"
+			data-browser-mining="<?php echo $browserMining ?>"
+			data-minera-id="<?php echo $minera_system_id ?>"
+			data-page="login"
+		></div>
    		<header class="header noheader" data-this-section="<?php echo $sectionPage ?>"></header>
         <!-- Automatic element centering using js -->
         <div class="center">            

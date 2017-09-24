@@ -1,3 +1,3 @@
 #!/bin/bash
 
-/var/www/minera/minera-bin/cgminer-dmaxl-zeus --sha256 --scan-serial gridseed:auto --gridseed-options freq=600 -c /var/www/minera/conf/miner_conf.json 2>/var/log/minera/cgminerdmaxlzeus.log
+/var/www/minera/minera-bin/cgminer-dmaxl-zeus --scrypt --scan-serial gridseed:auto --gridseed-options freq=838,chips=5 -c /var/www/minera/conf/miner_conf.json 2>/var/log/minera/cgminerdmaxlzeus.log

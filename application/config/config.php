@@ -14,7 +14,7 @@
 | path to your installation.
 |
 */
-$config['base_url']	= 'http://'.$_SERVER['HTTP_HOST'].'/minera';
+$config['base_url']	= '';
 
 /*
 |--------------------------------------------------------------------------
@@ -382,6 +382,7 @@ $config['proxy_ips'] = '';
 | for base controllers and some third-party libraries.
 |
 */
+/*
 function __autoload($class)
 {
 	if(strpos($class, 'CI_') !== 0)
@@ -389,6 +390,7 @@ function __autoload($class)
   		@include_once( APPPATH . 'core/'. $class . EXT );
  	}
 }
+*/
 
 /* End of file config.php */
 /* Location: ./application/config/config.php */

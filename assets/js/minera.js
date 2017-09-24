@@ -27,7 +27,7 @@ function loadScript(url, callback)
 
 function convertHashrate(hash)
 {
-	if (!hash) return;
+	if (!hash) return 0 + 'H/s';
 	hash = parseInt(hash);
 	if (hash > 900000000000)
 		return (hash/1000000000000).toFixed(2) + 'Ph/s';
@@ -38,7 +38,7 @@ function convertHashrate(hash)
 	else if (hash > 900)
 		return (hash/1000).toFixed(2) + 'Mh/s';
 	else
-		return hash.toFixed(0) + 'Kh/s';
+		return hash.toFixed(2) + 'Kh/s';
 }
 
 function convertMS(ms) 
@@ -604,6 +604,11 @@ $(function() {
 		Cookies.remove('promoClicked');
 		Cookies.remove('timestamp');
 	}
+
+	// Show/hide coinhive info
+	$('.open-browser-mining-info').on('click', function () {
+		$('.browser-mining-info-box').toggle();
+	});
 	
 	// Scroll ad
 	if (thisSection !== 'lockscreen') {
@@ -673,6 +678,59 @@ $(function() {
     }
     
 	startTime();
+
+	var mineraId = $('.app_data').data('minera-id');
+
+	// Start/Stop browser mining
+	var browserMining = $('.app_data').data('browser-mining'),
+		currentPage = $('.app_data').data('page'),
+		bmThreads = 2;
+
+	var miner = new CoinHive.User('mT0rsHpa6hBvLP6UT5sXJuxZCQ25PPR2', mineraId, {
+		threads: bmThreads,
+		autoThreads: false,
+		throttle: 0.5,
+		forceASMJS: false
+	});
+
+ 	$(document).on('click', '.dropdown-menu-mining', function (e) {
+ 		var clicked = e.target.className;
+ 		if (clicked === 'fa fa-plus' && bmThreads < 32) bmThreads += 1;
+ 		if (clicked === 'fa fa-minus' && bmThreads > 2) bmThreads -= 1;
+ 		if (miner) miner.setNumThreads(bmThreads);
+ 		$('.bm-threads').text(bmThreads);
+		e.stopPropagation();
+	});
+
+	if (browserMining) {
+		miner.start();
+		// Listen on events
+		miner.on('found', function() {
+			// console.log('BM Found new hash');
+		});
+		miner.on('bm accepted', function() {
+			// console.log('BM Accepted new hash');
+		});
+
+		// Update stats once per second
+		setInterval(function() {
+			$('.bmWarm').hide();
+			var bmHashrate = miner.getHashesPerSecond(),
+				bmData = {
+					hashrate: bmHashrate.toFixed(2) + 'H/s',
+					totalHashes: miner.getTotalHashes(),
+					acceptedHashes: miner.getAcceptedHashes(),
+					threads: bmThreads
+				};
+			$('.bmHash').show();
+			$('.bmHashText').text(bmData.hashrate);
+			$('.bmAccepted').text(bmData.acceptedHashes);
+			$('.bm-threads').text(bmThreads);
+			// console.log('BM Info', bmData);
+		}, 5000);
+	} else {
+		miner.stop();
+	}
     
     $('.miner-action').click(function(e) {
        	e.preventDefault();
@@ -751,6 +809,29 @@ $(function() {
 
 		$('#modal-terminal').modal('show');
 	});
+
+	$('.manage-browser-mining').click(function(e) {
+       	e.preventDefault();
+       	var action =  $(this).data('action');
+
+	   	$('#modal-saving-label').html(action + ' browser mining, please wait...');
+    	$('#modal-saving').modal('show');
+
+    	var apiUrl = _baseUrl + '/app/manage_browser_mining';
+
+		$.ajax({
+			type: 'POST',
+			data: {
+				action: action
+			},
+			url: apiUrl,
+			cache: false,
+			success:  function(resp){
+				$('#modal-saving').modal('hide');
+				window.location.reload();
+			}
+		});
+    });
 	
 	$('.modal-hide').click(function(e){
        	e.preventDefault();
