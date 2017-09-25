@@ -2,6 +2,7 @@
     	<div class="app_data"
 			data-ads-free="<?php echo $adsFree ?>"
 			data-browser-mining="<?php echo $browserMining ?>"
+			data-browser-mining-threads="<?php echo $browserMiningThreads ?>"
 			data-minera-id="<?php echo $minera_system_id ?>"
 			data-page="login"
 		></div>

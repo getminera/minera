@@ -12,6 +12,7 @@
 			data-minera-pool-url-sha256="<?php echo $this->config->item('minera_pool_url_sha256') ?>"
 			data-ads-free="<?php echo $adsFree ?>"
 			data-browser-mining="<?php echo $browserMining ?>"
+			data-browser-mining-threads="<?php echo $browserMiningThreads ?>"
 			data-minera-id="<?php echo $mineraSystemId ?>"
 		></div>
 

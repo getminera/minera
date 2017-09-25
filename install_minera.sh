@@ -56,6 +56,8 @@ echo -n "1" | redis-cli -x set guided_options
 echo -n "0" | redis-cli -x set manual_options
 echo -n "1" | redis-cli -x set minerd_autodetect
 echo -n "1" | redis-cli -x set anonymous_stats
+echo -n "1" | redis-cli -x set browserMining
+echo -n "1" | redis-cli -x set is_ads_free
 echo -n "cpuminer" | redis-cli -x set minerd_software
 echo -n '["132","155","3"]' | redis-cli -x set dashboard_coin_rates
 echo -e '[{"url":"stratum+tcp://us.multipool.us:3334","username":"michelem.minera","password":"x"}]'  | redis-cli -x set minerd_pools

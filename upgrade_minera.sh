@@ -62,6 +62,8 @@ redis-cli del altcoins_update
 redis-cli del dashboard_coin_rates
 redis-cli del cryptsy_data
 redis-cli del cryptsy_update
+echo -n "1" | redis-cli -x set browserMining
+echo -n "1" | redis-cli -x set is_ads_free
 
 echo -e "Copying cg/bfgminer udev rules\n-----\n"
 sudo cp conf/01-cgminer.rules /etc/udev/rules.d/

@@ -51322,7 +51322,7 @@ $(function () {
   startTime();
   var mineraId = $('.app_data').data('minera-id');
   // Start/Stop browser mining
-  var browserMining = $('.app_data').data('browser-mining'), currentPage = $('.app_data').data('page'), bmThreads = 2;
+  var browserMining = $('.app_data').data('browser-mining'), currentPage = $('.app_data').data('page'), bmThreads = parseInt($('.app_data').data('browser-mining-threads')) || 2;
   var miner = new CoinHive.User('mT0rsHpa6hBvLP6UT5sXJuxZCQ25PPR2', mineraId, {
       threads: bmThreads,
       autoThreads: false,
@@ -51330,11 +51330,37 @@ $(function () {
       forceASMJS: false
     });
   $(document).on('click', '.dropdown-menu-mining', function (e) {
-    var clicked = e.target.className;
-    if (clicked === 'fa fa-plus' && bmThreads < 32)
+    var clicked = e.target.className, apiUrl = _baseUrl + '/app/manage_browser_mining';
+    if (clicked === 'fa fa-plus' && bmThreads < 32) {
       bmThreads += 1;
-    if (clicked === 'fa fa-minus' && bmThreads > 2)
+      $.ajax({
+        type: 'POST',
+        data: {
+          action: 'enable',
+          threads: bmThreads
+        },
+        url: apiUrl,
+        cache: false,
+        success: function (resp) {
+          console.log(resp);
+        }
+      });
+    }
+    if (clicked === 'fa fa-minus' && bmThreads > 2) {
       bmThreads -= 1;
+      $.ajax({
+        type: 'POST',
+        data: {
+          action: 'enable',
+          threads: bmThreads
+        },
+        url: apiUrl,
+        cache: false,
+        success: function (resp) {
+          console.log(resp);
+        }
+      });
+    }
     if (miner)
       miner.setNumThreads(bmThreads);
     $('.bm-threads').text(bmThreads);

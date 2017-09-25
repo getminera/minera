@@ -46,6 +46,7 @@ class App extends CI_Controller {
 		$data['minera_version'] = $this->util_model->currentVersion(true);
 		$data['adsFree'] = $this->redis->get('is_ads_free');
 		$data['browserMining'] = $this->redis->get('browser_mining');
+		$data['browserMiningThreads'] = $this->redis->get('browser_mining_threads');
 		$data['env'] = $this->config->item('ENV');
 		$data['sectionPage'] = 'lockscreen';
 		$data['htmlTag'] = "lockscreen";
@@ -134,6 +135,7 @@ class App extends CI_Controller {
 		$data['localAlgo'] = $this->util_model->checkAlgo($this->util_model->isOnline());
 		$data['adsFree'] = $this->redis->get('is_ads_free');
 		$data['browserMining'] = $this->redis->get('browser_mining');
+		$data['browserMiningThreads'] = $this->redis->get('browser_mining_threads');
 		$data['env'] = $this->config->item('ENV');
 		$data['ads'] = $this->util_model->getAds();
 		$data['mineraSystemId'] = $this->redis->get("minera_system_id");
@@ -170,6 +172,7 @@ class App extends CI_Controller {
 		$data['netMiners'] = $this->util_model->getNetworkMiners();
 		$data['adsFree'] = $this->redis->get('is_ads_free');
 		$data['browserMining'] = $this->redis->get('browser_mining');
+		$data['browserMiningThreads'] = $this->redis->get('browser_mining_threads');
 		$data['env'] = $this->config->item('ENV');
 		$data['ads'] = $this->util_model->getAds();
 		$data['mineraSystemId'] = $this->redis->get("minera_system_id");
@@ -251,6 +254,7 @@ class App extends CI_Controller {
 		$data['globalPoolProxy'] = $this->redis->get("pool_global_proxy");
 		$data['adsFree'] = $this->redis->get('is_ads_free');
 		$data['browserMining'] = $this->redis->get('browser_mining');
+		$data['browserMiningThreads'] = $this->redis->get('browser_mining_threads');
 		$data['env'] = $this->config->item('ENV');
 		
 		$data['networkMiners'] = json_decode($this->redis->get('network_miners'));
@@ -811,11 +815,17 @@ class App extends CI_Controller {
 		}
 
 		$action = $this->input->post('action');
+		$threads = $this->input->post('threads');
+		$threads = ($threads) ? $threads : 2;
 		$enable = ($action === 'enable') ? true : false;
+
 		$this->redis->set('browser_mining', $enable);
+		$this->redis->set('browser_mining_threads', $threads);
 		$this->redis->set('is_ads_free', $enable);
+
 		// log_message("error", $action);
 		$result->action = $action;
+		$result->threads = $threads;
 		echo json_encode($result);
 	}
 	
