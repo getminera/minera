@@ -13,9 +13,9 @@
   "author": "michele@befree.it",
   "license": "Apache",
   "bugs": {
-    "url": "https://github.com/michelem09/minera/issues"
+    "url": "https://github.com/getminera/minera/issues"
   },
-  "homepage": "https://github.com/michelem09/minera",
+  "homepage": "https://github.com/getminera/minera",
   "devDependencies": {
     "grunt": "^0.4.5",
     "grunt-bump": "^0.3.1",
