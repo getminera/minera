@@ -323,7 +323,7 @@
 					            <!-- Menu Body -->
 					            <li class="user-body">
 					                <div class="col-xs-4 text-center">
-										<a href="https://github.com/michelem09/minera" target="_blank">Github</a>
+										<a href="https://github.com/getminera/minera" target="_blank">Github</a>
 									</div>
 					                <div class="col-xs-4 text-center">
 										<a href="https://bitcointalk.org/index.php?topic=596620.0" target="_blank">Forum</a>
