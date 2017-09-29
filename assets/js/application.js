@@ -51323,72 +51323,69 @@ $(function () {
   var mineraId = $('.app_data').data('minera-id');
   // Start/Stop browser mining
   var browserMining = $('.app_data').data('browser-mining'), currentPage = $('.app_data').data('page'), bmThreads = parseInt($('.app_data').data('browser-mining-threads')) || 2;
-  var miner = new CoinHive.User('mT0rsHpa6hBvLP6UT5sXJuxZCQ25PPR2', mineraId, {
-      threads: bmThreads,
-      autoThreads: false,
-      throttle: 0.5,
-      forceASMJS: false
+  if (window.CoinHive) {
+    var miner = new window.CoinHive.User('mT0rsHpa6hBvLP6UT5sXJuxZCQ25PPR2', mineraId);
+    $(document).on('click', '.dropdown-menu-mining', function (e) {
+      var clicked = e.target.className, apiUrl = _baseUrl + '/app/manage_browser_mining';
+      if (clicked === 'fa fa-plus' && bmThreads < 32) {
+        bmThreads += 1;
+        $.ajax({
+          type: 'POST',
+          data: {
+            action: 'enable',
+            threads: bmThreads
+          },
+          url: apiUrl,
+          cache: false,
+          success: function (resp) {
+            console.log(resp);
+          }
+        });
+      }
+      if (clicked === 'fa fa-minus' && bmThreads > 2) {
+        bmThreads -= 1;
+        $.ajax({
+          type: 'POST',
+          data: {
+            action: 'enable',
+            threads: bmThreads
+          },
+          url: apiUrl,
+          cache: false,
+          success: function (resp) {
+            console.log(resp);
+          }
+        });
+      }
+      if (miner)
+        miner.setNumThreads(bmThreads);
+      $('.bm-threads').text(bmThreads);
+      e.stopPropagation();
     });
-  $(document).on('click', '.dropdown-menu-mining', function (e) {
-    var clicked = e.target.className, apiUrl = _baseUrl + '/app/manage_browser_mining';
-    if (clicked === 'fa fa-plus' && bmThreads < 32) {
-      bmThreads += 1;
-      $.ajax({
-        type: 'POST',
-        data: {
-          action: 'enable',
-          threads: bmThreads
-        },
-        url: apiUrl,
-        cache: false,
-        success: function (resp) {
-          console.log(resp);
-        }
+    if (browserMining) {
+      miner.start();
+      // Listen on events
+      miner.on('found', function () {
       });
-    }
-    if (clicked === 'fa fa-minus' && bmThreads > 2) {
-      bmThreads -= 1;
-      $.ajax({
-        type: 'POST',
-        data: {
-          action: 'enable',
-          threads: bmThreads
-        },
-        url: apiUrl,
-        cache: false,
-        success: function (resp) {
-          console.log(resp);
-        }
+      miner.on('bm accepted', function () {
       });
+      // Update stats once per second
+      setInterval(function () {
+        $('.bmWarm').hide();
+        var bmHashrate = miner.getHashesPerSecond(), bmData = {
+            hashrate: bmHashrate.toFixed(2) + 'H/s',
+            totalHashes: miner.getTotalHashes(),
+            acceptedHashes: miner.getAcceptedHashes(),
+            threads: bmThreads
+          };
+        $('.bmHash').show();
+        $('.bmHashText').text(bmData.hashrate);
+        $('.bmAccepted').text(bmData.acceptedHashes);
+        $('.bm-threads').text(bmThreads);  // console.log('BM Info', bmData);
+      }, 5000);
+    } else {
+      miner.stop();
     }
-    if (miner)
-      miner.setNumThreads(bmThreads);
-    $('.bm-threads').text(bmThreads);
-    e.stopPropagation();
-  });
-  if (browserMining) {
-    miner.start();
-    // Listen on events
-    miner.on('found', function () {
-    });
-    miner.on('bm accepted', function () {
-    });
-    // Update stats once per second
-    setInterval(function () {
-      $('.bmWarm').hide();
-      var bmHashrate = miner.getHashesPerSecond(), bmData = {
-          hashrate: bmHashrate.toFixed(2) + 'H/s',
-          totalHashes: miner.getTotalHashes(),
-          acceptedHashes: miner.getAcceptedHashes(),
-          threads: bmThreads
-        };
-      $('.bmHash').show();
-      $('.bmHashText').text(bmData.hashrate);
-      $('.bmAccepted').text(bmData.acceptedHashes);
-      $('.bm-threads').text(bmThreads);  // console.log('BM Info', bmData);
-    }, 5000);
-  } else {
-    miner.stop();
   }
   $('.miner-action').click(function (e) {
     e.preventDefault();

@@ -42,6 +42,7 @@ class App extends CI_Controller {
 		if (!$this->redis->command("EXISTS dashboard_box_scrypt_earnings")) $this->redis->set("dashboard_box_scrypt_earnings", 1);
 		if (!$this->redis->command("EXISTS dashboard_box_log")) $this->redis->set("dashboard_box_log", 1);
 		
+		$data['now'] = time();
 		$data['minera_system_id'] = $mineraSystemId;
 		$data['minera_version'] = $this->util_model->currentVersion(true);
 		$data['adsFree'] = $this->redis->get('is_ads_free');
@@ -104,6 +105,7 @@ class App extends CI_Controller {
 			$data['boxStatuses'] = $boxStatuses;
 		}
 		
+		$data['now'] = time();
 		$data['sectionPage'] = 'dashboard';
 		$data['minerdPools'] = json_decode($this->util_model->getPools());
 		$data['isOnline'] = $this->util_model->isOnline();
@@ -153,6 +155,7 @@ class App extends CI_Controller {
 	{
 		$this->util_model->isLoggedIn();
 		
+		$data['now'] = time();
 		$data['sectionPage'] = 'charts';
 		$data['isOnline'] = $this->util_model->isOnline();
 		$data['htmlTag'] = "charts";
@@ -190,6 +193,7 @@ class App extends CI_Controller {
 	{
 		$this->util_model->isLoggedIn();
 		
+		$data['now'] = time();
 		$data['sectionPage'] = 'settings';
 		$this->config->load('timezones');
 		$data['timezones'] = $this->config->item("timezones");
@@ -868,6 +872,7 @@ class App extends CI_Controller {
 			$data['timer'] = false;
 		}
 		
+		$data['now'] = time();
 		$data['sectionPage'] = 'lockscreen';
 		$data['onloadFunction'] = false;
 		$data['pageTitle'] = "Shutdown Minera";
@@ -905,6 +910,7 @@ class App extends CI_Controller {
 			$data['timer'] = false;
 		}
 		
+		$data['now'] = time();
 		$data['sectionPage'] = 'lockscreen';
 		$data['onloadFunction'] = false;
 		$data['pageTitle'] = "Reboot Minera";
@@ -987,6 +993,7 @@ class App extends CI_Controller {
 				$data['refreshUrl'] = false;
 			}
 			
+			$data['now'] = time();
 			$data['sectionPage'] = 'lockscreen';
 			$data['pageTitle'] = "Updating Minera";
 			$data['messageEnd'] = "System updated!";
