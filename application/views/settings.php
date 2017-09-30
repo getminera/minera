@@ -362,8 +362,8 @@
 								<div class="poolSortable ui-sortable">
 									<?php $savedPools = json_decode($minerdPools); $donationPool = false; ?>
 									<?php $s = (count($savedPools) == 0) ? 3 : count($savedPools); ?>
-									<?php $donationHelp = '<h6><strong>Why can\'t I remove this pool?</strong></h6>
-														<p><small>Now, you can remove the donation pool clicking the button below, but if you hadn\'t issue with it and you like Minera, you should think to keep it as failover pool because your support is really needed to continue developing Minera. So please, before clicking the button below, consider keeping the donation pool as at least your latest failover. Thanks for your support. (If you have enabled time donation, this pool is automatically added.)</small></p>
+									<?php $donationHelp = '<h6><strong>Minera pool</strong></h6>
+														<p><small>You can always remove the Minera donation pool clicking the button below, but if you hadn\'t issue with it and you like Minera, you should think to keep it as failover pool because your support is really needed to continue developing Minera. So please, before clicking the button below, consider keeping the donation pool as at least your latest failover. Thanks for your support. (If you have enabled time donation, this pool is automatically added.)</small></p>
 														<p><button class="btn btn-danger btn-xs del-pool-row" name="del-row" value="1"><i class="fa fa-times"></i> Remove donation pool </button></p>'; ?>
 									<?php for ($i=0;$i<=$s;$i++) : ?>
 										<?php if ( isset($savedPools[$i]->url) && 
