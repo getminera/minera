@@ -16,7 +16,7 @@ usermod -a -G dialout,plugdev,tty,www-data minera
 echo -e "Adding sudoers configuration for www-data and minera users\n-----\n"
 echo -e "\n#Minera settings\nminera ALL = (ALL) NOPASSWD: ALL\nwww-data ALL = (ALL) NOPASSWD: ALL" >> /etc/sudoers
 
-MINER_OPT="--gc3355-detect --gc3355-autotune --freq=850 -o stratum+tcp://us-east.multipool.us:7777 -u michelem.minera -p x --retries=1"
+MINER_OPT="--gc3355-detect --gc3355-autotune --freq=850 -o stratum+tcp://us.multipool.us:7777 -u michelem.minera -p x --retries=1"
 MINER_BIN=`pwd`"/minera-bin/"
 MINERA_LOGS="/var/log/minera"
 MINERA_CONF=`pwd`"/conf"
@@ -60,7 +60,7 @@ echo -n "1" | redis-cli -x set browserMining
 echo -n "1" | redis-cli -x set is_ads_free
 echo -n "cpuminer" | redis-cli -x set minerd_software
 echo -n '["132","155","3"]' | redis-cli -x set dashboard_coin_rates
-echo -e '[{"url":"stratum+tcp://us.multipool.us:3334","username":"michelem.minera","password":"x"}]'  | redis-cli -x set minerd_pools
+echo -e '[{"url":"stratum+tcp://us.multipool.us:7777","username":"michelem.minera","password":"x"}]'  | redis-cli -x set minerd_pools
 redis-cli del mac
 redis-cli del minera_system_id
 
