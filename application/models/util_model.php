@@ -218,7 +218,7 @@ class Util_model extends CI_Model {
 
 				if ($this->checkNetworkDevice($netMiner->ip, $netMiner->port)) 
 				{
-					$n = $this->getMinerStats($netMiner->ip.":".$netMiner->port);
+					$n = $this->getMinerStats($netMiner->ip.":".$netMiner->port, $netMiner->algo);
 
 					if ($parsed === false)
 						$a[$netMiner->name] = $n;
@@ -238,13 +238,16 @@ class Util_model extends CI_Model {
 	}
 	
 	// Get the specific miner stats
-	public function getMinerStats($network = false)
+	public function getMinerStats($network = false, $algo = false)
 	{
 		$tmpPools = null; $pools = array();
 		
 		if ($this->isOnline($network))
 		{
-			$a = ($network) ? $this->network_miner->callMinerd(false, $network) : $this->miner->callMinerd();
+			$cmd = false;
+			if ($algo == 'Scrypt') $cmd = '{"command":"summary+pools+stats"}';
+
+			$a = ($network) ? $this->network_miner->callMinerd($cmd, $network) : $this->miner->callMinerd();
 
 			if (is_object($a))
 			{
@@ -254,7 +257,7 @@ class Util_model extends CI_Model {
 				else
 				{
 					$devicePoolActives = false;
-					
+
 					// Get the real active pools
 					if (isset($a->devs[0]->DEVS))
 					{
@@ -297,7 +300,7 @@ class Util_model extends CI_Model {
 							} else {
 								$poolActive = ($devicePoolActives && array_key_exists($poolIndex, $devicePoolActives)) ? true : false;
 							}
-														log_message("error", var_export($devicePoolActives, true));
+
 							$newpool = new stdClass();
 							$newpool->priority = $tmpPool->Priority;
 							$newpool->url = $tmpPool->URL;
@@ -426,14 +429,13 @@ class Util_model extends CI_Model {
 				$return['totals']['last_share'] = max($tdlastshares);
 				
 			}
-		}
-		else
 		// CG/BFGminer devices stats
-		{
-			if (isset($stats->devs[0]->DEVS))
-			{
-				foreach ($stats->devs[0]->DEVS as $device)
-				{
+		} else {
+			$antL3 = false;
+			if (isset($stats->stats[0]->STATS[0]) && $stats->stats[0]->STATS[0]->Type == 'Antminer L3+') $antL3 = true;
+
+			if (isset($stats->devs[0]->DEVS)) {
+				foreach ($stats->devs[0]->DEVS as $device) {
 					$d++; $c = 0; $tcfrequency = 0; $tcaccepted = 0; $tcrejected = 0; $tchwerrors = 0; $tcshares = 0; $tchashrate = 0; $tclastshares = array();
 									
 					$name = $device->Name.$device->ID;
@@ -443,14 +445,11 @@ class Util_model extends CI_Model {
 					$return['devices'][$name]['accepted'] = $device->Accepted;
 					$return['devices'][$name]['rejected'] = $device->Rejected;
 					$return['devices'][$name]['hw_errors'] = $device->{'Hardware Errors'};
-					if ($this->_minerdSoftware == "cgdmaxlzeus")
-					{
+					if ($this->_minerdSoftware == "cgdmaxlzeus") {
 						$return['devices'][$name]['shares'] = ($device->{'Diff1 Work'}) ? round(($device->{'Diff1 Work'}*71582788/1000/1000),0) : 0;
 						if (isset($device->{'KHS av'}))	$return['devices'][$name]['hashrate'] = ($device->{'KHS av'}*1000);
 						else $return['devices'][$name]['hashrate'] = ($device->{'MHS av'}*1000*1000);
-					}
-					else
-					{
+					} else {
 						$return['devices'][$name]['shares'] = ($device->{'Diff1 Work'}) ? round(($device->{'Diff1 Work'}*71582788/1000),0) : 0;	
 						if (isset($device->{'KHS av'}))	$return['devices'][$name]['hashrate'] = ($device->{'KHS av'}*1000);
 						else $return['devices'][$name]['hashrate'] = ($device->{'MHS av'}*1000*1000);
@@ -469,9 +468,34 @@ class Util_model extends CI_Model {
 				
 				$devicePoolActives = array_count_values($devicePoolIndex);				
 			}
+
+			// Antminer L3+
+			if ($antL3 && isset($stats->stats[0]->STATS[1]) && isset($stats->summary[0]->SUMMARY[0])) {
+				$device = $stats->stats[0]->STATS[1];
+				$summaryL3 = $stats->summary[0]->SUMMARY[0];
+				$d = 1;
+
+				// log_message("error", var_export($stats->stats[0]->STATS[1], true));
+				$return['devices']['L3']['temperature'] = (isset($device->temp1)) ? $device->temp1 : false;
+				$return['devices']['L3']['frequency'] = (isset($device->frequency)) ? $device->frequency : false;
+				$return['devices']['L3']['accepted'] = $summaryL3->Accepted;
+				$return['devices']['L3']['rejected'] = $summaryL3->Rejected;
+				$return['devices']['L3']['hw_errors'] = $summaryL3->{'Hardware Errors'};
+				$return['devices']['L3']['shares'] = $summaryL3->Utility;
+				if (isset($device->{'GHS av'}))	$return['devices']['L3']['hashrate'] = ($device->{'GHS av'} * 1000 * 1000 * 1000);
+				$return['devices']['L3']['last_share'] = $summaryL3->{'Last getwork'};
+
+				$tdtemperature = $return['devices']['L3']['temperature'];					
+				$tdfrequency = $return['devices']['L3']['frequency'];
+				$tdshares = $return['devices']['L3']['shares'];
+				$tdhashrate = $return['devices']['L3']['hashrate'];
+				
+				// Check the real active pool
+				$devicePoolIndex[] = 0;
+			}
 			
-			if (isset($stats->summary[0]->SUMMARY[0]))
-			{
+			if (isset($stats->summary[0]->SUMMARY[0])) {
+				// log_message("error", var_export($stats->summary[0]->SUMMARY[0], true));
 				$totals = $stats->summary[0]->SUMMARY[0];
 
 				$return['totals']['temperature'] = ($tdtemperature) ? round(($tdtemperature/$d), 2) : false;				
@@ -1217,7 +1241,6 @@ class Util_model extends CI_Model {
 			$o = false;
 			if ($a->success)
 			{
-				log_message("error", var_export($a->data->label, true));
 				$o[$id] = array(
 					"primaryname" => $a->data->label, 
 					"secondaryname" => $a->data->label, 
@@ -2402,8 +2425,7 @@ class Util_model extends CI_Model {
 	
 	public function checkNetworkDevice($ip, $port=4028) 
 	{		
-		$connection = @fsockopen($ip, 4028, $errno, $errstr, 0.1);
-		
+		$connection = @fsockopen($ip, 4028, $errno, $errstr, 5);
 	    if (is_resource($connection))
 	    {	
 	        fclose($connection);

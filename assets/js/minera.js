@@ -2783,7 +2783,6 @@ function getStats(refresh)
 					}
 
 					$.each(data.network_miners, function (netKey, networkMinerData) {
-						
 						if (networkMinerData.devices) 
 						{	
 							networkMiners[netKey] = networkMinerData.devices;
@@ -3112,7 +3111,6 @@ function getStats(refresh)
 
 					// Changing title page according to hashrate
 					$(document).attr('title', $(document).attr('title')+' | Network: '+convertHashrate(netPoolHashrates));
-
 				}
 				else
 				{
