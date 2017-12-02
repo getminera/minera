@@ -245,7 +245,7 @@ class Util_model extends CI_Model {
 		if ($this->isOnline($network))
 		{
 			$cmd = false;
-			if ($algo == 'Scrypt') $cmd = '{"command":"summary+pools+stats"}';
+			if ($network) $cmd = '{"command":"summary+pools+stats"}';
 
 			$a = ($network) ? $this->network_miner->callMinerd($cmd, $network) : $this->miner->callMinerd();
 
@@ -431,8 +431,8 @@ class Util_model extends CI_Model {
 			}
 		// CG/BFGminer devices stats
 		} else {
-			$antL3 = false;
-			if (isset($stats->stats[0]->STATS[0]) && $stats->stats[0]->STATS[0]->Type == 'Antminer L3+') $antL3 = true;
+			$antNew = false;
+			if (isset($stats->stats[0]->STATS[0]) && ($stats->stats[0]->STATS[0]->Type == 'Antminer S9' || $stats->stats[0]->STATS[0]->Type == 'Antminer L3+' || $stats->stats[0]->STATS[0]->Type == 'Antminer D3')) $antNew = true;
 
 			if (isset($stats->devs[0]->DEVS)) {
 				foreach ($stats->devs[0]->DEVS as $device) {
@@ -470,25 +470,33 @@ class Util_model extends CI_Model {
 			}
 
 			// Antminer L3+
-			if ($antL3 && isset($stats->stats[0]->STATS[1]) && isset($stats->summary[0]->SUMMARY[0])) {
+			if ($antNew && isset($stats->stats[0]->STATS[1]) && isset($stats->summary[0]->SUMMARY[0])) {
 				$device = $stats->stats[0]->STATS[1];
-				$summaryL3 = $stats->summary[0]->SUMMARY[0];
+				$summaryAntNew = $stats->summary[0]->SUMMARY[0];
 				$d = 1;
-
 				// log_message("error", var_export($stats->stats[0]->STATS[1], true));
-				$return['devices']['L3']['temperature'] = (isset($device->temp1)) ? $device->temp1 : false;
-				$return['devices']['L3']['frequency'] = (isset($device->frequency)) ? $device->frequency : false;
-				$return['devices']['L3']['accepted'] = $summaryL3->Accepted;
-				$return['devices']['L3']['rejected'] = $summaryL3->Rejected;
-				$return['devices']['L3']['hw_errors'] = $summaryL3->{'Hardware Errors'};
-				$return['devices']['L3']['shares'] = $summaryL3->Utility;
-				if (isset($device->{'GHS av'}))	$return['devices']['L3']['hashrate'] = ($device->{'GHS av'} * 1000 * 1000 * 1000);
-				$return['devices']['L3']['last_share'] = $summaryL3->{'Last getwork'};
 
-				$tdtemperature = $return['devices']['L3']['temperature'];					
-				$tdfrequency = $return['devices']['L3']['frequency'];
-				$tdshares = $return['devices']['L3']['shares'];
-				$tdhashrate = $return['devices']['L3']['hashrate'];
+				$temps = [];
+				foreach ($device as $key => $value) {
+					if (preg_match("/temp[0-9]?[0-9]$/", $key)) {
+						if ($value > 0) array_push($temps, $value);
+					}
+				}
+				$tempAvg = array_sum($temps)/count($temps);
+
+				$return['devices'][$stats->stats[0]->STATS[0]->Type]['temperature'] = $tempAvg;
+				$return['devices'][$stats->stats[0]->STATS[0]->Type]['frequency'] = (isset($device->frequency)) ? $device->frequency : false;
+				$return['devices'][$stats->stats[0]->STATS[0]->Type]['accepted'] = $summaryAntNew->Accepted;
+				$return['devices'][$stats->stats[0]->STATS[0]->Type]['rejected'] = $summaryAntNew->Rejected;
+				$return['devices'][$stats->stats[0]->STATS[0]->Type]['hw_errors'] = $summaryAntNew->{'Hardware Errors'};
+				$return['devices'][$stats->stats[0]->STATS[0]->Type]['shares'] = $summaryAntNew->Utility;
+				if (isset($device->{'GHS av'}))	$return['devices'][$stats->stats[0]->STATS[0]->Type]['hashrate'] = ($device->{'GHS av'} * 1000 * 1000 * 1000);
+				$return['devices'][$stats->stats[0]->STATS[0]->Type]['last_share'] = $summaryAntNew->{'Last getwork'};
+
+				$tdtemperature = $return['devices'][$stats->stats[0]->STATS[0]->Type]['temperature'];					
+				$tdfrequency = $return['devices'][$stats->stats[0]->STATS[0]->Type]['frequency'];
+				$tdshares = $return['devices'][$stats->stats[0]->STATS[0]->Type]['shares'];
+				$tdhashrate = $return['devices'][$stats->stats[0]->STATS[0]->Type]['hashrate'];
 				
 				// Check the real active pool
 				$devicePoolIndex[] = 0;
@@ -930,6 +938,7 @@ class Util_model extends CI_Model {
 		$this->setPools($newPools);
 		
 		$conf = json_decode($this->redis->get("minerd_json_settings"));
+		if (!isset($conf)) $conf = new stdClass();
 		$conf->pools = [];
 		$currentPools = $this->parsePools($this->redis->get("minerd_software"), json_decode(json_encode($newPools), true));
 		if ($currentPools) $conf->pools = $currentPools;
@@ -2467,7 +2476,7 @@ class Util_model extends CI_Model {
 		
 		foreach ($addresses as $address)
 		{
-		    $connection = @fsockopen($address, 4028, $errno, $errstr, 0.01);
+		    $connection = @fsockopen($address, 4028, $errno, $errstr, 1);
 		
 		    if (is_resource($connection) && !in_array($address, $current))
 		    {

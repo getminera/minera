@@ -76,9 +76,19 @@ class Cgminer_model extends CI_Model {
 			}
 
 			// L3+ fix it has invalid JSON output for "stats" command
-			$strBug = '"Type":"Antminer L3+"}{"';
-			if (strpos($line, $strBug)) {
-				$line = str_replace($strBug, '"Type":"Antminer L3+"},{"', $line);
+			$strL3Bug = '"Type":"Antminer L3+"}{"';
+			if (strpos($line, $strL3Bug)) {
+				$line = str_replace($strL3Bug, '"Type":"Antminer L3+"},{"', $line);
+			}
+			// D3 fix it has invalid JSON output for "stats" command
+			$strD3Bug = '"Type":"Antminer D3"}{"';
+			if (strpos($line, $strD3Bug)) {
+				$line = str_replace($strD3Bug, '"Type":"Antminer D3"},{"', $line);
+			}
+			// S9+ fix it has invalid JSON output for "stats" command
+			$strS9Bug = '"Type":"Antminer S9"}{"';
+			if (strpos($line, $strS9Bug)) {
+				$line = str_replace($strS9Bug, '"Type":"Antminer S9"},{"', $line);
 			}
 
 			//print "$cmd returned '$line'\n";
