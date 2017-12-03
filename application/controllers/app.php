@@ -388,6 +388,7 @@ class App extends CI_Controller {
 			$netMinersIps = $this->input->post('net_miner_ip');
 			$netMinersPorts = $this->input->post('net_miner_port');
 			$netMinersAlgos = $this->input->post('net_miner_algo');
+			$netMinersTypes = $this->input->post('net_miner_type');
 
 			// Network miners pools
 			$netGroupPoolActives = $this->input->post('net_pool_active');
@@ -403,7 +404,7 @@ class App extends CI_Controller {
 					if (isset($netMinersIps[$keyM]) && isset($netMinersPorts[$keyM]))
 					{
 						// Network Miners
-						$netMiners[] = array("name" => $netMinerName, "ip" => $netMinersIps[$keyM], "port" => $netMinersPorts[$keyM], "algo" => $netMinersAlgos[$keyM], "pools" => array());
+						$netMiners[] = array("name" => $netMinerName, "ip" => $netMinersIps[$keyM], "port" => $netMinersPorts[$keyM], "algo" => $netMinersAlgos[$keyM], "type" => $netMinersTypes[$keyM], "pools" => array());
 					}
 				}
 			}

@@ -218,7 +218,7 @@ class Util_model extends CI_Model {
 
 				if ($this->checkNetworkDevice($netMiner->ip, $netMiner->port)) 
 				{
-					$n = $this->getMinerStats($netMiner->ip.":".$netMiner->port, $netMiner->algo);
+					$n = $this->getMinerStats($netMiner->ip.":".$netMiner->port, $netMiner->algo, $netMiner->type);
 
 					if ($parsed === false)
 						$a[$netMiner->name] = $n;
@@ -238,14 +238,14 @@ class Util_model extends CI_Model {
 	}
 	
 	// Get the specific miner stats
-	public function getMinerStats($network = false, $algo = false)
+	public function getMinerStats($network = false, $algo = false, $type = false)
 	{
 		$tmpPools = null; $pools = array();
 		
 		if ($this->isOnline($network))
 		{
 			$cmd = false;
-			if ($network) $cmd = '{"command":"summary+pools+stats"}';
+			if ($type == 'newAnt') $cmd = '{"command":"summary+pools+stats"}';
 
 			$a = ($network) ? $this->network_miner->callMinerd($cmd, $network) : $this->miner->callMinerd();
 
@@ -482,7 +482,7 @@ class Util_model extends CI_Model {
 						if ($value > 0) array_push($temps, $value);
 					}
 				}
-				$tempAvg = array_sum($temps)/count($temps);
+				$tempAvg = round(array_sum($temps)/count($temps));
 
 				$return['devices'][$stats->stats[0]->STATS[0]->Type]['temperature'] = $tempAvg;
 				$return['devices'][$stats->stats[0]->STATS[0]->Type]['frequency'] = (isset($device->frequency)) ? $device->frequency : false;

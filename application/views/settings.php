@@ -886,16 +886,19 @@
 											<strong>Status</strong>
 										</div>
 										<div class="col-xs-3">
-											<strong>Miner Name</strong>
-										</div>
-										<div class="col-xs-3">
-											<strong>Miner IP</strong>
+											<strong>Name</strong>
 										</div>
 										<div class="col-xs-2">
-											<strong>Miner Port</strong>
+											<strong>IP</strong>
 										</div>
 										<div class="col-xs-2">
-											<strong>Miner Algorithm</strong>
+											<strong>Port</strong>
+										</div>
+										<div class="col-xs-1">
+											<strong>Algorithm</strong>
+										</div>
+										<div class="col-xs-2">
+											<strong>Type</strong>
 										</div>
                                     </div>
 								</div>
@@ -914,7 +917,7 @@
 										    			<input type="text" class="form-control net_miner_name" placeholder="Miner Name" name="net_miner_name[]" value="<?php echo (isset($networkMiner->name)) ? $networkMiner->name : ''; ?>" />
 										    		</div>
 										    	</div>
-										    	<div class="col-xs-3">
+										    	<div class="col-xs-2">
 										    		<div class="input-group">
 										    			<span class="input-group-addon"><i class="fa fa-hdd-o"></i></span>
 										    			<input type="text" class="form-control net_miner_ip" placeholder="Miner Ip Address" name="net_miner_ip[]" value="<?php echo (isset($networkMiner->ip)) ? $networkMiner->ip : ''; ?>" />
@@ -926,12 +929,20 @@
 										    			<input type="text" class="form-control net_miner_port" placeholder="Miner Port" name="net_miner_port[]" value="<?php echo (isset($networkMiner->port)) ? $networkMiner->port : ''; ?>" />
 										    		</div>
 										    	</div>
-										    	<div class="col-xs-2">
+										    	<div class="col-xs-1">
 										    		<div class="input-group">
 										    			<select class="form-control net_miner_algo" name="net_miner_algo[]">
 											    			<option <?php if (isset($networkMiner->algo) && $networkMiner->algo === "SHA-256") echo "selected" ?>>SHA-256</option>
 											    			<option <?php if (isset($networkMiner->algo) && $networkMiner->algo === "Scrypt") echo "selected" ?>>Scrypt</option>
-
+											    			<option <?php if (isset($networkMiner->algo) && $networkMiner->algo === "Dash") echo "selected" ?>>Dash</option>
+										    			</select>
+										    		</div>
+										    	</div>
+										    	<div class="col-xs-2">
+										    		<div class="input-group">
+										    			<select class="form-control net_miner_type" name="net_miner_type[]">
+											    			<option <?php if (isset($networkMiner->type) && $networkMiner->type === "newAnt") echo "selected" ?> value="newAnt">Antminer S9/L3+/D3</option>
+											    			<option <?php if (isset($networkMiner->type) && $networkMiner->type === "other") echo "selected" ?> value="other">Other</option>
 										    			</select>
 										    		</div>
 										    	</div>

@@ -3,9 +3,18 @@
 # This script, as Minera, is intended to be used on a Debian-like system
 
 echo -e "-----\nSTART Minera Install script\n-----\n"
+cd /var/www/minera
+
+echo -e "-----\nFixing locales\n-----\n"
+apt-get update
+LANG=en_GB.UTF-8
+apt-get install -y locales
+sed -i -e "s/# $LANG.*/$LANG.UTF-8 UTF-8/" /etc/locale.gen
+dpkg-reconfigure --frontend=noninteractive locales
+update-locale LANG=$LANG
 
 echo -e "-----\nInstall extra packages\n-----\n"
-apt-get -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" install -y build-essential libblkmaker-0.1-dev libtool libcurl4-openssl-dev libjansson-dev libudev-dev libncurses5-dev autoconf automake postfix redis-server git screen php7.0-cli php7.0-curl php7.0-fpm php7.0-readline php7.0-json wicd-curses uthash-dev libmicrohttpd-dev libevent-dev libusb-dev libusb-dev shellinabox supervisor lighttpd libssl-dev
+DEBIAN_FRONTEND=noninteractive apt-get -yq install build-essential libblkmaker-0.1-dev libtool libcurl4-openssl-dev libjansson-dev libudev-dev libncurses5-dev autoconf automake postfix redis-server git screen php7.0-cli php7.0-curl php7.0-fpm php7.0-readline php7.0-json wicd-curses uthash-dev libmicrohttpd-dev libevent-dev libusb-dev libusb-dev shellinabox supervisor lighttpd libssl-dev
 echo -e "Adding Minera user\n-----\n"
 adduser minera --gecos "" --disabled-password
 echo "minera:minera" | chpasswd
@@ -95,6 +104,6 @@ sudo dpkg-reconfigure openssh-server
 sudo service ssh restart
 
 echo -e "Building miners, this will take loooooooot of time in a low resource system, I strongly suggest you to take a beer (better two) and relax a while. Your Minera will be ready after this.\n-----\n"
-su - minera -c /var/www/minera/build_miner.sh all
+su - minera -c "/var/www/minera/build_miner.sh all"
 
 echo -e 'DONE! Minera is ready!\n\nOpen the URL: http://'$(hostname -I | tr -d ' ')'/minera/\n\nAnd happy mining!\n'
