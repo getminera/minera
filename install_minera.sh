@@ -7,7 +7,7 @@ cd /var/www/minera
 
 echo -e "-----\nFixing locales\n-----\n"
 apt-get update
-LANG=en_GB.UTF-8
+LANG=en_US.UTF-8
 apt-get install -y locales
 sed -i -e "s/# $LANG.*/$LANG.UTF-8 UTF-8/" /etc/locale.gen
 dpkg-reconfigure --frontend=noninteractive locales

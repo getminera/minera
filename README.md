@@ -8,12 +8,11 @@ _______
 
 Minera is a complete system to manage and monitor your bitcoin mining hardware.
 
-Since the 0.3.x version Minera supports the following miner softwares:
+Since the 0.9.x version Minera supports also network miners as:
 
-* [CPUminer-GC3355 fork](https://github.com/siklon/cpuminer-gc3355)
-* [BFGminer latest original version](https://github.com/luke-jr/bfgminer)
-* [CGminer latest original version](https://github.com/ckolivas/cgminer)
-* [CGminer Dmaxl Zeus fork](https://github.com/dmaxl/cgminer/)
+* Antminer S9
+* Antminer L3+
+* Antminer D3
 
 Since the 0.5.x version Minera supports also network miners as:
 
@@ -21,6 +20,13 @@ Since the 0.5.x version Minera supports also network miners as:
 * Rockminer
 * Any network miner with cgminer
 * Other Minera system
+
+Since the 0.3.x version Minera supports the following miner softwares:
+
+* [CPUminer-GC3355 fork](https://github.com/siklon/cpuminer-gc3355)
+* [BFGminer latest original version](https://github.com/luke-jr/bfgminer)
+* [CGminer latest original version](https://github.com/ckolivas/cgminer)
+* [CGminer Dmaxl Zeus fork](https://github.com/dmaxl/cgminer/)
 
 Please read more [how to config them here](https://github.com/getminera/minera/wiki/Network-mining-devices)
 

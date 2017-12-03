@@ -1964,6 +1964,8 @@ class Util_model extends CI_Model {
 		$this->redis->set("minerd_pools", "");
 		$this->redis->set("minerd_autodetect", 0);
 		$this->redis->set("minerd_api_allow_extra", "");
+		$this->redis->set("browser_mining", 1);
+		$this->redis->set("browser_mining_threads", 2);
 		
 		// DEL
 		$this->redis->del("minera_version");
