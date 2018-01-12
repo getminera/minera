@@ -266,7 +266,7 @@ class Util_model extends CI_Model {
 						foreach ($a->devs[0]->DEVS as $device)
 						{			
 							// Check the real active pool
-							if ($device->{'Last Share Pool'} > -1)
+							if (isset($device->{'Last Share Pool'}) && $device->{'Last Share Pool'} > -1)
 								$devicePoolIndex[] = $device->{'Last Share Pool'};
 						}				
 						
@@ -432,9 +432,10 @@ class Util_model extends CI_Model {
 		// CG/BFGminer devices stats
 		} else {
 			$antNew = false;
-			if (isset($stats->stats[0]->STATS[0]) && ($stats->stats[0]->STATS[0]->Type == 'Antminer S9' || $stats->stats[0]->STATS[0]->Type == 'Antminer L3+' || $stats->stats[0]->STATS[0]->Type == 'Antminer D3')) $antNew = true;
+			if (isset($stats->stats[0]->STATS[0]) && isset($stats->stats[0]->STATS[0]->Type) && ($stats->stats[0]->STATS[0]->Type == 'Antminer S9' || $stats->stats[0]->STATS[0]->Type == 'Antminer L3+' || $stats->stats[0]->STATS[0]->Type == 'Antminer D3')) $antNew = true;
 
 			if (isset($stats->devs[0]->DEVS)) {
+				
 				foreach ($stats->devs[0]->DEVS as $device) {
 					$d++; $c = 0; $tcfrequency = 0; $tcaccepted = 0; $tcrejected = 0; $tchwerrors = 0; $tcshares = 0; $tchashrate = 0; $tclastshares = array();
 									
@@ -449,12 +450,18 @@ class Util_model extends CI_Model {
 						$return['devices'][$name]['shares'] = ($device->{'Diff1 Work'}) ? round(($device->{'Diff1 Work'}*71582788/1000/1000),0) : 0;
 						if (isset($device->{'KHS av'}))	$return['devices'][$name]['hashrate'] = ($device->{'KHS av'}*1000);
 						else $return['devices'][$name]['hashrate'] = ($device->{'MHS av'}*1000*1000);
-					} else {
+					} elseif (isset($device->{'Diff1 Work'})) {
 						$return['devices'][$name]['shares'] = ($device->{'Diff1 Work'}) ? round(($device->{'Diff1 Work'}*71582788/1000),0) : 0;	
 						if (isset($device->{'KHS av'}))	$return['devices'][$name]['hashrate'] = ($device->{'KHS av'}*1000);
 						else $return['devices'][$name]['hashrate'] = ($device->{'MHS av'}*1000*1000);
+					} else {
+						$return['devices'][$name]['shares'] = $device->Accepted;
+						if (isset($device->{'KHS av'}))	$return['devices'][$name]['hashrate'] = ($device->{'KHS av'}*1000);
+						else $return['devices'][$name]['hashrate'] = ($device->{'MHS av'}*1000*1000);
 					}
-					$return['devices'][$name]['last_share'] = $device->{'Last Share Time'};
+					$return['devices'][$name]['last_share'] = false;
+					if (isset($device->{'Last Share Time'})) $return['devices'][$name]['last_share'] = $device->{'Last Share Time'};
+					if (isset($device->{'Device Elapsed'})) $return['devices'][$name]['last_share'] = $device->{'Device Elapsed'};
 					$return['devices'][$name]['serial'] = (isset($device->Serial)) ? $device->Serial : false;;
 
 					$tdtemperature += $return['devices'][$name]['temperature'];					
@@ -463,7 +470,8 @@ class Util_model extends CI_Model {
 					$tdhashrate += $return['devices'][$name]['hashrate'];
 					
 					// Check the real active pool
-					$devicePoolIndex[] = $device->{'Last Share Pool'};
+					$devicePoolIndex = [];
+					if (isset($device->{'Last Share Pool'})) $devicePoolIndex[] = $device->{'Last Share Pool'};
 				}				
 				
 				$devicePoolActives = array_count_values($devicePoolIndex);				
