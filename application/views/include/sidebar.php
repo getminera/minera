@@ -423,12 +423,12 @@
                                 </li>
                                 <?php if (count($netMiners) > 0) : ?>
                                 <li>
-                                	<a href="<?php echo site_url("app/dashboard#network-details") ?>" class="menu-network-miners-box ml10">
+                                	<a href="<?php echo site_url("app/dashboard#box-network-details") ?>" class="menu-network-miners-box ml10">
                                 		<i class="fa fa-server"></i> Network miners
                                 	</a>
                                 </li>
                                 <li>
-                                	<a href="<?php echo site_url("app/dashboard#network-pools-details") ?>" class="menu-network-pools-box ml10">
+                                	<a href="<?php echo site_url("app/dashboard#box-network-pools-details") ?>" class="menu-network-pools-box ml10">
                                 		<i class="fa fa-cloud"></i> Network Pools
                                 	</a>
                                 </li>
