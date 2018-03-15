@@ -146,6 +146,7 @@ class Util_model extends CI_Model {
 				}
 				else
 				{
+					$a = new stdClass();
 					$a->error = true;
 					$a->msg = "There are no stats to be displayed.";
 				}
