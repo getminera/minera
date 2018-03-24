@@ -340,8 +340,8 @@ function createChart(period, text_period)
 		}
 		else
 		{
-			$('#hashrate-chart-'+period).css({'height': '100%', 'overflow': 'visible', 'margin-top': '20px'}).html('<div class="alert alert-warning"><i class="fa fa-warning"></i><b>Ops!</b> <small>No data collected, wait at least '+text_period+' to see the chart.</small></div>');	
-			$('#rehw-chart-'+period).css({'height': '100%', 'overflow': 'visible', 'margin-top': '20px'}).html('<div class="alert alert-warning"><i class="fa fa-warning"></i><b>Ops!</b> <small>No data collected, wait at least '+text_period+' to see the chart.</small></div>');	
+			$('#hashrate-chart-'+period).css({'height': '100%', 'overflow': 'visible', 'margin-top': '20px'}).html('<div class="alert alert-warning"><i class="fa fa-warning"></i><b>Oops!</b> <small>No data collected, wait at least '+text_period+' to see the chart.</small></div>');	
+			$('#rehw-chart-'+period).css({'height': '100%', 'overflow': 'visible', 'margin-top': '20px'}).html('<div class="alert alert-warning"><i class="fa fa-warning"></i><b>Oops!</b> <small>No data collected, wait at least '+text_period+' to see the chart.</small></div>');	
 
 		}
 		
@@ -3498,7 +3498,7 @@ function getStats(refresh)
 			}
 			else
 			{
-				$('.chart').css({'height': '100%', 'overflow': 'visible', 'margin-top': '10px'}).html('<div class="alert alert-warning"><i class="fa fa-warning"></i><b>Ops!</b> <small>No data collected, You need at least 5 minutes of data to see the chart.</small></div>');	
+				$('.chart').css({'height': '100%', 'overflow': 'visible', 'margin-top': '10px'}).html('<div class="alert alert-warning"><i class="fa fa-warning"></i><b>Oops!</b> <small>No data collected, You need at least 5 minutes of data to see the chart.</small></div>');	
 			}
 			
 			//$('.overlay').hide();
