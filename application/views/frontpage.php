@@ -205,7 +205,7 @@
 											<p>Network Pool Hashrate</p>
 										</div>
 										<div class="icon"><i class="ion ion-ios-speedometer"></i></div>
-										<a href="#network-pools-details" class="small-box-footer">Totals net devices <i class="fa fa-arrow-circle-right"></i></a>
+										<a href="#box-network-pools-details" class="small-box-footer">Totals net devices <i class="fa fa-arrow-circle-right"></i></a>
 									</div>
 								</div>
 								
@@ -218,7 +218,7 @@
 											<p>Network Error/Rejected Rates</p>
 										</div>
 										<div class="icon"><i class="ion ion-alert-circled"></i></div>
-										<a href="#network-details" class="small-box-footer">Details <i class="fa fa-arrow-circle-right"></i></a>
+										<a href="#box-network-details" class="small-box-footer">Details <i class="fa fa-arrow-circle-right"></i></a>
 									</div>
 								</div>
 								
@@ -231,7 +231,7 @@
 											<p>Last Network Share</p>
 										</div>
 										<div class="icon"><i class="ion ion-ios-stopwatch-outline"></i></div>
-										<a href="#network-details" class="small-box-footer">Network details <i class="fa fa-arrow-circle-right"></i></a>
+										<a href="#box-network-details" class="small-box-footer">Network details <i class="fa fa-arrow-circle-right"></i></a>
 									</div>
 								</div>
 							</div>							
