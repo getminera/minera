@@ -24,11 +24,6 @@ class App extends CI_Controller {
 		
 		// Remove old Minera pool
 		$this->util_model->removeOldMineraPool();
-
-		if ($this->session->userdata("loggedin")) {
-			redirect('app/dashboard');
-			return false;
-		}
 		
 		if (!$this->redis->command("EXISTS dashboard_devicetree")) $this->redis->set("dashboard_devicetree", 1);
 		if (!$this->redis->command("EXISTS dashboard_box_profit")) $this->redis->set("dashboard_box_profit", 1);
@@ -65,11 +60,10 @@ class App extends CI_Controller {
 	*/
 	public function login()
 	{	
-		if (preg_match('/^[0-9a-f]{40}$/', $this->redis->get('minera_password')))
-		{
-			$storedp = $this->redis->get('minera_password');
-		} elseif (preg_match('/^[a-f0-9]{32}$/', $this->redis->get('minera_password'))) {
-			$storedp = $this->redis->get('minera_password');
+		$storedp = $this->redis->get('minera_password');
+		if (preg_match('/^[0-9a-f]{40}$/', $storedp)) {
+			$storedp = $storedp;
+		} elseif (preg_match('/^[a-f0-9]{32}$/', $storedp)) {
 			if ($this->input->post('password', true) && md5($this->input->post('password')) == $storedp) {
 				$storedp = sha1($this->input->post('password', true));
 				$this->redis->set('minera_password', $storedp);
@@ -78,10 +72,9 @@ class App extends CI_Controller {
 			$storedp = sha1($this->redis->get('minera_password'));
 			$this->redis->set('minera_password', $storedp);
 		}
-		
-		if ($this->input->post('password', true) && sha1($this->input->post('password')) == $storedp)
-		{
-			$this->session->set_userdata("loggedin", 1);
+
+		if ($this->input->post('password', true) && sha1($this->input->post('password')) == $storedp) {
+			$this->session->set_userdata("loggedin", $storedp);
 			redirect('app/dashboard');
 		}
 		else
