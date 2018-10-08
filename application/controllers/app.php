@@ -1092,7 +1092,7 @@ class App extends CI_Controller {
 				$o = json_encode($this->util_model->deleteCustomMinerFile($this->input->get("custom")));
 			break;
 			case "scan_network":
-				$o = json_encode($this->util_model->discoveryNetworkDevices());
+				$o = json_encode($this->util_model->discoveryNetworkDevices($this->input->get('network')));
 			break;
 			case "tail_log":
 				$o = json_encode($this->util_model->tailFile($this->input->get('file'), ($this->input->get('lines')) ? $this->input->get('lines') : 5));

@@ -1138,10 +1138,14 @@ $(function() {
 	    $(document).on('click', '.scan-network', function(e) {
 	       	e.preventDefault();
 	       	
-	       	$('#modal-saving-label').html('Scanning the network, please wait...');
-	    	$('#modal-saving').modal('show');
+	    	var networkToScan = $('#network-to-scan').val();
 	    	
-	    	var scanUrl = _baseUrl+'/app/api?command=scan_network';
+	    	if (!networkToScan.match('.*\/.*')) return alert('Network must be something like: 192.168.1.0/24');
+
+	    	$('#modal-saving-label').html('Scanning the network, please wait...');
+	    	$('#modal-saving').modal('show');
+
+	    	var scanUrl = _baseUrl+'/app/api?command=scan_network&network=' + networkToScan;
 	
 			$.ajax({
 				type: 'GET',

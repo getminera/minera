@@ -434,7 +434,7 @@ class Util_model extends CI_Model {
 		// CG/BFGminer devices stats
 		} else {
 			$antNew = false;
-			if (isset($stats->stats[0]->STATS[0]) && isset($stats->stats[0]->STATS[0]->Type) && ($stats->stats[0]->STATS[0]->Type == 'Antminer S9' || $stats->stats[0]->STATS[0]->Type == 'Antminer L3+' || $stats->stats[0]->STATS[0]->Type == 'Antminer D3')) $antNew = true;
+			if (isset($stats->stats[0]->STATS[0]) && isset($stats->stats[0]->STATS[0]->Type) && ($stats->stats[0]->STATS[0]->Type == 'Antminer S9' || $stats->stats[0]->STATS[0]->Type == 'Antminer S9i' || $stats->stats[0]->STATS[0]->Type == 'Antminer L3++' || $stats->stats[0]->STATS[0]->Type == 'Antminer L3+' || $stats->stats[0]->STATS[0]->Type == 'Antminer Z9' || $stats->stats[0]->STATS[0]->Type == 'Antminer V9' || $stats->stats[0]->STATS[0]->Type == 'Antminer D3')) $antNew = true;
 
 			if (isset($stats->devs[0]->DEVS)) {
 				
@@ -2462,14 +2462,18 @@ class Util_model extends CI_Model {
 	    return false;
 	}
 	
-	public function discoveryNetworkDevices() {
+	public function discoveryNetworkDevices($network = null) {
+		$range = $network;
 		$localIp = $_SERVER['SERVER_ADDR'];
-
-		list($w, $x, $y, $z) = explode('.', $localIp);
-				
-		$range = implode(".", array($w, $x, $y, '0'))."/24";
+		if (!$range) {
+			list($w, $x, $y, $z) = explode('.', $localIp);
+					
+			$range = implode(".", array($w, $x, $y, '0'))."/24";
+		}
 		$addresses = array();
 		$opens = array();
+
+		log_message("error", var_export($range, true));
 		
 		@list($ip, $len) = explode('/', $range);
 		
@@ -2488,7 +2492,7 @@ class Util_model extends CI_Model {
 		
 		foreach ($addresses as $address)
 		{
-		    $connection = @fsockopen($address, 4028, $errno, $errstr, 1);
+		    $connection = @fsockopen($address, 4028, $errno, $errstr, 0.1);
 		
 		    if (is_resource($connection) && !in_array($address, $current))
 		    {

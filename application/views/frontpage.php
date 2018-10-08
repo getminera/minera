@@ -797,9 +797,9 @@
 								<div class="box-body text-center">
 									<p>If you want to <strong>remove ads</strong> please <a href="<?php echo site_url("app/settings") ?>"><strong>USE THE BUTTON IN THE SETTINGS PAGE</strong></a>. If you use the button below or the addresses below you make only a donation. I will not remove ads if you don't use <a href="<?php echo site_url("app/settings") ?>"><strong>the right button</strong></a>.</p>
 		                        	<div class="coinbase-donate-button">
-		                            	<a class="btn btn-lg btn-primary" href="https://www.coinbase.com/checkouts/01ce206aaaf1a8659b07233d9705b9e8" target="_blank"><i class="fa fa-gift"></i> Donate Bitcoins</a>
+		                            	<a class="btn btn-lg btn-primary" href="https://commerce.coinbase.com/checkout/3e2f18f4-5112-44fe-9747-36ced4669b83" target="_blank"><i class="fa fa-gift"></i> Donate Bitcoins</a>
 									</div>
-									<p class="more-line-height">If you like Minera, please consider a donation to support it. <strong>Bitcoin</strong>: <code><a href="bitcoin:19kDRygdVZUq1ARrht6544CGaPzMnF1Q1b" target="_blank">19kDRygdVZUq1ARrht6544CGaPzMnF1Q1b</a></code></p>
+									<p class="more-line-height">If you like Minera, please consider a donation to support it.</p>
 								</div><!-- /.box-body -->
 							</div>
 							<?php endif; ?>
