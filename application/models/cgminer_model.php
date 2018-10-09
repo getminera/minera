@@ -75,41 +75,8 @@ class Cgminer_model extends CI_Model {
 				return array("error" => true, "msg" => $msg);
 			}
 
-			// L3+ fix it has invalid JSON output for "stats" command
-			$strL3Bug = '"Type":"Antminer L3+"}{"';
-			if (strpos($line, $strL3Bug)) {
-				$line = str_replace($strL3Bug, '"Type":"Antminer L3+"},{"', $line);
-			}
-			// D3 fix it has invalid JSON output for "stats" command
-			$strD3Bug = '"Type":"Antminer D3"}{"';
-			if (strpos($line, $strD3Bug)) {
-				$line = str_replace($strD3Bug, '"Type":"Antminer D3"},{"', $line);
-			}
-			// S9 fix it has invalid JSON output for "stats" command
-			$strS9Bug = '"Type":"Antminer S9"}{"';
-			if (strpos($line, $strS9Bug)) {
-				$line = str_replace($strS9Bug, '"Type":"Antminer S9"},{"', $line);
-			}
-			// L3++ fix it has invalid JSON output for "stats" command
-			$strS9Bug = '"Type":"Antminer L3++"}{"';
-			if (strpos($line, $strS9Bug)) {
-				$line = str_replace($strS9Bug, '"Type":"Antminer L3++"},{"', $line);
-			}
-			// V9 fix it has invalid JSON output for "stats" command
-			$strS9Bug = '"Type":"Antminer V9"}{"';
-			if (strpos($line, $strS9Bug)) {
-				$line = str_replace($strS9Bug, '"Type":"Antminer V9"},{"', $line);
-			}
-			// S9i fix it has invalid JSON output for "stats" command
-			$strS9Bug = '"Type":"Antminer S9i"}{"';
-			if (strpos($line, $strS9Bug)) {
-				$line = str_replace($strS9Bug, '"Type":"Antminer S9i"},{"', $line);
-			}
-			// Z9 fix it has invalid JSON output for "stats" command
-			$strS9Bug = '"Type":"Antminer Z9"}{"';
-			if (strpos($line, $strS9Bug)) {
-				$line = str_replace($strS9Bug, '"Type":"Antminer Z9"},{"', $line);
-			}
+			// Antminer JSON bug fix
+			$line = str_replace('}{', '},{' ,str_replace("\0", '', $line));
 
 			//print "$cmd returned '$line'\n";
 			if (substr($line,0,1) == '{') {
