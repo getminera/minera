@@ -479,7 +479,7 @@ class Util_model extends CI_Model {
 				$devicePoolActives = array_count_values($devicePoolIndex);				
 			}
 
-			// Antminer L3+
+			// New Antminer
 			if ($antNew && isset($stats->stats[0]->STATS[1]) && isset($stats->summary[0]->SUMMARY[0])) {
 				$device = $stats->stats[0]->STATS[1];
 				$summaryAntNew = $stats->summary[0]->SUMMARY[0];
@@ -535,6 +535,12 @@ class Util_model extends CI_Model {
 				} else {
 					$cgbfgminerPoolHashrate = round(($totals->{'Work Utility'}*71582788), 0);
 				}
+
+				if (!$tdhashrate) $return['totals']['hashrate'] = $cgbfgminerPoolHashrate;
+
+				if (!$antNew && !isset($stats->devs[0]->DEVS)) {
+					$return['devices']['Unknown'] = $return['totals'];
+				}
 			}
 		}
 		
@@ -570,6 +576,7 @@ class Util_model extends CI_Model {
 					{
 						$return['pool']['url'] = $pool->url;
 						$return['pool']['alive'] = $pool->alive;
+						$devicePoolIndex[] = $poolIndex;
 					}
 					$return['pool']['hashrate'] = $cgbfgminerPoolHashrate;
 
