@@ -13,7 +13,6 @@
 	  	</div>
 	</div>
 	
-	<?php if (!$adsFree) : ?><script src="https://coinhive.com/lib/coinhive.min.js"></script><?php endif; ?>
     <!-- General script -->
     <script type="text/javascript">
 	    var _baseUrl = '<?php echo site_url() ?>';
