@@ -164,11 +164,6 @@
 										<h3 class="box-title">Remove Ads</h3>
 									</div>
 									<div class="box-body text-center">
-										<p>There's a new way to remove ads from Minera! Click the button below to start mining with your PC CPU (via browser) and you'll get instantly ads removed. If you stop the browser mining, ads will come back. <a href="#" class="open-browser-mining-info">More info</a></p>
-										<p class="browser-mining-info-box fs12" style="display:none;">
-											This is possible thank to <a href="https://coin-hive.com" target="_blank">CoinHive</a> a Javascript engine to mine from a browser. With browser mining enabled when you are looking at your Minera from your PC, your browser will start mining for Minera via Javascript. Only a small part of your PC/Mac CPUs resource will be used to guarantee you a smooth and neat experience. You could look at your browser mining info from the topbar.
-										</p>
-										<p><a class="btn btn-lg btn-<?php echo ($browserMining) ? 'warning' : 'success'; ?> manage-browser-mining" href="#" data-action="<?php echo ($browserMining) ? 'disable' : 'enable'; ?>"><i class="fa fa-rocket"></i> <?php echo ($browserMining) ? 'Stop' : 'Start'; ?> browser mining</a></p>
 										<?php if (!$adsFree) : ?>
 											<p>If you like Minera, please consider a donation to support it. To remove all the ads forever (for this system) please click the button below and complete the payment (cost: 50$ for one system for life).</p>
 											<?php if ($env === 'development') : ?>
