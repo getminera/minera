@@ -1,4 +1,4 @@
-[![Minera](https://github.com/getminera/minera/raw/master/assets/img/cover_minera.jpg)](https://getminera.com)
+[![Minera](https://github.com/getminera/minera/raw/master/assets/img/minera_logo.png)](https://getminera.com)
 
 Minera
 ==============
@@ -362,6 +362,7 @@ I wish to thank every plugin, libraries, framework, icons, etc authors for their
 * [Jquery DataTables](https://datatables.net/) for the amazing tables
 * [Twitter Bootstrap](http://getbootstrap.com/) for the HTML/CSS theme
 * [Font Awesome](http://fortawesome.github.io/Font-Awesome/), [Ion icons](http://ionicons.com/) and [Glyphicon](http://glyphicons.com/) for the stunning well...icons of course :)
+* [Deb Pedrano](https://github.com/debpedrano) for the amazing new Minera logo, thank you Deb!
 
 _______
 
