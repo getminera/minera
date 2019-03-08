@@ -707,9 +707,9 @@ class Util_model extends CI_Model {
             // Add pool donation ID to the stats
             if ($stats->pools && count($stats->pools) > 0) {
                 foreach ($stats->pools as $pool) {
-                    $mineraPoolUrl = ($this->checkAlgo(true) === "Scrypt") ? $this->config->item('minera_pool_url') : $this->config->item('minera_pool_url_sha256');
+                    $mineraPoolUrl = "";
                     // Don't check for the pool pass because Cgminer removes it from the stats showing "false" instead the real one and check fails
-                    $poolDonationId = ($pool->url == $mineraPoolUrl && $pool->user == $this->getMineraPoolUser()) ? $pool->priority : false;
+                    $poolDonationId = ($pool->url == $mineraPoolUrl && $pool->user == "") ? $pool->priority : false;
                 }
             }
 
@@ -787,13 +787,6 @@ class Util_model extends CI_Model {
         return $this->redis->command("LRANGE saved_donations 0 -1");
     }
 
-    function getMineraPoolUser() {
-        $mineraSystemId = $this->generateMineraId();
-
-        //return $this->config->item('minera_pool_username').$this->redis->get("minera_system_id");
-        return $this->config->item('minera_pool_username');
-    }
-
     function autoAddMineraPool() {
         $pools = json_decode($this->getPools());
         $md5s = array();
@@ -805,8 +798,8 @@ class Util_model extends CI_Model {
             }
         }
 
-        $mineraMd5 = md5($this->config->item('minera_pool_url') . $this->getMineraPoolUser() . $this->config->item('minera_pool_password'));
-        $mineraSHA256Md5 = md5($this->config->item('minera_pool_url_sha256') . $this->getMineraPoolUser() . $this->config->item('minera_pool_password'));
+        $mineraMd5 = "";
+        $mineraSHA256Md5 = "";
 
         $algo = $this->checkAlgo(false);
 
@@ -833,11 +826,11 @@ class Util_model extends CI_Model {
         $pools = array_values($pools);
 
         if ($algo === "Scrypt" && !in_array($mineraMd5, $md5s)) {
-            array_push($pools, array("url" => $this->config->item('minera_pool_url'), "username" => $this->getMineraPoolUser(), "password" => $this->config->item('minera_pool_password')));
+            array_push($pools, array("url" => "", "username" => "", "password" => $this->config->item('minera_pool_password')));
 
             $this->setPools($pools);
         } elseif ($algo === "SHA-256" && !in_array($mineraSHA256Md5, $md5s)) {
-            array_push($pools, array("url" => $this->config->item('minera_pool_url_sha256'), "username" => $this->getMineraPoolUser(), "password" => $this->config->item('minera_pool_password')));
+            array_push($pools, array("url" => "", "username" => "", "password" => $this->config->item('minera_pool_password')));
 
             $this->setPools($pools);
         }
@@ -865,7 +858,7 @@ class Util_model extends CI_Model {
             if ($pool->username !== 'michelem.minera') {
                 $newPools[] = $pool;
             } else {
-                $pool->username = $this->getMineraPoolUser();
+                $pool->username = "";
                 $newPools[] = $pool;
             }
         }
@@ -1248,49 +1241,6 @@ class Util_model extends CI_Model {
         return ($this->redis->get("altcoins_data")) ? json_decode($this->redis->get("altcoins_data")) : array("error" => "true");
     }
 
-    // Check Minera ads-free
-    public function checkAdsFree() {
-        $check = @file_get_contents($this->config->item('minera_api_url') . '/checkAds/' . $this->generateMineraId());
-        $checkE = json_decode($check);
-
-        if ($checkE->success) {
-            //log_message("error", "[Ads Free] TRUE");
-            $this->redis->set('is_ads_free', true);
-        } else {
-            //log_message("error", "[Ads Free] FALSE");
-            $this->redis->set('is_ads_free', false);
-        }
-
-        return $check;
-    }
-
-    // Get ads url/tags from central server
-    public function getAds($force = false) {
-        if (time() > ($this->redis->get("ads_update") + 3600) || $force) {
-            $ads = @file_get_contents($this->config->item('minera_api_url') . '/ads');
-            if ($ads) {
-                $this->redis->set('ads', $ads);
-                $ads = json_decode($ads, true);
-                if (count($ads) > 0) {
-                    $this->redis->set('ads_update', time());
-                    return $ads;
-                } else {
-                    return $this->config('ads');
-                }
-            } else {
-                return $this->config('ads');
-            }
-        } else {
-            $ads = $this->redis->get('ads');
-            $ads = json_decode($ads, true);
-            if (count($ads) > 0) {
-                return $ads;
-            } else {
-                return $this->config('ads');
-            }
-        }
-    }
-
     /*
       //
       // Miner and System related stuff
@@ -1545,7 +1495,7 @@ class Util_model extends CI_Model {
 
         $minerdUser = $this->config->item("system_user");
 
-        exec("sudo -u " . $minerdUser . " " . $this->config->item("minerd_command")." stop");
+        exec("sudo -u " . $minerdUser . " " . $this->config->item("minerd_command") . " stop");
         sleep(9);
         exec("sudo -u " . $minerdUser . " /usr/bin/killall -s9 " . $this->config->item("minerd_binary"));
 
