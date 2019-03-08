@@ -14,19 +14,11 @@ $config['minerd_conf_file'] = FCPATH.'conf/miner_conf.json';
 $config['minerd_log_file'] = '/var/log/minera/cpuminer.log';
 $config['minerd_log_url'] = 'application/logs/cpuminer.log';
 $config['tmp_stats_file'] = '/tmp/cm_latest_stats';
-$config['system_user'] = 'minera';
+$config['system_user'] = 'pirate';
 $config['remote_config_url'] = 'https://raw.githubusercontent.com/getminera/minera/master/minera.json';
 $config['rpi_temp_file'] = '/sys/class/thermal/thermal_zone0/temp';
 $config['btc_address'] = '19kDRygdVZUq1ARrht6544CGaPzMnF1Q1b';
 $config['ltc_address'] = 'LLPmAT9gDwmiSdqwWEZu6mpUDmrNAnYBdC';
 $config['doge_address'] = 'DLAHwNxfUTUcePewbkvwvAouny19mcosA7';
-$config['mobileminer_apikey'] = 'Y8gl9PF6QR22Vv';
-$config['mobileminer_url_stats'] = 'https://api.mobileminerapp.com/MiningStatisticsInput';
-$config['mobileminer_url_notifications'] = 'https://api.mobileminerapp.com/NotificationsInput';
-$config['mobileminer_url_poolsinput'] = 'https://api.mobileminerapp.com/PoolsInput';
-$config['mobileminer_url_remotecommands'] = 'https://api.mobileminerapp.com/RemoteCommands';
-$config['mobileminera_apikey'] = 'Y8gl9PF6QR22Vv';
-$config['mobileminera_url_stats'] = 'https://getminera.com/api/miners';
-$config['minera_pool_password'] = 'x';
 /* End of file autoload.php */
 /* Location: ./application/config/app.php */

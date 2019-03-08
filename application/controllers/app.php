@@ -975,9 +975,6 @@ class App extends CI_Controller {
             case "network_miners_stats":
                 $o = json_encode($this->util_model->getNetworkMinerStats(false));
                 break;
-            case "notify_mobileminer":
-                $o = $this->util_model->callMobileminer();
-                break;
             case "history_stats":
                 $o = $this->util_model->getHistoryStats($this->input->get('type'));
                 break;
@@ -1018,9 +1015,6 @@ class App extends CI_Controller {
                 break;
             case "tail_log":
                 $o = json_encode($this->util_model->tailFile($this->input->get('file'), ($this->input->get('lines')) ? $this->input->get('lines') : 5));
-                break;
-            case "call_mobileminer":
-                $o = json_encode($this->util_model->callMobileminer());
                 break;
             case "box_status":
                 $o = json_encode($this->util_model->setBoxStatus($this->input->get('id'), $this->input->get('status')));
@@ -1240,10 +1234,6 @@ class App extends CI_Controller {
                 }
             }
         }
-
-        // Call Mobileminer if enabled
-        // DISABLED as the service shuts down
-        //$this->util_model->callMobileminer();
 
         $this->redis->del("cron_lock");
 
