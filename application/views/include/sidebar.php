@@ -31,7 +31,7 @@
 				</div>
 			</div>
 		</div>
-				
+
 		<div id="modal-log" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="Logs" aria-hidden="true" data-backdrop="static" data-keyboard="false" >
 			<div class="modal-dialog modal-dialog-center modal-md">
 				<div class="modal-content">
@@ -49,7 +49,7 @@
 				</div>
 			</div>
 		</div>
-		
+
 		<div id="modal-sharing" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="SharingData" aria-hidden="true" data-backdrop="static" data-keyboard="false" >
 			<div class="modal-dialog modal-md">
 				<div class="modal-content">
@@ -57,7 +57,7 @@
 						<h4 class="modal-title" id="modal-sharing-label"><i class="fa fa-share-square-o"></i> Share your config</h4>
 					</div>
 					<div class="modal-body">
-						<p>Before you can share your config with the Minera community you need to add a description, please add helpful infos like devices used and notes for users.<br />Only miner software and miner settings along with this description will be shared, no pools info.</p>
+						<p>Before you can share your config with the RaspiNode community you need to add a description, please add helpful infos like devices used and notes for users.<br />Only miner software and miner settings along with this description will be shared, no pools info.</p>
 						<form method="post" id="formsharingconfig">
 							<div class="form-group">
 								<label>Config description</label>
@@ -65,7 +65,7 @@
 								<input type="hidden" name="config_id" value="" />
 							</div>
 						</form>
-						<h6>Each config will be moderated before being available in the public repository. (Available soon on <a href="http://getminera.com">Getminera.com</a>)</h6>
+						<h6>Each config will be moderated before being available in the public repository. (Available soon on <a href="https://piratecash.net">PirateCash.net</a>)</h6>
 					</div>
 					<div class="modal-footer">
 						<button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
@@ -74,24 +74,24 @@
 				</div>
 			</div>
 		</div>
-		
+
 		<div id="modal-terminal" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true" data-backdrop="static">
 			<div class="modal-dialog modal-dialog-center modal-terminal">
 				<div class="modal-content">
 					<div class="modal-header bg-blue">
 						<button type="button" class="close modal-hide"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
-						<h4 class="modal-title" id="modal-saving-label"><i class="fa fa-terminal"></i> Minera terminal window</h4>
+						<h4 class="modal-title" id="modal-saving-label"><i class="fa fa-terminal"></i> RaspiNode terminal window</h4>
 					</div>
 					<div class="modal-body bg-black" style="text-align:center;">
 						<iframe id="terminal-iframe" src="" style="" width="100%" height="450" frameborder="0"></iframe>
 					</div>
 					<div class="modal-footer modal-footer-center">
-						<h6>This is a full terminal window running on your Minera system, use any user you want to login, but remember Minera runs as user "minera" and you should use this for each operation you wanna do.</h6>
+						<h6>This is a full terminal window running on your RaspiNode system, use any user you want to login, but remember RaspiNode runs as user "pirate" and you should use this for each operation you wanna do.</h6>
 					</div>
 				</div>
 			</div>
 		</div>
-		
+
         <header class="header" data-this-section="<?php echo $sectionPage ?>">
 
             <a href="<?php echo site_url('app/dashboard') ?>" class="logo">RaspiNode</a>
@@ -105,7 +105,7 @@
                     <span class="icon-bar"></span>
                     <span class="icon-bar"></span>
                 </a>
-                
+
 				<div class="navbar-right">
 					<ul class="nav navbar-nav">
 						<!-- Cron status -->
@@ -273,7 +273,7 @@
 	                        </script>
 							<!-- END: Underscore Template Definition. -->
 						</li>
-                        
+
 					    <!-- Donate/Help dropdown -->
 					    <li class="dropdown user user-menu">
 					        <a href="#" class="dropdown-toggle" data-toggle="dropdown">
@@ -287,31 +287,31 @@
 					            	<p><i class="glyphicon glyphicon-heart"></i></p>
 					                <p>
 					                    <small>Made with love</small>
-					                    Minera is a free and open source software
-					                    <small>Please help Minera: spread it, share, donate</small>
+					                    RaspiNode is a free and open source software
+					                    <small>Please help RaspiNode: spread it, share, donate</small>
 					                </p>
 					                <div style="margin:22px;">
-										<a href="https://www.facebook.com/sharer/sharer.php?u=http://getminera.com" target="_blank"><button class="btn bg-light-blue btn-circle"><i class="fa fa-facebook"></i></button></a>
-										<a href="https://twitter.com/home?status=Try%20Minera%20for%20your%20%23bitcoin%20mining%20monitor%20http://getminera.com &#64;michelem" target="_blank"><button class="btn bg-aqua btn-circle"><i class="fa fa-twitter"></i></button></a>
-										<a href="https://plus.google.com/share?url=http://getminera.com" target="_blank"><button class="btn bg-red btn-circle"><i class="fa fa-google-plus"></i></button></a>
+										<a href="https://www.facebook.com/sharer/sharer.php?u=https://piratecash.net" target="_blank"><button class="btn bg-light-blue btn-circle"><i class="fa fa-facebook"></i></button></a>
+										<a href="https://twitter.com/home?status=Try%20RaspiNode%20for%20your%20%23piratecash%20staking%20monitor%20https://piratecash.net &#64;PirateCash_NET" target="_blank"><button class="btn bg-aqua btn-circle"><i class="fa fa-twitter"></i></button></a>
+										<a href="https://plus.google.com/share?url=https://piratecash.net" target="_blank"><button class="btn bg-red btn-circle"><i class="fa fa-google-plus"></i></button></a>
 									</div>
 					            </li>
 					            <!-- Menu Body -->
 					            <li class="user-body">
 					                <div class="col-xs-4 text-center">
-										<a href="https://github.com/getminera/minera" target="_blank">Github</a>
+										<a href="https://github.com/piratecash/raspinode" target="_blank">Github</a>
 									</div>
 					                <div class="col-xs-4 text-center">
-										<a href="https://bitcointalk.org/index.php?topic=596620.0" target="_blank">Forum</a>
+										<a href="https://bitcointalk.org/index.php?topic=5050988.0" target="_blank">Forum</a>
 									</div>
 					                <div class="col-xs-4 text-center">
-					                    <a href="http://twitter.com/michelem" target="_blank">Follow</a>					
+					                    <a href="https://twitter.com/PirateCash_NET" target="_blank">Follow</a>
 									</div>
 					            </li>
 					            <!-- Menu Footer-->
 					            <li class="user-footer">
 					                <div class="pull-left">
-					                    <a href="http://getminera.com" class="btn btn-default btn-flat">Get Minera</a>
+					                    <a href="https://piratecash.net" class="btn btn-default btn-flat">Get PirateCash</a>
 					                </div>
 					                <div class="pull-right">
 					                	<?php if ($mineraUpdate) : ?>
@@ -325,7 +325,7 @@
 				                <li class="user-footer">
 				                	<div class="col-xs-12 text-center">
 				                		<small><a href="<?php echo site_url("app/update") ?>">There is a new version available</a></small>
-				                		<p><a href="<?php echo site_url("app/update") ?>"><button class="btn btn-danger btn-xs" data-toggle="tooltip" title="" data-original-title="Update Minera">Update Now! <i class="fa fa-download"></i></button></a></p>
+				                		<p><a href="<?php echo site_url("app/update") ?>"><button class="btn btn-danger btn-xs" data-toggle="tooltip" title="" data-original-title="Update Raspinode">Update Now! <i class="fa fa-download"></i></button></a></p>
 				                	</div>
 				                </li>
 								<?php endif; ?>
@@ -340,7 +340,7 @@
 				</div>
 			</nav>
         </header>
-        
+
         <!-- Main content -->
         <div class="wrapper row-offcanvas row-offcanvas-left">
 
@@ -359,7 +359,7 @@
 							<?php endif; ?>
                         </div>
                     </div>
-					
+
                     <!-- sidebar menu -->
                     <ul class="sidebar-menu">
 	                    <?php if ($sectionPage === "dashboard" && (($isOnline && $appScript) || count($netMiners) > 0)) : ?>
@@ -371,7 +371,7 @@
 						<?php endif; ?>
                         <li class="treeview" data-toggle="tooltip" title="" data-original-title="Go to the dashboard page">
                         	<a href="<?php echo site_url("app/dashboard") ?>">
-                        		<i class="fa fa-dashboard"></i> 
+                        		<i class="fa fa-dashboard"></i>
                         		<span>Dashboard</span>
                                 <i class="treeview-menu-dashboard-icon fa pull-right fa-angle-left"></i>
                         	</a>
@@ -420,7 +420,7 @@
                         </li>
                         <li class="treeview">
                         	<a href="#">
-                        		<i class="fa fa-gear"></i> 
+                        		<i class="fa fa-gear"></i>
                         		<span>Settings</span>
                                 <i class="treeview-menu-settings-icon fa pull-right fa-angle-left"></i>
                         	</a>
@@ -489,17 +489,17 @@
                                 <i class="fa pull-right fa-angle-left"></i>
                             </a>
                             <ul class="treeview-menu" style="display: none;">
-                                <li data-toggle="tooltip" title="" data-original-title="Open Minera's terminal">
+                                <li data-toggle="tooltip" title="" data-original-title="Open RaspiNode's terminal">
                                 	<a href="#" class="system-open-terminal" style="margin-left: 10px;">
                                 		<i class="fa fa-terminal"></i> Open terminal
                                 	</a>
                                 </li>
-                                <li data-toggle="tooltip" title="" data-original-title="Reboot Minera">
+                                <li data-toggle="tooltip" title="" data-original-title="Reboot RaspiNode">
                                 	<a href="<?php echo site_url("app/reboot") ?>" style="margin-left: 10px;">
                                 		<i class="fa fa-flash"></i> Reboot
                                 	</a>
                                 </li>
-                                <li data-toggle="tooltip" title="" data-original-title="Shutdown Minera">
+                                <li data-toggle="tooltip" title="" data-original-title="Shutdown Raspinode">
                                 	<a href="<?php echo site_url("app/shutdown") ?>" style="margin-left: 10px;">
                                 		<i class="fa fa-power-off"></i> Shutdown
                                 	</a>
@@ -508,7 +508,7 @@
                         </li>
                     </ul>
                 </section>
-                
+
                 <!-- /.sidebar -->
             </aside>
-            
+
