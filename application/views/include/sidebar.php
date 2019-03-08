@@ -10,7 +10,6 @@
 			data-minera-pool-username="<?php echo $this->util_model->getMineraPoolUser(); ?>"
 			data-minera-pool-url-scrypt="<?php echo $this->config->item('minera_pool_url') ?>"
 			data-minera-pool-url-sha256="<?php echo $this->config->item('minera_pool_url_sha256') ?>"
-			data-ads-free="<?php echo $adsFree ?>"
 			data-browser-mining="<?php echo $browserMining ?>"
 			data-browser-mining-threads="<?php echo $browserMiningThreads ?>"
 			data-minera-id="<?php echo $mineraSystemId ?>"
@@ -32,30 +31,7 @@
 				</div>
 			</div>
 		</div>
-		
-		<div id="modal-promo" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="Promo" aria-hidden="true" data-backdrop="static" data-keyboard="false" >
-			<div class="modal-dialog modal-dialog-center modal-md">
-				<div class="modal-content">
-					<div class="modal-header bg-primary">
-						<button type="button" class="close modal-promo-hide"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
-						<h4 class="modal-title"><i class="fa fa-gift"></i> Support Minera</h4>
-					</div>
-					<div class="modal-body">
-						<p>Please support the Minera project. This message will appear each hour. You can <a href="<?php echo site_url("app/settings#donation-box") ?>">completely remove the Ads on your Minera system</a>.</p>
-						<div class="mt30 mb20 text-center">
-							<div class="row">
-								<div class="banner col-md-offset-1 col-md-5 promo-iframe" bannerid='promo1'><?php echo $ads['200x200'] ?></div>
-								<div class="banner col-md-5 promo-iframe" bannerid='promo2'><?php echo $ads['200x200'] ?></iframe></div>
-							</div>
-						</div>
-					</div>
-					<div class="modal-footer modal-footer-center">
-						<a href="<?php echo site_url("app/settings#donation-box") ?>" class="btn btn-sm btn-primary">Remove Ads</a>
-					</div>
-				</div>
-			</div>
-		</div>
-		
+				
 		<div id="modal-log" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="Logs" aria-hidden="true" data-backdrop="static" data-keyboard="false" >
 			<div class="modal-dialog modal-dialog-center modal-md">
 				<div class="modal-content">
@@ -118,7 +94,7 @@
 		
         <header class="header" data-this-section="<?php echo $sectionPage ?>">
 
-            <a href="<?php echo site_url('app/dashboard') ?>" class="logo">Minera</a>
+            <a href="<?php echo site_url('app/dashboard') ?>" class="logo">RaspiNode</a>
 
             <!-- Header Navbar: style can be found in header.less -->
             <nav class="navbar navbar-static-top" role="navigation">
@@ -375,7 +351,7 @@
                     <!-- Sidebar main panel -->
                     <div class="user-panel">
                         <div class="pull-left info">
-                            <p>Minera ID <strong><?php echo $mineraSystemId ?></strong></p>
+                            <p>RaspiNode ID <strong><?php echo $mineraSystemId ?></strong></p>
 							<?php if ($isOnline) : ?>
 	                            <a href="<?php echo site_url("app/dashboard") ?>"><i class="fa fa-circle text-success"></i> Online <?php if ($minerdRunning) : ?><small class="pull-right badge bg-green"><?php echo $minerdRunning ?></small><?php endif; ?></a>
 	                        <?php else: ?>
@@ -383,12 +359,6 @@
 							<?php endif; ?>
                         </div>
                     </div>
-					
-					<?php if (!$adsFree) : ?>
-					<div class="mb10 text-center">
-						<?php echo ($dashboardSkin ==='black') ? $ads['200x200_black'] : $ads['200x200']; ?>
-					</div>
-					<?php endif; ?>
 					
                     <!-- sidebar menu -->
                     <ul class="sidebar-menu">
@@ -412,40 +382,8 @@
                                 	</a>
                                 </li>
                                 <li>
-                                	<a href="<?php echo site_url("app/dashboard#box-local-miner") ?>" class="menu-local-miner-box ml10">
-                                		<i class="fa fa-desktop"></i> Local miner
-                                	</a>
-                                </li>
-                                <li>
-                                	<a href="<?php echo site_url("app/dashboard#box-local-pools") ?>" class="menu-local-pools-box ml10">
-                                		<i class="fa fa-cloud"></i> Local Pools
-                                	</a>
-                                </li>
-                                <?php if (count($netMiners) > 0) : ?>
-                                <li>
-                                	<a href="<?php echo site_url("app/dashboard#box-network-details") ?>" class="menu-network-miners-box ml10">
-                                		<i class="fa fa-server"></i> Network miners
-                                	</a>
-                                </li>
-                                <li>
-                                	<a href="<?php echo site_url("app/dashboard#box-network-pools-details") ?>" class="menu-network-pools-box ml10">
-                                		<i class="fa fa-cloud"></i> Network Pools
-                                	</a>
-                                </li>
-                                <?php endif; ?>
-                                <li>
-                                	<a href="<?php echo site_url("app/dashboard#box-charts") ?>" class="menu-charts-box ml10">
-                                		<i class="fa fa-bar-chart"></i> Charts
-                                	</a>
-                                </li>
-                                <li>
                                 	<a href="<?php echo site_url("app/dashboard#box-log") ?>" class="menu-log-box ml10">
                                 		<i class="fa fa-file"></i> Log
-                                	</a>
-                                </li>
-                                <li>
-                                	<a href="<?php echo site_url("app/dashboard#box-donation") ?>" class="menu-donation-box ml10">
-                                		<i class="fa fa-gift"></i> Donation
                                 	</a>
                                 </li>
                             </ul>
@@ -454,6 +392,31 @@
                             <a href="<?php echo site_url("app/charts") ?>">
                                 <i class="fa fa-bar-chart-o"></i> <span>Charts</span>
                             </a>
+                        </li>
+                        <li class="treeview">
+                            <a href="#">
+                                <i class="fas fa-wallet"></i>
+                                <span>Wallet</span>
+                                <i class="fa pull-right fa-angle-left"></i>
+                            </a>
+                            <ul class="treeview-menu" style="display: none;">
+
+                                <li data-toggle="tooltip" title="" data-original-title="<?php echo ($isOnline) ? "It seems your miner is mining. To restart it click below" : "Start your miner"; ?>">
+                                	<a href="#" <?php echo ($isOnline) ? '' : 'class="miner-action" data-miner-action="start"'; ?> style="margin-left: 10px;">
+                                		<i class="fa fa-dashboard"></i> Status
+                                	</a>
+                                </li>
+                                <li data-toggle="tooltip" title="" data-original-title="<?php echo ($isOnline) ? "Stop your miner" : "Your miner is stopped"; ?>">
+                                	<a href="#" class="miner-action" data-miner-action="stop" style="margin-left: 10px;">
+                                		<i class="fas fa-address-card"></i> Address
+                                	</a>
+                                </li>
+                                <li data-toggle="tooltip" title="" data-original-title="Restart your miner">
+                                	<a href="#" class="miner-action" data-miner-action="restart" style="margin-left: 10px;">
+                                		<i class="fas fa-save"></i> Backup wallet
+                                	</a>
+                                </li>
+                            </ul>
                         </li>
                         <li class="treeview">
                         	<a href="#">
@@ -467,41 +430,9 @@
                                 		<i class="fa fa-gear"></i> General
                                 	</a>
                                 </li>
-                                <?php if (!$adsFree) : ?>
-                                <li>
-                                	<a href="<?php echo site_url("app/settings") ?>" class="menu-donation-box ml10">
-                                		<i class="fa fa-ban"></i> Remove Ads
-                                	</a>
-                                </li>
-                                <?php endif; ?>
-                                <li>
-                                	<a href="<?php echo site_url("app/settings") ?>" class="menu-donation-box ml10">
-                                		<i class="fa fa-gift"></i> Donation
-                                	</a>
-                                </li>
                                 <li>
                                 	<a href="<?php echo site_url("app/settings#dashboard-box") ?>" class="menu-dashboard-box ml10">
                                 		<i class="fa fa-dashboard"></i> Dashboard
-                                	</a>
-                                </li>
-                                <li>
-                                	<a href="<?php echo site_url("app/settings#pools-box") ?>" class="menu-pools-box ml10">
-                                		<i class="fa fa-cloud"></i> Pools
-                                	</a>
-                                </li>
-                                <li>
-                                	<a href="<?php echo site_url("app/settings#customer-miners-box") ?>" class="menu-customer-miners-box ml10">
-                                		<i class="fa fa-desktop"></i> Custom Miners
-                                	</a>
-                                </li>
-                                <li>
-                                	<a href="<?php echo site_url("app/settings#local-miner-box") ?>" class="menu-local-miner-box ml10">
-                                		<i class="fa fa-gear"></i> Local Miner
-                                	</a>
-                                </li>
-                                <li>
-                                	<a href="<?php echo site_url("app/settings#network-miners-box") ?>" class="menu-network-miners-box ml10">
-                                		<i class="fa fa-server"></i> Network Miners
                                 	</a>
                                 </li>
                                 <li>
@@ -529,24 +460,24 @@
                         <li class="treeview">
                             <a href="#">
                                 <i class="fa fa-desktop"></i>
-                                <span>Miner</span>
+                                <span>Daemon (piratecashd)</span>
                                 <i class="fa pull-right fa-angle-left"></i>
                             </a>
                             <ul class="treeview-menu" style="display: none;">
 
-                                <li data-toggle="tooltip" title="" data-original-title="<?php echo ($isOnline) ? "It seems your miner is mining. To restart it click below" : "Start your miner"; ?>">
+                                <li data-toggle="tooltip" title="" data-original-title="<?php echo ($isOnline) ? "It seems your wallet is staking. To restart it click below" : "Start your wallet"; ?>">
                                 	<a href="#" <?php echo ($isOnline) ? '' : 'class="miner-action" data-miner-action="start"'; ?> style="margin-left: 10px;">
-                                		<i class="fa fa-arrow-circle-o-up"></i> Start miner
+                                		<i class="fa fa-arrow-circle-o-up"></i> Start daemon
                                 	</a>
                                 </li>
-                                <li data-toggle="tooltip" title="" data-original-title="<?php echo ($isOnline) ? "Stop your miner" : "Your miner is stopped"; ?>">
+                                <li data-toggle="tooltip" title="" data-original-title="<?php echo ($isOnline) ? "Stop your wallet" : "Your wallet is stopped"; ?>">
                                 	<a href="#" class="miner-action" data-miner-action="stop" style="margin-left: 10px;">
-                                		<i class="fa fa-arrow-circle-o-down"></i> Stop miner
+                                		<i class="fa fa-arrow-circle-o-down"></i> Stop daemon
                                 	</a>
                                 </li>
-                                <li data-toggle="tooltip" title="" data-original-title="Restart your miner">
+                                <li data-toggle="tooltip" title="" data-original-title="Restart your wallet">
                                 	<a href="#" class="miner-action" data-miner-action="restart" style="margin-left: 10px;">
-                                		<i class="fa fa-repeat"></i> Restart miner
+                                		<i class="fa fa-repeat"></i> Restart daemon
                                 	</a>
                                 </li>
                             </ul>

@@ -15,7 +15,7 @@ class Cpuminer_model extends CI_Model {
 	// Call minerd to get the stats and retry before give up
 	public function callMinerd($cmd = false)
 	{		
-		if(!($fp = @fsockopen("127.0.0.1", 4028, $errno, $errstr, 3)))
+		if(!($fp = @fsockopen("127.0.0.1", 11888, $errno, $errstr, 3)))
 		{
 			return array("error" => true, "msg" => $errstr);
 		}

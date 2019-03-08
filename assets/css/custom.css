@@ -104,10 +104,9 @@ body > .header { position: fixed !important; }
 .lockscreen-cover {
 	width: 100%;
 	height: 200px;
-	background: url('../img/cover_minera.jpg') no-repeat;
+	background: url('../img/cover_piratecash.png') no-repeat;
 	background-size: contain;
 	background-position: center center;
-    background-color: #ff4d51;
 }
 
 .scroll-ad {

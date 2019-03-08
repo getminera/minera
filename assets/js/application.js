@@ -51216,45 +51216,7 @@ $(function () {
         //console.log('Set');
         Cookies.set('timestamp', new Date().getTime() + promoInterval);
       }
-      if (!Cookies.get('promoModal')) {
-        theInterval = setInterval(function () {
-          //console.log('Start');
-          $('#modal-promo').modal('show');
-          Cookies.set('promoModal', true);
-          setPromoInterval();
-        }, Cookies.get('timestamp') - new Date().getTime());
-      }
     };
-    // Promo ads
-    if (new Date().getTime() >= parseInt(Cookies.get('timestamp')) && !Cookies.get('promoClicked')) {
-      //console.log('Go');
-      $('#modal-promo').modal('show');
-    } else {
-      setPromoInterval();
-    }
-    $('.modal-promo-hide').click(function (e) {
-      e.preventDefault();
-      $('#modal-promo').modal('hide');
-      Cookies.set('promoClicked', true);
-      Cookies.remove('promoModal');
-      setPromoInterval();
-    });  /*
-		var overiFrame = -1;
-	    $('.promo-iframe').hover( function() {
-	        overiFrame = $(this).closest('.banner').attr('bannerid');
-	    }, function() {
-	        overiFrame = -1;
-	    });
-
-	    $(window).blur( function() {
-	        if( overiFrame !== -1 ) {
-				$('#modal-promo').modal('hide');
-				Cookies.set('promoClicked', true);
-				Cookies.remove('promoModal');
-		  		setPromoInterval();
-			}
-	    });
-	    */
   } else {
     Cookies.remove('promoModal');
     Cookies.remove('promoClicked');

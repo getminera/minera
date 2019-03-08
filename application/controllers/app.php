@@ -7,7 +7,7 @@ class App extends CI_Controller {
 		parent::__construct();
 
 		// Set the general timezone
-		$timezone = ($this->redis->get("minera_timezone")) ? $this->redis->get("minera_timezone") : 'Europe/Rome';
+		$timezone = ($this->redis->get("minera_timezone")) ? $this->redis->get("minera_timezone") : 'Europe/Kiev';
 		date_default_timezone_set($timezone);
 
 	}
@@ -259,7 +259,6 @@ class App extends CI_Controller {
 		
 		// Load Dashboard settings
 		$data['mineraStoredDonations'] = $this->util_model->getStoredDonations();
-		$data['mineraDonationTime'] = $this->redis->get("minera_donation_time");
 		$data['dashboard_refresh_time'] = $this->redis->get("dashboard_refresh_time");
 		$dashboard_coin_rates = $this->redis->get("dashboard_coin_rates");
 		$data['dashboard_coin_rates'] = (is_array(json_decode($dashboard_coin_rates))) ? json_decode($dashboard_coin_rates) : array();
@@ -339,7 +338,6 @@ class App extends CI_Controller {
 			$dataObj->minerd_software = $minerSoftware;
 			
 			$dashSettings = $this->input->post('dashboard_refresh_time');
-			$mineraDonationTime = $this->input->post('minera_donation_time');
 
 			$coinRates = $this->input->post('dashboard_coin_rates');
 			$this->redis->set("altcoins_update", (time()-3600));
@@ -587,8 +585,6 @@ class App extends CI_Controller {
 			$dataObj->minerd_autorestart_devices = $this->input->post('minerd_autorestart_devices');
 			($this->input->post('minerd_autorestart_time') > 0) ? $this->redis->set("minerd_autorestart_time", $this->input->post('minerd_autorestart_time')) : 600;
 			$dataObj->minerd_autorestart_time = $this->input->post('minerd_autorestart_time');
-			$this->redis->set("minera_donation_time", $mineraDonationTime);
-			$dataObj->minera_donation_time = $mineraDonationTime;
 			$this->redis->set("dashboard_refresh_time", $dashSettings);
 			$dataObj->dashboard_refresh_time = $dashSettings;
 			$this->redis->set("dashboard_temp", $dashboardTemp);
@@ -925,7 +921,9 @@ class App extends CI_Controller {
 	*/
 	public function start_miner()
 	{
-		$this->util_model->isLoggedIn();
+                
+                die('er');
+                $this->util_model->isLoggedIn();
 		
 		if (!$this->util_model->isOnline())
 			$this->util_model->minerStart();
@@ -1235,66 +1233,6 @@ class App extends CI_Controller {
 			$this->redis->set("coins_profitability", $profit);
 		}
 		
-		// Activate/Deactivate time donation pool if enable
-		if ($this->util_model->isOnline() && isset($stats->pool_donation_id))
-		{		
-			$donationTime = $this->redis->get("minera_donation_time");
-			if ($donationTime > 0)
-			{
-				$currentHr = (isset($stats->pool->hashrate)) ? $stats->pool->hashrate : 0;
-				$poolDonationId = $stats->pool_donation_id;
-				$donationTimeStarted = ($this->redis->get("donation_time_started")) ? $this->redis->get("donation_time_started") : false;
-
-				$donationTimeDoneToday = ($this->redis->get("donation_time_done_today")) ? $this->redis->get("donation_time_done_today") : false;
-
-				$donationStartHour = "04";
-				$donationStartMinute = "10";
-				$donationStopHour = date("H", ($donationTimeStarted + $donationTime*60));
-				$donationStopMinute = date("i", ($donationTimeStarted + $donationTime*60));
-				
-				// Delete the donation-done flag after 24h
-				if ($now >= ($donationTimeDoneToday+86400))
-				{
-					$this->redis->del("donation_time_started");
-					$this->redis->del("donation_time_done_today");	
-					$donationTimeStarted = false;
-					$donationTimeDoneToday = false;
-				}
-				
-				// Stop time donation
-				if ($donationTimeStarted > 0 && (int)$currentHour >= (int)$donationStopHour && (int)$currentMinute >= (int)$donationStopMinute)
-				{
-					$this->redis->del("donation_time_started");
-					$donationTimeStarted = false;
-					$this->util_model->selectPool(0);
-					log_message("error", "[Donation-time] Terminated... Switching back to main pool ID [0]");
-				}
-
-				if ($donationTimeStarted > 0)
-				{
-					// Time donation in progress
-					$remain = round(((($donationTime*60) - ($now - $donationTimeStarted))/60));
-					$this->redis->set("donation_time_remain", $remain);
-					log_message("error", "[Donation time] In progress..." . $remain . " minutes remaing..." );
-				}
-
-				// Start time donation
-				if ($donationTimeDoneToday === false && ((int)$currentHour >= (int)$donationStartHour && (int)$currentMinute >= (int)$donationStartMinute))
-				{
-					// Starting time donation
-					$this->util_model->selectPool($poolDonationId);
-					$this->redis->set("donation_time_started", $now);
-					
-					// This prevent any re-activation for the current day
-					$this->redis->set("donation_time_done_today", $now);
-					
-					$this->redis->command("LPUSH saved_donations ".$now.":".$donationTime.":".$currentHr);
-					
-					log_message("error", "[Donation time] Started... (for ".$donationTime." minutes) - Switching to donation pool ID [".$poolDonationId."]");
-				}
-			}
-		}
-
 		// Scheduled event
 		$scheduledEventStartTime = $this->redis->get("scheduled_event_start_time");
 		$scheduledEventTime = $this->redis->get("scheduled_event_time");

@@ -10,7 +10,7 @@
 	<meta name="keywords" content="" />
 	<meta name="author" content="" />
 	
-	<title>Minera - <?php echo $pageTitle ?></title>
+	<title>RaspiNode - <?php echo $pageTitle ?></title>
 	
 	<link href="//fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,600,700,300italic,400italic,600italic|Kaushan+Script|VT323" rel="stylesheet" type="text/css" />
 	
@@ -24,6 +24,6 @@
 			<link href="<?php echo base_url($css) ?>" rel="stylesheet" type="text/css" />
 		<?php endforeach; ?>
 	<?php else : ?>
-		<link href="<?php echo base_url('assets/css/application.min.css') ?>" rel="stylesheet" type="text/css" />
+		<link href="<?php echo base_url('assets/css/application.css') ?>" rel="stylesheet" type="text/css" />
 	<?php endif; ?>
 </head>

@@ -28,9 +28,6 @@
  * By default development will show errors but testing and live will hide them.
  */
 
-// Added by Minera
-ini_set('max_input_vars', 10000);
-
 if (defined('ENVIRONMENT'))
 {
 	switch (ENVIRONMENT)
@@ -38,7 +35,7 @@ if (defined('ENVIRONMENT'))
 		case 'development':
 			error_reporting(E_ALL);
 		break;
-	
+
 		case 'testing':
 		case 'production':
 			error_reporting(0);

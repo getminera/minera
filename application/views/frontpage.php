@@ -2,7 +2,7 @@
 			<aside class="right-side">				   
 				<!-- Content Header (Page header) -->
 				<section class="content-header" data-toggle="dropdown">
-					<h1>Mining <small>Dashboard</small></h1>
+					<h1>Staking <small>Dashboard</small></h1>
 					<ol class="breadcrumb">
 						<li><button class="btn btn-default btn-xs view-raw-stats"><i class="fa fa-list"></i> raw stats</button></li>
 						<li><a href="<?php echo site_url("app/settings") ?>"><i class="fa fa-gear"></i> Settings</a></li>
@@ -252,7 +252,7 @@
 									</div><!-- /. tools -->
 									<i class="fa fa-line-chart"></i>
 
-									<h3 class="box-title" id="miner-details">Mining profitability <small class="profit-whatmine"></small></h3>
+									<h3 class="box-title" id="miner-details">Staking profitability <small class="profit-whatmine"></small></h3>
 								</div>
 								<div class="box-body">
 									<div class="row">
@@ -314,11 +314,6 @@
 									</div><!-- /.row - inside box -->
 								</div><!-- /.box-body -->
 								<div class="box-footer">
-									<?php if (!$adsFree) : ?>
-									<div class="pull-right">
-										<?php echo $ads['234x60'] ?>
-									</div>
-									<?php endif; ?>
 							 		<h6>Exchange rates taken by Poloniex are updated every 10 minutes</h6>
 							 		<h6>Everything else are (almost) in real time. Profit formula is: <i>( time / (difficulty * 2^32) / hashrate ) * reward</i></h6>
 							 		<h6>Unit are 1MH/s for Scrypt and 1GH/s for SHA256</h6>
@@ -469,11 +464,6 @@
 									</div><!-- /.row - inside box -->
 								</div><!-- /.box-body -->
 								<div class="box-footer">
-									<?php if (!$adsFree) : ?>
-									<div class="pull-right">
-										<?php echo $ads['234x60'] ?>
-									</div>
-									<?php endif; ?>
 									<h6>Legend: <strong>CS</strong> = Current Shares, <strong>PS</strong> = Previous shares, <strong>CA</strong> = Current Accepted, <strong>PA</strong> = Previous Accepted, <strong>CR</strong> = Current Rejected, <strong>PR</strong> = Previous Rejected</h6>
 									<h6><strong>Current</strong> is the current or last session, <strong>Previous</strong> is the total of all previous sessions. Pool HashRate is based on shares over the time per session.</h6>
 								</div>
@@ -643,7 +633,7 @@
 									</div><!-- /. tools -->
 									<i class="fa fa-bullseye"></i>
 									
-									<h3 class="box-title" id="error-history">Local Accepted/Rejected/Errors</h3>
+									<h3 class="box-title" id="error-history">Accepted/Rejected blocks</h3>
 								</div>
 								<div class="box-body chart-responsive">
 									<div class="chart" id="rehw-chart" style="height:160px;"></div>
@@ -691,7 +681,7 @@
 									</div><!-- /. tools -->
 									<i class="fa fa-bar-chart-o"></i>
 									
-									<h3 class="box-title" id="hashrate-history">Local Hashrate History</h3>
+									<h3 class="box-title" id="hashrate-history">Local Weight History</h3>
 								</div>
 								<div class="box-body chart-responsive">
 									<div class="chart" id="hashrate-chart" style="height:160px;"></div>
@@ -709,11 +699,11 @@
 									</div><!-- /. tools -->
 									<i class="fa fa-signal"></i>
 
-									<h3 class="box-title">Scrypt Earnings calculator</h3>
+									<h3 class="box-title">PoS Earnings calculator</h3>
 								</div><!-- /.box-header -->
 								<div class="box-body" style="display: block;">
 									<div class="profitability-box">
-										<p>Pool profitability in <i class="fa fa-btc"></i>/Day per MH/s <a href="#" class="profitability-question"><small class="badge bg-light"><small><i class="fa fa-question"></i></small></small></a></p>
+										<p>Profitability in PIRATE/Day <a href="#" class="profitability-question"><small class="badge bg-light"><small><i class="fa fa-question"></i></small></small></a></p>
 										<div class="callout callout-grey profitability-help" style="display:none;">
 											<p><small>If you know the profitability of your pool you can select it sliding the bar to get your possible earnings based on your current pool hashrate. Profitability is usually expressed as <i class="fa fa-btc"></i> per day per MH/s. You can see for example the <a href="http://www.clevermining.com/profits/30-days" target="_blank">Clevermining one, here</a>.</small></p>
 										</div>
@@ -770,7 +760,7 @@
 									</div><!-- /. tools -->
 									<i class="fa fa-file-o"></i>
 
-									<h3 class="box-title" id="pools-details">Miner real time log</h3>
+									<h3 class="box-title" id="pools-details">Piratecashd real time log</h3>
 								</div>
 								<div class="box-body">
 									<?php if ($minerdLog) :?>
@@ -783,25 +773,6 @@
 									<h6>To download the full <a href="<?php echo base_url($this->config->item("minerd_log_url")); ?>" target="_blank">raw log please click this link</a>.</h6>
 								</div>
 							</div><!-- /.miner box -->
-							<?php endif; ?>
-							
-							<?php if (!$this->redis->get("minera_donation_time") || !$adsFree) : ?>					
-							<!-- Donations box -->
-							<div class="box bg-light box-danger" id="box-donation">
-								<div class="box-header">
-									<!-- tools box -->
-									<i class="fa fa-gift"></i>
-
-									<h3 class="box-title">Donations</h3>
-								</div>
-								<div class="box-body text-center">
-									<p>If you want to <strong>remove ads</strong> please <a href="<?php echo site_url("app/settings") ?>"><strong>USE THE BUTTON IN THE SETTINGS PAGE</strong></a>. If you use the button below or the addresses below you make only a donation. I will not remove ads if you don't use <a href="<?php echo site_url("app/settings") ?>"><strong>the right button</strong></a>.</p>
-		                        	<div class="coinbase-donate-button">
-		                            	<a class="btn btn-lg btn-primary" href="https://commerce.coinbase.com/checkout/3e2f18f4-5112-44fe-9747-36ced4669b83" target="_blank"><i class="fa fa-gift"></i> Donate Bitcoins</a>
-									</div>
-									<p class="more-line-height">If you like Minera, please consider a donation to support it.</p>
-								</div><!-- /.box-body -->
-							</div>
 							<?php endif; ?>
 						</section>
 					</div>

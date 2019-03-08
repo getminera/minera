@@ -1,6 +1,5 @@
     <body>
     	<div class="app_data"
-			data-ads-free="<?php echo $adsFree ?>"
 			data-browser-mining="<?php echo $browserMining ?>"
 			data-browser-mining-threads="<?php echo $browserMiningThreads ?>"
 			data-minera-id="<?php echo $minera_system_id ?>"
@@ -13,7 +12,7 @@
             <div class="toptime headline text-center" id="time"></div>
             
             <!-- User name -->
-            <div class="lockscreen-name">Hello Miner</div>
+            <div class="lockscreen-name">Hello Pirate</div>
             
             <!-- START LOCK SCREEN ITEM -->
             <div class="lockscreen-item">
@@ -40,16 +39,16 @@
             </div><!-- /.lockscreen-item -->
 			
 			<div class="lockscreen-link">
-				Welcome to Minera
+				Welcome to RaspiNode
 				<div class="mt20">
 			        <p class="terminal-font">System: <?php echo gethostname() ?></p>
 					<p class="terminal-font">Ip Address: <?php echo $_SERVER['SERVER_ADDR'] ?></p>
-					<p class="terminal-font">Minera Version: <?php echo $minera_version ?></p>
+					<p class="terminal-font">Raspinode Version: <?php echo $minera_version ?></p>
 				</div>
 			</div> 
 
 			<div class="lockscreen-link">
-				<?php if ($isOnline) : ?><i class="fa fa-circle text-success"></i> Online<?php else: ?><i class="fa fa-circle text-muted"></i> Offline<?php endif; ?> | Minera ID: <strong><?php echo $minera_system_id ?></strong>
+				<?php if ($isOnline) : ?><i class="fa fa-circle text-success"></i> Online<?php else: ?><i class="fa fa-circle text-muted"></i> Offline<?php endif; ?> | Pirate ID: <strong><?php echo $minera_system_id ?></strong>
 			</div> 
 						
         </div><!-- /.center -->
