@@ -222,7 +222,6 @@ class App extends CI_Controller {
 
         // Load miner settings
         $data['builtInMinersConf'] = json_decode($this->util_model->refreshMinerConf());
-        $data['minerdCommand'] = $this->config->item("minerd_command");
         $data['minerdAutorestart'] = $this->redis->get('minerd_autorestart');
         $data['minerdAutorestartDevices'] = $this->redis->get('minerd_autorestart_devices');
         $data['minerdAutorestartTime'] = $this->redis->get('minerd_autorestart_time');
@@ -527,12 +526,6 @@ class App extends CI_Controller {
 
             // Add JSON conf to miner command
             $exportConfigSettings = $settings;
-            if ($this->redis->get('minerd_append_conf')) {
-                $settings .= " -c " . $this->config->item("minerd_conf_file");
-            }
-
-            // Save the JSON conf file
-            file_put_contents($this->config->item("minerd_conf_file"), $jsonConfFile);
 
             // End command options string
 
@@ -942,23 +935,11 @@ class App extends CI_Controller {
         $o = '{ "Hello": "World" }';
 
         switch ($cmd) {
+            case "get_blocks":
+                $o = $this->util_model->getBlocks();
+                break;
             case "save_current_freq":
                 $o = $this->util_model->saveCurrentFreq();
-                break;
-            case "select_pool":
-                $o = json_encode($this->util_model->selectPool($this->input->get('poolId'), $this->input->get('network')));
-                // Give the miner the time to refresh
-                sleep(3);
-                break;
-            case "add_pool":
-                $o = json_encode($this->util_model->addPool($this->input->get('url'), $this->input->get('user'), $this->input->get('pass'), $this->input->get('network')));
-                // Give the miner the time to refresh
-                sleep(3);
-                break;
-            case "remove_pool":
-                $o = json_encode($this->util_model->removePool($this->input->get('poolId'), $this->input->get('network')));
-                // Give the miner the time to refresh
-                sleep(3);
                 break;
             case "update_minera":
                 $o = $this->util_model->update();
@@ -1007,19 +988,13 @@ class App extends CI_Controller {
             case "share_config":
                 $o = json_encode($this->util_model->shareSavedConfig($this->input->post()));
                 break;
-            case "delete_custom_miner":
-                $o = json_encode($this->util_model->deleteCustomMinerFile($this->input->get("custom")));
-                break;
-            case "scan_network":
-                $o = json_encode($this->util_model->discoveryNetworkDevices($this->input->get('network')));
-                break;
             case "tail_log":
                 $o = json_encode($this->util_model->tailFile($this->input->get('file'), ($this->input->get('lines')) ? $this->input->get('lines') : 5));
                 break;
             case "box_status":
                 $o = json_encode($this->util_model->setBoxStatus($this->input->get('id'), $this->input->get('status')));
                 break;
-            case "miner_action":
+            case "wallet_action":
                 $action = ($this->input->get('action')) ? $this->input->get('action') : false;
                 switch ($action) {
                     case "start":

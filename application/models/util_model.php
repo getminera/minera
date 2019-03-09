@@ -33,7 +33,7 @@ class Util_model extends CI_Model {
         if ($this->redis->get("minerd_use_root")) {
             $this->config->set_item('system_user', 'root');
         } else {
-            $this->config->set_item('system_user', 'minera');
+            $this->config->set_item('system_user', 'pirate');
         }
 
         $this->config->set_item('system_user', 'pirate');
@@ -45,16 +45,10 @@ class Util_model extends CI_Model {
 
         // Config for any custom miner
         $this->config->set_item('minerd_binary', 'piratecashd');
-        $this->config->set_item('screen_command', '/usr/bin/screen -dmS /usr/local/bin/piratecashd');
-        $this->config->set_item('screen_command_stop', '/usr/bin/screen -S /usr/local/bin/piratecashd -X quit');
-        $this->config->set_item('minerd_command', '/usr/local/bin/piratecashd');
         $this->config->set_item('minerd_log_file', '/var/log/minera/pirate.log');
         $this->config->set_item('minerd_special_log', true);
         $this->config->set_item('minerd_log_url', 'application/logs/pirate.log');
-        $this->load->model('cgminer_model', 'miner');
-
-        if ($network)
-            $this->load->model('cgminer_model', 'network_miner');
+        $this->load->model('cpuminer_model', 'miner');
 
         return true;
     }
@@ -846,7 +840,6 @@ class Util_model extends CI_Model {
 
         //log_message("error", var_export($conf, true));
         // Save the JSON conf file
-        file_put_contents($this->config->item("minerd_conf_file"), $jsonConfFile);
         $this->redis->set("minerd_json_settings", $jsonConfRedis);
     }
 
@@ -877,7 +870,6 @@ class Util_model extends CI_Model {
         $jsonConfFile = json_encode($conf, JSON_PRETTY_PRINT);
 
         // Save the JSON conf file
-        //file_put_contents($this->config->item("minerd_conf_file"), $jsonConfFile);
         $this->redis->set("minerd_json_settings", $jsonConfRedis);
     }
 
@@ -988,7 +980,7 @@ class Util_model extends CI_Model {
                 $this->redis->set("guided_options", false);
                 $this->redis->set("minerd_software", $obj->software);
                 $this->redis->set("minerd_manual_settings", $settings);
-                $settings .= " -c " . $this->config->item("minerd_conf_file");
+                $settings .= " -c ";
                 $this->setCommandline($settings);
                 $this->setPools($obj->pools);
 
@@ -1003,7 +995,6 @@ class Util_model extends CI_Model {
                 $jsonConfFile = json_encode($confArray, JSON_PRETTY_PRINT);
 
                 // Save the JSON conf file
-                file_put_contents($this->config->item("minerd_conf_file"), $jsonConfFile);
                 $this->redis->set("minerd_json_settings", $jsonConfRedis);
 
                 // Startup script rc.local
@@ -1344,11 +1335,6 @@ class Util_model extends CI_Model {
         return $files;
     }
 
-    public function deleteCustomMinerFile($file) {
-        $r = shell_exec("sudo rm " . FCPATH . 'minera-bin/custom/' . str_replace(" ", "\ ", $file));
-        return array('success' => $r);
-    }
-
     // Refresh miner confs
     public function refreshMinerConf() {
         // wait 1w before recheck
@@ -1421,7 +1407,7 @@ class Util_model extends CI_Model {
     public function saveStartupScript($minerSoftware, $delay = 5, $extracommands = false) {
         $this->switchMinerSoftware($minerSoftware);
 
-        $command = array($this->config->item("screen_command"), $this->config->item("minerd_command"), $this->getCommandline());
+        $command = array(" /usr/local/bin/piratecashd");
 
         $rcLocal = file_get_contents(FCPATH . "rc.local.minera");
 
@@ -1450,35 +1436,12 @@ class Util_model extends CI_Model {
         return $readlines;
     }
 
+    public function getBlocks() {
+        return '{"blocks":"' . $this->rpc->getinfo()['blocks'] . '"}';
+    }
+
     public function saveCurrentFreq() {
         return $this->miner->saveCurrentFreq();
-    }
-
-    public function selectPool($poolId, $network = false) {
-        if ($network) {
-            $this->switchMinerSoftware(false, true);
-            return $this->network_miner->selectPool($poolId, $network);
-        }
-
-        return $this->miner->selectPool($poolId, $network);
-    }
-
-    public function addPool($url, $user, $pass, $network = false) {
-        if ($network) {
-            $this->switchMinerSoftware(false, true);
-            return $this->network_miner->addPool($url, $user, $pass, $network);
-        }
-
-        return $this->miner->addPool($url, $user, $pass, $network);
-    }
-
-    public function removePool($poolId, $network = false) {
-        if ($network) {
-            $this->switchMinerSoftware(false, true);
-            return $this->network_miner->removePool($poolId, $network);
-        }
-
-        return $this->miner->removePool($poolId, $network);
     }
 
     // Stop miner
@@ -1495,7 +1458,7 @@ class Util_model extends CI_Model {
 
         $minerdUser = $this->config->item("system_user");
 
-        exec("sudo -u " . $minerdUser . " " . $this->config->item("minerd_command") . " stop");
+        exec("sudo -u " . $minerdUser . " /usr/local/bin/piratecashd stop");
         sleep(9);
         exec("sudo -u " . $minerdUser . " /usr/bin/killall -s9 " . $this->config->item("minerd_binary"));
 
@@ -1523,7 +1486,7 @@ class Util_model extends CI_Model {
 
         $this->redis->set("minerd_running_user", $this->config->item("system_user"));
 
-        $command = $this->config->item("minerd_command") . " " . $this->getCommandline() . " 2>" . $this->config->item("minerd_log_file");
+        $command = "/usr/local/bin/piratecashd " . $this->getCommandline() . " 2>" . $this->config->item("minerd_log_file");
 
         $finalCommand = "sudo -u " . $this->config->item("system_user") . " " . $command;
 
@@ -1894,47 +1857,6 @@ class Util_model extends CI_Model {
         }
 
         return false;
-    }
-
-    public function discoveryNetworkDevices($network = null) {
-        $range = $network;
-        $localIp = $_SERVER['SERVER_ADDR'];
-        if (!$range) {
-            list($w, $x, $y, $z) = explode('.', $localIp);
-
-            $range = implode(".", array($w, $x, $y, '0')) . "/24";
-        }
-        $addresses = array();
-        $opens = array();
-
-        log_message("error", var_export($range, true));
-
-        @list($ip, $len) = explode('/', $range);
-
-        if (($min = ip2long($ip)) !== false) {
-            $max = ($min | (1 << (32 - $len)) - 1);
-            for ($i = $min; $i < $max; $i++)
-                $addresses[] = long2ip($i);
-        }
-
-        $stored = $this->getNetworkMiners();
-        $current = array($localIp);
-
-        foreach ($stored as $net) {
-            $current[] = $net->ip;
-        }
-
-        foreach ($addresses as $address) {
-            $connection = @fsockopen($address, 4028, $errno, $errstr, 0.1);
-
-            if (is_resource($connection) && !in_array($address, $current)) {
-                $opens[] = array('ip' => $address, 'name' => $this->getRandomStarName());
-
-                fclose($connection);
-            }
-        }
-
-        return $opens;
     }
 
     public function getRandomStarName() {

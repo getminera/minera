@@ -51355,7 +51355,7 @@ $(function () {
     $('#modal-saving-label').html('Sending action: ' + action + ' , please wait...');
     $('#modal-saving').modal('show');
     saveSettings(false, false);
-    var apiUrl = _baseUrl + '/app/api?command=miner_action&action=' + action;
+    var apiUrl = _baseUrl + '/app/api?command=wallet_action&action=' + action;
     $.ajax({
       type: 'GET',
       url: apiUrl,
