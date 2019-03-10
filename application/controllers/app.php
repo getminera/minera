@@ -130,9 +130,6 @@ class App extends CI_Controller {
         $data['dashboardBoxLog'] = ($this->redis->get("dashboard_box_log")) ? $this->redis->get("dashboard_box_log") : false;
         $data['pageTitle'] = ($this->redis->get("mobileminer_system_name")) ? $this->redis->get("mobileminer_system_name") . " > Minera - Dashboard" : "Minera - Dashboard";
         $data['dashboardSkin'] = ($this->redis->get("dashboard_skin")) ? $this->redis->get("dashboard_skin") : "black";
-        $data['minerdRunning'] = $this->redis->get("minerd_running_software");
-        $data['minerdRunningUser'] = $this->redis->get("minerd_running_user");
-        $data['minerdSoftware'] = $this->redis->get("minerd_software");
         $data['netMiners'] = $this->util_model->getNetworkMiners();
         $data['localAlgo'] = $this->util_model->checkAlgo($this->util_model->isOnline());
         $data['browserMining'] = $this->redis->get('browser_mining');
@@ -167,9 +164,6 @@ class App extends CI_Controller {
         $data['minerdLog'] = $this->redis->get('minerd_log');
         $data['dashboardSkin'] = ($this->redis->get("dashboard_skin")) ? $this->redis->get("dashboard_skin") : "black";
         $data['dashboardDevicetree'] = ($this->redis->get("dashboard_devicetree")) ? $this->redis->get("dashboard_devicetree") : false;
-        $data['minerdRunning'] = $this->redis->get("minerd_running_software");
-        $data['minerdRunningUser'] = $this->redis->get("minerd_running_user");
-        $data['minerdSoftware'] = $this->redis->get("minerd_software");
         $data['netMiners'] = $this->util_model->getNetworkMiners();
         $data['browserMining'] = $this->redis->get('browser_mining');
         $data['browserMiningThreads'] = $this->redis->get('browser_mining_threads');
@@ -226,13 +220,11 @@ class App extends CI_Controller {
         $data['minerdAutorestartDevices'] = $this->redis->get('minerd_autorestart_devices');
         $data['minerdAutorestartTime'] = $this->redis->get('minerd_autorestart_time');
         $data['minerdAutorecover'] = $this->redis->get('minerd_autorecover');
-        $data['minerdUseRoot'] = $this->redis->get('minerd_use_root');
         $data['minerdScrypt'] = $this->redis->get('minerd_scrypt');
         $data['minerdAutodetect'] = $this->redis->get('minerd_autodetect');
         $data['minerdAutotune'] = $this->redis->get('minerd_autotune');
         $data['minerdStartfreq'] = $this->redis->get('minerd_startfreq');
         $data['minerdExtraoptions'] = $this->redis->get('minerd_extraoptions');
-        $data['minerdSoftware'] = $this->redis->get('minerd_software');
         $data['minerdLog'] = $this->redis->get('minerd_log');
         $data['minerdDebug'] = $this->redis->get('minerd_debug');
         $data['minerdAppendConf'] = $this->redis->get('minerd_append_conf');
@@ -298,10 +290,7 @@ class App extends CI_Controller {
         $data['htmlTag'] = "settings";
         $data['appScript'] = false;
         $data['settingsScript'] = true;
-        $data['pageTitle'] = "Minera - Settings";
-        $data['minerdRunning'] = $this->redis->get("minerd_running_software");
-        $data['minerdRunningUser'] = $this->redis->get("minerd_running_user");
-        $data['minerdSoftware'] = $this->redis->get("minerd_software");
+        $data['pageTitle'] = "RaspiNode - Settings";
         $data['donationProfitability'] = ($prof = $this->util_model->getAvgProfitability()) ? $prof : "0.00020";
 
         // Saved Configs
@@ -325,10 +314,7 @@ class App extends CI_Controller {
         $mineraSystemId = $this->util_model->generateMineraId();
 
         if ($this->input->post('save_settings')) {
-            $minerSoftware = $this->input->post('minerd_software');
-            $this->redis->set("minerd_software", $minerSoftware);
-            $this->util_model->switchMinerSoftware($minerSoftware);
-            $dataObj->minerd_software = $minerSoftware;
+            $minerSoftware = "";
 
             $dashSettings = $this->input->post('dashboard_refresh_time');
 
@@ -415,8 +401,8 @@ class App extends CI_Controller {
                 // Logging
                 $minerdLog = false;
                 if ($this->input->post('minerd_log')) {
-                    $confArray["log"] = $this->config->item("minerd_log_file");
-                    $minerdLog = $this->input->post('minerd_log');
+                    $confArray["log"] = "/home/pirate/.piratecash/debug.log ";
+                    $minerdLog = "/home/pirate/.piratecash/debug.log ";
                 }
                 $this->redis->set('minerd_log', $minerdLog);
                 $dataObj->minerd_log = $minerdLog;
@@ -432,7 +418,7 @@ class App extends CI_Controller {
 
                 // Logging
                 if ($this->input->post('minerd_log')) {
-                    $confArray["log-file"] = $this->config->item("minerd_log_file");
+                    $confArray["log-file"] = "/home/pirate/.piratecash/debug.log ";
                     $this->redis->set('minerd_log', $this->input->post('minerd_log'));
                     $dataObj->minerd_log = $this->input->post('minerd_log');
                 } else {
@@ -536,8 +522,6 @@ class App extends CI_Controller {
             $dataObj->minerd_json_settings = $jsonConfRedis;
             $this->redis->set("minerd_autorecover", $this->input->post('minerd_autorecover'));
             $dataObj->minerd_autorecover = $this->input->post('minerd_autorecover');
-            $this->redis->set("minerd_use_root", $this->input->post('minerd_use_root'));
-            $dataObj->minerd_use_root = $this->input->post('minerd_use_root');
             $this->redis->set("minerd_autorestart", $this->input->post('minerd_autorestart'));
             $dataObj->minerd_autorestart = $this->input->post('minerd_autorestart');
             $this->redis->set("minerd_autorestart_devices", $this->input->post('minerd_autorestart_devices'));
@@ -998,13 +982,13 @@ class App extends CI_Controller {
                 $action = ($this->input->get('action')) ? $this->input->get('action') : false;
                 switch ($action) {
                     case "start":
-                        $o = $this->util_model->minerStart();
+                        $o = $this->util_model->walletStart();
                         break;
                     case "stop":
-                        $o = $this->util_model->minerStop();
+                        $o = $this->util_model->walletStop();
                         break;
                     case "restart":
-                        $o = $this->util_model->minerRestart();
+                        $o = $this->util_model->walletRestart();
                         break;
                     default:
                         $o = json_encode(array("err" => true));
@@ -1155,9 +1139,7 @@ class App extends CI_Controller {
                     $totalDevices = count($devs);
                 }
 
-                $minerdRunning = $this->redis->get("minerd_running_software");
-
-                $anonStats = array("id" => $mineraSystemId, "algo" => $this->util_model->checkAlgo(), "hashrate" => $totalHashrate, "devices" => $totalDevices, "miner" => $minerdRunning, "version" => $this->util_model->currentVersion(true), "timestamp" => time());
+                $anonStats = array("id" => $mineraSystemId, "algo" => $this->util_model->checkAlgo(), "hashrate" => $totalHashrate, "devices" => $totalDevices, "miner" => "pirate", "version" => $this->util_model->currentVersion(true), "timestamp" => time());
             }
 
             if ($currentMinute == "00") {

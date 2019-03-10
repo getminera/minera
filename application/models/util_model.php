@@ -13,8 +13,6 @@ class Util_model extends CI_Model {
 
     public function __construct() {
         // load Miner Model
-        // Switch model for CGMiner/BFGMiner/CPUMiner
-        $this->switchMinerSoftware();
         parent::__construct();
     }
 
@@ -25,30 +23,6 @@ class Util_model extends CI_Model {
             redirect('app/index');
             return false;
         }
-
-        return true;
-    }
-
-    public function switchMinerSoftware($software = false, $network = false) {
-        if ($this->redis->get("minerd_use_root")) {
-            $this->config->set_item('system_user', 'root');
-        } else {
-            $this->config->set_item('system_user', 'pirate');
-        }
-
-        $this->config->set_item('system_user', 'pirate');
-
-        if ($software)
-            $this->_minerdSoftware = $software;
-        else
-            $this->_minerdSoftware = $this->redis->get('minerd_software');
-
-        // Config for any custom miner
-        $this->config->set_item('minerd_binary', 'piratecashd');
-        $this->config->set_item('minerd_log_file', '/var/log/minera/pirate.log');
-        $this->config->set_item('minerd_special_log', true);
-        $this->config->set_item('minerd_log_url', 'application/logs/pirate.log');
-        $this->load->model('cpuminer_model', 'miner');
 
         return true;
     }
@@ -833,7 +807,7 @@ class Util_model extends CI_Model {
         $conf = json_decode($this->redis->get("minerd_json_settings"));
         if (empty($conf))
             $conf = new stdClass();
-        $conf->pools = $this->parsePools($this->redis->get("minerd_software"), json_decode($newPools, true));
+        $conf->pools = $this->parsePools("", json_decode($newPools, true));
 
         $jsonConfRedis = json_encode($conf);
         $jsonConfFile = json_encode($conf, JSON_PRETTY_PRINT);
@@ -862,7 +836,7 @@ class Util_model extends CI_Model {
         if (!isset($conf))
             $conf = new stdClass();
         $conf->pools = [];
-        $currentPools = $this->parsePools($this->redis->get("minerd_software"), json_decode(json_encode($newPools), true));
+        $currentPools = $this->parsePools("", json_decode(json_encode($newPools), true));
         if ($currentPools)
             $conf->pools = $currentPools;
 
@@ -978,7 +952,6 @@ class Util_model extends CI_Model {
                 $settings = $obj->settings;
                 $this->redis->set("manual_options", 1);
                 $this->redis->set("guided_options", false);
-                $this->redis->set("minerd_software", $obj->software);
                 $this->redis->set("minerd_manual_settings", $settings);
                 $settings .= " -c ";
                 $this->setCommandline($settings);
@@ -1405,13 +1378,11 @@ class Util_model extends CI_Model {
 
     // Write rc.local startup file
     public function saveStartupScript($minerSoftware, $delay = 5, $extracommands = false) {
-        $this->switchMinerSoftware($minerSoftware);
-
         $command = array(" /usr/local/bin/piratecashd");
 
         $rcLocal = file_get_contents(FCPATH . "rc.local.minera");
 
-        $rcLocal .= "\nredis-cli set minerd_running_software $minerSoftware\nsleep $delay\nsu - " . $this->config->item('system_user') . ' -c "' . implode(' ', $command) . "\"\n$extracommands\nexit 0";
+        $rcLocal .= "\nsu - pirate -c \"" . implode(' ', $command) . "\"\n$extracommands\nexit 0";
 
         file_put_contents('/etc/rc.local', $rcLocal);
 
@@ -1444,27 +1415,14 @@ class Util_model extends CI_Model {
         return $this->miner->saveCurrentFreq();
     }
 
-    // Stop miner
-    public function minerStop() {
-        // Check if there is a running miner and
-        // stop that before start another one
-        $software = $this->redis->get("minerd_running_software");
-        if ($software) {
-            log_message("error", "Stopping running software: " . $software);
-            $this->switchMinerSoftware($software);
-        } else {
-            $this->switchMinerSoftware();
-        }
-
-        $minerdUser = $this->config->item("system_user");
-
-        exec("sudo -u " . $minerdUser . " /usr/local/bin/piratecashd stop");
+    // Stop wallet
+    public function walletStop() {
+        exec("sudo -u pirate /usr/local/bin/piratecashd stop");
         sleep(9);
-        exec("sudo -u " . $minerdUser . " /usr/bin/killall -s9 " . $this->config->item("minerd_binary"));
+        exec("sudo -u pirate /usr/bin/killall -s9 piratecashd");
 
         $this->redis->del("latest_stats");
         $this->redis->set("minerd_status", false);
-        $this->redis->set("minerd_running_software", false);
 
         log_message('error', $this->_minerdSoftware . " stopped");
 
@@ -1473,22 +1431,14 @@ class Util_model extends CI_Model {
         return true;
     }
 
-    // Start miner
-    public function minerStart() {
+    // Start wallet
+    public function walletStart() {
         $this->resetCounters();
         $this->checkCronIsRunning();
-        $software = $this->redis->get("minerd_software");
 
         $this->redis->set("minerd_status", true);
-        $this->redis->set("minerd_running_software", $software);
 
-        $this->switchMinerSoftware();
-
-        $this->redis->set("minerd_running_user", $this->config->item("system_user"));
-
-        $command = "/usr/local/bin/piratecashd " . $this->getCommandline() . " 2>" . $this->config->item("minerd_log_file");
-
-        $finalCommand = "sudo -u " . $this->config->item("system_user") . " " . $command;
+        $finalCommand = "sudo -u pirate /usr/local/bin/piratecashd";
 
         exec($finalCommand, $out);
 
@@ -1501,14 +1451,14 @@ class Util_model extends CI_Model {
         return true;
     }
 
-    // Restart minerd
-    public function minerRestart() {
+    // Restart wallet
+    public function walletRestart() {
         $this->resetCounters();
 
-        $this->minerStop();
+        $this->walletStop();
         sleep(1);
 
-        $this->minerStart();
+        $this->walletStart();
         sleep(1);
 
         return true;
@@ -1554,7 +1504,7 @@ class Util_model extends CI_Model {
 
         $lines = array();
         // Pull the latest code from github
-        exec("cd " . FCPATH . " && sudo -u " . $this->config->item("system_user") . " sudo git fetch --all && sudo git reset --hard origin/master", $out);
+        exec("cd " . FCPATH . " && sudo -u pirate sudo git fetch --all && sudo git reset --hard origin/master", $out);
 
         $logmsg = "Update request from " . $this->currentVersion() . " to " . $this->redis->command("HGET minera_update new_version") . " : " . var_export($out, true);
 
@@ -1569,7 +1519,7 @@ class Util_model extends CI_Model {
         $this->checkUpdate();
 
         // Run upgrade script
-        exec("cd " . FCPATH . " && sudo -u " . $this->config->item("system_user") . " sudo ./upgrade_minera.sh", $out);
+        exec("cd " . FCPATH . " && sudo -u pirate sudo ./upgrade_minera.sh", $out);
 
         $logmsg = "Running upgrade script" . var_export($out, true);
 
@@ -1626,7 +1576,6 @@ class Util_model extends CI_Model {
         $this->redis->set("minerd_autorestart_time", 600);
         $this->redis->set("minerd_manual_settings", "");
         $this->redis->set("minerd_extraoptions", "");
-        $this->redis->set("minerd_use_root", 0);
         $this->redis->set("minerd_settings", "");
         $this->redis->set("minerd_autotune", 0);
         $this->redis->set("mobileminer_system_name", "");
@@ -1638,7 +1587,6 @@ class Util_model extends CI_Model {
         $this->redis->set("dashboard_table_records", 10);
         $this->redis->set("minera_timezone", "GMT");
         $this->redis->set("dashboard_devicetree", 0);
-        $this->redis->set("minerd_software", "cpuminer");
         $this->redis->set("manual_options", 0);
         $this->redis->set("minerd_autorecover", 0);
         $this->redis->set("scheduled_event_action", "");
@@ -1656,7 +1604,6 @@ class Util_model extends CI_Model {
         $this->redis->set("dashboard_coin_rates", json_encode(array()));
         $this->redis->set("system_extracommands", "");
         $this->redis->set("minerd_append_conf", 1);
-        $this->redis->set("minerd_running_user", "minera");
         $this->redis->set("minerd_debug", 0);
         $this->redis->set("pool_global_proxy", "");
         $this->redis->set("minerd_pools", "");
@@ -1834,17 +1781,6 @@ class Util_model extends CI_Model {
         $minerdCommand = $this->getCommandLine();
         $scryptEnabled = $this->redis->get("minerd_scrypt");
         $algo = "SHA-256";
-
-        if ($running) {
-            if ($scryptEnabled || preg_match("/scrypt/i", $minerdCommand) || $this->redis->get("minerd_running_software") == "cpuminer") {
-                $algo = "Scrypt";
-            }
-        } else {
-            if ($scryptEnabled || preg_match("/scrypt/i", $minerdCommand) || $this->redis->get('minerd_software') == "cpuminer") {
-                $algo = "Scrypt";
-            }
-        }
-
         return $algo;
     }
 

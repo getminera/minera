@@ -2090,20 +2090,6 @@ function getStats(refresh)
 
                 if (miner_status) {
                     errorTriggered = true;
-                    $('.warning-message').html('Your local miner is offline. Click here to check last logs.');
-                    $('.widget-warning').html('Not running');
-                    $.ajax(_baseUrl + '/app/api?command=tail_log&file=' + log_file, {
-                        dataType: 'text',
-                        success: function (dataP) {
-                            if (dataP)
-                            {
-                                var dataJ = $.parseJSON(dataP);
-                                $('#modal-log-label').html('Check the logs');
-                                $('#modal-log .modal-log-lines').html(dataJ.join('<br />'));
-                            }
-                        }
-                    });
-
                     $('.warning-message').click(function (e) {
                         e.preventDefault();
                         $('#modal-log').modal('show');
@@ -2120,17 +2106,6 @@ function getStats(refresh)
                 $('.warning-message').html(data.msg);
                 $('.widget-warning').html('Error');
                 $('.local-widget').removeClass('col-lg-4 col-sm-4').addClass('col-lg-6 col-sm-6');
-                $.ajax(_baseUrl + '/app/api?command=tail_log&file=' + log_file, {
-                    dataType: 'text',
-                    success: function (dataP) {
-                        if (dataP)
-                        {
-                            var dataJ = $.parseJSON(dataP);
-                            $('#modal-log-label').html('Check the logs');
-                            $('#modal-log .modal-log-lines').html(dataJ.join('<br />'));
-                        }
-                    }
-                });
 
                 $('.warning-message').click(function (e) {
                     e.preventDefault();

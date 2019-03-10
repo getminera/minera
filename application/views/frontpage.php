@@ -754,7 +754,7 @@
 								<div class="box-header" style="cursor: move;">
 									<!-- tools box -->
 									<div class="pull-right box-tools">
-										<a href="<?php echo base_url($this->config->item("minerd_log_url")); ?>" target="_blank" style="padding-right: 20px;"><button class="btn btn-default btn-xs"><i class="fa fa-briefcase"></i> view raw log</button></a>
+										<a href="" target="_blank" style="padding-right: 20px;"><button class="btn btn-default btn-xs"><i class="fa fa-briefcase"></i> view raw log</button></a>
 										<button class="btn btn-default btn-xs pause-log" data-widget="pause" data-toggle="tooltip" title="" data-original-title="Pause Log"><i class="fa fa-pause"></i></button>
 										<button class="btn btn-default btn-xs" data-widget="collapse" data-toggle="tooltip" title="" data-original-title="Collapse"><i class="fa fa-minus"></i></button>
 									</div><!-- /. tools -->
@@ -770,7 +770,7 @@
 									<?php endif; ?>
 								</div><!-- /.box-body -->
 								<div class="box-footer">
-									<h6>To download the full <a href="<?php echo base_url($this->config->item("minerd_log_url")); ?>" target="_blank">raw log please click this link</a>.</h6>
+									<h6>To download the full <a href="" target="_blank">raw log please click this link</a>.</h6>
 								</div>
 							</div><!-- /.miner box -->
 							<?php endif; ?>

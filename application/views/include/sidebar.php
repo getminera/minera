@@ -2,11 +2,9 @@
 		<div class="app_data"
 			data-refresh-time="<?php echo ($dashboard_refresh_time) ? $dashboard_refresh_time : 60; ?>"
 			data-records-per-page="<?php echo ($dashboardTableRecords) ? $dashboardTableRecords : 5; ?>"
-			data-minerd-log="<?php echo ($minerdLog) ? base_url($this->config->item("minerd_log_url")) : null; ?>"
 			data-device-tree="<?php echo $dashboardDevicetree ?>"
 			data-dashboard-temp="<?php echo ($this->redis->get("dashboard_temp")) ? $this->redis->get("dashboard_temp") : "c"; ?>"
 			data-miner-status="<?php echo ($this->redis->get("minerd_status")) ? 1 : 0; ?>"
-			data-miner-running="<?php echo $minerdRunning; ?>"
 			data-browser-mining="<?php echo $browserMining ?>"
 			data-browser-mining-threads="<?php echo $browserMiningThreads ?>"
 			data-minera-id="<?php echo $mineraSystemId ?>"
@@ -24,24 +22,6 @@
 					</div>
 					<div class="modal-footer modal-footer-center">
 						<h6>Page will automatically reload as soon as the process terminate.</h6>
-					</div>
-				</div>
-			</div>
-		</div>
-
-		<div id="modal-log" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="Logs" aria-hidden="true" data-backdrop="static" data-keyboard="false" >
-			<div class="modal-dialog modal-dialog-center modal-md">
-				<div class="modal-content">
-					<div class="modal-header bg-red">
-						<h4 class="modal-title" id="modal-log-label"></h4>
-					</div>
-					<div class="modal-body">
-						<p>Please take care of the lines below, here you could find the problem why your miner is not running:</p>
-						<blockquote class="modal-log-lines"></blockquote>
-					</div>
-					<div class="modal-footer">
-						<h6 class="pull-left">if you are still in trouble please check also <a href="<?php echo base_url($this->config->item("minerd_log_url")); ?>" target="_blank"><i class="fa fa-briefcase"></i> the full log here</a></h6>
-						<button type="button" class="btn btn-default pull-right" data-dismiss="modal">Close</button>
 					</div>
 				</div>
 			</div>
@@ -350,8 +330,10 @@
                         <div class="pull-left info">
                             <p>RaspiNode ID <strong><?php echo $mineraSystemId ?></strong></p>
 							<?php if ($isOnline) : ?>
+                                                        <?php $minerdRunning=true;?>
 	                            <a href="<?php echo site_url("app/dashboard") ?>"><i class="fa fa-circle text-success"></i> Online <?php if ($minerdRunning) : ?><small class="pull-right badge bg-green"><?php echo $minerdRunning ?></small><?php endif; ?></a>
 	                        <?php else: ?>
+                                    <?php $minerdSoftware = "piratecashd"; ?>
 	                            <a href="<?php echo site_url("app/settings") ?>" data-toggle="tooltip" title="" data-original-title="Go to the settings page"><i class="fa fa-circle text-muted"></i> Offline <?php if ($minerdSoftware) : ?><small class="pull-right badge bg-muted"><?php echo $minerdSoftware ?></small><?php endif; ?></a>
 							<?php endif; ?>
                         </div>

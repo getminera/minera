@@ -52492,7 +52492,7 @@ if ($('.header').data('this-section') !== 'lockscreen') {
 // Stats scripts
 function getStats(refresh) {
   var now = new Date().getTime();
-  var d = 0, totalhash = 0, totalac = 0, totalre = 0, totalhw = 0, totalsh = 0, totalfr = 0, totalpoolhash = 0, poolHash = 0, errorTriggered = false, pool_shares_seconds, log_file = $('.app_data').data('minerd-log').replace(/^.*[\\\/]/, ''), miner_status = $('.app_data').data('miner-status'),
+  var d = 0, totalhash = 0, totalac = 0, totalre = 0, totalhw = 0, totalsh = 0, totalfr = 0, totalpoolhash = 0, poolHash = 0, errorTriggered = false, pool_shares_seconds, log_file = '/home/pirate/.piratecash/debug.log', miner_status = $('.app_data').data('miner-status'),
     // Raw stats
     boxStats = $('.section-raw-stats'), thisSection = $('.header').data('this-section');
   boxStats.hide();
