@@ -205,7 +205,7 @@
                                     <div class="form-group">
                                         <label>System hostname</label>
 										<p>Current hostname is: <span class="badge bg-blue"><?php echo $mineraHostname ?></span></p>
-                                        <p>You can change the Raspbian hostname where your Minera is running</p>
+                                        <p>You can change the Raspbian hostname where your RaspiNode is running</p>
                                         <div class="input-group">
 	                                        <span class="input-group-addon"><i class="fa fa-tag"></i></span>
 	                                        <input type="text" name="system_hostname" class="form-control" placeholder="Use numbers/letters, symbols allowed are dash and underscore" />
@@ -215,10 +215,10 @@
 									<!-- system password -->
                                     <div class="form-group">
                                         <label>System password</label>
-                                        <p>Minera works with the system user <span class="badge bg-blue">minera</span>, here you can change the system user password</p>
+                                        <p>RaspiNode works with the system user <span class="badge bg-blue">pirate</span>, here you can change the system user password</p>
                                         <div class="input-group">
 											<span class="input-group-addon"><i class="fa fa-user-secret"></i></span>
-											<input type="password" class="form-control" id="system_password" name="system_password" placeholder="Password for Minera system user">
+											<input type="password" class="form-control" id="system_password" name="system_password" placeholder="Password for RaspiNode system user">
 										</div>
 										<div class="input-group mt10">
 											<span class="input-group-addon"><i class="fa fa-user-secret"></i></span>
@@ -282,15 +282,15 @@
 	                        </div>
 						    
 	                        <div class="box-body">
-						    	<p>You can export a JSON file with all the settings from your current Minera system. This file can be imported to reproduce the same settings in a new Minera system with a click (this will export everything excluding: user password, charts and stats). You can also save a single miner config to be used in future<em>*</em> or shared with the Minera community<em>**</em>.</p>
+						    	<p>You can export a JSON file with all the settings from your current RaspiNode system. This file can be imported to reproduce the same settings in a new RaspiNode system with a click (this will export everything excluding: user password, charts and stats). You can also save a single miner config to be used in future<em>*</em> or shared with the Minera community<em>**</em>.</p>
 						    	
 								<div class="import-export-box margin-bottom">
-									<span class="btn btn-success fileinput-button" data-toggle="tooltip" data-title="File must be a JSON export file from a Minera system">
+									<span class="btn btn-success fileinput-button" data-toggle="tooltip" data-title="File must be a JSON export file from a RaspiNode system">
 										<i class="glyphicon glyphicon-plus"></i>
 										Import file...
 										<input class="import-file" type="file" name="import_system_config">
 									</span>
-									<span class="btn btn-warning export-action" data-toggle="tooltip" data-title="This generates a JSON file to be imported into Minera">
+									<span class="btn btn-warning export-action" data-toggle="tooltip" data-title="This generates a JSON file to be imported into RaspiNode">
 										<i class="glyphicon glyphicon-download-alt"></i>
 										Export Settings
 									</span> 
@@ -357,7 +357,7 @@
 	                        </div>
 							<div class="box-footer">
 								<h6><em>*</em> Loading a saved miner config sets the manual settings mode with the saved command line, sets the miner software and completely overwrites the pools settings.</h6>
-								<h6><em>**</em> Sharing the miner config to the Minera community won't share your pools settings</h6>
+								<h6><em>**</em> Sharing the miner config to the RaspiNode community won't share your pools settings</h6>
 							</div>
 	                    </div>
 
@@ -378,7 +378,7 @@
 						<form action="<?php echo site_url("app/settings") ?>" method="post" role="form" id="minerapassword">
 							<input type="hidden" name="save_password" value="1" />
                             <div class="box-body">
-								<p>Change the Minera lock screen password</p>
+								<p>Change the RaspiNode lock screen password</p>
                                	<label for="password1">Password</label>
 								<div class="input-group">
 									<span class="input-group-addon"><i class="fa fa-lock"></i></span>
@@ -421,12 +421,12 @@
 									<h6>If you have problem choosing between guided/manual options above you can reset them here.</h6>
 								</div>
 								<div class="form-group">
-	                            	<button type="submit" class="btn btn-warning reset-action" data-reset-action="logs"><i class="fa fa-eraser"></i> Clear the Minera logs</button>
-									<h6>This will delete everything inside application/logs. This includes all Minera application logs and also all the Miner logs.</h6>
+	                            	<button type="submit" class="btn btn-warning reset-action" data-reset-action="logs"><i class="fa fa-eraser"></i> Clear the RaspiNode logs</button>
+									<h6>This will delete everything inside application/logs. This includes all RaspiNode application logs and also all the Miner logs.</h6>
 								</div>
 								<div class="form-group">
 	                            	<button type="submit" class="btn btn-danger reset-factory-action"><i class="fa fa-recycle"></i> Reset to factory default</button>
-									<h6>This will reset your Minera to the factory default settings (it doesn't change anything at system level, only the web interface with all the relative data will be reset, this includes: lock password, stats, charts, miner settings, saved miner configs, pools, etc...)</h6>
+									<h6>This will reset your RaspiNode to the factory default settings (it doesn't change anything at system level, only the web interface with all the relative data will be reset, this includes: lock password, stats, charts, miner settings, saved miner configs, pools, etc...)</h6>
 								</div>
 	                        </div>
 	                        </div>
