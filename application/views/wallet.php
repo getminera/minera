@@ -20,9 +20,9 @@
     $tx = $this->rpc->listtransactions('staking', 10);
     $getstakinginfo = $this->rpc->getstakinginfo();
     $unit = 'minutes';
-    $interval = $getstakinginfo['expectedtime'];
+    $interval = $getstakinginfo['expectedtime'] / 60;
     $hours = $interval / 60;
-    $days = $hours / 60;
+    $days = $hours / 24;
     if ($hours > 1) {
         $interval = $hours;
         $unit = "hours";
@@ -43,11 +43,12 @@
         if (isset($txLine['generated'])) {
             if ($txLine['generated']) {
                 $txinfo = $this->rpc->gettransaction($txLine['txid']);
+                //print_r($txinfo);
                 $amount += $txinfo['amount'];
-                foreach ($txinfo['vout'] as $vout){
-                    if (isset($vout['scriptPubKey']['addresses'])){
-                        if ($vout['scriptPubKey']['addresses']==$txLine['address']){
-                           $amount +=  $vout['value'];
+                foreach ($txinfo['vout'] as $vout) {
+                    if (isset($vout['scriptPubKey']['addresses'])) {
+                        if ($vout['scriptPubKey']['addresses'] == $txLine['address']) {
+                            $amount += $vout['value'];
                         }
                     }
                 }
@@ -217,7 +218,7 @@
                                 </tr>
                                 <tr>
                                     <td><strong>Expected time to earn reward is</strong></td>
-                                    <td><strong><font color="green"><?= sprintf('%.1f',$interval)." ".$unit;?></font></strong></td>
+                                    <td><strong><font color="green"><?= sprintf('%.1f', $interval) . " " . $unit; ?></font></strong></td>
                                 </tr>
                             </table>
                         </div>
