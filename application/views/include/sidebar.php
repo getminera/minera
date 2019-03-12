@@ -294,7 +294,7 @@
                                     <?php if ($mineraUpdate) : ?>
                                         <a href="<?php echo site_url("app/update") ?>" class="btn btn-danger btn-flat" style="color:#fff;">Ver. <?php echo $this->util_model->currentVersion() ?></a>
                                     <?php else: ?>
-                                        <a href="<?php echo base_url("minera.json") ?>" class="btn btn-default btn-flat">Ver. <?php echo $this->util_model->currentVersion() ?></a>
+                                        <a href="<?php echo base_url("raspinode.json") ?>" class="btn btn-default btn-flat">Ver. <?php echo $this->util_model->currentVersion() ?></a>
                                     <?php endif; ?>
                                 </div>
                             </li>

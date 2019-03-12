@@ -1680,7 +1680,7 @@ class Util_model extends CI_Model {
         // wait 1h before recheck
         if (time() > ((int) $this->redis->command("HGET minera_version timestamp") + 3600) && $cron == false) {
             $this->redis->command("HSET minera_version timestamp " . time());
-            $localConfig = json_decode(file_get_contents(base_url('minera.json')));
+            $localConfig = json_decode(file_get_contents(base_url('raspinode.json')));
             $this->redis->command("HSET minera_version value " . $localConfig->version);
             return $localConfig->version;
         } else {
