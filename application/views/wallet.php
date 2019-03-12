@@ -23,11 +23,19 @@
     $index = count($tx);
     while ($index) {
         $txLine = $tx[--$index];
+        $amount = $txLine['amount'];
         if ($txLine['confirmations'] == 0) {
-            $pending += $txLine['amount'];
+            $pending += $amount;
         }
+        if (isset($txLine['generated'])) {
+            if ($txLine['generated']) {
+                $txinfo = $this->rpc->gettransaction($txLine['txid']);
+                $amount += $txinfo['amount'];
+            }
+        }
+
         $txTime = date('o-m-j H:i', $txLine['time']);
-        $txTable .= "<tr><td>" . date('o-m-j H:i', $txLine['time']) . "</td><td>" . $txLine['address'] . "</td><td>" . sprintf('%.8f', $txLine['amount']) . " PIRATE</td></tr>";
+        $txTable .= "<tr><td>" . $txTime . "</td><td>" . $txLine['address'] . "</td><td>" . sprintf('%.8f', $amount) . " PIRATE</td></tr>";
     }
     ?>
 
