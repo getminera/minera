@@ -44,6 +44,13 @@
             if ($txLine['generated']) {
                 $txinfo = $this->rpc->gettransaction($txLine['txid']);
                 $amount += $txinfo['amount'];
+                foreach ($txinfo['vout'] as $vout){
+                    if (isset($vout['scriptPubKey']['addresses'])){
+                        if ($vout['scriptPubKey']['addresses']==$txLine['address']){
+                           $amount +=  $vout['value'];
+                        }
+                    }
+                }
             }
         }
 
