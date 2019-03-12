@@ -18,6 +18,19 @@
     $listaddress = $this->rpc->getaddressesbyaccount('staking');
     $address = isset($listaddress[0]) ? $listaddress[0] : $newaddress;
     $tx = $this->rpc->listtransactions('staking', 10);
+    $getstakinginfo = $this->rpc->getstakinginfo();
+    $unit = 'minutes';
+    $interval = $getstakinginfo['expectedtime'];
+    $hours = $interval / 60;
+    $days = $hours / 60;
+    if ($hours > 1) {
+        $interval = $hours;
+        $unit = "hours";
+    }
+    if ($days > 1) {
+        $interval = $days;
+        $unit = "days";
+    }
     $pending = 0;
     $txTable = "";
     $index = count($tx);
@@ -162,6 +175,42 @@
                                 <tr>
                                     <td><strong>Your staking address:</strong></td>
                                     <td><strong><font color="green"><?= $address; ?></font></strong></td>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section class="right-section col-xs-12 col-md-6">
+
+                <!-- Panels box -->
+                <div class="box box-primary" id="top-bar-box">
+                    <div class="box-header">
+                        <!-- tools box -->
+                        <div class="pull-right box-tools">
+                            <button class="btn btn-default btn-xs" data-widget="collapse" data-toggle="tooltip" title="" data-original-title="Collapse"><i class="fa fa-minus"></i></button>
+                        </div><!-- /. tools -->
+                        <i class="fa fa-map-signs"></i>
+
+                        <h3 class="box-title">Staking info</h3>
+                    </div>
+
+                    <div class="box-body" id="address">
+                        <!-- Overview -->
+                        <div class="form-group">
+                            <table class="box-panels">
+                                <tr>
+                                    <td><strong>Enabled:</strong></td>
+                                    <td><strong><font color=<?= $getstakinginfo['enabled'] ? '"green">OK' : '"red">NO'; ?></font></strong></td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Staking:</strong></td>
+                                    <td><strong><font color=<?= $getstakinginfo['staking'] ? '"green">OK' : '"red">NO'; ?></font></strong></td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Expected time to earn reward is</strong></td>
+                                    <td><strong><font color="green"><?= sprintf('%.1f',$interval)." ".$unit;?></font></strong></td>
                                 </tr>
                             </table>
                         </div>
