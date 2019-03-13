@@ -36,29 +36,25 @@
     $index = count($tx);
     while ($index) {
         $txLine = $tx[--$index];
-        $amount = $txLine['amount'];
         if ($txLine['confirmations'] == 0) {
-            $pending += $amount;
+            $pending += $txLine['amount'];
         }
-        if (isset($txLine['generated'])) {
-            if ($txLine['generated']) {
-                $amount = 0;
-                $txinfo = $this->rpc->gettransaction($txLine['txid']);
-                foreach ($txinfo['vin'] as $vin) {
-                    $txvin = $this->rpc->gettransaction($vin['txid']);
-                    $detail = $txvin['vout'][$vin['vout']];
-                    $validate = $this->rpc->validateaddress($detail['scriptPubKey']['addresses'][0]);
-                    if ($validate['ismine']) {
-                        $amount -= $detail['value'];
-                    }
-                }
-                foreach ($txinfo['vout'] as $vout) {
-                    if (isset($vout['scriptPubKey']['addresses'])) {
-                        $validate = $this->rpc->validateaddress($vout['scriptPubKey']['addresses'][0]);
-                        if ($validate['ismine']) {
-                            $amount += $vout['value'];
-                        }
-                    }
+
+        $amount = 0;
+        $txinfo = $this->rpc->gettransaction($txLine['txid']);
+        foreach ($txinfo['vin'] as $vin) {
+            $txvin = $this->rpc->gettransaction($vin['txid']);
+            $detail = $txvin['vout'][$vin['vout']];
+            $validate = $this->rpc->validateaddress($detail['scriptPubKey']['addresses'][0]);
+            if ($validate['ismine']) {
+                $amount -= $detail['value'];
+            }
+        }
+        foreach ($txinfo['vout'] as $vout) {
+            if (isset($vout['scriptPubKey']['addresses'])) {
+                $validate = $this->rpc->validateaddress($vout['scriptPubKey']['addresses'][0]);
+                if ($validate['ismine']) {
+                    $amount += $vout['value'];
                 }
             }
         }
