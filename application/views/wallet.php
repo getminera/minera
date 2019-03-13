@@ -42,12 +42,20 @@
         }
         if (isset($txLine['generated'])) {
             if ($txLine['generated']) {
+                $amount = 0;
                 $txinfo = $this->rpc->gettransaction($txLine['txid']);
-                //print_r($txinfo);
-                $amount += $txinfo['amount'];
+                foreach ($txinfo['vin'] as $vin) {
+                    $txvin = $this->rpc->gettransaction($vin['txid']);
+                    $detail = $txvin['vout'][$vin['vout']];
+                    $validate = $this->rpc->validateaddress($detail['scriptPubKey']['addresses'][0]);
+                    if ($validate['ismine']) {
+                        $amount -= $detail['value'];
+                    }
+                }
                 foreach ($txinfo['vout'] as $vout) {
                     if (isset($vout['scriptPubKey']['addresses'])) {
-                        if ($vout['scriptPubKey']['addresses'] == $txLine['address']) {
+                        $validate = $this->rpc->validateaddress($vout['scriptPubKey']['addresses'][0]);
+                        if ($validate['ismine']) {
                             $amount += $vout['value'];
                         }
                     }
