@@ -36,9 +36,6 @@
     $index = count($tx);
     while ($index) {
         $txLine = $tx[--$index];
-        if ($txLine['confirmations'] == 0) {
-            $pending += $txLine['amount'];
-        }
 
         $amount = 0;
         $txinfo = $this->rpc->gettransaction($txLine['txid']);
@@ -57,6 +54,10 @@
                     $amount += $vout['value'];
                 }
             }
+        }
+
+        if ($txLine['confirmations'] == 0) {
+            $pending = $amount;
         }
 
         $txTime = date('o-m-j H:i', $txLine['time']);
