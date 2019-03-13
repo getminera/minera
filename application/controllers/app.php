@@ -130,7 +130,6 @@ class App extends CI_Controller {
         $data['dashboardBoxLog'] = ($this->redis->get("dashboard_box_log")) ? $this->redis->get("dashboard_box_log") : false;
         $data['pageTitle'] = ($this->redis->get("mobileminer_system_name")) ? $this->redis->get("mobileminer_system_name") . " > Minera - Dashboard" : "Minera - Dashboard";
         $data['dashboardSkin'] = ($this->redis->get("dashboard_skin")) ? $this->redis->get("dashboard_skin") : "black";
-        $data['netMiners'] = $this->util_model->getNetworkMiners();
         $data['localAlgo'] = $this->util_model->checkAlgo($this->util_model->isOnline());
         $data['browserMining'] = $this->redis->get('browser_mining');
         $data['browserMiningThreads'] = $this->redis->get('browser_mining_threads');
@@ -179,7 +178,6 @@ class App extends CI_Controller {
         $data['dashboardBoxLog'] = ($this->redis->get("dashboard_box_log")) ? $this->redis->get("dashboard_box_log") : false;
         $data['pageTitle'] = ($this->redis->get("mobileminer_system_name")) ? $this->redis->get("mobileminer_system_name") . " > Minera - Dashboard" : "Minera - Dashboard";
         $data['dashboardSkin'] = ($this->redis->get("dashboard_skin")) ? $this->redis->get("dashboard_skin") : "black";
-        $data['netMiners'] = $this->util_model->getNetworkMiners();
         $data['localAlgo'] = $this->util_model->checkAlgo($this->util_model->isOnline());
         $data['browserMining'] = $this->redis->get('browser_mining');
         $data['browserMiningThreads'] = $this->redis->get('browser_mining_threads');
@@ -213,7 +211,6 @@ class App extends CI_Controller {
         $data['minerdLog'] = $this->redis->get('minerd_log');
         $data['dashboardSkin'] = ($this->redis->get("dashboard_skin")) ? $this->redis->get("dashboard_skin") : "black";
         $data['dashboardDevicetree'] = ($this->redis->get("dashboard_devicetree")) ? $this->redis->get("dashboard_devicetree") : false;
-        $data['netMiners'] = $this->util_model->getNetworkMiners();
         $data['browserMining'] = $this->redis->get('browser_mining');
         $data['browserMiningThreads'] = $this->redis->get('browser_mining_threads');
         $data['env'] = $this->config->item('ENV');
@@ -289,9 +286,6 @@ class App extends CI_Controller {
         $data['browserMining'] = $this->redis->get('browser_mining');
         $data['browserMiningThreads'] = $this->redis->get('browser_mining_threads');
         $data['env'] = $this->config->item('ENV');
-
-        $data['networkMiners'] = json_decode($this->redis->get('network_miners'));
-        $data['netMiners'] = $this->util_model->getNetworkMiners();
 
         // Load Dashboard settings
         $data['mineraStoredDonations'] = $this->util_model->getStoredDonations();
@@ -411,19 +405,6 @@ class App extends CI_Controller {
             $netGroupPoolUrls = $this->input->post('net_pool_url');
             $netGroupPoolUsernames = $this->input->post('net_pool_username');
             $netGroupPoolPasswords = $this->input->post('net_pool_password');
-
-            $netMiners = array();
-            foreach ($netMinersNames as $keyM => $netMinerName) {
-                if (!empty($netMinerName)) {
-                    if (isset($netMinersIps[$keyM]) && isset($netMinersPorts[$keyM])) {
-                        // Network Miners
-                        $netMiners[] = array("name" => $netMinerName, "ip" => $netMinersIps[$keyM], "port" => $netMinersPorts[$keyM], "algo" => $netMinersAlgos[$keyM], "type" => $netMinersTypes[$keyM], "pools" => array());
-                    }
-                }
-            }
-
-            $this->redis->set('network_miners', json_encode($netMiners));
-            $dataObj->network_miners = json_encode($netMiners);
 
             // Save Custom miners
             $dataObj->custom_miners = $this->input->post('active_custom_miners');
@@ -971,9 +952,6 @@ class App extends CI_Controller {
             case "get_blocks":
                 $o = $this->util_model->getBlocks();
                 break;
-            case "save_current_freq":
-                $o = $this->util_model->saveCurrentFreq();
-                break;
             case "update_minera":
                 $o = $this->util_model->update();
                 break;
@@ -985,9 +963,6 @@ class App extends CI_Controller {
                 break;
             case "miner_stats":
                 $o = json_encode($this->util_model->getMinerStats());
-                break;
-            case "network_miners_stats":
-                $o = json_encode($this->util_model->getNetworkMinerStats(false));
                 break;
             case "history_stats":
                 $o = $this->util_model->getHistoryStats($this->input->get('type'));

@@ -64,8 +64,6 @@ class Util_model extends CI_Model {
             $a->notrunning = true;
         }
 
-        $a->network_miners = $this->getNetworkMinerStats(true);
-
         // Add Minera ID
         $a->minera_id = $this->generateMineraId();
 
@@ -110,51 +108,17 @@ class Util_model extends CI_Model {
         return json_encode($a);
     }
 
-    public function getNetworkMinerStats($parsed) {
-        $a = array();
-
-        $netMiners = $this->getNetworkMiners();
-
-        if (count($netMiners) > 0) {
-            $this->load->model('cgminer_model', 'network_miner');
-
-            foreach ($netMiners as $netMiner) {
-                $a[$netMiner->name] = new stdClass();
-
-                if ($this->checkNetworkDevice($netMiner->ip, $netMiner->port)) {
-                    $n = $this->getMinerStats($netMiner->ip . ":" . $netMiner->port, $netMiner->algo, $netMiner->type);
-
-                    if ($parsed === false)
-                        $a[$netMiner->name] = $n;
-                    else {
-                        if ($n) {
-                            $a[$netMiner->name] = json_decode($this->getParsedStats($n, true));
-                            $a[$netMiner->name]->pools = $n->pools;
-                        }
-                    }
-                }
-                // Add config data
-                $a[$netMiner->name]->config = array('ip' => $netMiner->ip, 'port' => $netMiner->port, 'algo' => $netMiner->algo);
-            }
-        }
-
-        return $a;
-    }
-
     // Get the specific miner stats
-    public function getMinerStats($network = false, $algo = false, $type = false) {
+    public function getMinerStats() {
         $tmpPools = null;
         $pools = array();
 
-        if ($this->isOnline($network)) {
-            $cmd = false;
-            if ($type == 'newAnt')
-                $cmd = '{"command":"summary+pools+stats"}';
-
-            $a = ($network) ? $this->network_miner->callMinerd($cmd, $network) : $this->miner->callMinerd();
+        if ($this->isOnline()) {
+            $this->load->model('pirate_model', 'miner');
+            $a = $this->miner->callMinerd();
 
             if (is_object($a)) {
-                if ($this->_minerdSoftware == "cpuminer" && !$network) {
+                if ($this->_minerdSoftware == "cpuminer") {
                     $pools = (isset($a->pools)) ? $a->pools : false;
                 } else {
                     $devicePoolActives = false;
@@ -273,7 +237,7 @@ class Util_model extends CI_Model {
         $poolHashrate = 0;
 
         // CPUminer devices stats
-        if ($this->_minerdSoftware == "cpuminer" && !$network) {
+        if ($this->_minerdSoftware == "cpuminer") {
             if (isset($stats->devices)) {
                 foreach ($stats->devices as $name => $device) {
                     $d++;
@@ -468,7 +432,7 @@ class Util_model extends CI_Model {
             $return['pool']['alive'] = 0;
 
             foreach ($stats->pools as $poolIndex => $pool) {
-                if ($this->_minerdSoftware == "cpuminer" && !$network) {
+                if ($this->_minerdSoftware == "cpuminer") {
                     if (isset($pool->active) && $pool->active == 1) {
                         $return['pool']['url'] = $pool->url;
                         $return['pool']['alive'] = $pool->alive;
@@ -1226,18 +1190,11 @@ class Util_model extends CI_Model {
         return false;
     }
 
-    public function getNetworkMiners() {
-        return json_decode($this->redis->get('network_miners'));
-    }
-
     // Check if the minerd if running
-    public function isOnline($network = false) {
+    public function isOnline() {
 
         $ip = "127.0.0.1";
         $port = 11888;
-
-        if ($network)
-            list($ip, $port) = explode(":", $network);
 
         if (!($fp = @fsockopen($ip, $port, $errno, $errstr, 1)))
             return false;
@@ -1270,9 +1227,9 @@ class Util_model extends CI_Model {
             if ($this->isOnline() === false) {
                 log_message('error', "It seems wallet is down, trying to restart it");
                 // Force stop and killall
-                $this->minerStop();
+                $this->walletStop();
                 // Restart miner
-                $this->minerStart();
+                $this->walletStart();
             }
 
             log_message('error', "Wallet is up");
@@ -1352,7 +1309,7 @@ class Util_model extends CI_Model {
     public function shutdown() {
         log_message('error', "Shutdown cmd called");
 
-        $this->minerStop();
+        $this->walletStop();
         $this->redis->del("cron_lock");
         $this->redis->command("BGSAVE");
         sleep(2);
@@ -1366,7 +1323,7 @@ class Util_model extends CI_Model {
     public function reboot() {
         log_message('error', "Reboot cmd called");
 
-        $this->minerStop();
+        $this->walletStop();
         $this->redis->del("cron_lock");
         $this->redis->command("BGSAVE");
         sleep(2);
@@ -1409,10 +1366,6 @@ class Util_model extends CI_Model {
 
     public function getBlocks() {
         return '{"blocks":"' . $this->rpc->getinfo()['blocks'] . '"}';
-    }
-
-    public function saveCurrentFreq() {
-        return $this->miner->saveCurrentFreq();
     }
 
     // Stop wallet
@@ -1498,7 +1451,7 @@ class Util_model extends CI_Model {
     // Call update cmd
     public function update() {
         $this->session->unset_userdata("loggedin");
-        $this->minerStop();
+        $this->walletStop();
         $this->resetCounters();
         sleep(3);
 
@@ -1532,7 +1485,7 @@ class Util_model extends CI_Model {
         log_message('error', $logmsg);
 
         sleep(5);
-        $this->minerStart();
+        $this->walletStart();
 
         return json_encode($lines);
     }
@@ -1566,7 +1519,7 @@ class Util_model extends CI_Model {
     }
 
     public function factoryReset() {
-        $this->minerStop();
+        $this->walletStop();
         sleep(3);
 
         // SET
@@ -1628,7 +1581,6 @@ class Util_model extends CI_Model {
         $this->redis->del("minera_remote_config");
         $this->redis->del("export_settings");
         $this->redis->del("altcoins_data");
-        $this->redis->del("network_miners");
         $this->redis->del("minerd_totals_stats");
         $this->redis->del("miners_conf");
         $this->redis->del("miners_conf_update");
@@ -1782,17 +1734,6 @@ class Util_model extends CI_Model {
         $scryptEnabled = $this->redis->get("minerd_scrypt");
         $algo = "SHA-256";
         return $algo;
-    }
-
-    public function checkNetworkDevice($ip, $port = 4028) {
-        $connection = @fsockopen($ip, 4028, $errno, $errstr, 5);
-        if (is_resource($connection)) {
-            fclose($connection);
-
-            return true;
-        }
-
-        return false;
     }
 
     public function getRandomStarName() {
