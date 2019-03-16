@@ -1386,7 +1386,7 @@ class Util_model extends CI_Model {
             }
             $getblock = $this->rpc->getblockbynumber($getinfo['blocks']);
             return '{"error": 0, "blocks": ' . $getinfo['blocks']
-                    . ', "expected_time": "' . $interval . ' ' . $unit
+                    . ', "expected_time": "' . sprintf('%.2f', $interval) . ' ' . $unit
                     . '", "available": ' . $getinfo['balance']
                     . ', "stake": ' . $getinfo['stake']
                     . ', "version": "' . $getinfo['version']

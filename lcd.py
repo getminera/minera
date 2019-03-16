@@ -37,6 +37,8 @@ try:
                 st = "\033[1;31mNO"
             print "\033[1;37mEnabled:      %s" % en
             print "\033[1;37mStaking:      %s" % st
+            print "\033[1;37mExpected time to earn reward:"
+            print "\033[1;35m              %s" % lcd['expected_time']
             print
             print "\033[1;32mTime:\033[1;37m           %s" % datetime.datetime.now().strftime('%Y-%m-%d %H:%M')
 except requests.exceptions.ConnectionError:
