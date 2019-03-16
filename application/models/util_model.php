@@ -1368,6 +1368,37 @@ class Util_model extends CI_Model {
         return '{"blocks":"' . $this->rpc->getinfo()['blocks'] . '"}';
     }
 
+    public function getStakingDashboard() {
+        try {
+            $getinfo = $this->rpc->getinfo();
+            $getstakinginfo = $this->rpc->getstakinginfo();
+            $unit = 'minutes';
+            $interval = $getstakinginfo['expectedtime'] / 60;
+            $hours = $interval / 60;
+            $days = $hours / 24;
+            if ($hours > 1) {
+                $interval = $hours;
+                $unit = "hours";
+            }
+            if ($days > 1) {
+                $interval = $days;
+                $unit = "days";
+            }
+            $getblock = $this->rpc->getblockbynumber($getinfo['blocks']);
+            return '{"error": 0, "blocks": ' . $getinfo['blocks']
+                    . ', "expected_time": "' . $interval . ' ' . $unit
+                    . '", "available": ' . $getinfo['balance']
+                    . ', "stake": ' . $getinfo['stake']
+                    . ', "version": "' . $getinfo['version']
+                    . '", "connections": ' . $getinfo['connections']
+                    . ', "enabled": ' . $getstakinginfo['enabled']
+                    . ', "staking": ' . $getstakinginfo['staking']
+                    . ', "last_block_time": ' . $getblock['time'] . '}';
+        } catch (Exception $ex) {
+            return '{"error": 1}';
+        }
+    }
+
     // Stop wallet
     public function walletStop() {
         exec("sudo -u pirate /usr/local/bin/piratecashd stop");

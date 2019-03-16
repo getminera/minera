@@ -94,7 +94,7 @@ class App extends CI_Controller {
       // Dashboard controller
      */
 
-    public function wallet(){
+    public function wallet() {
         $this->util_model->isLoggedIn();
 
         //var_export($this->redis->command("HGETALL box_status"));
@@ -1044,6 +1044,13 @@ class App extends CI_Controller {
         $this->output
                 ->set_content_type('application/json')
                 ->set_output($stats);
+    }
+
+    public function lcd() {
+        $o = $this->util_model->getStakingDashboard();
+        $this->output
+                ->set_content_type('application/json')
+                ->set_output($o);
     }
 
     /*
