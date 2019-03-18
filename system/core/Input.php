@@ -349,7 +349,11 @@ class CI_Input {
 		}
 		else
 		{
-			$this->ip_address = $_SERVER['REMOTE_ADDR'];
+                    if(isset($_SERVER['REMOTE_ADDR'])){
+                        $this->ip_address = $_SERVER['REMOTE_ADDR'];
+                    }else{
+                        $this->ip_address = '0.0.0.0';
+                    }
 		}
 
 		if ( ! $this->valid_ip($this->ip_address))
