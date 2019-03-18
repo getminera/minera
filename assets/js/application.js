@@ -50797,7 +50797,7 @@ function convertHashrate(hash) {
   else if (hash > 900000)
     return (hash / 1000000).toFixed(2) + 'Gh/s';
   else if (hash > 900)
-    return (hash / 1000).toFixed(2) + 'Mh/s';
+    return (hash / 1000).toFixed(2) + '';
   else
     return hash.toFixed(2) + 'Kh/s';
 }
@@ -50968,8 +50968,8 @@ function createChart(period, text_period) {
   $.getJSON(_baseUrl + '/app/api?command=history_stats&type=' + period, function (data) {
     var refresh = false, areaHash = {}, areaRej = {}, dataChart = Object.keys(data).map(function (key) {
         data[key].timestamp = data[key].timestamp * 1000;
-        data[key].hashrate = (data[key].hashrate / 1000 / 1000).toFixed(2);
-        data[key].pool_hashrate = (data[key].pool_hashrate / 1000 / 1000).toFixed(2);
+        data[key].weight = (data[key].weight).toFixed(2);
+        data[key].net_weight = (data[key].net_weight).toFixed(2);
         return data[key];
       });
     if (dataChart.length > 0) {
@@ -50981,14 +50981,14 @@ function createChart(period, text_period) {
           data: dataChart,
           xkey: 'timestamp',
           ykeys: [
-            'hashrate',
-            'pool_hashrate'
+            'weight',
+            'net_weight'
           ],
           ymax: 'auto',
-          postUnits: 'Mh/s',
+          postUnits: '',
           labels: [
-            'Devices',
-            'Pool'
+            'Raspinode',
+            'Network'
           ],
           lineColors: [
             '#3c8dbc',
@@ -51079,7 +51079,7 @@ function createMon(key, hash, totalhash, maxHashrate, ac, re, hw, sh, freq, colo
   var devBox = '<div class="col-xs-' + col + ' text-center" id="master-' + key + '"><input type="text" class="' + key + '" /><div class="knob-label"><p><strong>' + name + '</strong></p><p>A: ' + ac + ' - R: ' + re + ' - H: ' + hw + '</p></div></div>';
   $('#master-' + key).remove();
   $(toAppend).append(devBox);
-  $('.' + key).data('hashrate', hash);
+  $('.' + key).data('weight', hash);
   $('.' + key).knob({
     'readOnly': true,
     'fgColor': color,
@@ -51341,7 +51341,7 @@ $(function () {
             threads: bmThreads
           };
         $('.bmHash').show();
-        $('.bmHashText').text(bmData.hashrate);
+        $('.bmHashText').text(bmData.weight);
         $('.bmAccepted').text(bmData.acceptedHashes);
         $('.bm-threads').text(bmThreads);  // console.log('BM Info', bmData);
       }, 5000);
@@ -52609,11 +52609,11 @@ function getStats(refresh) {
           avgs.hrCurrent = 0;
           avgs.hrPast = 0;
           if (aval[0]) {
-            avgs.hrCurrent = parseInt(aval[0].pool_hashrate / 1000);
+            avgs.hrCurrent = parseInt(aval[0].net_weight / 1000);
             avgs.hrCurrentText = convertHashrate(avgs.hrCurrent);
           }
           if (aval[1]) {
-            avgs.hrPast = parseInt(aval[1].pool_hashrate / 1000);
+            avgs.hrPast = parseInt(aval[1].net_weight / 1000);
           }
           if (avgs.hrPast > avgs.hrCurrent) {
             avgs.arrow = 'fa-chevron-down';
@@ -53632,8 +53632,8 @@ function getStats(refresh) {
     $.getJSON(_baseUrl + '/app/api?command=history_stats&type=hourly', function (data) {
       var dataMorris = Object.keys(data).map(function (key) {
           data[key].timestamp = data[key].timestamp * 1000;
-          data[key].hashrate = (data[key].hashrate / 1000 / 1000).toFixed(2);
-          data[key].pool_hashrate = (data[key].pool_hashrate / 1000 / 1000).toFixed(2);
+          data[key].weight = (data[key].weight).toFixed(2);
+          data[key].net_weight = (data[key].net_weight).toFixed(2);
           return data[key];
         });
       var redrawGraphs = function () {
@@ -53660,14 +53660,14 @@ function getStats(refresh) {
           data: dataMorris,
           xkey: 'timestamp',
           ykeys: [
-            'hashrate',
-            'pool_hashrate'
+            'weight',
+            'net_weight'
           ],
           ymax: 'auto',
-          postUnits: 'Mh/s',
+          postUnits: '',
           labels: [
-            'Devices',
-            'Pool'
+            'RaspiNode',
+            'Network'
           ],
           lineColors: [
             '#3c8dbc',

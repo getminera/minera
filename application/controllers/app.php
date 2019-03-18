@@ -317,7 +317,6 @@ class App extends CI_Controller {
         $data['scheduledEventStartTime'] = $this->redis->get("scheduled_event_start_time");
         $data['scheduledEventTime'] = $this->redis->get("scheduled_event_time");
         $data['scheduledEventAction'] = $this->redis->get("scheduled_event_action");
-        $data['anonymousStats'] = $this->redis->get("anonymous_stats");
         $data['mineraSystemId'] = $this->redis->get("minera_system_id");
 
         // Load Mobileminer
@@ -654,14 +653,6 @@ class App extends CI_Controller {
             $dataObj->scheduled_event_time = $scheduledEventTime;
             $this->redis->set("scheduled_event_action", $scheduledEventAction);
             $dataObj->scheduled_event_action = $scheduledEventAction;
-
-            // Anonymous stats
-            $anonymousStats = false;
-            if ($this->input->post('anonymous_stats')) {
-                $anonymousStats = $this->input->post('anonymous_stats');
-            }
-            $this->redis->set("anonymous_stats", $anonymousStats);
-            $dataObj->anonymous_stats = $anonymousStats;
 
             // Startup script rc.local
             $this->util_model->saveStartupScript($minerSoftware, $delay, $extracommands);
@@ -1020,7 +1011,7 @@ class App extends CI_Controller {
                 break;
             case "test":
                 //$a = file_get_contents("api.json");
-                //$o = $this->redis->command("BGSAVE"); //$this->util_model->checkCronIsRunning(); //$this->util_model->sendAnonymousStats(123, "hello world!");
+                //$o = $this->redis->command("BGSAVE"); //$this->util_model->checkCronIsRunning();
                 //$this->util_model->updateAltcoinsRates(); //$this->util_model->refreshMinerConf(); //$o = json_encode($this->util_model->callMinerd()); //$this->util_model->getParsedStats($this->util_model->getMinerStats());
                 break;
         }
@@ -1146,7 +1137,7 @@ class App extends CI_Controller {
                 log_message("error", "TIME: " . time() . " - AFTER SCHEDULED START TIME: " . $this->redis->get("scheduled_event_start_time"));
 
                 if ($scheduledEventAction == "restart") {
-                    $this->util_model->minerRestart();
+                    $this->util_model->walletRestart();
                 } else {
                     sleep(10);
                     $this->util_model->reboot();
@@ -1154,30 +1145,6 @@ class App extends CI_Controller {
             }
         }
 
-        // Send anonymous stats
-        $anonynousStatsEnabled = $this->redis->get("anonymous_stats");
-        $mineraSystemId = $this->util_model->generateMineraId();
-
-        if ($mineraSystemId) {
-            if ($this->util_model->isOnline()) {
-                $totalDevices = 0;
-                $totalHashrate = 0;
-                if (isset($stats->totals->hashrate))
-                    $totalHashrate = $stats->totals->hashrate;
-
-                if (isset($stats->devices)) {
-                    $devs = (array) $stats->devices;
-                    $totalDevices = count($devs);
-                }
-
-                $anonStats = array("id" => $mineraSystemId, "algo" => $this->util_model->checkAlgo(), "hashrate" => $totalHashrate, "devices" => $totalDevices, "miner" => "pirate", "version" => $this->util_model->currentVersion(true), "timestamp" => time());
-            }
-
-            if ($currentMinute == "00") {
-                if ($this->util_model->isOnline())
-                    $this->util_model->sendAnonymousStats($mineraSystemId, $anonStats);
-            }
-        }
 
         // Use the live stats to check if autorestart is needed
         // (devices possible dead)

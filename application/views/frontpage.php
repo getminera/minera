@@ -177,8 +177,52 @@
                     </div>
 
                 </div>
-
             </section>
+            <?php if ($dashboardBoxChartSystemLoad) : ?>
+                <section class="col-md-6 col-xs-12 connectedSortable ui-sortable left-section">
+                    <!-- System box -->
+                    <div class="box box-light <?php if (isset($boxStatuses['box-chart-system-load']) && !$boxStatuses['box-chart-system-load']) : ?>collapsed-box<?php endif; ?>" id="box-chart-system-load">
+                        <div class="overlay"></div>
+                        <div class="loading-img"></div>
+                        <div class="box-header" style="cursor: move;">
+                            <!-- tools box -->
+                            <div class="pull-right box-tools">
+                                <button class="btn btn-default btn-xs" data-widget="collapse" data-toggle="tooltip" title="" data-original-title="Collapse"><i class="fa fa-minus"></i></button>
+                            </div><!-- /. tools -->
+                            <i class="fa fa-tasks"></i>
+
+                            <h3 class="box-title" id="sysload">System Load</h3>
+                        </div><!-- /.box-header -->
+                        <div class="box-body" style="display: block;">
+                            <div class="row padding-vert sysload" ></div>
+                        </div><!-- /.box-body -->
+                        <div class="box-footer">
+                            <h6 class="sysuptime"></h6>
+                        </div>
+                    </div><!-- /.system box -->
+                </section>
+            <?php endif; ?>
+            <?php if ($dashboardBoxChartHashrates) : ?>
+                <section class="col-md-6 col-xs-12 connectedSortable ui-sortable left-section">
+                    <!-- Hashrate box chart -->
+                    <div class="box box-primary <?php if (isset($boxStatuses['box-chart-hashrates']) && !$boxStatuses['box-chart-hashrates']) : ?>collapsed-box<?php endif; ?>" id="box-chart-hashrates">
+                        <div class="overlay"></div>
+                        <div class="loading-img"></div>
+                        <div class="box-header">
+                            <!-- tools box -->
+                            <div class="pull-right box-tools">
+                                <button class="btn btn-default btn-xs" data-widget="collapse" data-toggle="tooltip" title="" data-original-title="Collapse"><i class="fa fa-minus"></i></button>
+                            </div><!-- /. tools -->
+                            <i class="fa fa-bar-chart-o"></i>
+
+                            <h3 class="box-title" id="hashrate-history">Weight History</h3>
+                        </div>
+                        <div class="box-body chart-responsive">
+                            <div class="chart" id="hashrate-chart" style="height:160px;"></div>
+                        </div>
+                    </div><!-- /.hashrate box -->
+                </section>
+            <?php endif; ?>
 
             <!-- Top section -->
             <section class="hidden-xs col-md-12 connectedSortable ui-sortable top-section">
@@ -490,53 +534,11 @@
                     </div><!-- /.A/R/H chart -->
                 <?php endif; ?>
 
-                <?php if ($dashboardBoxChartSystemLoad) : ?>
-                    <!-- System box -->
-                    <div class="box box-light <?php if (isset($boxStatuses['box-chart-system-load']) && !$boxStatuses['box-chart-system-load']) : ?>collapsed-box<?php endif; ?>" id="box-chart-system-load">
-                        <div class="overlay"></div>
-                        <div class="loading-img"></div>
-                        <div class="box-header" style="cursor: move;">
-                            <!-- tools box -->
-                            <div class="pull-right box-tools">
-                                <button class="btn btn-default btn-xs" data-widget="collapse" data-toggle="tooltip" title="" data-original-title="Collapse"><i class="fa fa-minus"></i></button>
-                            </div><!-- /. tools -->
-                            <i class="fa fa-tasks"></i>
-
-                            <h3 class="box-title" id="sysload">System Load</h3>
-                        </div><!-- /.box-header -->
-                        <div class="box-body" style="display: block;">
-                            <div class="row padding-vert sysload" ></div>
-                        </div><!-- /.box-body -->
-                        <div class="box-footer">
-                            <h6 class="sysuptime"></h6>
-                        </div>
-                    </div><!-- /.system box -->
-                <?php endif; ?>
-
             </section><!-- Right col -->
 
             <!-- Left col -->
             <section class="col-md-6 col-xs-12 connectedSortable ui-sortable left-section">
 
-                <?php if ($dashboardBoxChartHashrates) : ?>
-                    <!-- Hashrate box chart -->
-                    <div class="box box-primary <?php if (isset($boxStatuses['box-chart-hashrates']) && !$boxStatuses['box-chart-hashrates']) : ?>collapsed-box<?php endif; ?>" id="box-chart-hashrates">
-                        <div class="overlay"></div>
-                        <div class="loading-img"></div>
-                        <div class="box-header">
-                            <!-- tools box -->
-                            <div class="pull-right box-tools">
-                                <button class="btn btn-default btn-xs" data-widget="collapse" data-toggle="tooltip" title="" data-original-title="Collapse"><i class="fa fa-minus"></i></button>
-                            </div><!-- /. tools -->
-                            <i class="fa fa-bar-chart-o"></i>
-
-                            <h3 class="box-title" id="hashrate-history">Local Weight History</h3>
-                        </div>
-                        <div class="box-body chart-responsive">
-                            <div class="chart" id="hashrate-chart" style="height:160px;"></div>
-                        </div>
-                    </div><!-- /.hashrate box -->
-                <?php endif; ?>
 
                 <?php if ($dashboardBoxScryptEarnings) : ?>
                     <!-- Profitability box -->

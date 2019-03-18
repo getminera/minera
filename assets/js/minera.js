@@ -272,8 +272,8 @@ function createChart(period, text_period)
                 areaRej = {},
                 dataChart = Object.keys(data).map(function (key) {
             data[key].timestamp = data[key].timestamp * 1000;
-            data[key].hashrate = (data[key].hashrate / 1000 / 1000).toFixed(2);
-            data[key].pool_hashrate = (data[key].pool_hashrate / 1000 / 1000).toFixed(2);
+            data[key].hashrate = (data[key].hashrate).toFixed(2);
+            data[key].net_weight = (data[key].net_weight).toFixed(2);
             return data[key];
         });
 
@@ -284,13 +284,13 @@ function createChart(period, text_period)
             {
                 // Hashrate history graph
                 areaHash = new Morris.Area({
-                    element: 'hashrate-chart-' + period,
+                    element: 'weight-chart-' + period,
                     resize: true,
                     data: dataChart,
                     xkey: 'timestamp',
-                    ykeys: ['hashrate', 'pool_hashrate'],
+                    ykeys: ['weight', 'net_weight'],
                     ymax: 'auto',
-                    postUnits: 'Mh/s',
+                    postUnits: '',
                     labels: ['Devices', 'Pool'],
                     lineColors: ['#3c8dbc', '#00c0ef'],
                     lineWidth: 2,
@@ -329,7 +329,7 @@ function createChart(period, text_period)
             });
         } else
         {
-            $('#hashrate-chart-' + period).css({'height': '100%', 'overflow': 'visible', 'margin-top': '20px'}).html('<div class="alert alert-warning"><i class="fa fa-warning"></i><b>Oops!</b> <small>No data collected, wait at least ' + text_period + ' to see the chart.</small></div>');
+            $('#weight-chart-' + period).css({'height': '100%', 'overflow': 'visible', 'margin-top': '20px'}).html('<div class="alert alert-warning"><i class="fa fa-warning"></i><b>Oops!</b> <small>No data collected, wait at least ' + text_period + ' to see the chart.</small></div>');
             $('#rehw-chart-' + period).css({'height': '100%', 'overflow': 'visible', 'margin-top': '20px'}).html('<div class="alert alert-warning"><i class="fa fa-warning"></i><b>Oops!</b> <small>No data collected, wait at least ' + text_period + ' to see the chart.</small></div>');
 
         }
@@ -377,7 +377,7 @@ function createMon(key, hash, totalhash, maxHashrate, ac, re, hw, sh, freq, colo
 
     $(toAppend).append(devBox);
 
-    $('.' + key).data('hashrate', hash);
+    $('.' + key).data('weight', hash);
 
     $('.' + key).knob({
         'readOnly': true,
@@ -463,11 +463,11 @@ function createMon(key, hash, totalhash, maxHashrate, ac, re, hw, sh, freq, colo
 function changeEarnings(value)
 {
 
-    var hashrate = $('.widget-total-hashrate').data('pool-hashrate');
+    var weight = $('.widget-total-weight').data('pool-weight');
 
-    var amount = (value * hashrate / 1000);
+    var amount = (value * weight / 1000);
 
-    $('.profitability-results').html('<span class="label bg-blue">' + convertHashrate(hashrate) + '</span>&nbsp;x&nbsp;<span class="label bg-green">' + value.toFixed(5) + '</span> = <small>Day: </small><span class="badge bg-red">' + amount.toFixed(8) + '</span> <small>Week: </small><span class="badge bg-light">' + (amount * 7).toFixed(8) + '</span> <small>Month: </small><span class="badge bg-light">' + (amount * 30).toFixed(8) + '</span>');
+    $('.profitability-results').html('<span class="label bg-blue">' + convertHashrate(weight) + '</span>&nbsp;x&nbsp;<span class="label bg-green">' + value.toFixed(5) + '</span> = <small>Day: </small><span class="badge bg-red">' + amount.toFixed(8) + '</span> <small>Week: </small><span class="badge bg-light">' + (amount * 7).toFixed(8) + '</span> <small>Month: </small><span class="badge bg-light">' + (amount * 30).toFixed(8) + '</span>');
 
 }
 
@@ -2173,12 +2173,12 @@ function getStats(refresh)
                     avgs.hrPast = 0;
                     if (aval[0])
                     {
-                        avgs.hrCurrent = parseInt(aval[0].pool_hashrate / 1000);
+                        avgs.hrCurrent = parseInt(aval[0].net_weight / 1000);
                         avgs.hrCurrentText = convertHashrate(avgs.hrCurrent);
                     }
                     if (aval[1])
                     {
-                        avgs.hrPast = parseInt(aval[1].pool_hashrate / 1000);
+                        avgs.hrPast = parseInt(aval[1].net_weight / 1000);
                     }
 
                     if (avgs.hrPast > avgs.hrCurrent) {
@@ -2266,7 +2266,7 @@ function getStats(refresh)
                 // Get main/active pool data
                 if (data.pool)
                 {
-                    var poolhashrate = (data.pool.hashrate) ? data.pool.hashrate : 0;
+                    var poolweight = (data.pool.weight) ? data.pool.weight : 0;
                 }
 
                 // Add pools data
@@ -2351,18 +2351,18 @@ function getStats(refresh)
                             paccepted = pstats.accepted;
                             prejected = pstats.rejected;
 
-                            // Calculate the real pool hashrate
+                            // Calculate the real pool weight
                             if (pval.active === true || pval.active === 1)
                             {
-                                phashData.hash = parseInt(poolhashrate / 1000); //parseInt((65536.0 * (pshares/(now/1000-pstats.start_time)))/1000);
+                                phashData.hash = parseInt(poolweight / 1000); //parseInt((65536.0 * (pshares/(now/1000-pstats.start_time)))/1000);
                                 phashData.label = 'red';
                                 //Add Main pool widget
-                                $('.widget-total-hashrate').html(convertHashrate(phashData.hash));
-                                $('.widget-total-hashrate').data('pool-hashrate', phashData.hash);
+                                $('.widget-total-weight').html(convertHashrate(phashData.hash));
+                                $('.widget-total-weight').data('pool-weight', phashData.hash);
 
                                 $('.widget-main-pool').html(palivelabel);
                                 $('.widget-main-pool').next('p').html(pval.url);
-                                // Changing title page according to hashrate
+                                // Changing title page according to weight
                                 $(document).attr('title', 'Local: ' + convertHashrate(phashData.hash));
                             }
                         } else
@@ -2474,11 +2474,11 @@ function getStats(refresh)
                 $.each(data.devices, function (key, val) {
 
                     // these are the single devices stats
-                    var hashrate = Math.round(val.hashrate / 1000);
+                    var weight = Math.round(val.weight / 1000);
 
-                    items[key] = {'temp': val.temperature, 'serial': val.serial, 'hash': hashrate, 'ac': val.accepted, 're': val.rejected, 'hw': val.hw_errors, 'fr': val.frequency, 'sh': val.shares, 'ls': val.last_share};
+                    items[key] = {'temp': val.temperature, 'serial': val.serial, 'hash': weight, 'ac': val.accepted, 're': val.rejected, 'hw': val.hw_errors, 'fr': val.frequency, 'sh': val.shares, 'ls': val.last_share};
 
-                    hashrates.push(hashrate);
+                    hashrates.push(weight);
 
                 });
 
@@ -2487,7 +2487,7 @@ function getStats(refresh)
                 var avgFr = (data.totals.frequency) ? data.totals.frequency : 'n.a.';
                 var totTemp = (data.totals.temperature) ? data.totals.temperature : 'n.a.';
 
-                totalhash = Math.round(data.totals.hashrate / 1000);
+                totalhash = Math.round(data.totals.weight / 1000);
 
                 // this is the global stats
                 items.total = {'temp': totTemp, 'serial': '', 'hash': totalhash, 'ac': data.totals.accepted, 're': data.totals.rejected, 'hw': data.totals.hw_errors, 'fr': avgFr, 'sh': data.totals.shares, 'ls': data.totals.last_share};
@@ -2517,7 +2517,7 @@ function getStats(refresh)
                     if (isNaN(percentageHw))
                         percentageHw = 0;
 
-                    // Add colored hashrates
+                    // Add colored weights
                     if (last_share_secs >= 120 && last_share_secs < 240)
                         devData.label = 'yellow';
                     else if (last_share_secs >= 240 && last_share_secs < 480)
@@ -2537,8 +2537,8 @@ function getStats(refresh)
                         $('.widget-last-share').html(parseInt(last_share_secs) + ' secs');
                         $('.widget-hwre-rates').html(parseFloat(percentageHw).toFixed(2) + '<sup style="font-size: 20px">%</sup> / ' + parseFloat(percentageRe).toFixed(2) + '<sup style="font-size: 20px">%</sup>');
                         dev_serial = '';
-                        //Sidebar hashrate
-                        //$('.sidebar-hashrate').html("@ "+convertHashrate(items[index].hash));
+                        //Sidebar weight
+                        //$('.sidebar-weight').html("@ "+convertHashrate(items[index].hash));
                     }
 
                     var devRow = '<tr class="dev-' + index + '"><td class="devs_table_name"><i class="glyphicon glyphicon-hdd"></i>&nbsp;&nbsp;' + index + dev_serial + '</td><td class="devs_table_temp">' + items[index].temp + '</td><td class="devs_table_freq">' + items[index].fr + 'MHz</td><td class="devs_table_hash"><strong>' + convertHashrate(items[index].hash) + '</strong></td><td class="devs_table_sh">' + items[index].sh + '</td><td class="devs_table_ac">' + items[index].ac + '</td><td><small class="text-muted">' + parseFloat(percentageAc).toFixed(2) + '%</small></td><td class="devs_table_re">' + items[index].re + '</td><td><small class="text-muted">' + parseFloat(percentageRe).toFixed(2) + '%</small></td><td class="devs_table_hw">' + items[index].hw + '</td><td><small class="text-muted">' + parseFloat(percentageHw).toFixed(2) + '%</small></td><td class="devs_table_ls">' + parseInt(last_share_secs) + ' secs ago</td><td><small class="text-muted">' + share_date.toUTCString() + '</small></td></tr>';
@@ -2682,11 +2682,11 @@ function getStats(refresh)
                             // Add per network device stats
                             $.each(networkMinerData.devices, function (key, val) {
                                 // these are the single devices stats
-                                var hashrate = Math.round(val.hashrate / 1000);
+                                var weight = Math.round(val.weight / 1000);
 
-                                networkMiners[netKey][key] = {'temp': val.temperature, 'serial': val.serial, 'hash': hashrate, 'ac': val.accepted, 're': val.rejected, 'hw': val.hw_errors, 'fr': val.frequency, 'sh': val.shares, 'ls': val.last_share};
+                                networkMiners[netKey][key] = {'temp': val.temperature, 'serial': val.serial, 'hash': weight, 'ac': val.accepted, 're': val.rejected, 'hw': val.hw_errors, 'fr': val.frequency, 'sh': val.shares, 'ls': val.last_share};
 
-                                netHashrates += hashrate;
+                                netHashrates += weight;
 
                                 tAc += val.accepted;
                                 tRe += val.rejected;
@@ -2716,7 +2716,7 @@ function getStats(refresh)
                                 var percentageRe = (100 * networkMiners[netKey][index].re / totalWorkedShares);
                                 var percentageHw = (100 * networkMiners[netKey][index].hw / totalWorkedShares);
 
-                                // Add colored hashrates
+                                // Add colored weights
                                 if (last_share_secs >= 120 && last_share_secs < 240)
                                     devData.label = 'yellow';
                                 else if (last_share_secs >= 240 && last_share_secs < 480)
@@ -2737,8 +2737,8 @@ function getStats(refresh)
                                  $('.widget-last-share').html(parseInt(last_share_secs) + ' secs');
                                  $('.widget-hwre-rates').html(parseFloat(percentageHw).toFixed(2) + '<sup style="font-size: 20px">%</sup> / ' + parseFloat(percentageRe).toFixed(2) + '<sup style="font-size: 20px">%</sup>');
                                  dev_serial = '';
-                                 //Sidebar hashrate
-                                 //$('.sidebar-hashrate').html('@ '+convertHashrate(items[index].hash));
+                                 //Sidebar weight
+                                 //$('.sidebar-weight').html('@ '+convertHashrate(items[index].hash));
                                  */
 
                                 if ($.fn.dataTable.isDataTable('#network-miner-table-details'))
@@ -2768,7 +2768,7 @@ function getStats(refresh)
                             // Get main/active network pool data
                             if (networkMinerData.pool)
                             {
-                                var netpoolhashrate = (networkMinerData.pool.hashrate) ? networkMinerData.pool.hashrate : 0;
+                                var netpoolhashrate = (networkMinerData.pool.weight) ? networkMinerData.pool.weight : 0;
                             }
 
                             if (networkMinerData.pools)
@@ -2898,7 +2898,7 @@ function getStats(refresh)
                                             paccepted = pstats.accepted;
                                             prejected = pstats.rejected;
 
-                                            // Calculate the real pool hashrate
+                                            // Calculate the real pool weight
                                             if (pval.active === true || pval.active === 1)
                                             {
                                                 phashData.hash = parseInt(netpoolhashrate / 1000); //parseInt((65536.0 * (pshares/(now/1000-pstats.start_time)))/1000);
@@ -3006,10 +3006,10 @@ function getStats(refresh)
                     $('.network_devs_table_foot').html(netDevRow);
 
                     //Add Network Main pool widget
-                    $('.network-widget-total-hashrate').html(convertHashrate(netPoolHashrates));
-                    $('.network-widget-total-hashrate').data('pool-hashrate', netPoolHashrates);
+                    $('.network-widget-total-weight').html(convertHashrate(netPoolHashrates));
+                    $('.network-widget-total-weight').data('pool-weight', netPoolHashrates);
 
-                    // Changing title page according to hashrate
+                    // Changing title page according to weight
                     $(document).attr('title', $(document).attr('title') + ' | Network: ' + convertHashrate(netPoolHashrates));
                 } else
                 {
@@ -3168,8 +3168,8 @@ function getStats(refresh)
                     // Add profit data
 
                     $('#profit-table-details').dataTable().fnClearTable();
-                    var thisHash = (data.totals && data.totals.hashrate) ? data.totals.hashrate / 1000 : 0;
-                    $('.profit_local_hashrate').html(($('.profit_hashrate').val() > 0) ? $('.profit_hashrate').val() + $('.profit_unit').find('option:selected').data('profit-unit') : convertHashrate(thisHash));
+                    var thisHash = (data.totals && data.totals.weight) ? data.totals.weight / 1000 : 0;
+                    $('.profit_local_weight').html(($('.profit_weight').val() > 0) ? $('.profit_weight').val() + $('.profit_unit').find('option:selected').data('profit-unit') : convertHashrate(thisHash));
                     $('.profit_local_period').html($('.profit_period').find('option:selected').data('profit-period'));
                     $('.profit_local_algo').html($('.profit_algo').data('profit-algo'));
 
@@ -3204,8 +3204,8 @@ function getStats(refresh)
                 });
                 btc = (btc[0]) ? btc[0] : 0;
 
-                var totalHash = (data.totals && data.totals.hashrate) ? data.totals.hashrate : 0,
-                        selHashrate = ($('.profit_hashrate').val() > 0) ? $('.profit_hashrate').val() : 0,
+                var totalHash = (data.totals && data.totals.weight) ? data.totals.weight : 0,
+                        selHashrate = ($('.profit_weight').val() > 0) ? $('.profit_weight').val() : 0,
                         selUnit = $('.profit_unit').val(),
                         selPeriod = $('.profit_period').val(),
                         currentProfitData = {hash: (selHashrate > 0) ? selUnit * selHashrate * selPeriod : totalHash / 1000000},
@@ -3213,14 +3213,14 @@ function getStats(refresh)
                             return (currentProfitData.hash * v.btc_profitability);
                         });
 
-                currentProfitData.hash = (data.totals && data.totals.hashrate) ? data.totals.hashrate / 1000000 : currentProfitData.hash;
+                currentProfitData.hash = (data.totals && data.totals.weight) ? data.totals.weight / 1000000 : currentProfitData.hash;
                 if (!selHashrate)
                     selHashrate = 1000000;
                 updateProfitDataTable(data, currentProfitData);
 
                 // Recalculate value when user change input elements
                 $('.profit_data').change(function (e) {
-                    selHashrate = ($('.profit_hashrate').val() > 0) ? $('.profit_hashrate').val() : 0;
+                    selHashrate = ($('.profit_weight').val() > 0) ? $('.profit_weight').val() : 0;
                     selUnit = $('.profit_unit').val();
                     selPeriod = $('.profit_period').val();
 
@@ -3228,8 +3228,8 @@ function getStats(refresh)
                     updateProfitDataTable(data, currentProfitData);
                 });
 
-                $('.profit_hashrate').change(function (e) {
-                    selHashrate = ($('.profit_hashrate').val() > 0) ? $('.profit_hashrate').val() : 0;
+                $('.profit_weight').change(function (e) {
+                    selHashrate = ($('.profit_weight').val() > 0) ? $('.profit_weight').val() : 0;
                     selUnit = $('.profit_unit').val();
                     selPeriod = $('.profit_period').val();
 
@@ -3342,8 +3342,8 @@ function getStats(refresh)
         {
             var dataMorris = Object.keys(data).map(function (key) {
                 data[key].timestamp = data[key].timestamp * 1000;
-                data[key].hashrate = (data[key].hashrate / 1000 / 1000).toFixed(2);
-                data[key].pool_hashrate = (data[key].pool_hashrate / 1000 / 1000).toFixed(2);
+                data[key].weight = (data[key].weight / 1000 / 1000).toFixed(2);
+                data[key].net_weight = (data[key].net_weight / 1000 / 1000).toFixed(2);
                 return data[key];
             });
 
@@ -3374,13 +3374,13 @@ function getStats(refresh)
 
                 // Hashrate history graph
                 charts.areaHash = new Morris.Area({
-                    element: 'hashrate-chart',
+                    element: 'weight-chart',
                     resize: true,
                     data: dataMorris,
                     xkey: 'timestamp',
-                    ykeys: ['hashrate', 'pool_hashrate'],
+                    ykeys: ['weight', 'net_weight'],
                     ymax: 'auto',
-                    postUnits: 'Mh/s',
+                    postUnits: '',
                     labels: ['Devices', 'Pool'],
                     lineColors: ['#3c8dbc', '#00c0ef'],
                     lineWidth: 2,

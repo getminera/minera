@@ -3,7 +3,7 @@
 				<!-- Content Header (Page header) -->
 				<section class="content-header">
 					<h1>
-						Mining
+						Staking
 						<small>Charts</small>
 					</h1>
 					<ol class="breadcrumb">
@@ -71,7 +71,7 @@
 									</div><!-- /. tools -->
 									<i class="fa fa-bar-chart-o"></i>
 									
-									<h3 class="box-title" id="hashrate-history">Hashrate History</h3>
+									<h3 class="box-title" id="hashrate-history">Weight History</h3>
 								</div>
 								<div class="box-body chart-responsive">
 									<h4>Hourly</h4>
