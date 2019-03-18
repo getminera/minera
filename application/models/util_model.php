@@ -1349,7 +1349,7 @@ class Util_model extends CI_Model {
     }
 
     public function tailFile($filename, $lines) {
-        $file = file(FCPATH . APPPATH . "logs/" . $filename);
+        $file = file($filename);
 
         if (count($file) > 0) {
             for ($i = count($file) - $lines; $i < count($file); $i++) {
