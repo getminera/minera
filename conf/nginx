@@ -41,27 +41,31 @@ server {
 	root /var/www/;
 
 	# Add index.php to the list if you are using PHP
-	index index.html index.htm index.nginx-debian.html;
+	index index.html index.htm index.php;
 
 	server_name _;
 
-	location / {
-		# First attempt to serve request as file, then
-		# as directory, then fall back to displaying a 404.
-		try_files $uri $uri/ /index.php?$args;
-		index index.php index.html;
-	}
+        location /raspinode/ {
+                # First attempt to serve request as file, then
+                # as directory, then fall back to displaying a 404.
+                try_files $uri $uri/ /raspinode/index.php;
+                index index.php index.html;
+		location = /raspinode/index.php {
+            fastcgi_pass        unix:/run/php/php7.0-fpm.sock;
+            fastcgi_index       index.php;
+            fastcgi_param       DOCUMENT_ROOT   /var/www/;
+            fastcgi_param       SCRIPT_FILENAME /var/www/$fastcgi_script_name;
+            fastcgi_param       PATH_TRANSLATED /var/www$fastcgi_script_name;
+            include fastcgi_params;
 
-	# pass PHP scripts to FastCGI server
-	#
-	location ~ \.php$ {
-	    fastcgi_pass	unix:/run/php/php7.0-fpm.sock;
-	    fastcgi_index	index.php;
-	    fastcgi_param	DOCUMENT_ROOT	/var/www/;
-	    fastcgi_param	SCRIPT_FILENAME	/var/www/$fastcgi_script_name;
-	    fastcgi_param	PATH_TRANSLATED	/var/www$fastcgi_script_name;
-	    include fastcgi_params;
-	}
+		}
+        }
+
+        # pass PHP scripts to FastCGI server
+        #
+        location ~ \.php$ {
+		return 444;
+        }
 
 	# deny access to .htaccess files, if Apache's document root
 	# concurs with nginx's one
