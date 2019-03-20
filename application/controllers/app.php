@@ -70,17 +70,17 @@ class App extends CI_Controller {
      */
 
     public function login() {
-        $storedp = $this->redis->get('minera_password');
+        $storedp = $this->redis->get('raspinode_password');
         if (preg_match('/^[0-9a-f]{40}$/', $storedp)) {
             $storedp = $storedp;
         } elseif (preg_match('/^[a-f0-9]{32}$/', $storedp)) {
             if ($this->input->post('password', true) && md5($this->input->post('password')) == $storedp) {
                 $storedp = sha1($this->input->post('password', true));
-                $this->redis->set('minera_password', $storedp);
+                $this->redis->set('raspinode_password', $storedp);
             }
         } else {
-            $storedp = sha1($this->redis->get('minera_password'));
-            $this->redis->set('minera_password', $storedp);
+            $storedp = sha1($this->redis->get('raspinode_password'));
+            $this->redis->set('raspinode_password', $storedp);
         }
 
         if ($this->input->post('password', true) && sha1($this->input->post('password')) == $storedp) {
@@ -247,7 +247,7 @@ class App extends CI_Controller {
                 $data['message'] = "<b>Warning!</b> Password mismatch";
                 $data['message_type'] = "warning";
             } else {
-                $this->redis->set("minera_password", sha1($password));
+                $this->redis->set("raspinode_password", sha1($password));
                 $data['message'] = '<b>Success!</b> Password saved!';
                 $data['message_type'] = "success";
             }

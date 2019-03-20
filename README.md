@@ -23,21 +23,9 @@ When you have your system ready, ssh into it and **install Raspinode**
 
 You can use this script to install everything you need, (it's good for any kind of Debian system: Ubuntu, Raspbian, ecc...) or use the manual steps below:
 
-curl -o- https://raw.githubusercontent.com/piratecash/raspinode/master/install_raspinode_ubuntu.sh | sudo bash
-
-Skip this step and continue below if you have a web server with PHP just installed.
-
 ```
-sudo apt-get install -y lighttpd php7.0-cgi
-sudo lighty-enable-mod fastcgi
-sudo lighty-enable-mod fastcgi-php
-sudo service lighttpd force-reload
-```
-
-When your web server is ready you can install Raspinode:
-
-```
-sudo apt-get install -y redis-server git screen php7.0-cli php7.0-curl
+sudo apt-get install -y git
+sudo mkdir /var/www
 cd /var/www
 sudo git clone https://github.com/piratecash/raspinode
 cd raspinode

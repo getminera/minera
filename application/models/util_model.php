@@ -17,7 +17,7 @@ class Util_model extends CI_Model {
     }
 
     public function isLoggedIn() {
-        $storedp = $this->redis->get('minera_password');
+        $storedp = $this->redis->get('raspinode_password');
 
         if ($this->session->userdata("loggedin") !== $storedp) {
             redirect('app/index');
@@ -1351,7 +1351,7 @@ class Util_model extends CI_Model {
         $this->redis->set("minerd_scrypt", 0);
         $this->redis->set("dashboard_refresh_time", 300);
         $this->redis->set("scheduled_event_start_time", "");
-        $this->redis->set("minera_password", "70e880b1effe0f770849d985231aed2784e11b38");
+        $this->redis->set("raspinode_password", "e0a0bad34f2ac763f60ff775560143e1");
         $this->redis->set("dashboard_coin_rates", json_encode(array()));
         $this->redis->set("system_extracommands", "");
         $this->redis->set("minerd_append_conf", 1);
