@@ -23,7 +23,7 @@
 		"assets/vendor/underscore/underscore.js",
 		"assets/js/jquery.hook.js",
 		"assets/js/app.js",
-		"assets/js/minera.js"
+		"assets/js/application.js"
 	],
 	"css": [
 		"assets/vendor/font-awesome/css/font-awesome.css",

@@ -158,7 +158,7 @@
 													<td><input type="checkbox" name="dashboard_box_local_miner" value="1" <?php if ($dashboardBoxLocalMiner) : ?>checked=""<?php endif; ?> /> Local miner</td>
 												</tr>
 												<tr>
-													<td><input type="checkbox" name="dashboard_box_local_pools" value="1" <?php if ($dashboardBoxLocalPools) : ?>checked=""<?php endif; ?> /> Local pools</td>
+													<td></td>
 													<td><input type="checkbox" name="dashboard_box_network_details" value="1" <?php if ($dashboardBoxNetworkDetails) : ?>checked=""<?php endif; ?> /> Network miners</td>
 												</tr>
 												<tr>

@@ -57,7 +57,7 @@ class App extends CI_Controller {
         $data['env'] = $this->config->item('ENV');
         $data['sectionPage'] = 'lockscreen';
         $data['htmlTag'] = "lockscreen";
-        $data['pageTitle'] = "Welcome to Minera";
+        $data['pageTitle'] = "Welcome to RaspiNode";
         $data['isOnline'] = $this->util_model->isOnline();
 
         $this->load->view('include/header', $data);
@@ -120,7 +120,6 @@ class App extends CI_Controller {
         $data['dashboardDevicetree'] = ($this->redis->get("dashboard_devicetree")) ? $this->redis->get("dashboard_devicetree") : false;
         $data['dashboardBoxProfit'] = ($this->redis->get("dashboard_box_profit")) ? $this->redis->get("dashboard_box_profit") : false;
         $data['dashboardBoxLocalMiner'] = ($this->redis->get("dashboard_box_local_miner")) ? $this->redis->get("dashboard_box_local_miner") : false;
-        $data['dashboardBoxLocalPools'] = ($this->redis->get("dashboard_box_local_pools")) ? $this->redis->get("dashboard_box_local_pools") : false;
         $data['dashboardBoxNetworkDetails'] = ($this->redis->get("dashboard_box_network_details")) ? $this->redis->get("dashboard_box_network_details") : false;
         $data['dashboardBoxNetworkPoolsDetails'] = ($this->redis->get("dashboard_box_network_pools_details")) ? $this->redis->get("dashboard_box_network_pools_details") : false;
         $data['dashboardBoxChartShares'] = ($this->redis->get("dashboard_box_chart_shares")) ? $this->redis->get("dashboard_box_chart_shares") : false;
@@ -128,7 +127,7 @@ class App extends CI_Controller {
         $data['dashboardBoxChartHashrates'] = ($this->redis->get("dashboard_box_chart_hashrates")) ? $this->redis->get("dashboard_box_chart_hashrates") : false;
         $data['dashboardBoxScryptEarnings'] = ($this->redis->get("dashboard_box_scrypt_earnings")) ? $this->redis->get("dashboard_box_scrypt_earnings") : false;
         $data['dashboardBoxLog'] = ($this->redis->get("dashboard_box_log")) ? $this->redis->get("dashboard_box_log") : false;
-        $data['pageTitle'] = ($this->redis->get("mobileminer_system_name")) ? $this->redis->get("mobileminer_system_name") . " > Minera - Dashboard" : "Minera - Dashboard";
+        $data['pageTitle'] = ($this->redis->get("mobileminer_system_name")) ? $this->redis->get("mobileminer_system_name") . " > PirateCash - Dashboard" : "PirateCash - Dashboard";
         $data['dashboardSkin'] = ($this->redis->get("dashboard_skin")) ? $this->redis->get("dashboard_skin") : "black";
         $data['localAlgo'] = $this->util_model->checkAlgo($this->util_model->isOnline());
         $data['browserMining'] = $this->redis->get('browser_mining');
@@ -168,7 +167,6 @@ class App extends CI_Controller {
         $data['dashboardDevicetree'] = ($this->redis->get("dashboard_devicetree")) ? $this->redis->get("dashboard_devicetree") : false;
         $data['dashboardBoxProfit'] = ($this->redis->get("dashboard_box_profit")) ? $this->redis->get("dashboard_box_profit") : false;
         $data['dashboardBoxLocalMiner'] = ($this->redis->get("dashboard_box_local_miner")) ? $this->redis->get("dashboard_box_local_miner") : false;
-        $data['dashboardBoxLocalPools'] = ($this->redis->get("dashboard_box_local_pools")) ? $this->redis->get("dashboard_box_local_pools") : false;
         $data['dashboardBoxNetworkDetails'] = ($this->redis->get("dashboard_box_network_details")) ? $this->redis->get("dashboard_box_network_details") : false;
         $data['dashboardBoxNetworkPoolsDetails'] = ($this->redis->get("dashboard_box_network_pools_details")) ? $this->redis->get("dashboard_box_network_pools_details") : false;
         $data['dashboardBoxChartShares'] = ($this->redis->get("dashboard_box_chart_shares")) ? $this->redis->get("dashboard_box_chart_shares") : false;
@@ -205,7 +203,7 @@ class App extends CI_Controller {
         $data['appScript'] = false;
         $data['settingsScript'] = false;
         $data['mineraUpdate'] = $this->util_model->checkUpdate();
-        $data['pageTitle'] = ($this->redis->get("mobileminer_system_name")) ? $this->redis->get("mobileminer_system_name") . " > Minera - Charts" : "Minera - Charts";
+        $data['pageTitle'] = ($this->redis->get("mobileminer_system_name")) ? $this->redis->get("mobileminer_system_name") . " > PirateCash - Charts" : "PirateCash - Charts";
         $data['dashboard_refresh_time'] = $this->redis->get("dashboard_refresh_time");
         $data['dashboardTableRecords'] = $this->redis->get("dashboard_table_records");
         $data['minerdLog'] = $this->redis->get('minerd_log');
@@ -298,7 +296,6 @@ class App extends CI_Controller {
         $data['dashboardDevicetree'] = ($this->redis->get("dashboard_devicetree")) ? $this->redis->get("dashboard_devicetree") : false;
         $data['dashboardBoxProfit'] = ($this->redis->get("dashboard_box_profit")) ? $this->redis->get("dashboard_box_profit") : false;
         $data['dashboardBoxLocalMiner'] = ($this->redis->get("dashboard_box_local_miner")) ? $this->redis->get("dashboard_box_local_miner") : false;
-        $data['dashboardBoxLocalPools'] = ($this->redis->get("dashboard_box_local_pools")) ? $this->redis->get("dashboard_box_local_pools") : false;
         $data['dashboardBoxNetworkDetails'] = ($this->redis->get("dashboard_box_network_details")) ? $this->redis->get("dashboard_box_network_details") : false;
         $data['dashboardBoxNetworkPoolsDetails'] = ($this->redis->get("dashboard_box_network_pools_details")) ? $this->redis->get("dashboard_box_network_pools_details") : false;
         $data['dashboardBoxChartShares'] = ($this->redis->get("dashboard_box_chart_shares")) ? $this->redis->get("dashboard_box_chart_shares") : false;
@@ -368,7 +365,6 @@ class App extends CI_Controller {
             $dashboardDevicetree = $this->input->post('dashboard_devicetree');
             $dashboardBoxProfit = $this->input->post('dashboard_box_profit');
             $dashboardBoxLocalMiner = $this->input->post('dashboard_box_local_miner');
-            $dashboardBoxLocalPools = $this->input->post("dashboard_box_local_pools");
             $dashboardBoxNetworkDetails = $this->input->post("dashboard_box_network_details");
             $dashboardBoxNetworkPoolsDetails = $this->input->post("dashboard_box_network_pools_details");
             $dashboardBoxChartShares = $this->input->post("dashboard_box_chart_shares");
@@ -572,8 +568,6 @@ class App extends CI_Controller {
             $dataObj->dashboard_box_profit = $dashboardBoxProfit;
             $this->redis->set("dashboard_box_local_miner", $dashboardBoxLocalMiner);
             $dataObj->dashboard_box_local_miner = $dashboardBoxLocalMiner;
-            $this->redis->set("dashboard_box_local_pools", $dashboardBoxLocalPools);
-            $dataObj->dashboard_box_local_pools = $dashboardBoxLocalPools;
             $this->redis->set("dashboard_box_network_details", $dashboardBoxNetworkDetails);
             $dataObj->dashboard_box_network_details = $dashboardBoxNetworkDetails;
             $this->redis->set("dashboard_box_network_pools_details", $dashboardBoxNetworkPoolsDetails);
@@ -804,7 +798,7 @@ class App extends CI_Controller {
         $data['now'] = time();
         $data['sectionPage'] = 'lockscreen';
         $data['onloadFunction'] = false;
-        $data['pageTitle'] = "Shutdown Minera";
+        $data['pageTitle'] = "Shutdown RaspiNode";
         $data['messageEnd'] = "you can unplug me now.";
         $data['htmlTag'] = "lockscreen";
         $data['seconds'] = 30;
@@ -837,7 +831,7 @@ class App extends CI_Controller {
         $data['now'] = time();
         $data['sectionPage'] = 'lockscreen';
         $data['onloadFunction'] = false;
-        $data['pageTitle'] = "Reboot Minera";
+        $data['pageTitle'] = "Reboot RaspiNode";
         $data['messageEnd'] = "here we go!";
         $data['htmlTag'] = "lockscreen";
         $data['seconds'] = 50;
@@ -914,7 +908,7 @@ class App extends CI_Controller {
 
             $data['now'] = time();
             $data['sectionPage'] = 'lockscreen';
-            $data['pageTitle'] = "Updating Minera";
+            $data['pageTitle'] = "Updating RaspiNode";
             $data['messageEnd'] = "System updated!";
             $data['htmlTag'] = "lockscreen";
             $data['seconds'] = 200;

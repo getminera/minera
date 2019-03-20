@@ -37,29 +37,12 @@ class Util_model extends CI_Model {
     public function getStats() {
         $date = new DateTime();
         $a = new stdClass();
-        $altcoinData = $this->getAltcoinsRates();
+        $altcoinData = array("error" => "true");
         $btcData = $this->getBtcUsdRates();
 
         if ($this->isOnline()) {
             $miner = $this->getMinerStats();
-
-            $a = json_decode($this->getParsedStats($miner));
-
-            if (is_object($a) && is_object($miner)) {
-                $a->pools = $miner->pools;
-
-                // Encode and save the latest
-                $l = json_encode($a);
-                $this->redis->set("latest_stats", $l);
-            } else {
-                if ($latestSaved = $this->redis->get("latest_stats")) {
-                    $a = json_decode($latestSaved);
-                } else {
-                    $a = new stdClass();
-                    $a->error = true;
-                    $a->msg = "There are no stats to be displayed.";
-                }
-            }
+            $a->piratecashd = $miner;
         } else {
             $a->notrunning = true;
         }
@@ -831,114 +814,12 @@ class Util_model extends CI_Model {
         }
     }
 
-    // Get Cryptsy API to look at BTC rates
-    public function getCryptsyRates($id) {
-        $ctx = stream_context_create(array('http' => array('timeout' => 3)));
+    // Refresh data IDs/Values
+    public function updateAltcoinsRates() {
 
-        if ($json = @file_get_contents("https://www.cryptsy.com/api/v2/markets/$id", 0, $ctx)) {
-            $a = json_decode($json);
-            $o = false;
-            if ($a->success) {
-                $o[$id] = array(
-                    "primaryname" => $a->data->label,
-                    "secondaryname" => $a->data->label,
-                    "primarycode" => $a->data->{'24hr'}->volume,
-                    "secondarycode" => $a->data->{'24hr'}->volume_btc,
-                    "label" => $a->data->label,
-                    "price" => $a->data->last_trade->price,
-                    "time" => $a->data->last_trade->timestamp
-                );
-            }
-            return $o;
-        } else {
-            return false;
-        }
-    }
+        log_message('error', "Refreshing Altcoins rates data");
 
-    // Get Cryptsy API to look at currency IDs/Values
-    public function getCryptsyRateIds() {
-        if ($json = @file_get_contents("https://www.cryptsy.com/api/v2/markets")) {
-            $a = json_decode($json);
-
-            if ($a->success) {
-                $o = array();
-
-                foreach ($a->data as $market) {
-                    if (preg_match("/\/BTC$/", $market->label)) {
-                        $o[$market->id] = array("codes" => $market->label, "names" => $market->label);
-                    }
-                }
-            }
-
-            return json_encode($o);
-        } else {
-            return false;
-        }
-    }
-
-    // Refresh Cryptsy data IDs/Values
-    public function refreshCryptsyData() {
-        // wait 1d before recheck
-        if (time() > ($this->redis->get("cryptsy_update") + 86400 * 7)) {
-            if ($this->redis->get("cryptsy_data_lock"))
-                return true;
-
-            log_message('error', "Refreshing Cryptsy data");
-
-            $this->redis->set("cryptsy_data_lock", true);
-
-            $data = $this->getCryptsyRateIds();
-
-            if ($data) {
-                $this->redis->set("cryptsy_update", time());
-
-                $this->redis->set("cryptsy_data", $data);
-            }
-
-            $this->redis->del("cryptsy_data_lock");
-        }
-    }
-
-    // Refresh Cryptsy data IDs/Values
-    public function updateAltcoinsRates($force = false) {
-        $oldData = ($this->redis->get("altcoins_data")) ? $this->redis->get("altcoins_data") : array("error" => "true");
-
-        // wait 1d before recheck
-        if (time() > ($this->redis->get("altcoins_update") + 3600) || $force) {
-            if ($this->redis->get("altcoins_data_lock"))
-                return $oldData;
-
-            $this->redis->set("altcoins_data_lock", true);
-
-            log_message('error', "Refreshing Altcoins rates data");
-
-            $o = false;
-            if ($this->redis->get("dashboard_coin_rates")) {
-                $altcoins = json_decode($this->redis->get("dashboard_coin_rates"));
-                if (is_array($altcoins)) {
-                    foreach ($altcoins as $altcoin) {
-                        $altcoinRate = $this->getCryptsyRates($altcoin);
-                        if ($altcoinRate) {
-                            $o[$altcoin] = $altcoinRate;
-                        }
-                    }
-
-                    $this->redis->set("altcoins_update", time());
-
-                    $this->redis->set("altcoins_data", json_encode($o));
-                }
-            }
-
-            $this->redis->del("altcoins_data_lock");
-            return $o;
-        } else {
-            return json_decode($oldData);
-        }
-    }
-
-    // Get Cryptsy altdata saved
-    public function getAltcoinsRates() {
-        return ($this->redis->get("altcoins_data")) ? json_decode($this->redis->get("altcoins_data")) : array("error" => "true");
+        return json_decode(array("error" => "true"));
     }
 
     /*
@@ -1178,7 +1059,6 @@ class Util_model extends CI_Model {
         sleep(9);
         exec("sudo -u pirate /usr/bin/killall -s9 piratecashd");
 
-        $this->redis->del("latest_stats");
         $this->redis->set("minerd_status", false);
 
         log_message('error', $this->_minerdSoftware . " stopped");
@@ -1270,7 +1150,7 @@ class Util_model extends CI_Model {
         log_message('error', $logmsg);
 
         $this->redis->del("altcoins_update");
-        $this->util_model->updateAltcoinsRates(true);
+        $this->util_model->updateAltcoinsRates();
         $this->redis->del("minera_update");
         $this->redis->del("raspinode_version");
         $this->checkUpdate();
@@ -1372,18 +1252,14 @@ class Util_model extends CI_Model {
         $this->redis->del("raspinode_version");
         $this->redis->del("active_custom_miners");
         $this->redis->del("minera_update");
-        $this->redis->del("cryptsy_update");
-        $this->redis->del("latest_stats");
         $this->redis->del("piratecashd_avg_stats_86400");
         $this->redis->del("piratecashd_avg_stats_3600");
         $this->redis->del("piratecashd_avg_stats_300");
         $this->redis->del("saved_miner_configs");
-        $this->redis->del("cryptsy_data");
         $this->redis->del("bitstamp_data");
         $this->redis->del("saved_donations");
         $this->redis->del("minera_remote_config");
         $this->redis->del("export_settings");
-        $this->redis->del("altcoins_data");
         $this->redis->del("piratecashd_totals_stats");
         $this->redis->del("miners_conf");
         $this->redis->del("miners_conf_update");
