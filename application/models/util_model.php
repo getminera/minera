@@ -1161,7 +1161,8 @@ class Util_model extends CI_Model {
                     . '", "connections": ' . $getinfo['connections']
                     . ', "enabled": ' . ($getstakinginfo['enabled'] ? 1 : 0)
                     . ', "staking": ' . ($getstakinginfo['staking'] ? 1 : 0)
-                    . ', "last_block_time": ' . $getblock['time'] . '}';
+                    . ', "last_block_time": ' . $getblock['time']
+                    . ', "raspinode": "' . $this->util_model->currentVersion(true) . '"}';
         } catch (Exception $ex) {
             return '{"error": 1}';
         }
@@ -1267,7 +1268,7 @@ class Util_model extends CI_Model {
         $this->redis->del("altcoins_update");
         $this->util_model->updateAltcoinsRates(true);
         $this->redis->del("minera_update");
-        $this->redis->del("minera_version");
+        $this->redis->del("raspinode_version");
         $this->checkUpdate();
 
         // Run upgrade script
@@ -1364,7 +1365,7 @@ class Util_model extends CI_Model {
         $this->redis->set("browser_mining_threads", 2);
 
         // DEL
-        $this->redis->del("minera_version");
+        $this->redis->del("raspinode_version");
         $this->redis->del("active_custom_miners");
         $this->redis->del("minera_update");
         $this->redis->del("cryptsy_update");
@@ -1428,13 +1429,13 @@ class Util_model extends CI_Model {
     // Get local Minera version
     public function currentVersion($cron = false) {
         // wait 1h before recheck
-        if (time() > ((int) $this->redis->command("HGET minera_version timestamp") + 3600) && $cron == false) {
-            $this->redis->command("HSET minera_version timestamp " . time());
+        if (time() > ((int) $this->redis->command("HGET raspinode_version timestamp") + 3600) && $cron == false) {
+            $this->redis->command("HSET raspinode_version timestamp " . time());
             $localConfig = json_decode(file_get_contents(base_url('raspinode.json')));
-            $this->redis->command("HSET minera_version value " . $localConfig->version);
+            $this->redis->command("HSET raspinode_version value " . $localConfig->version);
             return $localConfig->version;
         } else {
-            return $this->redis->command("HGET minera_version value");
+            return $this->redis->command("HGET raspinode_version value");
         }
     }
 

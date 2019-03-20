@@ -51,7 +51,7 @@ class App extends CI_Controller {
 
         $data['now'] = time();
         $data['minera_system_id'] = $mineraSystemId;
-        $data['minera_version'] = $this->util_model->currentVersion(true);
+        $data['raspinode_version'] = $this->util_model->currentVersion(true);
         $data['browserMining'] = $this->redis->get('browser_mining');
         $data['browserMiningThreads'] = $this->redis->get('browser_mining_threads');
         $data['env'] = $this->config->item('ENV');

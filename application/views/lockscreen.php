@@ -43,7 +43,7 @@
 				<div class="mt20">
 			        <p class="terminal-font">System: <?php echo gethostname() ?></p>
 					<p class="terminal-font">Ip Address: <?php echo $_SERVER['SERVER_ADDR'] ?></p>
-					<p class="terminal-font">Raspinode Version: <?php echo $minera_version ?></p>
+					<p class="terminal-font">Raspinode Version: <?php echo $raspinode_version ?></p>
 				</div>
 			</div> 
 
