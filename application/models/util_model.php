@@ -1159,8 +1159,8 @@ class Util_model extends CI_Model {
                     . ', "stake": ' . $getinfo['stake']
                     . ', "version": "' . $getinfo['version']
                     . '", "connections": ' . $getinfo['connections']
-                    . ', "enabled": ' . $getstakinginfo['enabled'] ? 1 : 0
-                    . ', "staking": ' . $getstakinginfo['staking'] ? 1 : 0
+                    . ', "enabled": ' . ($getstakinginfo['enabled'] ? 1 : 0)
+                    . ', "staking": ' . ($getstakinginfo['staking'] ? 1 : 0)
                     . ', "last_block_time": ' . $getblock['time'] . '}';
         } catch (Exception $ex) {
             return '{"error": 1}';
