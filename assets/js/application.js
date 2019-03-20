@@ -50801,6 +50801,23 @@ function convertHashrate(hash) {
   else
     return hash.toFixed(2) + 'Kh/s';
 }
+function convertExpectedtime(et) {
+    if (!et)
+        return "0.0 days";
+    unit = 'minutes';
+    interval = et / 60;
+    hours = interval / 60;
+    days = hours / 24;
+    if (hours > 1) {
+        interval = hours;
+        unit = 'hours';
+    }
+    if (days > 1) {
+        interval = days;
+        unit = 'days';
+    }
+    return Math.round(interval) + ' ' + unit;
+}
 function convertMS(ms) {
   var d, h, m, s;
   s = Math.floor(ms / 1000);
@@ -52605,20 +52622,20 @@ function getStats(refresh) {
         var avgStats = [], avgStatsData = {};
         _.each(data.avg, function (aval, akey) {
           var avgs = {};
-          avgs.hrCurrentText = '-';
-          avgs.hrCurrent = 0;
-          avgs.hrPast = 0;
+          avgs.etCurrentText = '-';
+          avgs.etCurrent = 0;
+          avgs.etPast = 0;
           if (aval[0]) {
-            avgs.hrCurrent = parseInt(aval[0].net_weight / 1000);
-            avgs.hrCurrentText = convertHashrate(avgs.hrCurrent);
+            avgs.etCurrent = parseInt(aval[0].expectedtime);
+            avgs.etCurrentText = convertExpectedtime(parseInt(aval[0].expectedtime));
           }
           if (aval[1]) {
-            avgs.hrPast = parseInt(aval[1].net_weight / 1000);
+            avgs.etPast = parseInt(aval[1].expectedtime);
           }
-          if (avgs.hrPast > avgs.hrCurrent) {
+          if (avgs.etPast > avgs.etCurrent) {
             avgs.arrow = 'fa-chevron-down';
             avgs.color = '#f56954';
-          } else if (avgs.hrPast < avgs.hrCurrent) {
+          } else if (avgs.etPast < avgs.etCurrent) {
             avgs.arrow = 'fa-chevron-up';
             avgs.color = '#00a65a';
           } else {
@@ -52627,7 +52644,7 @@ function getStats(refresh) {
           }
           if (akey === '1min') {
             avgStatsData = {
-              avgonemin: akey + ': ' + avgs.hrCurrentText,
+              avgonemin: avgs.etCurrentText,
               arrow: avgs.arrow,
               color: avgs.color
             };
@@ -52635,7 +52652,7 @@ function getStats(refresh) {
             avgStats.push({
               arrow: avgs.arrow,
               color: avgs.color,
-              hrCurrentText: avgs.hrCurrentText,
+              etCurrentText: avgs.etCurrentText,
               key: akey
             });
           }

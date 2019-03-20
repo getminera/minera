@@ -364,6 +364,7 @@ class Util_model extends CI_Model {
                 "seconds" => $seconds,
                 "net_weight" => $netweight,
                 "weight" => $weight,
+                "expectedtime" => (isset($obj->expectedtime)) ? $obj->expectedtime : 0,
                 "frequency" => $frequency,
                 "accepted" => $accepted,
                 "errors" => $errors,
@@ -419,6 +420,7 @@ class Util_model extends CI_Model {
 
             $ph = (isset($stats['staking']['netstakeweight'])) ? round($stats['staking']['netstakeweight'] / 100000000, 0) : 0;
             $dh = (isset($stats['staking']['weight'])) ? round($stats['staking']['weight'] / 100000000, 0) : 0;
+            $et = (isset($stats['staking']['expectedtime'])) ? $stats['staking']['expectedtime'] : 0;
             $fr = 0;
             $ac = 0;
             $hw = 0;
@@ -431,6 +433,7 @@ class Util_model extends CI_Model {
                 "timestamp" => time(),
                 "weight" => $dh,
                 "net_weight" => $ph,
+                "expectedtime" => $et,
                 "avg_freq" => $fr,
                 "accepted" => $ac,
                 "errors" => $hw,
@@ -461,6 +464,7 @@ class Util_model extends CI_Model {
                 "timestamp" => time(),
                 "weight" => $dh,
                 "net_weight" => $ph,
+                "expectedtime" => $et,
                 "avg_freq" => max((int) ($fr - $lfr), 0),
                 "accepted" => max((int) ($ac - $lac), 0),
                 "errors" => max((int) ($hw - $lhw), 0),

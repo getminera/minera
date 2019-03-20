@@ -1088,9 +1088,6 @@ class App extends CI_Controller {
         $currentHour = date("H", $now);
         $currentMinute = date("i", $now);
 
-        // Refresh Cryptsydata if needed
-        //$this->util_model->refreshcryptsyData();
-        //$this->util_model->updateAltcoinsRates();
         // Store the live stats
         $stats = $this->util_model->storeStats();
 
