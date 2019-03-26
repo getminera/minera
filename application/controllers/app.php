@@ -20,7 +20,7 @@ class App extends CI_Controller {
     public function index() {
         // Always try to assign the mineraId if not present
         $mineraSystemId = $this->util_model->generateMineraId();
-        $this->redis->del("minera_update");
+        $this->redis->del("raspinode_update");
         $this->util_model->checkUpdate();
 
         // Remove old Minera pool
@@ -52,8 +52,6 @@ class App extends CI_Controller {
         $data['now'] = time();
         $data['minera_system_id'] = $mineraSystemId;
         $data['raspinode_version'] = $this->util_model->currentVersion(true);
-        $data['browserMining'] = $this->redis->get('browser_mining');
-        $data['browserMiningThreads'] = $this->redis->get('browser_mining_threads');
         $data['env'] = $this->config->item('ENV');
         $data['sectionPage'] = 'lockscreen';
         $data['htmlTag'] = "lockscreen";
@@ -130,8 +128,6 @@ class App extends CI_Controller {
         $data['pageTitle'] = ($this->redis->get("mobileminer_system_name")) ? $this->redis->get("mobileminer_system_name") . " > PirateCash - Dashboard" : "PirateCash - Dashboard";
         $data['dashboardSkin'] = ($this->redis->get("dashboard_skin")) ? $this->redis->get("dashboard_skin") : "black";
         $data['localAlgo'] = $this->util_model->checkAlgo($this->util_model->isOnline());
-        $data['browserMining'] = $this->redis->get('browser_mining');
-        $data['browserMiningThreads'] = $this->redis->get('browser_mining_threads');
         $data['env'] = $this->config->item('ENV');
         $data['mineraSystemId'] = $this->redis->get("minera_system_id");
 
@@ -177,8 +173,6 @@ class App extends CI_Controller {
         $data['pageTitle'] = ($this->redis->get("mobileminer_system_name")) ? $this->redis->get("mobileminer_system_name") . " > Minera - Dashboard" : "Minera - Dashboard";
         $data['dashboardSkin'] = ($this->redis->get("dashboard_skin")) ? $this->redis->get("dashboard_skin") : "black";
         $data['localAlgo'] = $this->util_model->checkAlgo($this->util_model->isOnline());
-        $data['browserMining'] = $this->redis->get('browser_mining');
-        $data['browserMiningThreads'] = $this->redis->get('browser_mining_threads');
         $data['env'] = $this->config->item('ENV');
         $data['mineraSystemId'] = $this->redis->get("minera_system_id");
 
@@ -209,8 +203,6 @@ class App extends CI_Controller {
         $data['minerdLog'] = $this->redis->get('minerd_log');
         $data['dashboardSkin'] = ($this->redis->get("dashboard_skin")) ? $this->redis->get("dashboard_skin") : "black";
         $data['dashboardDevicetree'] = ($this->redis->get("dashboard_devicetree")) ? $this->redis->get("dashboard_devicetree") : false;
-        $data['browserMining'] = $this->redis->get('browser_mining');
-        $data['browserMiningThreads'] = $this->redis->get('browser_mining_threads');
         $data['env'] = $this->config->item('ENV');
         $data['mineraSystemId'] = $this->redis->get("minera_system_id");
 
@@ -281,8 +273,6 @@ class App extends CI_Controller {
         $data['minerdDelaytime'] = $this->redis->get("minerd_delaytime");
         $data['minerApiAllowExtra'] = $this->redis->get("minerd_api_allow_extra");
         $data['globalPoolProxy'] = $this->redis->get("pool_global_proxy");
-        $data['browserMining'] = $this->redis->get('browser_mining');
-        $data['browserMiningThreads'] = $this->redis->get('browser_mining_threads');
         $data['env'] = $this->config->item('ENV');
 
         // Load Dashboard settings
@@ -290,7 +280,6 @@ class App extends CI_Controller {
         $data['dashboard_refresh_time'] = $this->redis->get("dashboard_refresh_time");
         $dashboard_coin_rates = $this->redis->get("dashboard_coin_rates");
         $data['dashboard_coin_rates'] = (is_array(json_decode($dashboard_coin_rates))) ? json_decode($dashboard_coin_rates) : array();
-        $data['cryptsy_data'] = $this->redis->get("cryptsy_data");
         $data['dashboardTemp'] = ($this->redis->get("dashboard_temp")) ? $this->redis->get("dashboard_temp") : "c";
         $data['dashboardSkin'] = ($this->redis->get("dashboard_skin")) ? $this->redis->get("dashboard_skin") : "black";
         $data['dashboardDevicetree'] = ($this->redis->get("dashboard_devicetree")) ? $this->redis->get("dashboard_devicetree") : false;
@@ -732,34 +721,6 @@ class App extends CI_Controller {
                 ->set_output(json_encode($dataObj));
     }
 
-    /*
-      // Enable disable browser mining
-     */
-
-    public function manage_browser_mining() {
-        $this->util_model->isLoggedIn();
-        $result = new stdClass();
-        $error = new stdClass();
-
-        if (!$this->input->post('action')) {
-            $error->err = 'Action is required';
-            echo json_encode($error);
-            return false;
-        }
-
-        $action = $this->input->post('action');
-        $threads = $this->input->post('threads');
-        $threads = ($threads) ? $threads : 2;
-        $enable = ($action === 'enable') ? true : false;
-
-        $this->redis->set('browser_mining', $enable);
-        $this->redis->set('browser_mining_threads', $threads);
-
-        // log_message("error", $action);
-        $result->action = $action;
-        $result->threads = $threads;
-        echo json_encode($result);
-    }
 
     /*
       // Export the settings forcing download of JSON file

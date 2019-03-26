@@ -1143,7 +1143,7 @@ class Util_model extends CI_Model {
         // Pull the latest code from github
         exec("cd " . FCPATH . " && sudo -u pirate sudo git fetch --all && sudo git reset --hard origin/master", $out);
 
-        $logmsg = "Update request from " . $this->currentVersion() . " to " . $this->redis->command("HGET minera_update new_version") . " : " . var_export($out, true);
+        $logmsg = "Update request from " . $this->currentVersion() . " to " . $this->redis->command("HGET raspinode_update new_version") . " : " . var_export($out, true);
 
         $lines[] = $logmsg;
 
@@ -1151,12 +1151,12 @@ class Util_model extends CI_Model {
 
         $this->redis->del("altcoins_update");
         $this->util_model->updateAltcoinsRates();
-        $this->redis->del("minera_update");
+        $this->redis->del("raspinode_update");
         $this->redis->del("raspinode_version");
         $this->checkUpdate();
 
         // Run upgrade script
-        exec("cd " . FCPATH . " && sudo -u pirate sudo ./upgrade_minera.sh", $out);
+        exec("cd " . FCPATH . " && sudo -u pirate sudo ./upgrade_raspinode.sh", $out);
 
         $logmsg = "Running upgrade script" . var_export($out, true);
 
@@ -1245,13 +1245,11 @@ class Util_model extends CI_Model {
         $this->redis->set("minerd_pools", "");
         $this->redis->set("minerd_autodetect", 0);
         $this->redis->set("minerd_api_allow_extra", "");
-        $this->redis->set("browser_mining", 1);
-        $this->redis->set("browser_mining_threads", 2);
 
         // DEL
         $this->redis->del("raspinode_version");
         $this->redis->del("active_custom_miners");
-        $this->redis->del("minera_update");
+        $this->redis->del("raspinode_update");
         $this->redis->del("piratecashd_avg_stats_86400");
         $this->redis->del("piratecashd_avg_stats_3600");
         $this->redis->del("piratecashd_avg_stats_300");
@@ -1279,27 +1277,27 @@ class Util_model extends CI_Model {
     // Check Minera version
     public function checkUpdate() {
         // wait 1h before recheck
-        if (time() > ($this->redis->command("HGET minera_update timestamp") + 3600)) {
+        if (time() > ($this->redis->command("HGET raspinode_update timestamp") + 3600)) {
             log_message('error', "Checking Minera updates");
 
             $latestConfig = $this->getRemoteJsonConfig();
             $localVersion = $this->currentVersion();
 
             if (isset($latestConfig->version)) {
-                $this->redis->command("HSET minera_update timestamp " . time());
-                $this->redis->command("HSET minera_update new_version " . $latestConfig->version);
+                $this->redis->command("HSET raspinode_update timestamp " . time());
+                $this->redis->command("HSET raspinode_update new_version " . $latestConfig->version);
 
                 if ($latestConfig->version != $localVersion) {
                     log_message('error', "Found a new Minera update");
 
-                    $this->redis->command("HSET minera_update value 1");
+                    $this->redis->command("HSET raspinode_update value 1");
                     return true;
                 }
 
-                $this->redis->command("HSET minera_update value 0");
+                $this->redis->command("HSET raspinode_update value 0");
             }
         } else {
-            if ($this->redis->command("HGET minera_update value"))
+            if ($this->redis->command("HGET raspinode_update value"))
                 return true;
             else
                 return false;

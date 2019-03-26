@@ -5,8 +5,6 @@
          data-device-tree="<?php echo $dashboardDevicetree ?>"
          data-dashboard-temp="<?php echo ($this->redis->get("dashboard_temp")) ? $this->redis->get("dashboard_temp") : "c"; ?>"
          data-miner-status="<?php echo ($this->redis->get("minerd_status")) ? 1 : 0; ?>"
-         data-browser-mining="<?php echo $browserMining ?>"
-         data-browser-mining-threads="<?php echo $browserMiningThreads ?>"
          data-minera-id="<?php echo $mineraSystemId ?>"
          ></div>
 
@@ -111,41 +109,6 @@
                             <i class="fa fa-clock-o"></i> <span class="toptime"></span>
                         </a>
                     </li>
-
-                    <!-- Browser mining -->
-                    <?php if ($browserMining) : ?>
-                        <li class="messages-menu messages-bm">
-                            <a href="#" class="bmWarm">
-                                <i class="fa fa-globe"></i> <span>Warming up...</span>
-                            </a>
-                            <a href="#" class="dropdown-toggle bmHash" data-toggle="dropdown" style="display:none;">
-                                <i class="fa fa-globe"></i> <span class="bmHashText"></span>
-                            </a>
-                            <ul class="dropdown-menu dropdown-menu-mining">
-                                <li class="header">Browser mining</li>
-                                <li>
-                                    <!-- inner menu: contains the actual data -->
-                                    <ul class="menu avg-stats" style="overflow: hidden; width: 100%; height: 200px;">
-                                        <li>
-                                            <a href="#">
-                                                <div class="pull-left" style="padding-left:15px;">
-                                                    <i class="fa fa-trophy"></i>
-                                                </div>
-                                                <h4><span class="bmAccepted"></span><small><i class="fa fa-globe"></i> Accepted hashes</small></h4>
-                                                <p>Browser mining hash</p>
-                                            </a>
-                                        </li>
-                                        <li>
-                                            <div class="text-center">
-                                                <h1><a href="#" data-toggle="tooltip" title="Increase CPU threads" class="increase-mining-threads"><i class="fa fa-plus"></i></a> <span class="bm-threads ml10 mr10 fs72"></span> <a href="#" data-toggle="tooltip" title="Decrease CPU threads" class="decrease-mining-threads"><i class="fa fa-minus"></i></a></h1>
-                                            </div>
-                                        </li>
-                                    </ul>
-                                </li>
-                                <li class="footer"><a href="<?php echo site_url("app/settings") ?>">Go to settings</a></li>
-                            </ul>
-                        </li>
-                    <?php endif; ?>
 
                     <!-- Averages -->
                     <li class="messages-menu messages-avg">
