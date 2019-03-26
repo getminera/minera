@@ -158,10 +158,6 @@
 													<td><input type="checkbox" name="dashboard_box_local_miner" value="1" <?php if ($dashboardBoxLocalMiner) : ?>checked=""<?php endif; ?> /> Local miner</td>
 												</tr>
 												<tr>
-													<td></td>
-													<td><input type="checkbox" name="dashboard_box_network_details" value="1" <?php if ($dashboardBoxNetworkDetails) : ?>checked=""<?php endif; ?> /> Network miners</td>
-												</tr>
-												<tr>
 													<td><input type="checkbox" name="dashboard_box_network_pools_details" value="1" <?php if ($dashboardBoxNetworkPoolsDetails) : ?>checked=""<?php endif; ?> /> Network pools</td>
 													<td><input type="checkbox" name="dashboard_box_chart_shares" value="1" <?php if ($dashboardBoxChartShares) : ?>checked=""<?php endif; ?> /> Shares chart</td>
 												</tr>

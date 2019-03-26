@@ -102,7 +102,7 @@
                                 <p>Last Share</p>
                             </div>
                             <div class="icon"><i class="ion ion-ios-stopwatch-outline"></i></div>
-                            <a href="#miner-details" class="small-box-footer">Miner details <i class="fa fa-arrow-circle-right"></i></a>
+                            <a href="#raspinode-details" class="small-box-footer">Miner details <i class="fa fa-arrow-circle-right"></i></a>
                         </div>
                     </div>
                 </div>
@@ -169,10 +169,10 @@
                         <div class="small-box bg-aqua">
                             <div class="inner">
                                 <h3 class="widget-uptime"><i class="ion spin ion-load-c"></i></h3>
-                                <p>Miner uptime</p>
+                                <p>RaspiNode uptime</p>
                             </div>
                             <div class="icon"><i class="ion ion-ios-timer-outline"></i></div>
-                            <a href="#miner-details" class="small-box-footer uptime-footer">... <i class="fa fa-arrow-circle-right"></i></a>
+                            <a href="#raspinode-details" class="small-box-footer uptime-footer">... <i class="fa fa-arrow-circle-right"></i></a>
                         </div>
                     </div>
 
@@ -238,7 +238,7 @@
                             </div><!-- /. tools -->
                             <i class="fa fa-line-chart"></i>
 
-                            <h3 class="box-title" id="miner-details">Staking profitability <small class="profit-whatmine"></small></h3>
+                            <h3 class="box-title" id="raspinode-details">Staking profitability <small class="profit-whatmine"></small></h3>
                         </div>
                         <div class="box-body">
                             <div class="row">
@@ -319,7 +319,7 @@
                             </div><!-- /. tools -->
                             <i class="fa fa-desktop"></i>
 
-                            <h3 class="box-title" id="miner-details">Local Miner details</h3>
+                            <h3 class="box-title" id="raspinode-details">Local Miner details</h3>
                         </div>
                         <div class="box-body">
                             <div class="row">
@@ -369,61 +369,6 @@
                     </div><!-- /.miner box -->
                 <?php endif; ?>
 
-                <?php if ($dashboardBoxNetworkDetails) : ?>
-                    <!-- Network Miners box -->
-                    <?php if (true) : ?>
-                        <div id="box-network-details" class="box box-light network-miner-details <?php if (isset($boxStatuses['box-network-details']) && !$boxStatuses['box-network-details']) : ?>collapsed-box<?php endif; ?>" style="display:none;">
-                            <div class="overlay"></div>
-                            <div class="loading-img"></div>
-                            <div class="box-header" style="cursor: move;">
-                                <!-- tools box -->
-                                <div class="pull-right box-tools">
-                                    <button class="btn btn-default btn-xs" data-widget="collapse" data-toggle="tooltip" title="" data-original-title="Collapse"><i class="fa fa-minus"></i></button>
-                                </div><!-- /. tools -->
-                                <i class="fa fa-server"></i>
-
-                                <h3 class="box-title" id="miner-details">Network Miners details</h3>
-                            </div>
-                            <div class="box-body">
-                                <div class="row">
-                                    <div class="col-sm-12">
-                                        <div class="">
-                                            <table id="network-miner-table-details" class="responsive-datatable-minera table table-striped datatable">
-                                                <thead>
-                                                    <tr>
-                                                        <th>DEV</th>
-                                                        <th>Temp</th>
-                                                        <th>Frequency</th>
-                                                        <th>Dev HR</th>
-                                                        <th>Shares</th>
-                                                        <th>AC</th>
-                                                        <th>% AC</th>
-                                                        <th>RE</th>
-                                                        <th>% RE</th>
-                                                        <th>HW</th>
-                                                        <th>% HW</th>
-                                                        <th>Last share</th>
-                                                        <th>Last share time</th>
-                                                    </tr>
-                                                </thead>
-                                                <tbody class="network_devs_table">
-                                                </tbody>
-                                                <tfoot class="network_devs_table_foot">
-                                                </tfoot>
-                                            </table><!-- /.table -->
-                                        </div>
-                                    </div>
-                                </div><!-- /.row - inside box -->
-                            </div><!-- /.box-body -->
-                            <div class="box-footer">
-                                <div class="legend pull-right">
-                                    <h6>Colors based on last share time: <i class="fa fa-circle text-success"></i> Good&nbsp;&nbsp;&nbsp;<i class="fa fa-circle text-warning"></i> Warning&nbsp;&nbsp;&nbsp;<i class="fa fa-circle text-danger"></i> Critical&nbsp;&nbsp;&nbsp;<i class="fa fa-circle text-muted"></i> Possibly dead</h6>
-                                </div>
-                                <div>&nbsp;</div>
-                            </div>
-                        </div><!-- /.network miner box -->
-                    <?php endif; ?>
-                <?php endif; ?>
             </section>
 
             <!-- Right col -->

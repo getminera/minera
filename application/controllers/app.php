@@ -118,7 +118,6 @@ class App extends CI_Controller {
         $data['dashboardDevicetree'] = ($this->redis->get("dashboard_devicetree")) ? $this->redis->get("dashboard_devicetree") : false;
         $data['dashboardBoxProfit'] = ($this->redis->get("dashboard_box_profit")) ? $this->redis->get("dashboard_box_profit") : false;
         $data['dashboardBoxLocalMiner'] = ($this->redis->get("dashboard_box_local_miner")) ? $this->redis->get("dashboard_box_local_miner") : false;
-        $data['dashboardBoxNetworkDetails'] = ($this->redis->get("dashboard_box_network_details")) ? $this->redis->get("dashboard_box_network_details") : false;
         $data['dashboardBoxNetworkPoolsDetails'] = ($this->redis->get("dashboard_box_network_pools_details")) ? $this->redis->get("dashboard_box_network_pools_details") : false;
         $data['dashboardBoxChartShares'] = ($this->redis->get("dashboard_box_chart_shares")) ? $this->redis->get("dashboard_box_chart_shares") : false;
         $data['dashboardBoxChartSystemLoad'] = ($this->redis->get("dashboard_box_chart_system_load")) ? $this->redis->get("dashboard_box_chart_system_load") : false;
@@ -163,7 +162,6 @@ class App extends CI_Controller {
         $data['dashboardDevicetree'] = ($this->redis->get("dashboard_devicetree")) ? $this->redis->get("dashboard_devicetree") : false;
         $data['dashboardBoxProfit'] = ($this->redis->get("dashboard_box_profit")) ? $this->redis->get("dashboard_box_profit") : false;
         $data['dashboardBoxLocalMiner'] = ($this->redis->get("dashboard_box_local_miner")) ? $this->redis->get("dashboard_box_local_miner") : false;
-        $data['dashboardBoxNetworkDetails'] = ($this->redis->get("dashboard_box_network_details")) ? $this->redis->get("dashboard_box_network_details") : false;
         $data['dashboardBoxNetworkPoolsDetails'] = ($this->redis->get("dashboard_box_network_pools_details")) ? $this->redis->get("dashboard_box_network_pools_details") : false;
         $data['dashboardBoxChartShares'] = ($this->redis->get("dashboard_box_chart_shares")) ? $this->redis->get("dashboard_box_chart_shares") : false;
         $data['dashboardBoxChartSystemLoad'] = ($this->redis->get("dashboard_box_chart_system_load")) ? $this->redis->get("dashboard_box_chart_system_load") : false;
@@ -285,7 +283,6 @@ class App extends CI_Controller {
         $data['dashboardDevicetree'] = ($this->redis->get("dashboard_devicetree")) ? $this->redis->get("dashboard_devicetree") : false;
         $data['dashboardBoxProfit'] = ($this->redis->get("dashboard_box_profit")) ? $this->redis->get("dashboard_box_profit") : false;
         $data['dashboardBoxLocalMiner'] = ($this->redis->get("dashboard_box_local_miner")) ? $this->redis->get("dashboard_box_local_miner") : false;
-        $data['dashboardBoxNetworkDetails'] = ($this->redis->get("dashboard_box_network_details")) ? $this->redis->get("dashboard_box_network_details") : false;
         $data['dashboardBoxNetworkPoolsDetails'] = ($this->redis->get("dashboard_box_network_pools_details")) ? $this->redis->get("dashboard_box_network_pools_details") : false;
         $data['dashboardBoxChartShares'] = ($this->redis->get("dashboard_box_chart_shares")) ? $this->redis->get("dashboard_box_chart_shares") : false;
         $data['dashboardBoxChartSystemLoad'] = ($this->redis->get("dashboard_box_chart_system_load")) ? $this->redis->get("dashboard_box_chart_system_load") : false;
@@ -354,7 +351,6 @@ class App extends CI_Controller {
             $dashboardDevicetree = $this->input->post('dashboard_devicetree');
             $dashboardBoxProfit = $this->input->post('dashboard_box_profit');
             $dashboardBoxLocalMiner = $this->input->post('dashboard_box_local_miner');
-            $dashboardBoxNetworkDetails = $this->input->post("dashboard_box_network_details");
             $dashboardBoxNetworkPoolsDetails = $this->input->post("dashboard_box_network_pools_details");
             $dashboardBoxChartShares = $this->input->post("dashboard_box_chart_shares");
             $dashboardBoxChartSystemLoad = $this->input->post("dashboard_box_chart_system_load");
@@ -557,8 +553,6 @@ class App extends CI_Controller {
             $dataObj->dashboard_box_profit = $dashboardBoxProfit;
             $this->redis->set("dashboard_box_local_miner", $dashboardBoxLocalMiner);
             $dataObj->dashboard_box_local_miner = $dashboardBoxLocalMiner;
-            $this->redis->set("dashboard_box_network_details", $dashboardBoxNetworkDetails);
-            $dataObj->dashboard_box_network_details = $dashboardBoxNetworkDetails;
             $this->redis->set("dashboard_box_network_pools_details", $dashboardBoxNetworkPoolsDetails);
             $dataObj->dashboard_box_network_pools_details = $dashboardBoxNetworkPoolsDetails;
             $this->redis->set("dashboard_box_chart_shares", $dashboardBoxChartShares);

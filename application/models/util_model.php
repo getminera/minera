@@ -46,6 +46,10 @@ class Util_model extends CI_Model {
         } else {
             $a->notrunning = true;
         }
+        $uptime = @file_get_contents( "/proc/uptime");
+        $uptime = explode(" ",$uptime);
+        $uptime = $uptime[0];
+        $a->start_time = time()-$uptime;
 
         // Add Minera ID
         $a->minera_id = $this->generateMineraId();
