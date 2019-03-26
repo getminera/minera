@@ -50801,6 +50801,20 @@ function convertHashrate(hash) {
   else
     return hash.toFixed(2) + 'Kh/s';
 }
+function convertWeight(net) {
+    if (!net)
+        return "N/A";
+    unit = '';
+    if (net > 100000000000000){
+        net = net / 100000000000000;
+        unit = 'M';
+    } else  if (net > 100000000000){
+        net = net / 100000000000;
+        unit = 'k';
+    }
+
+    return (net).toFixed(4) + ' ' + unit;
+}
 function convertExpectedtime(et) {
     if (!et)
         return "0.0 days";
@@ -51069,7 +51083,7 @@ function createChart(period, text_period) {
   });
 }
 //End get stored stats
-function createMon(key, hash, totalhash, maxHashrate, ac, re, hw, sh, freq, color) {
+function createMon(key, hash, totalhash, maxHashrate, ac, re, bl, freq, color) {
   var col, toAppend, size, skin, thickness, fontsize, name, max;
   if (key === 'total') {
     col = 12;
@@ -51093,7 +51107,7 @@ function createMon(key, hash, totalhash, maxHashrate, ac, re, hw, sh, freq, colo
   else
     name = key;
   // Add per device knob graph
-  var devBox = '<div class="col-xs-' + col + ' text-center" id="master-' + key + '"><input type="text" class="' + key + '" /><div class="knob-label"><p><strong>' + name + '</strong></p><p>A: ' + ac + ' - R: ' + re + ' - H: ' + hw + '</p></div></div>';
+  var devBox = '<div class="col-xs-' + col + ' text-center" id="master-' + key + '"><input type="text" class="' + key + '" /><div class="knob-label"><p><strong>' + name + '</strong></p><p>A: ' + ac + ' - R: ' + re + '</p></div></div>';
   $('#master-' + key).remove();
   $(toAppend).append(devBox);
   $('.' + key).data('weight', hash);
@@ -52422,7 +52436,7 @@ if ($('.header').data('this-section') !== 'lockscreen') {
 // Stats scripts
 function getStats(refresh) {
   var now = new Date().getTime();
-  var d = 0, totalhash = 0, totalac = 0, totalre = 0, totalhw = 0, totalsh = 0, totalfr = 0, totalpoolhash = 0, poolHash = 0, errorTriggered = false, pool_shares_seconds, log_file = '/home/pirate/.piratecash/debug.log', miner_status = $('.app_data').data('miner-status'),
+  var d = 0, totalhash = 0, totalac = 0, totalre = 0, totalsh = 0, totalpoolhash = 0, poolHash = 0, errorTriggered = false, pool_shares_seconds, log_file = '/home/pirate/.piratecash/debug.log', miner_status = $('.app_data').data('miner-status'),
     // Raw stats
     boxStats = $('.section-raw-stats'), thisSection = $('.header').data('this-section');
   boxStats.hide();
@@ -52578,7 +52592,14 @@ function getStats(refresh) {
         alwaysVisible: false,
         size: '3px'
       }).css('width', '100%');
+      if (data.weight) { 
+          $('.widget-total-weight').html(convertWeight(data.weight));
+      }
+      if (data.localweight) { 
+          $('.widget-main-pool').html(convertWeight(data.localweight));
+      }
       if (data.devices) {
+        $('#devs').empty();
         if (!$.fn.dataTable.isDataTable('#miner-table-details')) {
           // Initialize the miner datatable	
           $('#miner-table-details').dataTable({
@@ -52608,25 +52629,13 @@ function getStats(refresh) {
                 'aTargets': [2],
                 'mRender': function (data, type, full) {
                   if (type === 'display') {
-                    if (data)
-                      return '<small class="label label-light">' + data + ' MHz</small>';
-                    else
-                      return '<small class="label label-light">not available</small>';
+                    return '<small class="badge bg-' + data.label + '">' + data.locweight + '</small>';
                   }
-                  return data;
+                  return data.locweight;
                 }
               },
               {
-                'aTargets': [3],
-                'mRender': function (data, type, full) {
-                  if (type === 'display') {
-                    return '<small class="badge bg-' + data.label + '">' + convertHashrate(data.hash) + '</small>';
-                  }
-                  return data.hash;
-                }
-              },
-              {
-                'aTargets': [11],
+                'aTargets': [7],
                 'mRender': function (data, type, full) {
                   if (type === 'display') {
                     return data + ' secs ago';
@@ -52636,9 +52645,7 @@ function getStats(refresh) {
               },
               {
                 'aTargets': [
-                  6,
-                  8,
-                  10
+                  6
                 ],
                 'mRender': function (data, type, full) {
                   if (type === 'display') {
@@ -52660,9 +52667,8 @@ function getStats(refresh) {
             'hash': hashrate,
             'ac': val.accepted,
             're': val.rejected,
-            'hw': val.hw_errors,
             'fr': val.frequency,
-            'sh': val.shares,
+            'lw': val.localweight,
             'ls': val.last_share
           };
           hashrates.push(hashrate);
@@ -52678,50 +52684,51 @@ function getStats(refresh) {
           'hash': totalhash,
           'ac': data.totals.accepted,
           're': data.totals.rejected,
-          'hw': data.totals.hw_errors,
           'fr': avgFr,
-          'sh': data.totals.shares,
+          'lw': data.totals.localweight,
           'ls': data.totals.last_share
         };
         for (var index in items) {
           // Add per device rows in system table
-          var devData = {};
-          devData.hash = items[index].hash;
+          var devWeight = {};
+          devWeight.locweight = convertWeight(items[index].lw);
           var share_date = new Date(items[index].ls * 1000);
           var rightnow = new Date().getTime();
           var last_share_secs = items[index].ls > 0 ? (rightnow - share_date.getTime()) / 1000 : 0;
           if (last_share_secs < 0)
             last_share_secs = 0;
-          var totalWorkedShares = parseFloat(items[index].ac) + parseFloat(items[index].re) + parseFloat(items[index].hw);
+          var totalWorkedShares = parseFloat(items[index].ac) + parseFloat(items[index].re);
           var percentageAc = parseFloat(100 * items[index].ac / totalWorkedShares);
           var percentageRe = parseFloat(100 * items[index].re / totalWorkedShares);
-          var percentageHw = parseFloat(100 * items[index].hw / totalWorkedShares);
           if (isNaN(percentageAc))
             percentageAc = 0;
           if (isNaN(percentageRe))
             percentageRe = 0;
-          if (isNaN(percentageHw))
-            percentageHw = 0;
           // Add colored hashrates
-          if (last_share_secs >= 120 && last_share_secs < 240)
-            devData.label = 'yellow';
-          else if (last_share_secs >= 240 && last_share_secs < 480)
-            devData.label = 'red';
-          else if (last_share_secs >= 480)
-            devData.label = 'muted';
+          if (last_share_secs >= 302400 && last_share_secs < 604800)
+            devWeight.label = 'yellow';
+          else if (last_share_secs >= 604800 && last_share_secs < 1209600)
+            devWeight.label = 'red';
+          else if (last_share_secs >= 1209600)
+            devWeight.label = 'muted';
           else
-            devData.label = 'green';
+            devWeight.label = 'green';
           var dev_serial = 'serial not available';
           if (index !== 'total' && items[index].serial) {
             dev_serial = 'serial: ' + items[index].serial;
           } else {
             // Widgets
-            $('.widget-last-share').html(parseInt(last_share_secs) + ' secs');
-            $('.widget-hwre-rates').html(parseFloat(percentageHw).toFixed(2) + '<sup style="font-size: 20px">%</sup> / ' + parseFloat(percentageRe).toFixed(2) + '<sup style="font-size: 20px">%</sup>');
+            var uptime = convertMS(last_share_secs * 1000);
+            var human_last_share = '';
+            for (var ukey in uptime) {
+                human_last_share = human_last_share + '' + uptime[ukey] + ukey + ' ';
+            }
+            $('.widget-last-share').html(human_last_share);
+            $('.widget-hwre-rates').html(parseFloat(percentageRe).toFixed(2) + '<sup style="font-size: 20px">%</sup>');
             dev_serial = '';  //Sidebar hashrate
                               //$('.sidebar-hashrate').html("@ "+convertHashrate(items[index].hash));
           }
-          var devRow = '<tr class="dev-' + index + '"><td class="devs_table_name"><i class="glyphicon glyphicon-hdd"></i>&nbsp;&nbsp;' + index + dev_serial + '</td><td class="devs_table_temp">' + items[index].temp + '</td><td class="devs_table_freq">' + items[index].fr + 'MHz</td><td class="devs_table_hash"><strong>' + convertHashrate(items[index].hash) + '</strong></td><td class="devs_table_sh">' + items[index].sh + '</td><td class="devs_table_ac">' + items[index].ac + '</td><td><small class="text-muted">' + parseFloat(percentageAc).toFixed(2) + '%</small></td><td class="devs_table_re">' + items[index].re + '</td><td><small class="text-muted">' + parseFloat(percentageRe).toFixed(2) + '%</small></td><td class="devs_table_hw">' + items[index].hw + '</td><td><small class="text-muted">' + parseFloat(percentageHw).toFixed(2) + '%</small></td><td class="devs_table_ls">' + parseInt(last_share_secs) + ' secs ago</td><td><small class="text-muted">' + share_date.toUTCString() + '</small></td></tr>';
+          var devRow = '<tr class="dev-' + index + '"><td class="devs_table_name"><i class="glyphicon glyphicon-hdd"></i>&nbsp;&nbsp;' + index + dev_serial + '</td><td class="devs_table_temp">' + items[index].temp + '</td><td class="devs_table_freq">' + convertWeight(items[index].lw) + '</td><td class="devs_table_ac">' + items[index].ac + '</td><td><small class="text-muted">' + parseFloat(percentageAc).toFixed(2) + '%</small></td><td class="devs_table_re">' + items[index].re + '</td><td><small class="text-muted">' + parseFloat(percentageRe).toFixed(2) + '%</small></td><td class="devs_table_ls">' + parseInt(last_share_secs) + ' secs ago</td><td><small class="text-muted">' + share_date.toUTCString() + '</small></td></tr>';
           if (index === 'total') {
             // TODO add row total via datatable
             $('.devs_table_foot').html(devRow);
@@ -52731,15 +52738,11 @@ function getStats(refresh) {
               $('#miner-table-details').dataTable().fnAddData([
                 '<span data-toggle="tooltip" title="' + dev_serial + '" data-placement="top"><i class="glyphicon glyphicon-hdd"></i>&nbsp;&nbsp;' + index + '</span>',
                 items[index].temp,
-                items[index].fr,
-                devData,
-                items[index].sh,
+                devWeight,
                 items[index].ac,
                 parseFloat(percentageAc).toFixed(2),
                 items[index].re,
                 parseFloat(percentageRe).toFixed(2),
-                items[index].hw,
-                parseFloat(percentageHw).toFixed(2),
                 parseInt(last_share_secs),
                 '<small class="text-muted">' + share_date.toUTCString() + '</small>'
               ]);
@@ -52747,12 +52750,12 @@ function getStats(refresh) {
           }
           if ($('.app_data').data('device-tree')) {
             // Crete Knob graph for devices and total
-            createMon(index, items[index].hash, totalhash, maxHashrate, items[index].ac, items[index].re, items[index].hw, items[index].sh, items[index].fr, devData.label);
+            createMon(index, items[index].hash, totalhash, maxHashrate, items[index].ac, items[index].re, items[index].lw, items[index].fr, devWeight.label);
           }
         }
         $('[data-toggle="tooltip"]').tooltip();
-      } else {
-        var nodevsMsg = '<div class="alert alert-warning"><i class="fa fa-warning"></i>No active local devices found</div>';
+        } else {
+        var nodevsMsg = '<div class="alert alert-warning"><i class="fa fa-warning"></i>No active piratecash daemons</div>';
         $('#miner-table-details').html(nodevsMsg);
         $('#devs').html(nodevsMsg).removeClass('row');
       }

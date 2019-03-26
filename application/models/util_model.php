@@ -46,10 +46,42 @@ class Util_model extends CI_Model {
         } else {
             $a->notrunning = true;
         }
-        $uptime = @file_get_contents( "/proc/uptime");
-        $uptime = explode(" ",$uptime);
+        $uptime = @file_get_contents("/proc/uptime");
+        $uptime = explode(" ", $uptime);
         $uptime = $uptime[0];
-        $a->start_time = time()-$uptime;
+        $a->start_time = time() - $uptime;
+
+        $a->localweight = $this->redis->get("localweight_weight") == "" ?
+                "N/A" : $this->redis->get("localweight_weight");
+
+        $a->devices = [
+            '127.0.0.1' => [
+                'temperature' => $this->checkTemp()['value'],
+                'serial' => exec("cat /proc/cpuinfo |grep Serial|cut -d' ' -f2"),
+                'hash' => 10000,
+                'accepted' => $this->redis->get("node_accepted") == "" ?
+                0 : $this->redis->get("node_accepted"),
+                'rejected' => 0,
+                'frequency' => 155,
+                'localweight' => $a->localweight,
+                'last_share' => $this->redis->get("node_last_accepted_time") == "" ?
+                0 : $this->redis->get("node_last_accepted_time")
+            ]
+        ];
+        $a->totals = [
+            'accepted' => $this->redis->get("node_accepted") == "" ?
+            0 : $this->redis->get("node_accepted"),
+            'rejected' => 0,
+            'localweight' => $a->localweight,
+            'last_share' => $this->redis->get("node_last_accepted_time") == "" ?
+            0 : $this->redis->get("node_last_accepted_time")
+        ];
+
+        $a->weight = $this->redis->get("network_weight") == "" ?
+                "N/A" : $this->redis->get("network_weight");
+
+        $a->localweight = $this->redis->get("localweight_weight") == "" ?
+                "N/A" : $this->redis->get("localweight_weight");
 
         // Add Minera ID
         $a->minera_id = $this->generateMineraId();

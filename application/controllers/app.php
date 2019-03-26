@@ -715,7 +715,6 @@ class App extends CI_Controller {
                 ->set_output(json_encode($dataObj));
     }
 
-
     /*
       // Export the settings forcing download of JSON file
      */
@@ -1135,6 +1134,31 @@ class App extends CI_Controller {
                 }
             }
         }
+        //Scan staking
+        $tx = $this->rpc->listtransactions('staking', 10);
+        $last_accepted_time = $this->redis->get("node_last_accepted_time") == "" ?
+                0 : $this->redis->get("node_last_accepted_time");
+        $last_rejected_time = $this->redis->get("node_last_rejected_time") == "" ?
+                0 : $this->redis->get("node_last_rejected_time");
+        $accepted = $this->redis->get("node_accepted") == "" ?
+                0 : $this->redis->get("node_accepted");
+        $rejected = $this->redis->get("node_rejected") == "" ?
+                0 : $this->redis->get("node_rejected");
+
+        foreach ($tx as $txinfo) {
+            if ($last_accepted_time < $txinfo['time'] and $txinfo['category'] == 'generate') {
+                $last_accepted_time = $txinfo['time'];
+                $accepted++;
+                $this->redis->set("node_accepted", $accepted);
+                $this->redis->set("node_last_accepted_time", $last_accepted_time);
+            }
+            if ($last_rejected_time < $txinfo['time'] and $txinfo['category'] == 'generate') {
+                //
+            }
+        }
+        $getstakinginfo = $this->rpc->getstakinginfo();
+        $this->redis->set("network_weight", $getstakinginfo['netstakeweight']);
+        $this->redis->set("localweight_weight", $getstakinginfo['weight']);
 
         $this->redis->del("cron_lock");
 

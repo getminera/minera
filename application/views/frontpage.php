@@ -72,11 +72,11 @@
                         <!-- small box -->
                         <div class="small-box bg-red">
                             <div class="inner">
-                                <h3 class="widget-total-hashrate"><i class="ion spin ion-load-c"></i></h3>
-                                <p>Pool Hashrate</p>
+                                <h3 class="widget-total-weight"><i class="ion spin ion-load-c"></i></h3>
+                                <p>Network weight</p>
                             </div>
                             <div class="icon"><i class="ion ion-ios-speedometer-outline"></i></div>
-                            <a href="#hashrate-history" class="small-box-footer">History <i class="fa fa-arrow-circle-right"></i></a>
+                            <a href="#weight-history" class="small-box-footer">History <i class="fa fa-arrow-circle-right"></i></a>
                         </div>
                     </div>
 
@@ -86,23 +86,23 @@
                         <div class="small-box bg-light">
                             <div class="inner">
                                 <h3 class="widget-hwre-rates"><i class="ion spin ion-load-c"></i></h3>
-                                <p>Error/Rejected rates</p>
+                                <p>Rejected rates</p>
                             </div>
                             <div class="icon"><i class="ion ion-alert-circled"></i></div>
                             <a href="#error-history" class="small-box-footer">Details <i class="fa fa-arrow-circle-right"></i></a>
                         </div>
                     </div>
 
-                    <!-- last share widget -->
+                    <!-- last transaction widget -->
                     <div class="col-lg-4 col-sm-4 col-xs-12">
                         <!-- small box -->
                         <div class="small-box bg-light-blue">
                             <div class="inner">
                                 <h3 class="widget-last-share"><i class="ion spin ion-load-c"></i></h3>
-                                <p>Last Share</p>
+                                <p>Last staking transaction</p>
                             </div>
                             <div class="icon"><i class="ion ion-ios-stopwatch-outline"></i></div>
-                            <a href="#raspinode-details" class="small-box-footer">Miner details <i class="fa fa-arrow-circle-right"></i></a>
+                            <a href="#raspinode-details" class="small-box-footer">Wallet details <i class="fa fa-arrow-circle-right"></i></a>
                         </div>
                     </div>
                 </div>
@@ -156,10 +156,10 @@
                         <div class="small-box bg-dark">
                             <div class="inner">
                                 <h3 class="widget-main-pool"><i class="ion spin ion-load-c"></i></h3>
-                                <p>Checking...</p>
+                                <p>Your weight</p>
                             </div>
                             <div class="icon"><i class="ion ion-ios-cloud-upload-outline"></i></div>
-                            <a href="#pools-details" class="small-box-footer">Pools details <i class="fa fa-arrow-circle-right"></i></a>
+                            <a href="#weight-history" class="small-box-footer">Your weight details <i class="fa fa-arrow-circle-right"></i></a>
                         </div>
                     </div>
 
@@ -215,7 +215,7 @@
                             </div><!-- /. tools -->
                             <i class="fa fa-bar-chart-o"></i>
 
-                            <h3 class="box-title" id="hashrate-history">Weight History</h3>
+                            <h3 class="box-title" id="weight-history">Weight History</h3>
                         </div>
                         <div class="box-body chart-responsive">
                             <div class="chart" id="hashrate-chart" style="height:160px;"></div>
@@ -319,7 +319,7 @@
                             </div><!-- /. tools -->
                             <i class="fa fa-desktop"></i>
 
-                            <h3 class="box-title" id="raspinode-details">Local Miner details</h3>
+                            <h3 class="box-title" id="raspinode-details">PirateCash daemons details</h3>
                         </div>
                         <div class="box-body">
                             <div class="row">
@@ -330,15 +330,11 @@
                                                 <tr>
                                                     <th>DEV</th>
                                                     <th>Temp</th>
-                                                    <th>Frequency</th>
-                                                    <th>Dev HR</th>
-                                                    <th>Shares</th>
+                                                    <th>Weight</th>
                                                     <th>AC</th>
                                                     <th>% AC</th>
                                                     <th>RE</th>
                                                     <th>% RE</th>
-                                                    <th>HW</th>
-                                                    <th>% HW</th>
                                                     <th>Last share</th>
                                                     <th>Last share time</th>
                                                 </tr>
@@ -354,7 +350,7 @@
                         </div><!-- /.box-body -->
                         <div class="box-footer">
                             <div class="legend pull-right">
-                                <h6>Colors based on last share time: <i class="fa fa-circle text-success"></i> Good&nbsp;&nbsp;&nbsp;<i class="fa fa-circle text-warning"></i> Warning&nbsp;&nbsp;&nbsp;<i class="fa fa-circle text-danger"></i> Critical&nbsp;&nbsp;&nbsp;<i class="fa fa-circle text-muted"></i> Possibly dead</h6>
+                                <h6>Colors based on last stake time: <i class="fa fa-circle text-success"></i> Good&nbsp;&nbsp;&nbsp;<i class="fa fa-circle text-warning"></i> Low&nbsp;&nbsp;&nbsp;<i class="fa fa-circle text-danger"></i> Extra low&nbsp;&nbsp;&nbsp;<i class="fa fa-circle text-muted"></i> Probably you need more Pirates</h6>
                             </div>
                             <?php if ($savedFrequencies && $minerdRunning == "cpuminer") : ?>
                                 <button class="btn btn-primary btn-sm btn-saved-freq" data-toggle="tooltip" title="" data-original-title="Look at saved frequencies"><i class="fa fa-eye"></i> Saved frequencies</button>
