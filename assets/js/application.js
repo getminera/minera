@@ -50813,7 +50813,7 @@ function convertWeight(net) {
         unit = 'k';
     }
 
-    return (net).toFixed(4) + ' ' + unit;
+    return parseFloat(net).toFixed(4) + ' ' + unit;
 }
 function convertExpectedtime(et) {
     if (!et)
