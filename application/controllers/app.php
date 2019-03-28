@@ -352,6 +352,9 @@ class App extends CI_Controller {
         $dataObj = new stdClass();
 
         $file = '/tmp/wallet.dat.' . date("Y-m-d-H.i", time());
+        if ($file == $this->redis->get('raspinode_wallet_dat')) {
+            exec('sudo rm ' . $file);
+        }
         $this->rpc->backupwallet($file);
         exec('sudo chown www-data ' . $file);
 
