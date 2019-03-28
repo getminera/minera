@@ -1,5 +1,5 @@
     <!-- Right side column. Contains the navbar and content of the page -->
-    <aside class="right-side ">                	
+    <aside class="right-side ">
         <!-- Content Header (Page header) -->
         <section class="content-header">
             <h1>
@@ -45,7 +45,7 @@
 							<?php echo $message ?>.
 						</div>
                     </section>
-                <?php endif; ?>                        
+                <?php endif; ?>
                 <?php if ($this->session->flashdata('message')) : ?>
                     <section class="col-md-12">
                     	<div class="alert alert-<?php echo $this->session->flashdata('message_type') ?> alert-dismissable">
@@ -54,18 +54,18 @@
 							<?php echo $this->session->flashdata('message') ?>.
 						</div>
                     </section>
-                <?php endif; ?>                        
-                
+                <?php endif; ?>
+
                 <!-- Top section -->
                 <section class="col-md-12">
-						
+
 					<form action="#" method="post" role="form" id="minersettings" enctype="multipart/form-data">
-												
-						<input type="hidden" name="save_settings" value="1" />                                                    
-						
+
+						<input type="hidden" name="save_settings" value="1" />
+
 						<div class="row">
 							<section class="left-section col-xs-12 col-md-6">
-						
+
 								<!-- Dashboard box -->
 								<div class="box box-primary" id="dashboard-box">
 									<div class="box-header">
@@ -74,10 +74,10 @@
 		                                    <button class="btn btn-default btn-xs" data-widget="collapse" data-toggle="tooltip" title="" data-original-title="Collapse"><i class="fa fa-minus"></i></button>
 		                                </div><!-- /. tools -->
 		                                <i class="fa fa-dashboard"></i>
-		                                
+
 		                                <h3 class="box-title">Dashboard Settings</h3>
 		                            </div>
-									
+
 		                            <div class="box-body">
 			                            <div class="row">
 				                            <div class="col-md-12">
@@ -89,14 +89,14 @@
 														<label>
 															<input type="radio" name="dashboard_temp" value="c" <?php if ($dashboardTemp == "c") : ?>checked=""<?php endif; ?> />
 															Celsius (C°)
-														</label>                                                
+														</label>
 														<label>
 															<input type="radio" name="dashboard_temp" value="f" <?php if ($dashboardTemp == "f") : ?>checked=""<?php endif; ?> />
 															Fahrenheit (F°)
-														</label>                                                
+														</label>
 													</div>
 												</div>
-				
+
 												<!-- Refresh time -->
 												<div class="form-group">
 													<label>Refresh time</label>
@@ -105,7 +105,7 @@
 														<input type="text" name="dashboard_refresh_time" id="option-dashboard-refresh-time" class="refresh-time" value="" data-saved-refresh-time="<?php echo (isset($dashboard_refresh_time)) ? $dashboard_refresh_time : 60; ?>" />
 													</div>
 												</div>
-												
+
 												<!-- Skin colors -->
 												<div class="form-group">
 													<label>Skin</label>
@@ -115,7 +115,7 @@
 														<option value="blue" <?php if ($dashboardSkin == "blue") : ?>selected<?php endif; ?>>Blue</option>
 													</select>
 												</div>
-												
+
 												<!-- Records per page -->
 												<div class="form-group">
 													<label>Data tables</label>
@@ -132,9 +132,9 @@
 		                            </div>
 		                        </div>
 							</section>
-						
-							<section class="right-section col-xs-12 col-md-6">			
-													
+
+							<section class="right-section col-xs-12 col-md-6">
+
 								<!-- Panels box -->
 								<div class="box box-primary" id="top-bar-box">
 								    <div class="box-header">
@@ -143,11 +143,11 @@
 			                                <button class="btn btn-default btn-xs" data-widget="collapse" data-toggle="tooltip" title="" data-original-title="Collapse"><i class="fa fa-minus"></i></button>
 			                            </div><!-- /. tools -->
 			                            <i class="fa fa-map-signs"></i>
-			                            
+
 			                            <h3 class="box-title">Dashboard panels</h3>
 			                        </div>
-								    
-			                        <div class="box-body">								    		
+
+			                        <div class="box-body">
 							    		<!-- Local device tree -->
 										<div class="form-group">
 											<label>Section panels</label>
@@ -158,8 +158,8 @@
 													<td><input type="checkbox" name="dashboard_box_local_miner" value="1" <?php if ($dashboardBoxLocalMiner) : ?>checked=""<?php endif; ?> /> Local miner</td>
 												</tr>
 												<tr>
-													<td><input type="checkbox" name="dashboard_box_network_pools_details" value="1" <?php if ($dashboardBoxNetworkPoolsDetails) : ?>checked=""<?php endif; ?> /> Network pools</td>
 													<td><input type="checkbox" name="dashboard_box_chart_shares" value="1" <?php if ($dashboardBoxChartShares) : ?>checked=""<?php endif; ?> /> Shares chart</td>
+                                                                                                        <td></td>
 												</tr>
 												<tr>
 													<td><input type="checkbox" name="dashboard_box_chart_system_load" value="1" <?php if ($dashboardBoxChartSystemLoad) : ?>checked=""<?php endif; ?> /> System load</td>
@@ -177,11 +177,11 @@
 										</div>
 			                        </div>
 			                    </div>
-                            
+
 							</section><!-- End right section -->
 
 						</div><!-- End row -->
-	                                            
+
                         <!-- System box -->
 						<div class="box box-primary" id="system-box">
 							<div class="box-header">
@@ -190,10 +190,10 @@
                                     <button class="btn btn-default btn-xs" data-widget="collapse" data-toggle="tooltip" title="" data-original-title="Collapse"><i class="fa fa-minus"></i></button>
                                 </div><!-- /. tools -->
                                 <i class="fa fa-rocket"></i>
-                                
+
                                 <h3 class="box-title">System Settings</h3>
                             </div>
-							
+
                             <div class="box-body">
 								<p>Setup the system options</p>
 
@@ -207,7 +207,7 @@
 	                                        <input type="text" name="system_hostname" class="form-control" placeholder="Use numbers/letters, symbols allowed are dash and underscore" />
                                         </div>
 									</div>
-									
+
 									<!-- system password -->
                                     <div class="form-group">
                                         <label>System password</label>
@@ -222,7 +222,7 @@
 										</div>
 										<h6>This is not the web password! This is the system user password you should use to login into the system by SSH. For the <a href="#user-box">web password look below</a>.
 									</div>
-									
+
 									<!-- timezone -->
                                     <div class="form-group">
                                         <label>System timezone</label>
@@ -234,7 +234,7 @@
 											<?php endforeach; ?>
 										</select>
 									</div>
-									
+
 									<!-- rc.local extra commands -->
                                     <div class="form-group">
                                         <label>Startup extra commands (rc.local)</label>
@@ -242,7 +242,7 @@
                                         <textarea name="system_extracommands" class="form-control system_extracommands" rows="5" placeholder="There isn't any error control here"><?php echo $systemExtracommands ?></textarea>
 										<h6>(WARNING: you could harm your controller putting wrong strings here.)</h6>
 									</div>
-									
+
 									<!-- scheduled event -->
 									<div class="form-group">
                                         <label>Scheduled event</label>
@@ -261,10 +261,10 @@
 											</label>
 										</div>
 										<h6>If you leave the hours empty it will be disabled.</h6>
-									</div>												
+									</div>
                             </div>
                         </div>
-                        
+
 						<!-- Import/Export box -->
 						<div class="box box-primary" id="importexport-box">
 						    <div class="box-header">
@@ -273,36 +273,36 @@
 	                                <button class="btn btn-default btn-xs" data-widget="collapse" data-toggle="tooltip" title="" data-original-title="Collapse"><i class="fa fa-minus"></i></button>
 	                            </div><!-- /. tools -->
 	                            <i class="fa fa-code-fork"></i>
-	                            
+
 	                            <h3 class="box-title">Import/Export/Share Settings</h3>
 	                        </div>
-						    
+
 	                        <div class="box-body">
 						    	<p>You can export a JSON file with all the settings from your current RaspiNode system. This file can be imported to reproduce the same settings in a new RaspiNode system with a click (this will export everything excluding: user password, charts and stats). You can also save a single miner config to be used in future<em>*</em> or shared with the Minera community<em>**</em>.</p>
-						    	
+
 								<div class="import-export-box margin-bottom">
 									<span class="btn btn-success fileinput-button" data-toggle="tooltip" data-title="File must be a JSON export file from a RaspiNode system">
 										<i class="glyphicon glyphicon-plus"></i>
 										Import file...
 										<input class="import-file" type="file" name="import_system_config">
 									</span>
-									<span class="btn btn-warning export-action" data-toggle="tooltip" data-title="This generates a JSON file to be imported into RaspiNode">
+                                                                    <span class="btn btn-warning export-action" data-toggle="tooltip" data-title="This generates a JSON file to be imported into RaspiNode">
 										<i class="glyphicon glyphicon-download-alt"></i>
 										Export Settings
-									</span> 
+									</span>
 									<span class="btn btn-default save-config-action" data-toggle="tooltip" data-title="This saves only the miner config to be used or shared later">
 										<i class="glyphicon glyphicon-floppy-disk"></i>
 										Save Miner Config
 									</span>
 								</div>
-						    	
+
 								<!-- The global progress bar -->
 								<div id="progress" class="progress">
 									<div class="progress-bar progress-bar-success"></div>
 								</div>
 								<!-- The container for the uploaded files -->
 								<div id="files" class="files"></div>
-						    	
+
 									<div class="saved-configs" <?php if (!$savedConfigs) : ?>style="display:none;"<?php endif; ?>>
 									    <div class="table-responsive">
 									    	<table id="saved-configs-table" class="table table-striped datatable">
@@ -349,7 +349,7 @@
 									    	</table>
 									    </div>
 									</div>
-								
+
 	                        </div>
 							<div class="box-footer">
 								<h6><em>*</em> Loading a saved miner config sets the manual settings mode with the saved command line, sets the miner software and completely overwrites the pools settings.</h6>
@@ -367,10 +367,10 @@
                                 <button class="btn btn-default btn-xs" data-widget="collapse" data-toggle="tooltip" title="" data-original-title="Collapse"><i class="fa fa-minus"></i></button>
                             </div><!-- /. tools -->
                             <i class="fa fa-user"></i>
-                            
+
                             <h3 class="box-title">User</h3>
                         </div>
-						
+
 						<form action="<?php echo site_url("app/settings") ?>" method="post" role="form" id="minerapassword">
 							<input type="hidden" name="save_password" value="1" />
                             <div class="box-body">
@@ -388,10 +388,10 @@
 							<div class="box-footer">
 								<button type="submit" class="btn btn-primary save-minera-password">Save password</button>
 							</div>
-						
+
 						</form>
                     </div>
-                    
+
 					<!-- Reset box -->
 					<div class="box box-primary" id="resets-box">
 						<div class="box-header">
@@ -400,10 +400,10 @@
                                 <button class="btn btn-default btn-xs" data-widget="collapse" data-toggle="tooltip" title="" data-original-title="Collapse"><i class="fa fa-minus"></i></button>
                             </div><!-- /. tools -->
                             <i class="fa fa-warning"></i>
-                            
+
                             <h3 class="box-title">Resets</h3>
                         </div>
-						
+
                         <div class="box-body">
 	                        <div class="row">
 	                        <div class="col-md-10">
@@ -431,9 +431,9 @@
 							<h6><strong>Clicking the reset buttons resets data immediately, there isn't any confirmation to do. Reset actions aren't recoverable, data will be lost.</strong></h6>
 						</div>
                     </div>
-                
+
                 </section><!-- /.left col -->
-                
+
 			</div><!-- /.row -->
 
         </section><!-- /.content -->

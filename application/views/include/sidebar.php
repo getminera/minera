@@ -5,7 +5,6 @@
          data-device-tree="<?php echo $dashboardDevicetree ?>"
          data-dashboard-temp="<?php echo ($this->redis->get("dashboard_temp")) ? $this->redis->get("dashboard_temp") : "c"; ?>"
          data-miner-status="<?php echo ($this->redis->get("minerd_status")) ? 1 : 0; ?>"
-         data-minera-id="<?php echo $mineraSystemId ?>"
          ></div>
 
     <!-- Modal -->
@@ -291,7 +290,6 @@
                 <!-- Sidebar main panel -->
                 <div class="user-panel">
                     <div class="pull-left info">
-                        <p>RaspiNode ID <strong><?php echo $mineraSystemId ?></strong></p>
                         <?php if ($isOnline) : ?>
                             <?php $minerdRunning = true; ?>
                             <a href="<?php echo site_url("app/dashboard") ?>"><i class="fa fa-circle text-success"></i> Online <?php if ($minerdRunning) : ?><small class="pull-right badge bg-green"><?php echo $minerdRunning ?></small><?php endif; ?></a>
@@ -353,7 +351,7 @@
                                 </a>
                             </li>
                             <li>
-                                <a href="<?= site_url("app/wallet#backup") ?>" class="menu-log-box ml10">
+                                <a href="<?= site_url("app/wallet_backup") ?>" class="menu-log-box ml10">
                                     <i class="fa fa-file"></i> Backup wallet
                                 </a>
                             </li>

@@ -51401,6 +51401,24 @@ $(function () {
                     $(window).scrollLeft()) + 'px');
             return this;
         }*/
+  } else if (thisSection === 'wallet_backup') { 
+    $('.backup-action').click(function (e) {
+        e.preventDefault();
+        $('#modal-saving-label').html('Generating wallet.dat file, please wait...');
+        $('#modal-saving').modal('show');
+        var saveUrl = _baseUrl + '/app/get_wallet_dat';
+        var formData = $('#wallet_backup').serialize();
+        $.ajax({
+            type: 'POST',
+            url: saveUrl,
+            data: formData,
+            cache: false,
+            success: function (resp) {
+            $('#modal-saving').modal('hide');
+                window.location = _baseUrl + '/app/export_wallet';
+            }
+      });
+    });
   } else if (thisSection === 'settings') {
     // Settings Scripts
     $('.box-tools').click(function (e) {

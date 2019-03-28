@@ -19,12 +19,8 @@ class App extends CI_Controller {
 
     public function index() {
         // Always try to assign the mineraId if not present
-        $mineraSystemId = $this->util_model->generateMineraId();
         $this->redis->del("raspinode_update");
         $this->util_model->checkUpdate();
-
-        // Remove old Minera pool
-        $this->util_model->removeOldMineraPool();
 
         if (!$this->redis->command("EXISTS dashboard_devicetree"))
             $this->redis->set("dashboard_devicetree", 1);
@@ -32,12 +28,8 @@ class App extends CI_Controller {
             $this->redis->set("dashboard_box_profit", 1);
         if (!$this->redis->command("EXISTS dashboard_box_local_miner"))
             $this->redis->set("dashboard_box_local_miner", 1);
-        if (!$this->redis->command("EXISTS dashboard_box_local_pools"))
-            $this->redis->set("dashboard_box_local_pools", 1);
         if (!$this->redis->command("EXISTS dashboard_box_network_details"))
             $this->redis->set("dashboard_box_network_details", 1);
-        if (!$this->redis->command("EXISTS dashboard_box_network_pools_details"))
-            $this->redis->set("dashboard_box_network_pools_details", 1);
         if (!$this->redis->command("EXISTS dashboard_box_chart_shares"))
             $this->redis->set("dashboard_box_chart_shares", 1);
         if (!$this->redis->command("EXISTS dashboard_box_chart_system_load"))
@@ -50,7 +42,6 @@ class App extends CI_Controller {
             $this->redis->set("dashboard_box_log", 1);
 
         $data['now'] = time();
-        $data['minera_system_id'] = $mineraSystemId;
         $data['raspinode_version'] = $this->util_model->currentVersion(true);
         $data['env'] = $this->config->item('ENV');
         $data['sectionPage'] = 'lockscreen';
@@ -89,7 +80,7 @@ class App extends CI_Controller {
     }
 
     /*
-      // Dashboard controller
+      // wallet controller
      */
 
     public function wallet() {
@@ -105,7 +96,6 @@ class App extends CI_Controller {
 
         $data['now'] = time();
         $data['sectionPage'] = 'dashboard';
-        $data['minerdPools'] = json_decode($this->util_model->getPools());
         $data['isOnline'] = $this->util_model->isOnline();
         $data['minerdLog'] = $this->redis->get('minerd_log');
         $data['savedFrequencies'] = $this->redis->get('current_frequencies');
@@ -118,7 +108,6 @@ class App extends CI_Controller {
         $data['dashboardDevicetree'] = ($this->redis->get("dashboard_devicetree")) ? $this->redis->get("dashboard_devicetree") : false;
         $data['dashboardBoxProfit'] = ($this->redis->get("dashboard_box_profit")) ? $this->redis->get("dashboard_box_profit") : false;
         $data['dashboardBoxLocalMiner'] = ($this->redis->get("dashboard_box_local_miner")) ? $this->redis->get("dashboard_box_local_miner") : false;
-        $data['dashboardBoxNetworkPoolsDetails'] = ($this->redis->get("dashboard_box_network_pools_details")) ? $this->redis->get("dashboard_box_network_pools_details") : false;
         $data['dashboardBoxChartShares'] = ($this->redis->get("dashboard_box_chart_shares")) ? $this->redis->get("dashboard_box_chart_shares") : false;
         $data['dashboardBoxChartSystemLoad'] = ($this->redis->get("dashboard_box_chart_system_load")) ? $this->redis->get("dashboard_box_chart_system_load") : false;
         $data['dashboardBoxChartHashrates'] = ($this->redis->get("dashboard_box_chart_hashrates")) ? $this->redis->get("dashboard_box_chart_hashrates") : false;
@@ -126,13 +115,55 @@ class App extends CI_Controller {
         $data['dashboardBoxLog'] = ($this->redis->get("dashboard_box_log")) ? $this->redis->get("dashboard_box_log") : false;
         $data['pageTitle'] = ($this->redis->get("mobileminer_system_name")) ? $this->redis->get("mobileminer_system_name") . " > PirateCash - Dashboard" : "PirateCash - Dashboard";
         $data['dashboardSkin'] = ($this->redis->get("dashboard_skin")) ? $this->redis->get("dashboard_skin") : "black";
-        $data['localAlgo'] = $this->util_model->checkAlgo($this->util_model->isOnline());
         $data['env'] = $this->config->item('ENV');
-        $data['mineraSystemId'] = $this->redis->get("minera_system_id");
 
         $this->load->view('include/header', $data);
         $this->load->view('include/sidebar', $data);
         $this->load->view('wallet', $data);
+        $this->load->view('include/footer', $data);
+    }
+
+    /*
+      // Wallet backup controller
+     */
+
+    public function wallet_backup() {
+        $this->util_model->isLoggedIn();
+
+        //var_export($this->redis->command("HGETALL box_status"));
+        $boxStatuses = json_decode($this->redis->get("box_status"), true);
+
+        $data['boxStatuses'] = array();
+        if (count($boxStatuses > 0)) {
+            $data['boxStatuses'] = $boxStatuses;
+        }
+
+        $data['now'] = time();
+        $data['sectionPage'] = 'wallet_backup';
+        $data['isOnline'] = $this->util_model->isOnline();
+        $data['minerdLog'] = $this->redis->get('minerd_log');
+        $data['savedFrequencies'] = $this->redis->get('current_frequencies');
+        $data['htmlTag'] = "dashboard";
+        $data['appScript'] = true;
+        $data['settingsScript'] = false;
+        $data['mineraUpdate'] = $this->util_model->checkUpdate();
+        $data['dashboard_refresh_time'] = $this->redis->get("dashboard_refresh_time");
+        $data['dashboardTableRecords'] = $this->redis->get("dashboard_table_records");
+        $data['dashboardDevicetree'] = ($this->redis->get("dashboard_devicetree")) ? $this->redis->get("dashboard_devicetree") : false;
+        $data['dashboardBoxProfit'] = ($this->redis->get("dashboard_box_profit")) ? $this->redis->get("dashboard_box_profit") : false;
+        $data['dashboardBoxLocalMiner'] = ($this->redis->get("dashboard_box_local_miner")) ? $this->redis->get("dashboard_box_local_miner") : false;
+        $data['dashboardBoxChartShares'] = ($this->redis->get("dashboard_box_chart_shares")) ? $this->redis->get("dashboard_box_chart_shares") : false;
+        $data['dashboardBoxChartSystemLoad'] = ($this->redis->get("dashboard_box_chart_system_load")) ? $this->redis->get("dashboard_box_chart_system_load") : false;
+        $data['dashboardBoxChartHashrates'] = ($this->redis->get("dashboard_box_chart_hashrates")) ? $this->redis->get("dashboard_box_chart_hashrates") : false;
+        $data['dashboardBoxScryptEarnings'] = ($this->redis->get("dashboard_box_scrypt_earnings")) ? $this->redis->get("dashboard_box_scrypt_earnings") : false;
+        $data['dashboardBoxLog'] = ($this->redis->get("dashboard_box_log")) ? $this->redis->get("dashboard_box_log") : false;
+        $data['pageTitle'] = ($this->redis->get("mobileminer_system_name")) ? $this->redis->get("mobileminer_system_name") . " > PirateCash - Dashboard" : "PirateCash - Dashboard";
+        $data['dashboardSkin'] = ($this->redis->get("dashboard_skin")) ? $this->redis->get("dashboard_skin") : "black";
+        $data['env'] = $this->config->item('ENV');
+
+        $this->load->view('include/header', $data);
+        $this->load->view('include/sidebar', $data);
+        $this->load->view('backup', $data);
         $this->load->view('include/footer', $data);
     }
 
@@ -149,7 +180,6 @@ class App extends CI_Controller {
 
         $data['now'] = time();
         $data['sectionPage'] = 'dashboard';
-        $data['minerdPools'] = json_decode($this->util_model->getPools());
         $data['isOnline'] = $this->util_model->isOnline();
         $data['minerdLog'] = $this->redis->get('minerd_log');
         $data['savedFrequencies'] = $this->redis->get('current_frequencies');
@@ -162,7 +192,6 @@ class App extends CI_Controller {
         $data['dashboardDevicetree'] = ($this->redis->get("dashboard_devicetree")) ? $this->redis->get("dashboard_devicetree") : false;
         $data['dashboardBoxProfit'] = ($this->redis->get("dashboard_box_profit")) ? $this->redis->get("dashboard_box_profit") : false;
         $data['dashboardBoxLocalMiner'] = ($this->redis->get("dashboard_box_local_miner")) ? $this->redis->get("dashboard_box_local_miner") : false;
-        $data['dashboardBoxNetworkPoolsDetails'] = ($this->redis->get("dashboard_box_network_pools_details")) ? $this->redis->get("dashboard_box_network_pools_details") : false;
         $data['dashboardBoxChartShares'] = ($this->redis->get("dashboard_box_chart_shares")) ? $this->redis->get("dashboard_box_chart_shares") : false;
         $data['dashboardBoxChartSystemLoad'] = ($this->redis->get("dashboard_box_chart_system_load")) ? $this->redis->get("dashboard_box_chart_system_load") : false;
         $data['dashboardBoxChartHashrates'] = ($this->redis->get("dashboard_box_chart_hashrates")) ? $this->redis->get("dashboard_box_chart_hashrates") : false;
@@ -170,9 +199,7 @@ class App extends CI_Controller {
         $data['dashboardBoxLog'] = ($this->redis->get("dashboard_box_log")) ? $this->redis->get("dashboard_box_log") : false;
         $data['pageTitle'] = ($this->redis->get("mobileminer_system_name")) ? $this->redis->get("mobileminer_system_name") . " > Minera - Dashboard" : "Minera - Dashboard";
         $data['dashboardSkin'] = ($this->redis->get("dashboard_skin")) ? $this->redis->get("dashboard_skin") : "black";
-        $data['localAlgo'] = $this->util_model->checkAlgo($this->util_model->isOnline());
         $data['env'] = $this->config->item('ENV');
-        $data['mineraSystemId'] = $this->redis->get("minera_system_id");
 
         $this->load->view('include/header', $data);
         $this->load->view('include/sidebar', $data);
@@ -202,7 +229,6 @@ class App extends CI_Controller {
         $data['dashboardSkin'] = ($this->redis->get("dashboard_skin")) ? $this->redis->get("dashboard_skin") : "black";
         $data['dashboardDevicetree'] = ($this->redis->get("dashboard_devicetree")) ? $this->redis->get("dashboard_devicetree") : false;
         $data['env'] = $this->config->item('ENV');
-        $data['mineraSystemId'] = $this->redis->get("minera_system_id");
 
         $this->load->view('include/header', $data);
         $this->load->view('include/sidebar', $data);
@@ -264,17 +290,13 @@ class App extends CI_Controller {
         $data['minerdAppendConf'] = $this->redis->get('minerd_append_conf');
         $data['minerdManualSettings'] = $this->redis->get('minerd_manual_settings');
         $data['minerdSettings'] = $this->util_model->getCommandline();
-        $data['minerdJsonSettings'] = $this->redis->get("minerd_json_settings");
-        $data['minerdPools'] = $this->util_model->getPools();
         $data['minerdGuidedOptions'] = $this->redis->get("guided_options");
         $data['minerdManualOptions'] = $this->redis->get("manual_options");
         $data['minerdDelaytime'] = $this->redis->get("minerd_delaytime");
         $data['minerApiAllowExtra'] = $this->redis->get("minerd_api_allow_extra");
-        $data['globalPoolProxy'] = $this->redis->get("pool_global_proxy");
         $data['env'] = $this->config->item('ENV');
 
         // Load Dashboard settings
-        $data['mineraStoredDonations'] = $this->util_model->getStoredDonations();
         $data['dashboard_refresh_time'] = $this->redis->get("dashboard_refresh_time");
         $dashboard_coin_rates = $this->redis->get("dashboard_coin_rates");
         $data['dashboard_coin_rates'] = (is_array(json_decode($dashboard_coin_rates))) ? json_decode($dashboard_coin_rates) : array();
@@ -283,7 +305,6 @@ class App extends CI_Controller {
         $data['dashboardDevicetree'] = ($this->redis->get("dashboard_devicetree")) ? $this->redis->get("dashboard_devicetree") : false;
         $data['dashboardBoxProfit'] = ($this->redis->get("dashboard_box_profit")) ? $this->redis->get("dashboard_box_profit") : false;
         $data['dashboardBoxLocalMiner'] = ($this->redis->get("dashboard_box_local_miner")) ? $this->redis->get("dashboard_box_local_miner") : false;
-        $data['dashboardBoxNetworkPoolsDetails'] = ($this->redis->get("dashboard_box_network_pools_details")) ? $this->redis->get("dashboard_box_network_pools_details") : false;
         $data['dashboardBoxChartShares'] = ($this->redis->get("dashboard_box_chart_shares")) ? $this->redis->get("dashboard_box_chart_shares") : false;
         $data['dashboardBoxChartSystemLoad'] = ($this->redis->get("dashboard_box_chart_system_load")) ? $this->redis->get("dashboard_box_chart_system_load") : false;
         $data['dashboardBoxChartHashrates'] = ($this->redis->get("dashboard_box_chart_hashrates")) ? $this->redis->get("dashboard_box_chart_hashrates") : false;
@@ -291,7 +312,6 @@ class App extends CI_Controller {
         $data['dashboardBoxLog'] = ($this->redis->get("dashboard_box_log")) ? $this->redis->get("dashboard_box_log") : false;
 
         $data['dashboardTableRecords'] = ($this->redis->get("dashboard_table_records")) ? $this->redis->get("dashboard_table_records") : 5;
-        $data['algo'] = $this->util_model->checkAlgo(false);
 
         // Load System settings
         $data['mineraHostname'] = gethostname();
@@ -300,7 +320,6 @@ class App extends CI_Controller {
         $data['scheduledEventStartTime'] = $this->redis->get("scheduled_event_start_time");
         $data['scheduledEventTime'] = $this->redis->get("scheduled_event_time");
         $data['scheduledEventAction'] = $this->redis->get("scheduled_event_action");
-        $data['mineraSystemId'] = $this->redis->get("minera_system_id");
 
         // Load Mobileminer
         $data['mobileminerEnabled'] = $this->redis->get("mobileminer_enabled");
@@ -327,6 +346,22 @@ class App extends CI_Controller {
         $this->load->view('include/footer');
     }
 
+    public function get_wallet_dat() {
+        $this->util_model->isLoggedIn();
+
+        $dataObj = new stdClass();
+
+        $file = '/tmp/wallet.dat.' . date("Y-m-d-H.i", time());
+        $this->rpc->backupwallet($file);
+        exec('sudo chown www-data ' . $file);
+
+        $this->redis->set('raspinode_wallet_dat', $file);
+
+        $this->output
+                ->set_content_type('application/json')
+                ->set_output(json_encode($dataObj));
+    }
+
     /*
       // Save Settings controller
      */
@@ -336,7 +371,6 @@ class App extends CI_Controller {
 
         $extramessages = false;
         $dataObj = new stdClass();
-        $mineraSystemId = $this->util_model->generateMineraId();
 
         if ($this->input->post('save_settings')) {
             $minerSoftware = "";
@@ -351,27 +385,11 @@ class App extends CI_Controller {
             $dashboardDevicetree = $this->input->post('dashboard_devicetree');
             $dashboardBoxProfit = $this->input->post('dashboard_box_profit');
             $dashboardBoxLocalMiner = $this->input->post('dashboard_box_local_miner');
-            $dashboardBoxNetworkPoolsDetails = $this->input->post("dashboard_box_network_pools_details");
             $dashboardBoxChartShares = $this->input->post("dashboard_box_chart_shares");
             $dashboardBoxChartSystemLoad = $this->input->post("dashboard_box_chart_system_load");
             $dashboardBoxChartHashrates = $this->input->post("dashboard_box_chart_hashrates");
             $dashboardBoxScryptEarnings = $this->input->post("dashboard_box_scrypt_earnings");
             $dashboardBoxLog = $this->input->post("dashboard_box_log");
-
-            // Pools
-            $poolUrls = $this->input->post('pool_url');
-            $poolUsernames = $this->input->post('pool_username');
-            $poolPasswords = $this->input->post('pool_password');
-            $poolProxy = $this->input->post('pool_proxy');
-
-            $pools = array();
-            foreach ($poolUrls as $key => $poolUrl) {
-                if ($poolUrl) {
-                    if (isset($poolUsernames[$key]) && isset($poolPasswords[$key])) {
-                        $pools[] = array("url" => $poolUrl, "username" => $poolUsernames[$key], "password" => $poolPasswords[$key], "proxy" => $poolProxy[$key]);
-                    }
-                }
-            }
 
             // Network miners
             $netMinersNames = $this->input->post('net_miner_name');
@@ -379,12 +397,6 @@ class App extends CI_Controller {
             $netMinersPorts = $this->input->post('net_miner_port');
             $netMinersAlgos = $this->input->post('net_miner_algo');
             $netMinersTypes = $this->input->post('net_miner_type');
-
-            // Network miners pools
-            $netGroupPoolActives = $this->input->post('net_pool_active');
-            $netGroupPoolUrls = $this->input->post('net_pool_url');
-            $netGroupPoolUsernames = $this->input->post('net_pool_username');
-            $netGroupPoolPasswords = $this->input->post('net_pool_password');
 
             // Save Custom miners
             $dataObj->custom_miners = $this->input->post('active_custom_miners');
@@ -502,20 +514,6 @@ class App extends CI_Controller {
                 $dataObj->minerd_extraoptions = $this->input->post('minerd_extraoptions');
             }
 
-            // Add the pools to the command
-            $poolsArray = array();
-
-            // Global pool proxy
-            if ($this->input->post('pool_global_proxy')) {
-                $confArray["socks-proxy"] = $this->input->post('pool_global_proxy');
-            }
-            $this->redis->set('pool_global_proxy', $this->input->post('pool_global_proxy'));
-            $dataObj->pool_global_proxy = $this->input->post('pool_global_proxy');
-
-            $poolsArray = $this->util_model->parsePools($minerSoftware, $pools);
-
-            $confArray['pools'] = $poolsArray;
-
             // Prepare JSON conf
             $jsonConfRedis = json_encode($confArray);
             $jsonConfFile = json_encode($confArray, JSON_PRETTY_PRINT);
@@ -525,11 +523,7 @@ class App extends CI_Controller {
 
             // End command options string
 
-            $this->util_model->setPools($pools);
-
             $this->util_model->setCommandline($settings);
-            $this->redis->set("minerd_json_settings", $jsonConfRedis);
-            $dataObj->minerd_json_settings = $jsonConfRedis;
             $this->redis->set("minerd_autorecover", $this->input->post('minerd_autorecover'));
             $dataObj->minerd_autorecover = $this->input->post('minerd_autorecover');
             $this->redis->set("minerd_autorestart", $this->input->post('minerd_autorestart'));
@@ -553,8 +547,6 @@ class App extends CI_Controller {
             $dataObj->dashboard_box_profit = $dashboardBoxProfit;
             $this->redis->set("dashboard_box_local_miner", $dashboardBoxLocalMiner);
             $dataObj->dashboard_box_local_miner = $dashboardBoxLocalMiner;
-            $this->redis->set("dashboard_box_network_pools_details", $dashboardBoxNetworkPoolsDetails);
-            $dataObj->dashboard_box_network_pools_details = $dashboardBoxNetworkPoolsDetails;
             $this->redis->set("dashboard_box_chart_shares", $dashboardBoxChartShares);
             $dataObj->dashboard_box_chart_shares = $dashboardBoxChartShares;
             $this->redis->set("dashboard_box_chart_system_load", $dashboardBoxChartSystemLoad);
@@ -571,12 +563,6 @@ class App extends CI_Controller {
                 $dataObj->dashboard_coin_rates = json_encode($coinRates);
                 $this->util_model->updateAltcoinsRates(true);
             }
-
-            if ($mineraDonationTime) {
-                $this->util_model->autoAddMineraPool();
-            }
-
-            $dataObj->minerd_pools = $this->util_model->getPools();
 
             // System settings
             // System hostname
@@ -690,12 +676,10 @@ class App extends CI_Controller {
         $this->redis->set("export_settings", json_encode($dataObj));
 
         // Publish stats to Redis
-        $dataObj->minera_id = $mineraSystemId;
         $this->redis->publish("minera-channel", json_encode($dataObj));
 
         // Save current miner settings
         if ($this->input->get("save_config")) {
-            unset($confArray['pools']);
             $lineConf = false;
             foreach ($confArray as $keyConf => $valueConf) {
                 if ($valueConf != "1")
@@ -704,7 +688,7 @@ class App extends CI_Controller {
                     $lineConf .= " --" . $keyConf;
             }
             $exportConfigSettings .= $lineConf;
-            $dataObj = array("timestamp" => time(), "software" => $minerSoftware, "settings" => $exportConfigSettings, "pools" => $pools, "description" => false);
+            $dataObj = array("timestamp" => time(), "software" => $minerSoftware, "settings" => $exportConfigSettings, "description" => false);
             $this->redis->command("HSET saved_miner_configs " . time() . " " . base64_encode(json_encode($dataObj)));
         }
 
@@ -713,6 +697,20 @@ class App extends CI_Controller {
         $this->output
                 ->set_content_type('application/json')
                 ->set_output(json_encode($dataObj));
+    }
+
+    public function export_wallet() {
+        $this->util_model->isLoggedIn();
+        $o = $this->redis->get('raspinode_wallet_dat');
+        if (file_exists($o)) {
+            header("Cache-Control: public");
+            header("Content-Description: File Transfer");
+            header("Content-Disposition: attachment; filename=wallet" . date("Y-m-d-H.i", time()) . ".dat");
+            header("Content-Type: octet-stream");
+            header("Content-Transfer-Encoding: binary");
+            readfile($o);
+        } else
+            return false;
     }
 
     /*

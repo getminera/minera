@@ -83,14 +83,8 @@ class Util_model extends CI_Model {
         $a->localweight = $this->redis->get("localweight_weight") == "" ?
                 "N/A" : $this->redis->get("localweight_weight");
 
-        // Add Minera ID
-        $a->minera_id = $this->generateMineraId();
-
         // Add miner software used
         $a->miner = $this->_minerdSoftware;
-
-        // Add local algo used
-        $a->algo = $this->checkAlgo(true);
 
         //log_message("error", var_export($netStats, true));
         // Add sysload stats
@@ -223,37 +217,6 @@ class Util_model extends CI_Model {
             $return['totals']['shares'] = $tdshares;
             $return['totals']['hashrate'] = $tdhashrate;
             $return['totals']['last_share'] = max($tdlastshares);
-        }
-
-
-        if (isset($stats->pools)) {
-            $return['pool']['hashrate'] = 0;
-            $return['pool']['url'] = null;
-            $return['pool']['alive'] = 0;
-
-            foreach ($stats->pools as $poolIndex => $pool) {
-                if ($this->_minerdSoftware == "cpuminer") {
-                    if (isset($pool->active) && $pool->active == 1) {
-                        $return['pool']['url'] = $pool->url;
-                        $return['pool']['alive'] = $pool->alive;
-
-                        foreach ($pool->stats as $session) {
-                            if ($session->stats_id == $pool->stats_id) {
-                                // Calculate pool hashrate
-                                $poolHashrate = round(65536.0 * ($session->shares / (time() - $session->start_time)), 0);
-                                $return['pool']['hashrate'] = $poolHashrate;
-                            }
-                        }
-                    }
-                } else {
-                    if ((isset($pool->active) && $pool->active == 1) || (isset($pool->{'Stratum Active'}) && $pool->{'Stratum Active'} == 1)) {
-                        $return['pool']['url'] = $pool->url;
-                        $return['pool']['alive'] = $pool->alive;
-                        $devicePoolIndex[] = $poolIndex;
-                    }
-                    $return['pool']['hashrate'] = $cgbfgminerPoolHashrate;
-                }
-            }
         }
 
         return json_encode($return);
@@ -506,135 +469,6 @@ class Util_model extends CI_Model {
         return $data;
     }
 
-    function getStoredDonations() {
-        return $this->redis->command("LRANGE saved_donations 0 -1");
-    }
-
-    function autoAddMineraPool() {
-        $pools = json_decode($this->getPools());
-        $md5s = array();
-        $pools = (is_array($pools)) ? $pools : array();
-
-        if (count($pools) > 0) {
-            foreach ($pools as $pool) {
-                $md5s[] = md5(strtolower($pool->url) . strtolower($pool->username) . strtolower($pool->password));
-            }
-        }
-
-        $mineraMd5 = "";
-        $mineraSHA256Md5 = "";
-
-        $algo = $this->checkAlgo(false);
-
-        $keysSha = array();
-        $keysScrypt = array();
-
-        $keysSha = array_keys($md5s, $mineraSHA256Md5);
-        $keysScrypt = array_keys($md5s, $mineraMd5);
-
-        if (count($keysScrypt) > 0) {
-            foreach ($keysScrypt as $vScrypt) {
-                unset($pools[$vScrypt]);
-                unset($md5s[$vScrypt]);
-            }
-        }
-
-        if (count($keysSha) > 0) {
-            foreach ($keysSha as $vSha) {
-                unset($pools[$vSha]);
-                unset($md5s[$vSha]);
-            }
-        }
-
-        $pools = array_values($pools);
-
-        if ($algo === "Scrypt" && !in_array($mineraMd5, $md5s)) {
-            array_push($pools, array("url" => "", "username" => "", "password" => ""));
-
-            $this->setPools($pools);
-        } elseif ($algo === "SHA-256" && !in_array($mineraSHA256Md5, $md5s)) {
-            array_push($pools, array("url" => "", "username" => "", "password" => ""));
-
-            $this->setPools($pools);
-        }
-
-        $newPools = $this->getPools();
-        $conf = json_decode($this->redis->get("minerd_json_settings"));
-        if (empty($conf))
-            $conf = new stdClass();
-        $conf->pools = $this->parsePools("", json_decode($newPools, true));
-
-        $jsonConfRedis = json_encode($conf);
-        $jsonConfFile = json_encode($conf, JSON_PRETTY_PRINT);
-
-        //log_message("error", var_export($conf, true));
-        // Save the JSON conf file
-        $this->redis->set("minerd_json_settings", $jsonConfRedis);
-    }
-
-    function removeOldMineraPool() {
-        $pools = json_decode($this->getPools());
-        $newPools = array();
-
-        foreach ($pools as $pool) {
-            if ($pool->username !== 'michelem.minera') {
-                $newPools[] = $pool;
-            } else {
-                $pool->username = "";
-                $newPools[] = $pool;
-            }
-        }
-
-        $this->setPools($newPools);
-
-        $conf = json_decode($this->redis->get("minerd_json_settings"));
-        if (!isset($conf))
-            $conf = new stdClass();
-        $conf->pools = [];
-        $currentPools = $this->parsePools("", json_decode(json_encode($newPools), true));
-        if ($currentPools)
-            $conf->pools = $currentPools;
-
-        $jsonConfRedis = json_encode($conf);
-        $jsonConfFile = json_encode($conf, JSON_PRETTY_PRINT);
-
-        // Save the JSON conf file
-        $this->redis->set("minerd_json_settings", $jsonConfRedis);
-    }
-
-    function setPools($pools) {
-        return $this->redis->set("minerd_pools", json_encode($pools));
-    }
-
-    function getPools() {
-        return $this->redis->get("minerd_pools");
-    }
-
-    function parsePools($minerSoftware, $pools) {
-        $poolsArray = array();
-
-        if (is_array($pools)) {
-            foreach ($pools as $pool) {
-                if ($minerSoftware == "cgminer" OR $minerSoftware == "cgdmaxlzeus") {
-                    // CGminer has different method to add proxy pool
-                    if (!empty($pool['proxy'])) {
-                        $poolsArray[] = array("url" => $pool['proxy'] . "|" . $pool['url'], "user" => $pool['username'], "pass" => $pool['password']);
-                    } else {
-                        $poolsArray[] = array("url" => $pool['url'], "user" => $pool['username'], "pass" => $pool['password']);
-                    }
-                } else {
-                    if (!empty($pool['proxy'])) {
-                        $poolsArray[] = array("url" => $pool['url'], "user" => $pool['username'], "pass" => $pool['password'], "pool-proxy" => $pool['proxy']);
-                    } else {
-                        $poolsArray[] = array("url" => $pool['url'], "user" => $pool['username'], "pass" => $pool['password']);
-                    }
-                }
-            }
-        }
-
-        return $poolsArray;
-    }
-
     function setCommandline($string) {
         return $this->redis->set("minerd_settings", $string);
     }
@@ -710,20 +544,6 @@ class Util_model extends CI_Model {
                 $this->redis->set("minerd_manual_settings", $settings);
                 $settings .= " -c ";
                 $this->setCommandline($settings);
-                $this->setPools($obj->pools);
-
-                $poolsArray = array();
-                foreach ($obj->pools as $pool) {
-                    $poolsArray[] = array("url" => $pool->url, "user" => $pool->username, "pass" => $pool->password);
-                }
-                $confArray['pools'] = $poolsArray;
-
-                // Prepare JSON conf
-                $jsonConfRedis = json_encode($confArray);
-                $jsonConfFile = json_encode($confArray, JSON_PRETTY_PRINT);
-
-                // Save the JSON conf file
-                $this->redis->set("minerd_json_settings", $jsonConfRedis);
 
                 // Startup script rc.local
                 $this->saveStartupScript($obj->software);
@@ -858,26 +678,6 @@ class Util_model extends CI_Model {
         return json_decode(array("error" => "true"));
     }
 
-    /*
-      //
-      // Miner and System related stuff
-      //
-     */
-
-    // Check if pool is alive
-    public function checkPool($url) {
-        $parsedUrl = @parse_url($url);
-
-        if (isset($parsedUrl['host']) && isset($parsedUrl['port'])) {
-            $conn = @fsockopen($parsedUrl['host'], $parsedUrl['port'], $errno, $errstr, 1);
-            if (is_resource($conn)) {
-                fclose($conn);
-                return true;
-            }
-        }
-
-        return false;
-    }
 
     // Check if the minerd if running
     public function isOnline() {
@@ -1277,8 +1077,6 @@ class Util_model extends CI_Model {
         $this->redis->set("system_extracommands", "");
         $this->redis->set("minerd_append_conf", 1);
         $this->redis->set("minerd_debug", 0);
-        $this->redis->set("pool_global_proxy", "");
-        $this->redis->set("minerd_pools", "");
         $this->redis->set("minerd_autodetect", 0);
         $this->redis->set("minerd_api_allow_extra", "");
 
@@ -1291,21 +1089,16 @@ class Util_model extends CI_Model {
         $this->redis->del("piratecashd_avg_stats_300");
         $this->redis->del("saved_miner_configs");
         $this->redis->del("bitstamp_data");
-        $this->redis->del("saved_donations");
-        $this->redis->del("minera_remote_config");
+        $this->redis->del("raspinode_remote_config");
         $this->redis->del("export_settings");
         $this->redis->del("piratecashd_totals_stats");
         $this->redis->del("miners_conf");
         $this->redis->del("miners_conf_update");
         $this->redis->del("piratecashd_delta_stats");
         $this->redis->del("saved_miner_config:*");
-        $this->redis->del("minerd_json_settings");
         $this->redis->del("import_data_tmp");
         $this->redis->del("bitstamp_update");
         $this->redis->del("altcoins_update");
-
-        // Add donation pool
-        $this->autoAddMineraPool();
 
         return true;
     }
@@ -1380,37 +1173,18 @@ class Util_model extends CI_Model {
         return $result[0];
     }
 
-    // Generate a uniq hash ID for Minera System ID
-    public function generateMineraId() {
-        $mac = $this->getMacLinux();
-        if (!$mac) {
-            $mac = $this->redis->get("mac");
-            if (!$mac) {
-                $mac = substr(str_shuffle("0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"), 0, 12);
-                $this->redis->set("mac", $mac);
-            }
-        } else {
-            $this->redis->del("mac");
-        }
-
-        $id = substr(strtolower(preg_replace('/[0-9_\/]+/', '', base64_encode(sha1(trim($mac))))), 0, 12);
-
-        $this->redis->set("minera_system_id", $id);
-        return $id;
-    }
-
     // Get Remote configuration from Github
     public function getRemoteJsonConfig() {
         $remoteConfig = @file_get_contents($this->config->item('remote_config_url'));
 
-        $this->redis->set("minera_remote_config", $remoteConfig);
+        $this->redis->set("raspinode_remote_config", $remoteConfig);
 
         return json_decode($remoteConfig);
     }
 
     // Return saved remote configuration from local Redis
     public function returnRemoteJsonConfig() {
-        return json_decode($this->redis->get("minera_remote_config"));
+        return json_decode($this->redis->get("raspinode_remote_config"));
     }
 
     /*
@@ -1427,16 +1201,6 @@ class Util_model extends CI_Model {
         return false;
     }
 
-    /*
-      // Check what kind of algo is used to mine
-     */
-
-    public function checkAlgo($running = true) {
-        $minerdCommand = $this->getCommandLine();
-        $scryptEnabled = $this->redis->get("minerd_scrypt");
-        $algo = "SHA-256";
-        return $algo;
-    }
 
     public function getRandomStarName() {
         $array = array("Andromeda", "Antlia", "Apus", "Aquarius", "Aquila", "Ara", "Aries", "Auriga", "Caelum", "Camelopardalis", "Cancer", "Canes Venatici", "Canis Major", "Canis Minor", "Capricornus", "Carina", "Cassiopeia", "Centaurus", "Cepheus", "Cetus", "Chamaeleon", "Circinus", "Columba", "Coma Berenices", "Corona Austrina", "Corona Borealis", "Corvus", "Crater", "Crux", "Cygnus", "Delphinus", "Dorado", "Draco", "Equuleus", "Eridanus", "Fornax", "Gemini", "Grus", "Hercules", "Horologium", "Hydra", "Hydrus", "Indus", "Lacerta", "Leo", "Leo Minor", "Lepus", "Libra", "Lupus", "Lynx", "Lyra", "Mensa", "Microscopium", "Monoceros", "Musca", "Norma", "Octans", "Ophiuchus", "Orion", "Pavo", "Pegasus", "Perseus", "Phoenix", "Pictor", "Pisces", "Piscis Austrinus", "Puppis", "Pyxis", "Reticulum", "Sagitta", "Sagittarius", "Scorpius", "Sculptor", "Scutum", "Serpens", "Sextans", "Taurus", "Telescopium", "Triangulum", "Triangulum Australe", "Tucana", "Ursa Major", "Ursa Minor", "Vela", "Virgo", "Volans", "Vulpecula");
