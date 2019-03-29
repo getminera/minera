@@ -50804,13 +50804,15 @@ function convertHashrate(hash) {
 function convertWeight(net) {
     if (!net)
         return "N/A";
-    unit = '';
     if (net > 100000000000000){
         net = net / 100000000000000;
         unit = 'M';
     } else  if (net > 100000000000){
         net = net / 100000000000;
         unit = 'k';
+    } else {
+        net = net / 100000000;
+        unit = '';
     }
 
     return parseFloat(net).toFixed(4) + ' ' + unit;
