@@ -214,25 +214,29 @@ class App extends CI_Controller {
         $this->util_model->isLoggedIn();
 
         $dataObj = new stdClass();
+        try {
 
-        if (!$this->input->post('send_address') || !$this->input->post('send_amount')) {
-            log_message('error', 'no data');
-            return;
+            if (!$this->input->post('send_address') || !$this->input->post('send_amount')) {
+                log_message('error', 'no data');
+                return;
+            }
+
+            if (!is_numeric($this->input->post('send_amount'))) {
+                log_message('error', 'amount isn\'t number:' . $this->input->post('send_amount'));
+                return;
+            }
+
+            $isvalid = $this->rpc->validateaddress($this->input->post('send_address'));
+
+            if (!$isvalid['isvalid']) {
+                log_message('error', 'Wrong adress: ' . $this->input->post('send_address'));
+                return;
+            }
+
+            $this->rpc->sendtoaddress($this->input->post('send_address'), (float) $this->input->post('send_amount'));
+        } catch (Exception $e) {
+            log_message('error', $e->getMessage() . ' in ' . $e->getFile() . ':' . $e->getLine());
         }
-
-        if (!is_numeric($this->input->post('send_amount'))) {
-            log_message('error', 'amount isn\'t number:' . $this->input->post('send_amount'));
-            return;
-        }
-
-        $isvalid = $this->rpc->validateaddress($this->input->post('send_address'));
-
-        if (!$isvalid['isvalid']) {
-            log_message('error', 'Wrong adress: ' . $this->input->post('send_address'));
-            return;
-        }
-
-        $this->rpc->sendtoaddress($this->input->post('send_address'),(float)$this->input->post('send_amount'));
 
         $this->output
                 ->set_content_type('application/json')

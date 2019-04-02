@@ -302,7 +302,7 @@
 
                 <!-- sidebar menu -->
                 <ul class="sidebar-menu">
-                    <?php if ($sectionPage === "dashboard" && (($isOnline && $appScript) || count($netMiners) > 0)) : ?>
+                    <?php if ($sectionPage === "dashboard" && $isOnline && $appScript) : ?>
                         <li data-toggle="tooltip" title="" data-original-title="Refresh Dashboard">
                             <a href="#" class="refresh-btn">
                                 <i class="fa fa-refresh refresh-icon mr5" style="width: inherit;"></i> <span>Refresh</span><span class="badge bg-muted pull-right auto-refresh-time">auto in</span>
