@@ -346,8 +346,8 @@
                                 </a>
                             </li>
                             <li>
-                                <a href="<?= site_url("app/wallet#address") ?>" class="menu-log-box ml10">
-                                    <i class="fa fa-user"></i> Address
+                                <a href="<?= site_url("app/sendto") ?>" class="menu-log-box ml10">
+                                    <i class="glyphicon glyphicon-upload"></i> Send to
                                 </a>
                             </li>
                             <li>

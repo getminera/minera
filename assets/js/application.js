@@ -25062,7 +25062,7 @@ if (typeof jQuery === 'undefined') {
       var types = DataTable.ext.type.detect;
       var i, ien, j, jen, k, ken;
       var col, cell, detectedType, cache;
-      // For each column, spin over the 
+      // For each column, spin over the
       for (i = 0, ien = columns.length; i < ien; i++) {
         col = columns[i];
         cache = [];
@@ -26683,7 +26683,7 @@ if (typeof jQuery === 'undefined') {
 			 * word order. We also want double quoted text to be preserved, so word
 			 * order is important - a la google. So this is what we want to
 			 * generate:
-			 * 
+			 *
 			 * ^(?=.*?\bone\b)(?=.*?\btwo three\b)(?=.*?\bfour\b).*$
 			 */
         var a = $.map(search.match(/"[^"]+"|[^ ]+/g) || [''], function (word) {
@@ -27467,7 +27467,7 @@ if (typeof jQuery === 'undefined') {
         }
         // Table has been built, attach to the document so we can work with it
         tmpTable.appendTo(tableContainer);
-        // When scrolling (X or Y) we want to set the width of the table as 
+        // When scrolling (X or Y) we want to set the width of the table as
         // appropriate. However, when not scrolling leave the table width as it
         // is. This results in slightly different, but I think correct behaviour
         if (scrollX && scrollXInner) {
@@ -31096,7 +31096,7 @@ if (typeof jQuery === 'undefined') {
     };
     /**
 	 * DataTables utility methods
-	 * 
+	 *
 	 * This namespace provides helper methods that DataTables uses internally to
 	 * create a DataTable, but which are not exclusively used only for DataTables.
 	 * These methods can be used by extension authors to save the duplication of
@@ -31677,7 +31677,7 @@ if (typeof jQuery === 'undefined') {
 	 */
     /**
 	 * DataTables extensions
-	 * 
+	 *
 	 * This namespace acts as a collection area for plug-ins that can be used to
 	 * extend DataTables capabilities. Indeed many of the build in methods
 	 * use this method to provide their own capabilities (sorting methods for
@@ -31980,7 +31980,7 @@ if (typeof jQuery === 'undefined') {
     ]);
     // Filter formatting functions. See model.ext.ofnSearch for information about
     // what is required from these methods.
-    // 
+    //
     // Note that additional search methods are added for the html numbers and
     // html formatted numbers by `_addNumericSort()` when we know what the decimal
     // place is
@@ -35218,13 +35218,13 @@ if (typeof jQuery === 'undefined') {
 // │ Licensed under the MIT (http://raphaeljs.com/license.html) license.│ \\
 // └────────────────────────────────────────────────────────────────────┘ \\
 // Copyright (c) 2013 Adobe Systems Incorporated. All rights reserved.
-// 
+//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
-// 
+//
 // http://www.apache.org/licenses/LICENSE-2.0
-// 
+//
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -35356,7 +35356,7 @@ if (typeof jQuery === 'undefined') {
      - name (string) name of the event, dot (`.`) or slash (`/`) separated, with optional wildcards
      - f (function) event handler function
      **
-     = (function) returned function accepts a single numeric parameter that represents z-index of the handler. It is an optional feature and only used when you need to ensure that some subset of handlers will be invoked in a given order, despite of the order of assignment. 
+     = (function) returned function accepts a single numeric parameter that represents z-index of the handler. It is an optional feature and only used when you need to ensure that some subset of handlers will be invoked in a given order, despite of the order of assignment.
      > Example:
      | eve.on("mouse", eatIt)(2);
      | eve.on("mouse", scream);
@@ -46761,7 +46761,7 @@ Licensed under the BSD-2-Clause License.
     // based on the content type returned by the server, without attempting an
     // (unsupported) conversion from "iframe" to the actual type.
     options.dataTypes.shift();
-    // Use the data from the original AJAX options, as it doesn't seem to be 
+    // Use the data from the original AJAX options, as it doesn't seem to be
     // copied over since jQuery 1.7.
     // See https://github.com/cmlenz/jquery-iframe-transport/issues/6
     options.data = origOptions.data;
@@ -50181,7 +50181,7 @@ Licensed under the BSD-2-Clause License.
  *      This file should be included in all pages
  !**/
 /*
- * Global variables. If you change any of these vars, don't forget 
+ * Global variables. If you change any of these vars, don't forget
  * to change the values in the less files!
  */
 var left_side_width = 220;
@@ -50216,11 +50216,11 @@ $(function () {
   });
   //Activate tooltips
   $('[data-toggle=\'tooltip\']').tooltip();
-  /*     
+  /*
      * Add collapse and remove events to boxes
      */
   $('[data-widget=\'collapse\']').click(function () {
-    //Find the box parent        
+    //Find the box parent
     var box = $(this).parents('.box').first();
     //Find the body and the footer
     var bf = box.find('.box-body, .box-footer');
@@ -50275,19 +50275,19 @@ $(function () {
     });
   });
   $('[data-widget=\'remove\']').click(function () {
-    //Find the box parent        
+    //Find the box parent
     var box = $(this).parents('.box').first();
     box.slideUp();
   });
   /* Sidebar tree view */
   $('.sidebar .treeview').tree();
-  /* 
+  /*
      * Make sure that the sidebar is streched full height
      * ---------------------------------------------
      * We are gonna assign a min-height value every time the
      * wrapper gets resized and upon page load. We will use
      * Ben Alman's method for detecting the resize event.
-     * 
+     *
      **/
   function _fix() {
     //Get window height and the wrapper height
@@ -50313,7 +50313,7 @@ $(function () {
   //Fix the fixed layout sidebar scroll bug
   fix_sidebar();
   /*
-     * We are gonna initialize all checkbox and radio inputs to 
+     * We are gonna initialize all checkbox and radio inputs to
      * iCheck plugin in.
      * You can find the documentation at http://fronteed.com/iCheck/
      */
@@ -50342,12 +50342,12 @@ function change_skin(cls) {
   $('body').removeClass('skin-blue skin-black');
   $('body').addClass(cls);
 }
-/* 
- * BOX REFRESH BUTTON 
+/*
+ * BOX REFRESH BUTTON
  * ------------------
  * This is a custom plugin to use with the compenet BOX. It allows you to add
  * a refresh button to the box. It converts the box's state to a loading state.
- * 
+ *
  * USAGE:
  *  $("#box-widget").boxRefresh( options );
  * */
@@ -50404,13 +50404,13 @@ function change_skin(cls) {
  * SIDEBAR MENU
  * ------------
  * This is a custom plugin for the sidebar menu. It provides a tree view.
- * 
+ *
  * Usage:
  * $(".sidebar).tree();
- * 
+ *
  * Note: This plugin does not accept any options. Instead, it only requires a class
  *       added to the element that contains a sub-menu.
- *       
+ *
  * When used with the sidebar, for example, it would look something like this:
  * <ul class='sidebar-menu'>
  *      <li class="treeview active">
@@ -50420,7 +50420,7 @@ function change_skin(cls) {
  *          </ul>
  *      </li>
  * </ul>
- * 
+ *
  * Add .active class to <li> elements if you want the menu to be open automatically
  * on page load. See above for an example.
  */
@@ -50508,7 +50508,7 @@ function change_skin(cls) {
 /*
  * jQuery resize event - v1.1 - 3/14/2010
  * http://benalman.com/projects/jquery-resize-plugin/
- * 
+ *
  * Copyright (c) 2010 "Cowboy" Ben Alman
  * Dual licensed under the MIT and GPL licenses.
  * http://benalman.com/about/license/
@@ -51403,7 +51403,25 @@ $(function () {
                     $(window).scrollLeft()) + 'px');
             return this;
         }*/
-  } else if (thisSection === 'wallet_backup') { 
+  } else if (thisSection === 'send') {
+    $('.send-action').click(function (e) {
+        e.preventDefault();
+        $('#modal-saving-label').html('Sending your coins, please wait...');
+        $('#modal-saving').modal('show');
+        var saveUrl = _baseUrl + '/app/send';
+        var formData = $('#wallet_send').serialize();
+        $.ajax({
+            type: 'POST',
+            url: saveUrl,
+            data: formData,
+            cache: false,
+            success: function (resp) {
+            $('#modal-saving').modal('hide');
+                window.location = _baseUrl + '/app/wallet';
+            }
+      });
+    });
+  } else if (thisSection === 'wallet_backup') {
     $('.backup-action').click(function (e) {
         e.preventDefault();
         $('#modal-saving-label').html('Generating wallet.dat file, please wait...');
@@ -52612,16 +52630,16 @@ function getStats(refresh) {
         alwaysVisible: false,
         size: '3px'
       }).css('width', '100%');
-      if (data.weight) { 
+      if (data.weight) {
           $('.widget-total-weight').html(convertWeight(data.weight));
       }
-      if (data.localweight) { 
+      if (data.localweight) {
           $('.widget-main-pool').html(convertWeight(data.localweight));
       }
       if (data.devices) {
         $('#devs').empty();
         if (!$.fn.dataTable.isDataTable('#miner-table-details')) {
-          // Initialize the miner datatable	
+          // Initialize the miner datatable
           $('#miner-table-details').dataTable({
             'lengthMenu': [
               5,
@@ -52814,7 +52832,7 @@ function getStats(refresh) {
       if (data.profits) {
         var btcPrice = data.btc_rates && data.btc_rates.last ? data.btc_rates.last : 0, btcEurPrice = data.btc_rates && data.btc_rates.last_eur ? data.btc_rates.last_eur : 0;
         if (!$.fn.dataTable.isDataTable('#profit-table-details')) {
-          // Initialize the profit datatable	
+          // Initialize the profit datatable
           $('#profit-table-details').dataTable({
             'bAutoWidth': false,
             'lengthChange': false,

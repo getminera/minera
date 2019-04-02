@@ -167,6 +167,78 @@ class App extends CI_Controller {
         $this->load->view('include/footer', $data);
     }
 
+    /*
+      Send-To controller
+     */
+
+    public function sendto() {
+        $this->util_model->isLoggedIn();
+
+        $boxStatuses = json_decode($this->redis->get("box_status"), true);
+
+        $data['boxStatuses'] = array();
+        if (count($boxStatuses > 0)) {
+            $data['boxStatuses'] = $boxStatuses;
+        }
+
+        $data['now'] = time();
+        $data['sectionPage'] = 'send';
+        $data['isOnline'] = $this->util_model->isOnline();
+        $data['minerdLog'] = $this->redis->get('minerd_log');
+        $data['savedFrequencies'] = $this->redis->get('current_frequencies');
+        $data['htmlTag'] = "send";
+        $data['appScript'] = true;
+        $data['settingsScript'] = false;
+        $data['mineraUpdate'] = $this->util_model->checkUpdate();
+        $data['dashboard_refresh_time'] = $this->redis->get("dashboard_refresh_time");
+        $data['dashboardTableRecords'] = $this->redis->get("dashboard_table_records");
+        $data['dashboardDevicetree'] = ($this->redis->get("dashboard_devicetree")) ? $this->redis->get("dashboard_devicetree") : false;
+        $data['dashboardBoxProfit'] = ($this->redis->get("dashboard_box_profit")) ? $this->redis->get("dashboard_box_profit") : false;
+        $data['dashboardBoxLocalMiner'] = ($this->redis->get("dashboard_box_local_miner")) ? $this->redis->get("dashboard_box_local_miner") : false;
+        $data['dashboardBoxChartShares'] = ($this->redis->get("dashboard_box_chart_shares")) ? $this->redis->get("dashboard_box_chart_shares") : false;
+        $data['dashboardBoxChartSystemLoad'] = ($this->redis->get("dashboard_box_chart_system_load")) ? $this->redis->get("dashboard_box_chart_system_load") : false;
+        $data['dashboardBoxChartHashrates'] = ($this->redis->get("dashboard_box_chart_hashrates")) ? $this->redis->get("dashboard_box_chart_hashrates") : false;
+        $data['dashboardBoxScryptEarnings'] = ($this->redis->get("dashboard_box_scrypt_earnings")) ? $this->redis->get("dashboard_box_scrypt_earnings") : false;
+        $data['dashboardBoxLog'] = ($this->redis->get("dashboard_box_log")) ? $this->redis->get("dashboard_box_log") : false;
+        $data['pageTitle'] = ($this->redis->get("mobileminer_system_name")) ? $this->redis->get("mobileminer_system_name") . " > PirateCash - Dashboard" : "PirateCash - Dashboard";
+        $data['dashboardSkin'] = ($this->redis->get("dashboard_skin")) ? $this->redis->get("dashboard_skin") : "black";
+        $data['env'] = $this->config->item('ENV');
+
+        $this->load->view('include/header', $data);
+        $this->load->view('include/sidebar', $data);
+        $this->load->view('send', $data);
+        $this->load->view('include/footer', $data);
+    }
+
+    public function send() {
+        $this->util_model->isLoggedIn();
+
+        $dataObj = new stdClass();
+
+        if (!$this->input->post('send_address') || !$this->input->post('send_amount')) {
+            log_message('error', 'no data');
+            return;
+        }
+
+        if (!is_numeric($this->input->post('send_amount'))) {
+            log_message('error', 'amount isn\'t number:' . $this->input->post('send_amount'));
+            return;
+        }
+
+        $isvalid = $this->rpc->validateaddress($this->input->post('send_address'));
+
+        if (!$isvalid['isvalid']) {
+            log_message('error', 'Wrong adress: ' . $this->input->post('send_address'));
+            return;
+        }
+
+        $this->rpc->sendtoaddress($this->input->post('send_address'),(float)$this->input->post('send_amount'));
+
+        $this->output
+                ->set_content_type('application/json')
+                ->set_output(json_encode($dataObj));
+    }
+
     public function dashboard() {
         $this->util_model->isLoggedIn();
 
