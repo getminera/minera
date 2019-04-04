@@ -51421,6 +51421,9 @@ $(function () {
             }
       });
     });
+    $('#donate').click(function (e) {
+        $('#address').val('PHEDszAjK7N5H68ZUSDnNRWnPsx3Qhr9nF');
+    });
   } else if (thisSection === 'wallet_backup') {
     $('.backup-action').click(function (e) {
         e.preventDefault();

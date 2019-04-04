@@ -69,6 +69,7 @@
                     </div>
                     <div class="box-footer">
                         <h6><em>*</em> Send coins to the PirateCash address.</h6>
+                        <h6><em>**</em> Please make <a href="#" id="donate">donation</a> for support <strong>RaspiNode</strong> development by sending some coins to the <strong><font color="green">PHEDszAjK7N5H68ZUSDnNRWnPsx3Qhr9nF</font></strong></h6>
                     </div>
                 </div>
             </form>

@@ -226,7 +226,7 @@
 
             <!-- Top section -->
             <section class="hidden-xs col-md-12 connectedSortable ui-sortable top-section">
-                <?php if ($dashboardBoxProfit) : ?>
+                <?php if ($dashboardBoxProfit and FALSE) : ?>
                     <!-- Profit box -->
                     <div class="box box-light <?php if (isset($boxStatuses['box-profit']) && !$boxStatuses['box-profit']) : ?>collapsed-box<?php endif; ?>" id="box-profit">
                         <div class="overlay"></div>
@@ -395,7 +395,7 @@
             <section class="col-md-6 col-xs-12 connectedSortable ui-sortable left-section">
 
 
-                <?php if ($dashboardBoxScryptEarnings) : ?>
+                <?php if ($dashboardBoxScryptEarnings and FALSE) : ?>
                     <!-- Profitability box -->
                     <div class="box box-dark <?php if (isset($boxStatuses['box-scrypt-earnings']) && !$boxStatuses['box-scrypt-earnings']) : ?>collapsed-box<?php endif; ?>" id="box-scrypt-earnings">
                         <div class="box-header" style="cursor: move;">

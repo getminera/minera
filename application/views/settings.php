@@ -278,7 +278,7 @@
 	                        </div>
 
 	                        <div class="box-body">
-						    	<p>You can export a JSON file with all the settings from your current RaspiNode system. This file can be imported to reproduce the same settings in a new RaspiNode system with a click (this will export everything excluding: user password, charts and stats). You can also save a single miner config to be used in future<em>*</em> or shared with the Minera community<em>**</em>.</p>
+						    	<p>You can export a JSON file with all the settings from your current RaspiNode system. This file can be imported to reproduce the same settings in a new RaspiNode system with a click (this will export everything excluding: user password, charts and stats). You can also save a single miner config to be used in future<em>*</em> or shared with the RaspiNode community<em>**</em>.</p>
 
 								<div class="import-export-box margin-bottom">
 									<span class="btn btn-success fileinput-button" data-toggle="tooltip" data-title="File must be a JSON export file from a RaspiNode system">
@@ -352,8 +352,8 @@
 
 	                        </div>
 							<div class="box-footer">
-								<h6><em>*</em> Loading a saved miner config sets the manual settings mode with the saved command line, sets the miner software and completely overwrites the pools settings.</h6>
-								<h6><em>**</em> Sharing the miner config to the RaspiNode community won't share your pools settings</h6>
+								<h6><em>*</em> Loading a saved RaspiNode config sets the manual settings mode with the saved command line, sets the miner software and completely overwrites the pools settings.</h6>
+								<h6><em>**</em> Sharing the RaspiNode config to the RaspiNode community won't share your pools settings</h6>
 							</div>
 	                    </div>
 
