@@ -4,6 +4,8 @@ __author__ = 'hades'
 import requests
 import json
 import datetime
+import time
+from pyfiglet import Figlet
 
 try:
     request = 'http://127.0.0.1/raspinode/index.php/app/lcd'
@@ -17,7 +19,7 @@ try:
             print "| .--' | || .-. \/  /\  \ | |  | {__"
             print "`-'    `-'`-' `-'`-'  `-' `-'  `----'"
             print "\033[0;37m                               v%s" % lcd['raspinode']
-            print
+            #print
             print "\033[1;32mAvailable:\033[1;37m%20.8f \033[0;37mPIRATE" % lcd['available']
             print "\033[1;32mStake:\033[0;37m%24.8f PIRATE" % lcd['stake']
             print "\033[1;32mTotal:\033[1;37m%24.8f \033[0;37mPIRATE" % (lcd['available'] + lcd['stake'])
@@ -40,10 +42,16 @@ try:
             print "\033[1;37mStaking:        %s" % st
             print "\033[1;37mExpected time to earn reward:"
             print "\033[1;35m                %s" % lcd['expected_time']
-            print
+            #print
             print "\033[1;32mWallet:\033[0;37m         %s" % lcd['version']
-            print
-            print "\033[1;32mTime:\033[1;37m           %s" % datetime.datetime.now().strftime('%Y-%m-%d %H:%M')
+            #print
+            #print "\033[1;32mTime:\033[1;37m           %s" % datetime.datetime.now().strftime('%Y-%m-%d %H:%M')
+	    custom_fig = Figlet(font='clr6x8')
+	    ascii_banner = custom_fig.renderText(datetime.datetime.now().strftime('%H:%M'))
+	    print("\033[1;37m%s" % ascii_banner)
+	    #print "\n\n"
+	    diff = round((time.time() - lcd['last_block_time'])/60,2)
+            print "\033[1;32mTime diff:\033[1;37m      %s" % diff
 except requests.exceptions.ConnectionError:
     pass
 except KeyError:

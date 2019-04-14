@@ -6,9 +6,11 @@ echo -e "-----\nSTART RaspiNode Upgrade script\n-----\n"
 
 echo -e "-----\nInstall extra packages\n-----\n"
 
-apt-get -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" install build-essential libtool libncurses5-dev autoconf automake redis-server php7.0-cli php7.0-curl php7.0-fpm php7.0-readline php7.0-json shellinabox nginx-light libboost-all-dev libqrencode-dev dh-autoreconf libminiupnpc-dev libgmp-dev python-requests libdb++-dev pwgen
+apt-get -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" install build-essential libtool libncurses5-dev autoconf automake redis-server php7.0-cli php7.0-curl php7.0-fpm php7.0-readline php7.0-json shellinabox nginx-light libboost-all-dev libqrencode-dev dh-autoreconf libminiupnpc-dev libgmp-dev python-requests libdb++-dev pwgen python-pip
 
 sudo dpkg --configure -a
+
+pip install pyfiglet
 
 echo -e "Upgrading sudoers configuration for www-data and minera users\n-----\n"
 
