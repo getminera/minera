@@ -39,4 +39,12 @@ redis-cli del raspinode_version
 redis-cli del altcoins_update
 redis-cli del dashboard_coin_rates
 
+echo -e "Update piratecashd\n-----\n"
+su - pirate -c "/usr/local/bin/piratecashd stop"
+sleep 10
+wget https://github.com/piratecash/piratecash/releases/download/v11-release/raspberry-piratecashd.tar.gz -O /tmp/raspberry-piratecashd.tar.gz
+rm /usr/local/bin/piratecashd
+tar xf /tmp/raspberry-piratecashd.tar.gz -C /usr/local/bin/
+su - pirate -c "/usr/local/bin/piratecashd"
+
 echo -e 'DONE! RaspiNode is ready!\n\nOpen the URL: http://'$(hostname -I | tr -d ' ')'/raspinode/\n\nAnd happy staking!\n'

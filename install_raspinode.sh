@@ -59,7 +59,7 @@ chown pirate:pirate /home/pirate/.piratecash/piratecash.conf
 echo -e "<?php\ndefined('BASEPATH') OR exit('No direct script access allowed');\n\$config['url'] = 'http://piraterpc:${GEN_PASS}@127.0.0.1:11888/';\n\$config['debug'] = FALSE;" > `pwd`/application/config/rpc.php
 
 echo -e "Installing piratecashd\n-----\n"
-wget https://github.com/piratecash/piratecash/releases/download/1.0.10/raspberry-piratecashd.tar.gz -O /tmp/raspberry-piratecashd.tar.gz
+wget https://github.com/piratecash/piratecash/releases/download/v11-release/raspberry-piratecashd.tar.gz -O /tmp/raspberry-piratecashd.tar.gz
 tar xf /tmp/raspberry-piratecashd.tar.gz -C /usr/local/bin/
 su - pirate -c "/usr/local/bin/piratecashd"
 sed -i -e "s/exit 0//g" /etc/rc.local
