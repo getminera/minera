@@ -32,7 +32,7 @@ Please read more [how to config them here](https://github.com/getminera/minera/w
 
 If you like it, please consider a donation:
 
-    Bitcoin: 19kDRygdVZUq1ARrht6544CGaPzMnF1Q1b
+    Bitcoin: 3K7aJNeSu3kCsjVKjQ4W9AzCfSFifJBkq3
 
 Thanks.
 
