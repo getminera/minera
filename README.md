@@ -339,7 +339,7 @@ Donations
 
 Minera is a free and Open Source software, if you like it, please consider a donation to support it:
 
-    Bitcoin: 19kDRygdVZUq1ARrht6544CGaPzMnF1Q1b
+    Bitcoin: 3K7aJNeSu3kCsjVKjQ4W9AzCfSFifJBkq3
 
 Thanks and happy mining!
 
