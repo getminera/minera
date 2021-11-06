@@ -30,10 +30,6 @@ Since the 0.3.x version Minera supports the following miner softwares:
 
 Please read more [how to config them here](https://github.com/getminera/minera/wiki/Network-mining-devices)
 
-If you like it, please consider a donation:
-
-    Bitcoin: 3K7aJNeSu3kCsjVKjQ4W9AzCfSFifJBkq3
-
 Thanks.
 
 **[Download from official server (DE) minera-latest.img.zip](https://getminera.com/download/latest)**
@@ -332,19 +328,6 @@ Web Terminal:
 Blue skin:
 
 [![Blue skin](https://github.com/getminera/minera/raw/master/assets/img/screen_minera_dashboard_blue.png)](https://github.com/getminera/minera/raw/master/assets/img/screen_minera_dashboard_blue_hi.png)
-_______
-
-Donations
--------------
-
-Minera is a free and Open Source software, if you like it, please consider a donation to support it:
-
-    Bitcoin: 3K7aJNeSu3kCsjVKjQ4W9AzCfSFifJBkq3
-
-Thanks and happy mining!
-
-If you liked Minera, please try [Betcoins](https://betcoins.co), my new project on [Bitcoin binary options](https://betcoins.co).
-
 _______
 
 Credits
